@@ -1,0 +1,1277 @@
+/* Variables globales et réinitialisation */
+.globalWrapper {
+    --color-primary: #2e7d32;
+    --color-primary-dark: #1b5e20;
+    --color-primary-light: #4caf50;
+    --color-accent: #81c784;
+    --color-secondary: #f8b400;
+    --color-background: #f9fbf7;
+    --color-background-light: #ffffff;
+    --color-background-dark: #f1f8e9;
+    --color-text: #2c3e50;
+    --color-text-light: #546e7a;
+    --color-text-inverted: #ffffff;
+    --color-border: #e0e0e0;
+    --color-muted: #9e9e9e;
+    --color-success: #4caf50;
+    --color-error: #f44336;
+    --color-warning: #ff9800;
+    --color-info: #2196f3;
+    
+    /* Variables d'état des commandes */
+    --color-pending: #ff9800;
+    --color-processing: #2196f3;
+    --color-shipped: #9c27b0;
+    --color-delivered: #4caf50;
+    --color-cancelled: #f44336;
+    
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.15);
+    
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-full: 9999px;
+    
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-2xl: 48px;
+    --spacing-3xl: 64px;
+    --spacing-4xl: 96px;
+    
+    --font-sans: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    --font-serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+    
+    /* Configuration globale */
+    width: 100%;
+    min-height: 100vh;
+    background-color: var(--color-background);
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    font-size: 16px;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  
+  .loadingWrapper {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--color-background);
+  }
+  
+  .loadingLogo {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--color-primary);
+  }
+  
+  .loadingOrders {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+  }
+  
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--color-primary-light);
+    border-top: 4px solid var(--color-primary);
+    border-radius: 50%;
+    animation: spin 1s infinite linear;
+    margin-bottom: var(--spacing-md);
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  /* Header et Navigation */
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 15px 0;
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+    transition: all var(--transition-normal);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .headerScrolled {
+    padding: 10px 0;
+    box-shadow: var(--shadow-md);
+    background-color: rgba(255, 255, 255, 0.98);
+  }
+  
+  .headerContent {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-xl);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .logoContainer {
+    position: relative;
+    z-index: 101;
+  }
+  
+  .logoLink {
+    text-decoration: none;
+    display: inline-block;
+  }
+  
+  .logo {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--color-primary);
+    letter-spacing: -0.5px;
+    font-family: var(--font-serif);
+    position: relative;
+    display: inline-block;
+    transition: color var(--transition-fast);
+  }
+  
+  .logo::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--color-primary);
+    transition: width var(--transition-normal);
+  }
+  
+  .logoLink:hover .logo {
+    color: var(--color-primary-dark);
+  }
+  
+  .logoLink:hover .logo::after {
+    width: 100%;
+  }
+  
+  /* Navigation principale */
+  .mainNav {
+    position: relative;
+    z-index: 100;
+  }
+  
+  .navList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: var(--spacing-xl);
+  }
+  
+  .navItem {
+    position: relative;
+  }
+  
+  .navLink {
+    color: var(--color-text);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 16px;
+    padding: var(--spacing-sm) 0;
+    position: relative;
+    transition: color var(--transition-fast);
+    display: inline-block;
+  }
+  
+  .navLink::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--color-primary);
+    transition: width var(--transition-normal);
+  }
+  
+  .navLink:hover,
+  .navLink.active {
+    color: var(--color-primary);
+  }
+  
+  .navLink:hover::after,
+  .navLink.active::after {
+    width: 100%;
+  }
+  
+  
+  /* Profil administrateur */
+  .adminProfile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .adminAvatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+  }
+  
+  .adminInfo {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .adminName {
+    font-weight: 600;
+    font-size: 14px;
+  }
+  
+  .adminEmail {
+    font-size: 12px;
+    color: var(--color-text-light);
+  }
+  
+  /* Main Content */
+  .mainContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-top: 50px;
+    padding-bottom: var(--spacing-xl);
+  }
+  
+  /* Page Header Section */
+  .pageHeaderSection {
+    padding: var(--spacing-xl) 0 var(--spacing-lg);
+  }
+  
+  .pageHeaderContent {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-xl);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .pageTitle h1 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 var(--spacing-xs);
+  }
+  
+  .pageDescription {
+    color: var(--color-text-light);
+    margin: 0;
+  }
+  
+  .pageActions {
+    display: flex;
+    gap: var(--spacing-md);
+  }
+  
+  .exportButton {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: 10px 16px;
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-fast);
+  }
+  
+  .exportButton:hover {
+    background-color: var(--color-primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--box-shadow);
+  }
+  
+  /* Customers Section */
+  .customersSection {
+    flex: 1;
+    padding: 0 0 var(--spacing-xl);
+  }
+  
+  .customersContainer {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-xl);
+  }
+  
+  /* Customer Stats Cards */
+  .customerStatsCards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+  
+  .statCard {
+    background-color: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--box-shadow);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: var(--transition-fast);
+  }
+  
+  .statCard:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--box-shadow-lg);
+  }
+  
+  .statIcon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    background-color: rgba(76, 175, 80, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .statContent {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .statValue {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 5px;
+  }
+  
+  .statLabel {
+    font-size: 14px;
+    color: var(--color-text-light);
+  }
+  
+  /* Customers Controls */
+  .customersControls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  
+  .customersTabs {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+  }
+  
+  .orderTab {
+    background: none;
+    border: none;
+    color: var(--color-text);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: var(--transition-fast);
+  }
+  
+  .orderTab:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  
+  .activeTab {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary-dark);
+    font-weight: 600;
+  }
+  
+  .tabCount {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.1);
+    color: var(--color-text);
+    font-size: 12px;
+    font-weight: 600;
+    height: 20px;
+    min-width: 20px;
+    padding: 0 6px;
+    border-radius: 10px;
+  }
+  
+  .activeTab .tabCount {
+    background-color: var(--color-primary-dark);
+    color: white;
+  }
+  
+  .ordersSearch {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .ordersSearch svg {
+    position: absolute;
+    left: 12px;
+    color: var(--color-text-light);
+  }
+  
+  .ordersSearch input {
+    padding: 10px 12px 10px 36px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    font-size: 14px;
+    min-width: 250px;
+    transition: var(--transition-fast);
+  }
+  
+  .ordersSearch input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+  }
+  
+  /* Orders Table */
+  .ordersTableWrapper {
+    background-color: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--box-shadow);
+    overflow: auto;
+  }
+  
+  .ordersTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  
+  .ordersTable th {
+    text-align: left;
+    padding: 12px 16px;
+    background-color: rgba(0, 0, 0, 0.02);
+    font-weight: 600;
+    color: var(--color-text);
+    border-bottom: 1px solid var(--color-border);
+    white-space: nowrap;
+  }
+  
+  .ordersTable td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text);
+  }
+  
+  .sortableColumn {
+    cursor: pointer;
+    position: relative;
+    padding-right: 24px !important;
+  }
+  
+  .sortableColumn::after {
+    content: '';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+  }
+  
+  .sortNone::after {
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 4px solid #ddd;
+    transform: translateY(-65%);
+  }
+  
+  .sortNone::before {
+    content: '';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #ddd;
+    transform: translateY(-35%);
+  }
+  
+  .sortAsc::after {
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 4px solid var(--color-primary);
+  }
+  
+  .sortDesc::after {
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid var(--color-primary);
+  }
+  
+  .customerRow {
+    cursor: pointer;
+    transition: var(--transition-fast);
+  }
+  
+  .customerRow:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+  
+  .actionsColumn {
+    width: 80px;
+  }
+  
+  .inactiveCustomer {
+    background-color: rgba(0, 0, 0, 0.03);
+    color: var(--color-text-light);
+  }
+  
+  .customerStatus {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: var(--border-radius-full);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  
+  .statusActive {
+    background-color: rgba(76, 175, 80, 0.15);
+    color: var(--color-success);
+  }
+  
+  .statusInactive {
+    background-color: rgba(244, 67, 54, 0.15);
+    color: var(--color-error);
+  }
+  
+  .customerEmail {
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+  
+  .customerEmail:hover {
+    text-decoration: underline;
+  }
+  
+  /* Order Actions */
+  .orderActions {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .viewOrderButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    color: var(--color-text);
+    cursor: pointer;
+    transition: var(--transition-fast);
+  }
+  
+  .viewOrderButton:hover {
+    background-color: var(--color-primary-light);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+  
+  .orderActionsDropdown {
+    position: relative;
+  }
+  
+  .dropdownToggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    color: var(--color-text);
+    cursor: pointer;
+    transition: var(--transition-fast);
+  }
+  
+  .dropdownToggle:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-color: var(--color-text);
+  }
+  
+  .dropdownToggle:focus + .dropdownMenu,
+  .dropdownMenu:hover {
+    display: block;
+  }
+  
+  .dropdownMenu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    z-index: 10;
+    min-width: 180px;
+    background-color: white;
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--box-shadow-lg);
+    overflow: hidden;
+  }
+  
+  .dropdownMenu button {
+    width: 100%;
+    text-align: left;
+    padding: 10px 12px;
+    background: none;
+    border: none;
+    color: var(--color-text);
+    font-size: 14px;
+    cursor: pointer;
+    transition: var(--transition-fast);
+  }
+  
+  .dropdownMenu button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Customer Details */
+  .customerDetailsRow {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+  
+  .customerDetails {
+    padding: 20px;
+  }
+  
+  .customerDetailsSections {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .customerDetailsSection {
+    background-color: white;
+    border-radius: var(--border-radius-md);
+    padding: 20px;
+    box-shadow: var(--box-shadow);
+  }
+  
+  .customerDetailsSection h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text);
+  }
+  
+  .detailsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+  
+  .detailItem {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .detailLabel {
+    font-size: 12px;
+    color: var(--color-text-light);
+  }
+  
+  .detailValue {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text);
+  }
+  
+  .statusBadge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: var(--border-radius-full);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  
+  .customerNotes {
+    background-color: white;
+    border-radius: var(--border-radius-md);
+    padding: 20px;
+    box-shadow: var(--box-shadow);
+    margin-bottom: 20px;
+  }
+  
+  .customerNotes h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text);
+  }
+  
+  .customerNotes p {
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0;
+    color: var(--color-text);
+  }
+  
+  .customerOrderHistory {
+    background-color: white;
+    border-radius: var(--border-radius-md);
+    padding: 20px;
+    box-shadow: var(--box-shadow);
+    margin-bottom: 20px;
+  }
+  
+  .customerOrderHistory h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text);
+  }
+  
+  .orderHistoryTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  
+  .orderHistoryTable th {
+    text-align: left;
+    padding: 10px;
+    font-weight: 600;
+    color: var(--color-text-light);
+    border-bottom: 1px solid var(--color-border);
+  }
+  
+  .orderHistoryTable td {
+    padding: 10px;
+    border-bottom: 1px solid var(--color-border);
+  }
+  
+  .orderHistoryLink {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  .orderHistoryLink:hover {
+    text-decoration: underline;
+  }
+  
+  .viewDetailButton {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--color-primary);
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  
+  .viewDetailButton:hover {
+    text-decoration: underline;
+  }
+  
+  .noOrdersMessage {
+    text-align: center;
+    color: var(--color-text-light);
+    padding: 15px 0;
+  }
+  
+  .customerDetailActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .editCustomerButton,
+  .emailCustomerButton,
+  .statusToggleButton,
+  .closeDetailsButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    border-radius: var(--border-radius-md);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    border: none;
+  }
+  
+  .editCustomerButton {
+    background-color: var(--color-primary);
+    color: white;
+  }
+  
+  .editCustomerButton:hover {
+    background-color: var(--color-primary-dark);
+  }
+  
+  .emailCustomerButton {
+    background-color: var(--color-info);
+    color: white;
+  }
+  
+  .emailCustomerButton:hover {
+    background-color: #1976d2;
+  }
+  
+  .deactivateButton {
+    background-color: var(--color-error);
+    color: white;
+  }
+  
+  .deactivateButton:hover {
+    background-color: #d32f2f;
+  }
+  
+  .activateButton {
+    background-color: var(--color-success);
+    color: white;
+  }
+  
+  .activateButton:hover {
+    background-color: var(--color-primary-dark);
+  }
+  
+  .closeDetailsButton {
+    background-color: #e0e0e0;
+    color: var(--color-text);
+  }
+  
+  .closeDetailsButton:hover {
+    background-color: #bdbdbd;
+  }
+  
+  /* No Orders Found */
+  .noOrdersFound {
+    text-align: center;
+    padding: 40px 0;
+    color: var(--color-text-light);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .noOrdersFound svg {
+    color: #bdbdbd;
+  }
+  
+  .noOrdersFound p {
+    font-size: 16px;
+    margin: 0;
+  }
+  
+  /* Order Status */
+  .orderStatus {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  
+  .pending {
+    background-color: rgba(255, 193, 7, 0.15);
+    color: #ff8f00;
+  }
+  
+  .processing {
+    background-color: rgba(33, 150, 243, 0.15);
+    color: #1976d2;
+  }
+  
+  .shipped {
+    background-color: rgba(156, 39, 176, 0.15);
+    color: #7b1fa2;
+  }
+  
+  .delivered {
+    background-color: rgba(76, 175, 80, 0.15);
+    color: #388e3c;
+  }
+  
+  .cancelled {
+    background-color: rgba(244, 67, 54, 0.15);
+    color: #d32f2f;
+  }
+  
+  /* Modal */
+  .modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .modalContainer {
+    background-color: white;
+    border-radius: var(--border-radius-lg);
+    width: 600px;
+    max-width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--box-shadow-lg);
+  }
+  
+  .modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--color-border);
+  }
+  
+  .modalHeader h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    color: var(--color-text);
+  }
+  
+  .closeModal {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--color-text-light);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    transition: var(--transition-fast);
+  }
+  
+  .closeModal:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: var(--color-text);
+  }
+  
+  .modalBody {
+    padding: 20px;
+  }
+  
+  /* Form */
+  .formGroup {
+    margin-bottom: 15px;
+  }
+  
+  .formGroup label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--color-text);
+  }
+  
+  .formGroup input[type="text"],
+  .formGroup input[type="email"],
+  .formGroup input[type="tel"],
+  .formGroup textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    font-size: 14px;
+    color: var(--color-text);
+    transition: var(--transition-fast);
+  }
+  
+  .formGroup input:focus,
+  .formGroup textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+  }
+  
+  .formRow {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+  
+  .checkboxRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .checkboxRow input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .formActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .cancelButton {
+    padding: 10px 15px;
+    background-color: white;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text);
+    cursor: pointer;
+    transition: var(--transition-fast);
+  }
+  
+  .cancelButton:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-color: var(--color-text);
+  }
+  
+  .submitButton {
+    padding: 10px 15px;
+    background-color: var(--color-primary);
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: 14px;
+    font-weight: 500;
+    color: white;
+    cursor: pointer;
+    transition: var(--transition-fast);
+  }
+  
+  .submitButton:hover {
+    background-color: var(--color-primary-dark);
+  }
+  
+  /* Footer */
+  .adminFooter {
+    background-color: white;
+    border-top: 1px solid var(--color-border);
+    padding: var(--spacing-lg) 0;
+    margin-top: auto;
+  }
+  
+  .footerContent {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-xl);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .copyright {
+    color: var(--color-text-light);
+    font-size: 14px;
+    margin: 0;
+  }
+  
+  .footerLinks {
+    display: flex;
+    gap: var(--spacing-lg);
+  }
+  
+  .footerLinks a, 
+  .footerLinks button {
+    color: var(--color-text);
+    text-decoration: none;
+    font-size: 14px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+  
+  .footerLinks a:hover,
+  .footerLinks button:hover {
+    color: var(--color-primary);
+  }
+  
+  /* Responsive */
+  @media (max-width: 1200px) {
+    .customerStatsCards {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .customerDetailsSections {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  @media (max-width: 1024px) {
+    .headerContent,
+    .pageHeaderContent, 
+    .customersContainer {
+      padding: 0 var(--spacing-lg);
+    }
+    
+    .customersControls {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .customersTabs {
+      width: 100%;
+      overflow-x: auto;
+    }
+    
+    .ordersSearch {
+      width: 100%;
+    }
+    
+    .ordersSearch input {
+      width: 100%;
+      min-width: auto;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .headerContent {
+      height: auto;
+      padding: var(--spacing-md);
+      flex-direction: column;
+      gap: var(--spacing-md);
+    }
+    
+    .mainNav {
+      width: 100%;
+      order: 3;
+    }
+    
+    .navList {
+      width: 100%;
+      overflow-x: auto;
+      padding-bottom: var(--spacing-sm);
+    }
+    
+    .pageHeaderContent {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-md);
+    }
+    
+    .pageActions {
+      width: 100%;
+    }
+    
+    .exportButton {
+      width: 100%;
+      justify-content: center;
+    }
+    
+    .customerStatsCards {
+      grid-template-columns: 1fr;
+    }
+    
+    .detailsGrid {
+      grid-template-columns: 1fr;
+    }
+    
+    .customerDetailActions {
+      flex-direction: column;
+    }
+    
+    .editCustomerButton,
+    .emailCustomerButton,
+    .statusToggleButton,
+    .closeDetailsButton {
+      width: 100%;
+      justify-content: center;
+    }
+    
+    .adminProfile {
+      margin-left: auto;
+    }
+    
+    .adminInfo {
+      display: none;
+    }
+    
+    .formActions {
+      flex-direction: column;
+    }
+    
+    .cancelButton,
+    .submitButton {
+      width: 100%;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .navLink {
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+    
+    .formRow {
+      grid-template-columns: 1fr;
+    }
+  }

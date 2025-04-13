@@ -1,0 +1,27 @@
+{
+  "name": "nextjs-template",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3001",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@contentful/rich-text-html-renderer": "^17.0.0",
+    "@contentful/rich-text-react-renderer": "^16.0.1",
+    "contentful": "^11.5.13",
+    "next": "^15.3.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "styled-components": "^6.1.17"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.2.0",
+    "babel-plugin-styled-components": "^2.1.4",
+    "jest": "^28.1.0",
+    "jest-environment-jsdom": "^28.1.0"
+  }
+}
