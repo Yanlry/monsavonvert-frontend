@@ -1,475 +1,344 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import Head from 'next/head';
-import Link from 'next/link';
-import styles from '../../styles/admin-products.module.css';
-// On supprime l'import direct de Contentful
-// import { getAllProducts } from '../../lib/contentful';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import Head from "next/head";
+import Link from "next/link";
+import styles from "../../styles/admin-products.module.css";
 
 export default function AdminProducts() {
-  // États
+  const router = useRouter();
+
+  // États de base
   const [isClient, setIsClient] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [userEmail, setUserEmail] = useState('');
-  const [products, setProducts] = useState([]);
+  const [userEmail, setUserEmail] = useState("");
   const [isAuthorized, setIsAuthorized] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [activeCategory, setActiveCategory] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [expandedProduct, setExpandedProduct] = useState(null);
-  const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'asc' });
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [products, setProducts] = useState([]);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [currentProduct, setCurrentProduct] = useState(null);
-  const router = useRouter();
-  
-  // Formulaire d'ajout ou d'édition de produit
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [productImages, setProductImages] = useState([]);
+
+  // État pour gérer le modal d'ajout de produit
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
+
+  // États pour les modaux de notification et confirmation
+  const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const [notificationType, setNotificationType] = useState("success"); // 'success' ou 'error'
+  const [notificationMessage, setNotificationMessage] = useState("");
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [confirmationAction, setConfirmationAction] = useState(null);
+  const [confirmationMessage, setConfirmationMessage] = useState("");
+
+  // État pour le formulaire d'ajout de produit
   const [formData, setFormData] = useState({
-    productName: '',
-    shortDescription: '',
-    longDescription: '',
-    price: '',
-    categories: [],
-    stock: '',
-    isActive: true,
-    mainImage: { fields: { file: { url: '' } } },
+    title: "",
+    description: "",
+    price: "",
+    characteristics: "",
+    stock: "0",
+    ingredients: "",
+    usageTips: "",
+    image: null,
   });
 
-  // Liste des catégories disponibles
-  const availableCategories = [
-    { id: 'exfoliating', name: 'Exfoliants' },
-    { id: 'sensitive-skin', name: 'Peaux sensibles' },
-    { id: 'moisturizing', name: 'Hydratants' },
-    { id: 'soap', name: 'Savons' },
-    { id: 'shampoo', name: 'Shampoings' },
-    { id: 'accessory', name: 'Accessoires' },
-  ];
+  // Afficher une notification
+  const showNotification = (type, message) => {
+    setNotificationType(type);
+    setNotificationMessage(message);
+    setShowNotificationModal(true);
+    
+    // Fermer automatiquement après 3 secondes
+    setTimeout(() => {
+      setShowNotificationModal(false);
+    }, 3000);
+  };
 
-  // Effet pour l'initialisation côté client
+  // Demander une confirmation
+  const askConfirmation = (message, action) => {
+    setConfirmationMessage(message);
+    setConfirmationAction(() => action);
+    setShowConfirmationModal(true);
+  };
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("http://localhost:8888/products");
+        if (!response.ok) {
+          throw new Error("Erreur lors de la récupération des produits");
+        }
+        const data = await response.json();
+        console.log(data.products); // Vérifiez si le champ "image" est présent
+        setProducts(data.products);
+      } catch (error) {
+        console.error("Erreur:", error);
+        showNotification("error", "Erreur lors du chargement des produits");
+      }
+    };
+  
+    fetchProducts();
+  }, []);
+
+  // Initialisation côté client
   useEffect(() => {
     setIsClient(true);
-    
+
     // Réinitialisation des marges
-    if (typeof document !== 'undefined') {
+    if (typeof document !== "undefined") {
       document.body.classList.add(styles.resetMargins);
       document.documentElement.classList.add(styles.resetMargins);
     }
-    
+
     // Détection du scroll pour le header
     const handleScroll = () => {
       setScrolled(window.scrollY > 30);
     };
-    
+
     // Gestionnaires d'événements
-    if (typeof window !== 'undefined') {
-      window.addEventListener('scroll', handleScroll);
+    if (typeof window !== "undefined") {
+      window.addEventListener("scroll", handleScroll);
     }
-    
+
     // Nettoyage
     return () => {
-      if (typeof document !== 'undefined') {
+      if (typeof document !== "undefined") {
         document.body.classList.remove(styles.resetMargins);
         document.documentElement.classList.remove(styles.resetMargins);
       }
-      if (typeof window !== 'undefined') {
-        window.removeEventListener('scroll', handleScroll);
+      if (typeof window !== "undefined") {
+        window.removeEventListener("scroll", handleScroll);
       }
     };
   }, []);
 
-// Vérification de l'authentification et chargement des produits via l'API route
-useEffect(() => {
-  if (!isClient) return;
-  
-  try {
-    // Vérifier si l'utilisateur est connecté en tant qu'admin
-    const email = localStorage.getItem('userEmail');
-    const userRole = localStorage.getItem('userRole');
+  // Vérification de l'authentification
+  useEffect(() => {
+    if (!isClient) return;
 
-    console.log('Vérification des autorisations pour:', email);
-    console.log('Rôle utilisateur:', userRole);
+    try {
+      // Vérifier si l'utilisateur est connecté en tant qu'admin
+      const email = localStorage.getItem("userEmail");
+      const userRole = localStorage.getItem("userRole");
 
-    // Vérifier si les informations sont présentes
-    if (!email || !userRole) {
-      console.log('Informations manquantes - Email ou Rôle non trouvé');
-      router.push('/login');
-      return;
-    }
+      console.log("Vérification des autorisations pour:", email);
+      console.log("Rôle utilisateur:", userRole);
 
-    // Vérifier si l'utilisateur a le rôle admin
-    if (userRole !== 'admin') {
-      console.log('Accès refusé: L\'utilisateur n\'a pas le rôle admin');
-      router.push('/profile');
-      return;
-    }
-
-    // Si l'utilisateur est bien un admin, autoriser l'accès
-    console.log('Accès autorisé pour l\'administrateur');
-    setUserEmail(email);
-    setIsAuthorized(true);
-    
-    // Charger les produits depuis notre API route
-    const loadProducts = async () => {
-      try {
-        console.log('Chargement des produits via l\'API route...');
-        const response = await fetch('/api/products');
-        
-        if (!response.ok) {
-          throw new Error('Erreur lors de la récupération des produits');
-        }
-        
-        const contentfulProducts = await response.json();
-        
-        // Transformation des produits pour correspondre à la structure attendue par l'interface
-        const formattedProducts = contentfulProducts.map(product => ({
-          id: product.id, // Utilisation de l'ID Contentful
-          productName: product.productName || '',
-          price: product.price || 0,
-          stock: product.stock || 0,
-          mainImage: product.mainImage || { fields: { file: { url: '/images/default.JPEG' } } },
-          shortDescription: product.shortDescription || '',
-          longDescription: product.longDescription || '',
-          categories: product.categories || [],
-          popularity: product.popularity || 0,
-          isActive: product.isActive !== undefined ? product.isActive : true,
-          createdAt: product.sys?.createdAt || new Date().toISOString(),
-          rating: product.rating || 0,
-          reviewCount: product.reviewCount || 0,
-          isNew: product.isNew || false,
-          isBestSeller: product.isBestSeller || false
-        }));
-        
-        console.log(`${formattedProducts.length} produits récupérés via l'API`);
-        setProducts(formattedProducts);
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Erreur lors du chargement des produits:', error);
-        // En cas d'erreur, on affiche des produits de démonstration pour éviter que l'app ne plante
-        const demoProducts = [
-          {
-            id: 1,
-            productName: "Savon Exfoliant à l'Avoine",
-            price: 8.90,
-            stock: 35,
-            mainImage: { fields: { file: { url: '/images/1.JPEG' } } },
-            shortDescription: "Exfoliation douce pour peaux sensibles.",
-            longDescription: "Ce savon exfoliant à l'avoine est spécialement conçu pour les peaux sensibles.",
-            categories: ['exfoliating', 'sensitive-skin'],
-            popularity: 10,
-            isActive: true,
-            createdAt: '2025-01-15T09:30:00',
-            rating: 4.5,
-            reviewCount: 42,
-            isNew: true
-          },
-          {
-            id: 2,
-            productName: "Shampooing Solide Nourrissant",
-            price: 11.50,
-            stock: 28,
-            mainImage: { fields: { file: { url: '/images/2.JPEG' } } },
-            shortDescription: "Nourrit en profondeur tous types de cheveux.",
-            categories: ['moisturizing', 'shampoo'],
-            isActive: true
-          },
-          {
-            id: 3,
-            productName: "Savon Surgras à l'Huile d'Olive",
-            price: 7.90,
-            stock: 42,
-            mainImage: { fields: { file: { url: '/images/3.JPEG' } } },
-            shortDescription: "Hydratation intense pour peaux sèches.",
-            categories: ['moisturizing', 'sensitive-skin', 'soap'],
-            isActive: true
-          }
-        ];
-        
-        console.log('Utilisation des produits de démonstration');
-        setProducts(demoProducts);
-        setIsLoading(false);
+      // Si pas connecté, rediriger vers login
+      if (!email || !userRole) {
+        console.log("Informations manquantes - Email ou Rôle non trouvé");
+        router.push("/login");
+        return;
       }
-    };
-    
-    loadProducts();
-    
-  } catch (error) {
-    console.error('Erreur lors de la vérification des autorisations:', error);
-    router.push('/login');
-  }
-}, [isClient, router]);
 
-  // Fonction pour trier les produits
-  const sortProducts = (productsToSort) => {
-    const sortableProducts = [...productsToSort];
-    
-    sortableProducts.sort((a, b) => {
-      let aValue = a[sortConfig.key];
-      let bValue = b[sortConfig.key];
-      
-      // Gestion des cas particuliers
-      if (sortConfig.key === 'productName') {
-        aValue = aValue?.toLowerCase() || '';
-        bValue = bValue?.toLowerCase() || '';
-      } else if (sortConfig.key === 'createdAt') {
-        aValue = new Date(aValue || 0);
-        bValue = new Date(bValue || 0);
+      // Vérifier si admin
+      if (userRole !== "admin") {
+        console.log("Accès refusé: L'utilisateur n'a pas le rôle admin");
+        router.push("/profile");
+        return;
       }
-      
-      if (aValue < bValue) {
-        return sortConfig.direction === 'asc' ? -1 : 1;
-      }
-      if (aValue > bValue) {
-        return sortConfig.direction === 'asc' ? 1 : -1;
-      }
-      return 0;
-    });
-    
-    return sortableProducts;
-  };
 
-  // Fonction pour filtrer les produits
-  const getFilteredProducts = () => {
-    // Filtrer par catégorie
-    let filtered = products;
-    if (activeCategory !== 'all') {
-      filtered = filtered.filter(product => 
-        product.categories && product.categories.includes(activeCategory)
-      );
+      // Autoriser l'accès
+      console.log("Accès autorisé pour l'administrateur");
+      setUserEmail(email);
+      setIsAuthorized(true);
+    } catch (error) {
+      console.error("Erreur lors de la vérification des autorisations:", error);
+      router.push("/login");
     }
-    
-    // Filtrer par recherche
-    if (searchTerm.trim() !== '') {
-      const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(product => 
-        (product.productName || '').toLowerCase().includes(term) ||
-        (product.shortDescription || '').toLowerCase().includes(term)
-      );
-    }
-    
-    // Trier les produits
-    return sortProducts(filtered);
-  };
+  }, [isClient, router]);
 
-  // Fonction pour changer la méthode de tri
-  const requestSort = (key) => {
-    let direction = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
-    }
-    setSortConfig({ key, direction });
-  };
-
-  // Fonction pour obtenir la classe CSS de tri
-  const getSortClass = (key) => {
-    if (sortConfig.key !== key) return styles.sortNone;
-    return sortConfig.direction === 'asc' ? styles.sortAsc : styles.sortDesc;
-  };
-
-  // Fonction pour changer le statut d'un produit (actif/inactif)
-  const toggleProductStatus = (productId) => {
-    setProducts(products.map(product => {
-      if (product.id === productId) {
-        // Ici, dans une application réelle, vous feriez une requête à Contentful pour mettre à jour le produit
-        return { ...product, isActive: !product.isActive };
-      }
-      return product;
-    }));
-    
-    console.log(`Statut du produit ${productId} mis à jour`);
-    // Note: Dans une implémentation complète, vous utiliseriez l'API Contentful pour mettre à jour le statut
-  };
-
-  // Fonction pour supprimer un produit
-  const deleteProduct = (productId) => {
-    if (confirm('Êtes-vous sûr de vouloir supprimer ce produit ? Cette action est irréversible.')) {
-      setProducts(products.filter(product => product.id !== productId));
-      console.log(`Produit ${productId} supprimé`);
-      // Note: Dans une implémentation complète, vous utiliseriez l'API Contentful pour supprimer le produit
-    }
-  };
-
-  // Fonction pour ouvrir le modal d'ajout
-  const openAddModal = () => {
-    setFormData({
-      productName: '',
-      shortDescription: '',
-      longDescription: '',
-      price: '',
-      categories: [],
-      stock: '',
-      isActive: true,
-      mainImage: { fields: { file: { url: '' } } },
-    });
-    setShowAddModal(true);
-  };
-
-  // Fonction pour ouvrir le modal d'édition
-  const openEditModal = (product) => {
-    setCurrentProduct(product);
-    setFormData({
-      productName: product.productName || '',
-      shortDescription: product.shortDescription || '',
-      longDescription: product.longDescription || '',
-      price: (product.price || 0).toString(),
-      categories: product.categories || [],
-      stock: (product.stock || 0).toString(),
-      isActive: product.isActive !== undefined ? product.isActive : true,
-      mainImage: product.mainImage || { fields: { file: { url: '' } } },
-    });
-    setShowEditModal(true);
-  };
-
-  // Fonction pour gérer les changements dans le formulaire
+  // Gestion des changements dans le formulaire
   const handleFormChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    
-    if (type === 'checkbox') {
-      if (name === 'isActive') {
-        setFormData({ ...formData, [name]: checked });
+    const { name, value, type } = e.target;
+
+    if (type === "file") {
+      const file = e.target.files[0];
+      setFormData({ ...formData, [name]: file });
+
+      // Prévisualisation de l'image
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreview(reader.result);
+        };
+        reader.readAsDataURL(file);
       } else {
-        // Gestion des catégories multiples
-        const categoryId = value;
-        const updatedCategories = [...formData.categories];
-        
-        if (checked) {
-          if (!updatedCategories.includes(categoryId)) {
-            updatedCategories.push(categoryId);
-          }
-        } else {
-          const index = updatedCategories.indexOf(categoryId);
-          if (index > -1) {
-            updatedCategories.splice(index, 1);
-          }
-        }
-        
-        setFormData({ ...formData, categories: updatedCategories });
+        setImagePreview(null);
       }
     } else {
       setFormData({ ...formData, [name]: value });
     }
   };
 
-  // Fonction pour soumettre le formulaire d'ajout
-  const handleAddSubmit = (e) => {
+  // Soumission du formulaire
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
+  
+    // Validation de base
+    if (!formData.title || !formData.description || !formData.price || !formData.stock) {
+      alert('Veuillez remplir tous les champs obligatoires');
+      return;
+    }
+  
     try {
-      // Validation des données
-      if (!formData.productName || !formData.price || !formData.stock) {
-        alert('Veuillez remplir tous les champs obligatoires');
-        return;
+      setIsLoading(true);
+  
+      // Préparer les données à envoyer
+      const productData = new FormData();
+      productData.append('title', formData.title);
+      productData.append('description', formData.description);
+      productData.append('price', formData.price);
+      productData.append('characteristics', formData.characteristics);
+      productData.append('stock', formData.stock);
+      productData.append('ingredients', formData.ingredients);
+      productData.append('usageTips', formData.usageTips);
+  
+      if (formData.image) {
+        productData.append('image', formData.image); // Ajouter l'image
       }
-      
-      // Dans une implémentation réelle, vous appelleriez l'API Contentful pour créer le produit
-      // et obtenir un ID réel. Pour l'instant, on génère un ID temporaire
-      const newId = `temp-${Date.now()}`;
-      
-      // Création du nouveau produit
-      const newProduct = {
-        id: newId,
-        productName: formData.productName,
-        shortDescription: formData.shortDescription,
-        longDescription: formData.longDescription,
-        price: parseFloat(formData.price),
-        stock: parseInt(formData.stock),
-        categories: formData.categories,
-        isActive: formData.isActive,
-        mainImage: { fields: { file: { url: '/images/default.JPEG' } } }, // Image par défaut
-        createdAt: new Date().toISOString(),
-        popularity: 0,
-        rating: 0,
-        reviewCount: 0,
-        isNew: true,
-      };
-      
-      // Ajout du produit à la liste (temporaire, en attendant l'intégration complète avec Contentful)
-      setProducts([...products, newProduct]);
-      
-      // Fermeture du modal
+  
+      // Appel API vers le backend
+      const response = await fetch('http://localhost:8888/products/add', {
+        method: 'POST',
+        body: productData, // Envoyer les données sous forme de FormData
+      });
+  
+      if (!response.ok) {
+        throw new Error('Erreur lors de l\'ajout du produit');
+      }
+  
+      const result = await response.json();
+      console.log('Produit ajouté:', result);
+  
+      // Réinitialisation du formulaire
+      setFormData({
+        title: '',
+        description: '',
+        price: '',
+        characteristics: '',
+        stock: '0',
+        ingredients: '',
+        usageTips: '',
+        image: null,
+      });
+      setImagePreview(null);
       setShowAddModal(false);
-      
-      console.log('Nouveau produit ajouté (local):', newProduct);
-      alert('Produit ajouté localement. Dans une version complète, ce produit serait enregistré sur Contentful.');
+      alert('Produit ajouté avec succès !');
     } catch (error) {
       console.error('Erreur lors de l\'ajout du produit:', error);
       alert('Une erreur est survenue lors de l\'ajout du produit');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Fonction pour soumettre le formulaire d'édition
-  const handleEditSubmit = (e) => {
-    e.preventDefault();
-    
-    try {
-      // Validation des données
-      if (!formData.productName || !formData.price || !formData.stock) {
-        alert('Veuillez remplir tous les champs obligatoires');
-        return;
-      }
-      
-      // Mise à jour du produit (local seulement pour l'instant)
-      setProducts(products.map(product => {
-        if (product.id === currentProduct.id) {
-          return {
-            ...product,
-            productName: formData.productName,
-            shortDescription: formData.shortDescription,
-            longDescription: formData.longDescription,
-            price: parseFloat(formData.price),
-            stock: parseInt(formData.stock),
-            categories: formData.categories,
-            isActive: formData.isActive,
-          };
+  const handleDeleteProduct = async () => {
+    // Fonction exécutée après confirmation
+    const performDelete = async () => {
+      try {
+        setIsLoading(true);
+
+        const response = await fetch(
+          `http://localhost:8888/products/delete/${selectedProduct._id}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Erreur lors de la suppression du produit");
         }
-        return product;
-      }));
-      
-      // Fermeture du modal
+
+        // Mettre à jour la liste des produits
+        setProducts((prevProducts) =>
+          prevProducts.filter((product) => product._id !== selectedProduct._id)
+        );
+
+        setShowEditModal(false);
+        showNotification("success", "Produit supprimé avec succès !");
+      } catch (error) {
+        console.error("Erreur lors de la suppression du produit:", error);
+        showNotification("error", "Une erreur est survenue lors de la suppression du produit");
+      } finally {
+        setIsLoading(false);
+        setShowConfirmationModal(false);
+      }
+    };
+
+    // Demander confirmation avant suppression
+    askConfirmation("Êtes-vous sûr de vouloir supprimer ce produit ?", performDelete);
+  };
+
+  const handleUpdateProduct = async (e) => {
+    e.preventDefault();
+  
+    try {
+      setIsLoading(true);
+  
+      const productData = new FormData();
+      productData.append('title', selectedProduct.title);
+      productData.append('description', selectedProduct.description);
+      productData.append('price', parseFloat(selectedProduct.price));
+      productData.append('characteristics', selectedProduct.characteristics);
+      productData.append('stock', parseInt(selectedProduct.stock, 10));
+      productData.append('ingredients', selectedProduct.ingredients);
+      productData.append('usageTips', selectedProduct.usageTips);
+  
+      // Ajouter la nouvelle image si elle existe
+      if (selectedProduct.newImage) {
+        productData.append('image', selectedProduct.newImage);
+      }
+  
+      const response = await fetch(
+        `http://localhost:8888/products/update/${selectedProduct._id}`,
+        {
+          method: 'PUT',
+          body: productData, // Envoyer les données sous forme de FormData
+        }
+      );
+  
+      if (!response.ok) {
+        throw new Error('Erreur lors de la mise à jour du produit');
+      }
+  
+      const result = await response.json();
+      console.log('Produit mis à jour:', result);
+  
+      // Mettre à jour la liste des produits
+      setProducts((prevProducts) =>
+        prevProducts.map((product) =>
+          product._id === result.product._id ? result.product : product
+        )
+      );
+  
       setShowEditModal(false);
-      
-      console.log('Produit mis à jour (local):', currentProduct.id);
-      alert('Produit mis à jour localement. Dans une version complète, ces modifications seraient enregistrées sur Contentful.');
+      showNotification('success', 'Produit mis à jour avec succès !');
     } catch (error) {
       console.error('Erreur lors de la mise à jour du produit:', error);
-      alert('Une erreur est survenue lors de la mise à jour du produit');
+      showNotification('error', 'Une erreur est survenue lors de la mise à jour du produit');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Comptage des produits par catégorie
-  const getCategoryCount = (categoryId) => {
-    if (categoryId === 'all') {
-      return products.length;
-    }
-    return products.filter(product => 
-      product.categories && product.categories.includes(categoryId)
-    ).length;
+  const handleEditProduct = (product) => {
+    setSelectedProduct(product);
+    setShowEditModal(true);
   };
 
-  // Fonction pour obtenir le nom d'une catégorie à partir de son ID
-  const getCategoryName = (categoryId) => {
-    const category = availableCategories.find(cat => cat.id === categoryId);
-    return category ? category.name : categoryId;
-  };
-
-  // Fonction pour vérifier si un produit est en rupture de stock
-  const isOutOfStock = (product) => {
-    return (product.stock || 0) <= 0;
-  };
-
-  // Fonction pour vérifier si un produit est en stock faible
-  const isLowStock = (product) => {
-    return (product.stock || 0) > 0 && (product.stock || 0) <= 5;
-  };
-
-  // Rendu de base sans contenu dynamique (pour éviter les erreurs d'hydratation)
+  // Rendu de base sans contenu dynamique
   if (!isClient) {
     return (
       <>
         <Head>
           <title>Gestion des Produits | MonSavonVert</title>
-          <meta name="description" content="Panneau d'administration des produits - MonSavonVert" />
+          <meta
+            name="description"
+            content="Panneau d'administration des produits - MonSavonVert"
+          />
           <link rel="icon" href="/favicon.ico" />
         </Head>
         <div className={styles.loadingWrapper}>
@@ -484,14 +353,21 @@ useEffect(() => {
     <>
       <Head>
         <title>Gestion des Produits | MonSavonVert</title>
-        <meta name="description" content="Panneau d'administration des produits - MonSavonVert" />
+        <meta
+          name="description"
+          content="Panneau d'administration des produits - MonSavonVert"
+        />
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
 
       <div className={styles.globalWrapper}>
         {/* Header avec navigation */}
-        <header className={`${styles.header} ${scrolled ? styles.headerScrolled : ''}`}>
+        <header
+          className={`${styles.header} ${
+            scrolled ? styles.headerScrolled : ""
+          }`}
+        >
           <div className={styles.headerContent}>
             <div className={styles.logoContainer}>
               <Link href="/" legacyBehavior>
@@ -516,7 +392,9 @@ useEffect(() => {
                 </li>
                 <li className={styles.navItem}>
                   <Link href="/admin/products" legacyBehavior>
-                    <a className={`${styles.navLink} ${styles.active}`}>Produits</a>
+                    <a className={`${styles.navLink} ${styles.active}`}>
+                      Produits
+                    </a>
                   </Link>
                 </li>
                 <li className={styles.navItem}>
@@ -552,12 +430,26 @@ useEffect(() => {
               <div className={styles.pageTitle}>
                 <h1>Gestion des Produits</h1>
                 <p className={styles.pageDescription}>
-                  Gérez votre catalogue de produits, modifiez les informations et suivez les stocks
+                  Gérez votre catalogue de produits, modifiez les informations
+                  et suivez les stocks
                 </p>
               </div>
               <div className={styles.pageActions}>
-                <button className={styles.addProductButton} onClick={openAddModal}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <button
+                  className={styles.addProductButton}
+                  onClick={() => setShowAddModal(true)}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                   </svg>
@@ -566,347 +458,59 @@ useEffect(() => {
               </div>
             </div>
           </section>
-          
+
           {/* Contenu principal */}
           <section className={styles.productsSection}>
             <div className={styles.productsContainer}>
-              {isLoading ? (
-                <div className={styles.loadingOrders}>
-                  <div className={styles.spinner}></div>
-                  <p>Chargement des produits depuis Contentful...</p>
+              {products.length === 0 ? (
+                <div className={styles.emptyState}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="64"
+                    height="64"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                  </svg>
+                  <h2>Aucun produit disponible</h2>
+                  <p>
+                    Votre catalogue de produits est vide pour le moment. Cliquez
+                    sur "Ajouter un produit" pour commencer.
+                  </p>
                 </div>
               ) : (
-                <>
-                  {/* Filtres et recherche */}
-                  <div className={styles.productsControls}>
-                    <div className={styles.productsTabs}>
-                      <button 
-                        className={`${styles.orderTab} ${activeCategory === 'all' ? styles.activeTab : ''}`}
-                        onClick={() => setActiveCategory('all')}
-                      >
-                        Tous les produits
-                        <span className={styles.tabCount}>{getCategoryCount('all')}</span>
-                      </button>
-                      
-                      {availableCategories.map(category => (
-                        <button 
-                          key={category.id}
-                          className={`${styles.orderTab} ${activeCategory === category.id ? styles.activeTab : ''}`}
-                          onClick={() => setActiveCategory(category.id)}
-                        >
-                          {category.name}
-                          <span className={styles.tabCount}>{getCategoryCount(category.id)}</span>
-                        </button>
-                      ))}
-                    </div>
-                    <div className={styles.ordersSearch}>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                      </svg>
-                      <input 
-                        type="text" 
-                        placeholder="Rechercher un produit..." 
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  
-                  {/* Tableau des produits */}
-                  <div className={styles.ordersTableWrapper}>
-                    <table className={styles.ordersTable}>
-                      <thead>
-                        <tr>
-                          <th className={`${styles.sortableColumn} ${getSortClass('id')}`} onClick={() => requestSort('id')}>
-                            ID
-                          </th>
-                          <th className={styles.productImageCol}>Image</th>
-                          <th className={`${styles.sortableColumn} ${getSortClass('productName')}`} onClick={() => requestSort('productName')}>
-                            Nom du produit
-                          </th>
-                          <th className={`${styles.sortableColumn} ${getSortClass('price')}`} onClick={() => requestSort('price')}>
-                            Prix
-                          </th>
-                          <th className={`${styles.sortableColumn} ${getSortClass('stock')}`} onClick={() => requestSort('stock')}>
-                            Stock
-                          </th>
-                          <th>Catégories</th>
-                          <th>Statut</th>
-                          <th className={styles.actionsColumn}>Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {getFilteredProducts().map(product => (
-                          <>
-                            <tr 
-                              key={product.id} 
-                              className={`${styles.productRow} ${!product.isActive ? styles.inactiveProduct : ''}`}
-                              onClick={() => setExpandedProduct(expandedProduct === product.id ? null : product.id)}
-                            >
-                              <td>{product.id}</td>
-                              <td className={styles.productImageCell}>
-                                <div className={styles.productThumb}>
-                                  <img 
-                                    src={product.mainImage && product.mainImage.fields ? 
-                                      `https:${product.mainImage.fields.file.url}` : 
-                                      '/images/default.JPEG'} 
-                                    alt={product.productName} 
-                                    onError={(e) => { e.target.src = '/images/default.JPEG'; }}
-                                  />
-                                  {product.isNew && <span className={styles.newBadge}>Nouveau</span>}
-                                </div>
-                              </td>
-                              <td>
-                                <div className={styles.productNameCell}>
-                                  <span className={styles.productName}>{product.productName || 'Sans nom'}</span>
-                                  <span className={styles.productShortDesc}>{product.shortDescription || 'Aucune description'}</span>
-                                </div>
-                              </td>
-                              <td>{(product.price || 0).toFixed(2)} €</td>
-                              <td>
-                                <span className={`${styles.stockBadge} ${
-                                  isOutOfStock(product) ? styles.outOfStock : 
-                                  isLowStock(product) ? styles.lowStock : 
-                                  styles.inStock
-                                }`}>
-                                  {isOutOfStock(product) ? 'Rupture' : 
-                                   isLowStock(product) ? 'Faible' : 
-                                   'En stock'}
-                                </span>
-                                <span className={styles.stockCount}>{product.stock || 0}</span>
-                              </td>
-                              <td>
-                                <div className={styles.categoriesList}>
-                                  {product.categories && product.categories.length > 0 ? 
-                                    product.categories.map((cat, index) => (
-                                      <span key={index} className={styles.categoryBadge}>
-                                        {getCategoryName(cat)}
-                                      </span>
-                                    )) : 
-                                    <span className={styles.noCategoryBadge}>Aucune catégorie</span>
-                                  }
-                                </div>
-                              </td>
-                              <td>
-                                <span className={`${styles.productStatus} ${product.isActive ? styles.statusActive : styles.statusInactive}`}>
-                                  {product.isActive ? 'Actif' : 'Inactif'}
-                                </span>
-                              </td>
-                              <td>
-                                <div className={styles.orderActions}>
-                                  <button 
-                                    className={styles.viewOrderButton}
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setExpandedProduct(expandedProduct === product.id ? null : product.id);
-                                    }}
-                                  >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                      <circle cx="12" cy="12" r="10"></circle>
-                                      <line x1="12" y1="8" x2="12" y2="16"></line>
-                                      <line x1="8" y1="12" x2="16" y2="12"></line>
-                                    </svg>
-                                  </button>
-                                  <div className={styles.orderActionsDropdown}>
-                                    <button className={styles.dropdownToggle}>
-                                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <circle cx="12" cy="12" r="1"></circle>
-                                        <circle cx="12" cy="5" r="1"></circle>
-                                        <circle cx="12" cy="19" r="1"></circle>
-                                      </svg>
-                                    </button>
-                                    <div className={styles.dropdownMenu}>
-                                      <button onClick={(e) => {
-                                        e.stopPropagation();
-                                        openEditModal(product);
-                                      }}>
-                                        Modifier le produit
-                                      </button>
-                                      <button onClick={(e) => {
-                                        e.stopPropagation();
-                                        toggleProductStatus(product.id);
-                                      }}>
-                                        {product.isActive ? 'Désactiver' : 'Activer'} le produit
-                                      </button>
-                                      <button 
-                                        className={styles.cancelAction}
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          deleteProduct(product.id);
-                                        }}
-                                      >
-                                        Supprimer le produit
-                                      </button>
-                                    </div>
-                                  </div>
-                                </div>
-                              </td>
-                            </tr>
-                            {expandedProduct === product.id && (
-                              <tr className={styles.productDetailsRow}>
-                                <td colSpan="8">
-                                  <div className={styles.productDetails}>
-                                    <div className={styles.productDetailsSections}>
-                                      <div className={styles.productDetailsSection}>
-                                        <h3>Informations produit</h3>
-                                        <div className={styles.detailsGrid}>
-                                          <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>ID</span>
-                                            <span className={styles.detailValue}>{product.id}</span>
-                                          </div>
-                                          <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>Nom</span>
-                                            <span className={styles.detailValue}>{product.productName || 'Sans nom'}</span>
-                                          </div>
-                                          <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>Prix</span>
-                                            <span className={styles.detailValue}>{(product.price || 0).toFixed(2)} €</span>
-                                          </div>
-                                          <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>Stock</span>
-                                            <span className={styles.detailValue}>{product.stock || 0}</span>
-                                          </div>
-                                          <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>Statut</span>
-                                            <span className={`${styles.detailValue} ${styles.statusBadge} ${product.isActive ? styles.statusActive : styles.statusInactive}`}>
-                                              {product.isActive ? 'Actif' : 'Inactif'}
-                                            </span>
-                                          </div>
-                                          <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>Date de création</span>
-                                            <span className={styles.detailValue}>
-                                              {new Date(product.createdAt || Date.now()).toLocaleDateString('fr-FR')}
-                                            </span>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      
-                                      <div className={styles.productDetailsSection}>
-                                        <h3>Statistiques</h3>
-                                        <div className={styles.detailsGrid}>
-                                          <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>Ventes totales</span>
-                                            <span className={styles.detailValue}>{(product.popularity || 0) * 10}</span>
-                                          </div>
-                                          <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>Note moyenne</span>
-                                            <span className={styles.detailValue}>
-                                              <span className={styles.ratingStars}>
-                                                {"★".repeat(Math.floor(product.rating || 0))}
-                                                {(product.rating || 0) % 1 !== 0 && "½"}
-                                                {"☆".repeat(5 - Math.ceil(product.rating || 0))}
-                                              </span>
-                                              {product.rating ? ` (${product.rating})` : 'N/A'}
-                                            </span>
-                                          </div>
-                                          <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>Nombre d'avis</span>
-                                            <span className={styles.detailValue}>{product.reviewCount || 0}</span>
-                                          </div>
-                                          <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>Catégories</span>
-                                            <span className={styles.detailValue}>
-                                              {product.categories && product.categories.length > 0 ? 
-                                                product.categories.map(cat => getCategoryName(cat)).join(', ') : 
-                                                'Aucune catégorie'
-                                              }
-                                            </span>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    
-                                    <div className={styles.productDescription}>
-                                      <h3>Description</h3>
-                                      <div className={styles.descriptionContent}>
-                                        <div className={styles.shortDescription}>
-                                          <h4>Description courte</h4>
-                                          <p>{product.shortDescription || 'Aucune description courte disponible'}</p>
-                                        </div>
-                                        <div className={styles.longDescription}>
-                                          <h4>Description longue</h4>
-                                          <p>{product.longDescription || 'Aucune description longue disponible'}</p>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    
-                                    <div className={styles.productDetailActions}>
-                                      <button 
-                                        className={styles.editProductButton}
-                                        onClick={() => openEditModal(product)}
-                                      >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                        </svg>
-                                        Modifier le produit
-                                      </button>
-                                      <button 
-                                        className={styles.stockButton}
-                                        onClick={() => {
-                                          const newStock = prompt('Entrez la nouvelle valeur du stock:', product.stock || 0);
-                                          if (newStock !== null) {
-                                            const stockValue = parseInt(newStock);
-                                            if (!isNaN(stockValue) && stockValue >= 0) {
-                                              setProducts(products.map(p => {
-                                                if (p.id === product.id) {
-                                                  return { ...p, stock: stockValue };
-                                                }
-                                                return p;
-                                              }));
-                                            } else {
-                                              alert('Veuillez entrer un nombre valide');
-                                            }
-                                          }
-                                        }}
-                                      >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                                          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                                        </svg>
-                                        Mettre à jour le stock
-                                      </button>
-                                      <button 
-                                        className={`${styles.statusToggleButton} ${!product.isActive ? styles.activateButton : styles.deactivateButton}`}
-                                        onClick={() => toggleProductStatus(product.id)}
-                                      >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                          <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
-                                          <line x1="12" y1="2" x2="12" y2="12"></line>
-                                        </svg>
-                                        {product.isActive ? 'Désactiver le produit' : 'Activer le produit'}
-                                      </button>
-                                      
-                                      <button 
-                                        className={styles.closeDetailsButton}
-                                        onClick={() => setExpandedProduct(null)}
-                                      >
-                                        Fermer les détails
-                                      </button>
-                                    </div>
-                                  </div>
-                                </td>
-                              </tr>
-                            )}
-                          </>
-                        ))}
-                      </tbody>
-                    </table>
-                    
-                    {getFilteredProducts().length === 0 && (
-                      <div className={styles.noOrdersFound}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <path d="M16 16s-1.5-2-4-2-4 2-4 2"></path>
-                          <line x1="9" y1="9" x2="9.01" y2="9"></line>
-                          <line x1="15" y1="9" x2="15.01" y2="9"></line>
-                        </svg>
-                        <p>Aucun produit trouvé</p>
+                <div className={styles.productList}>
+                  {products.map((product) => (
+                    <div
+                      key={product._id}
+                      className={styles.productCard}
+                      onClick={() => handleEditProduct(product)}
+                    >
+                 <img
+  src={product.image || '/images/default-product.png'}
+  alt={product.title}
+  className={styles.productImage}
+/>
+                      <div className={styles.productDetails}>
+                        <h3>{product.title}</h3>
+                        <p>{product.description}</p>
+                        <p>
+                          <strong>Prix :</strong> {product.price} €
+                        </p>
+                        <p>
+                          <strong>Stock :</strong> {product.stock}
+                        </p>
                       </div>
-                    )}
-                  </div>
-                </>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           </section>
@@ -915,17 +519,25 @@ useEffect(() => {
         {/* Footer simplifié pour l'admin */}
         <footer className={styles.adminFooter}>
           <div className={styles.footerContent}>
-            <p className={styles.copyright}>© 2025 MonSavonVert. Panneau d'administration.</p>
+            <p className={styles.copyright}>
+              © 2025 MonSavonVert. Panneau d'administration.
+            </p>
             <div className={styles.footerLinks}>
-              <Link href="/admin/help" legacyBehavior><a>Aide</a></Link>
-              <Link href="/admin/documentation" legacyBehavior><a>Documentation</a></Link>
-              <button onClick={() => {
-                localStorage.removeItem('userEmail');
-                localStorage.removeItem('token');
-                localStorage.removeItem('userRole');
-                console.log('Déconnexion réussie');
-                router.push('/login');
-              }}>
+              <Link href="/admin/help" legacyBehavior>
+                <a>Aide</a>
+              </Link>
+              <Link href="/admin/documentation" legacyBehavior>
+                <a>Documentation</a>
+              </Link>
+              <button
+                onClick={() => {
+                  localStorage.removeItem("userEmail");
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("userRole");
+                  console.log("Déconnexion réussie");
+                  router.push("/login");
+                }}
+              >
                 Se déconnecter
               </button>
             </div>
@@ -935,386 +547,655 @@ useEffect(() => {
 
       {/* Modal d'ajout de produit */}
       {showAddModal && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalContainer}>
-            <div className={styles.modalHeader}>
+        <div className="modalOverlay">
+          <div className="modalContainer">
+            <div className="modalHeader">
               <h2>Ajouter un nouveau produit</h2>
-              <button className={styles.closeModal} onClick={() => setShowAddModal(false)}>×</button>
+              <button
+                className="closeModal"
+                onClick={() => setShowAddModal(false)}
+              >
+                ×
+              </button>
             </div>
-            <div className={styles.modalBody}>
-              <form onSubmit={handleAddSubmit}>
-                <div className={styles.formGroup}>
-                  <label htmlFor="productName">Nom du produit *</label>
-                  <input 
-                    type="text" 
-                    id="productName" 
-                    name="productName" 
-                    value={formData.productName} 
-                    onChange={handleFormChange} 
-                    required 
-                  />
+
+            <div className="modalBody">
+              {isLoading ? (
+                <div className="loadingContainer">
+                  <div className="spinner"></div>
+                  <p>Ajout du produit en cours...</p>
                 </div>
-                
-                <div className={styles.formGroup}>
-                  <label htmlFor="shortDescription">Description courte *</label>
-                  <input 
-                    type="text" 
-                    id="shortDescription" 
-                    name="shortDescription" 
-                    value={formData.shortDescription} 
-                    onChange={handleFormChange} 
-                    required 
-                  />
-                </div>
-                
-                <div className={styles.formGroup}>
-                  <label htmlFor="longDescription">Description longue</label>
-                  <textarea 
-                    id="longDescription" 
-                    name="longDescription" 
-                    value={formData.longDescription} 
-                    onChange={handleFormChange} 
-                    rows="5"
-                  ></textarea>
-                </div>
-                
-                <div className={styles.formRow}>
-                  <div className={styles.formGroup}>
-                    <label htmlFor="price">Prix (€) *</label>
-                    <input 
-                      type="number" 
-                      id="price" 
-                      name="price" 
-                      value={formData.price} 
-                      onChange={handleFormChange} 
-                      step="0.01" 
-                      min="0" 
-                      required 
-                    />
-                  </div>
-                  
-                  <div className={styles.formGroup}>
-                    <label htmlFor="stock">Stock *</label>
-                    <input 
-                      type="number" 
-                      id="stock" 
-                      name="stock" 
-                      value={formData.stock} 
-                      onChange={handleFormChange} 
-                      min="0" 
-                      required 
-                    />
-                  </div>
-                </div>
-                
-                <div className={styles.formGroup}>
-                  <label>Catégories</label>
-                  <div className={styles.checkboxGrid}>
-                    {availableCategories.map(category => (
-                      <div key={category.id} className={styles.checkboxItem}>
-                        <input 
-                          type="checkbox" 
-                          id={`category-${category.id}`} 
-                          name="categories" 
-                          value={category.id} 
-                          checked={formData.categories.includes(category.id)} 
-                          onChange={handleFormChange} 
+              ) : (
+                <form onSubmit={handleSubmit} className="productForm">
+                  <div className="formColumns">
+                    <div className="formColumn">
+                      <div className="formGroup">
+                        <label htmlFor="title">Titre du produit *</label>
+                        <input
+                          type="text"
+                          id="title"
+                          name="title"
+                          value={formData.title}
+                          onChange={handleFormChange}
+                          placeholder="Ex: Savon exfoliant à l'avoine"
+                          required
                         />
-                        <label htmlFor={`category-${category.id}`}>{category.name}</label>
                       </div>
-                    ))}
-                  </div>
-                </div>
-                
-                <div className={styles.formGroup}>
-                  <div className={styles.checkboxRow}>
-                    <input 
-                      type="checkbox" 
-                      id="isActive" 
-                      name="isActive" 
-                      checked={formData.isActive} 
-                      onChange={handleFormChange} 
-                    />
-                    <label htmlFor="isActive">Produit actif</label>
-                  </div>
-                </div>
-                
-                <div className={styles.formActions}>
-                  <button type="button" className={styles.cancelButton} onClick={() => setShowAddModal(false)}>
-                    Annuler
-                  </button>
-                  <button type="submit" className={styles.submitButton}>
-                    Ajouter le produit
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
-      
-      {/* Modal d'édition de produit */}
-      {showEditModal && currentProduct && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalContainer}>
-            <div className={styles.modalHeader}>
-              <h2>Modifier le produit #{currentProduct.id}</h2>
-              <button className={styles.closeModal} onClick={() => setShowEditModal(false)}>×</button>
-            </div>
-            <div className={styles.modalBody}>
-              <form onSubmit={handleEditSubmit}>
-                <div className={styles.formGroup}>
-                  <label htmlFor="productName">Nom du produit *</label>
-                  <input 
-                    type="text" 
-                    id="productName" 
-                    name="productName" 
-                    value={formData.productName} 
-                    onChange={handleFormChange} 
-                    required 
-                  />
-                </div>
-                
-                <div className={styles.formGroup}>
-                  <label htmlFor="shortDescription">Description courte *</label>
-                  <input 
-                    type="text" 
-                    id="shortDescription" 
-                    name="shortDescription" 
-                    value={formData.shortDescription} 
-                    onChange={handleFormChange} 
-                    required 
-                  />
-                </div>
-                
-                <div className={styles.formGroup}>
-                  <label htmlFor="longDescription">Description longue</label>
-                  <textarea 
-                    id="longDescription" 
-                    name="longDescription" 
-                    value={formData.longDescription} 
-                    onChange={handleFormChange} 
-                    rows="5"
-                  ></textarea>
-                </div>
-                
-                <div className={styles.formRow}>
-                  <div className={styles.formGroup}>
-                    <label htmlFor="price">Prix (€) *</label>
-                    <input 
-                      type="number" 
-                      id="price" 
-                      name="price" 
-                      value={formData.price} 
-                      onChange={handleFormChange} 
-                      step="0.01" 
-                      min="0" 
-                      required 
-                    />
-                  </div>
-                  
-                  <div className={styles.formGroup}>
-                    <label htmlFor="stock">Stock *</label>
-                    <input 
-                      type="number" 
-                      id="stock" 
-                      name="stock" 
-                      value={formData.stock} 
-                      onChange={handleFormChange} 
-                      min="0" 
-                      required 
-                    />
-                  </div>
-                </div>
-                
-                <div className={styles.formGroup}>
-                  <label>Catégories</label>
-                  <div className={styles.checkboxGrid}>
-                    {availableCategories.map(category => (
-                      <div key={category.id} className={styles.checkboxItem}>
-                        <input 
-                          type="checkbox" 
-                          id={`edit-category-${category.id}`} 
-                          name="categories" 
-                          value={category.id} 
-                          checked={formData.categories.includes(category.id)} 
-                          onChange={handleFormChange} 
+
+                      <div className="formGroup">
+                        <label htmlFor="price">Prix (€) *</label>
+                        <input
+                          type="number"
+                          id="price"
+                          name="price"
+                          value={formData.price}
+                          onChange={handleFormChange}
+                          step="0.01"
+                          min="0"
+                          placeholder="Ex: 8.90"
+                          required
                         />
-                        <label htmlFor={`edit-category-${category.id}`}>{category.name}</label>
                       </div>
-                    ))}
+
+                      <div className="formGroup">
+                        <label htmlFor="stock">Stock *</label>
+                        <input
+                          type="number"
+                          id="stock"
+                          name="stock"
+                          value={formData.stock}
+                          onChange={handleFormChange}
+                          min="0"
+                          placeholder="Ex: 50"
+                          required
+                        />
+                      </div>
+
+                      <div className="formGroup">
+                        <label htmlFor="image">Image du produit</label>
+                        <div className="imageUploadContainer">
+                          <input
+                            type="file"
+                            id="image"
+                            name="image"
+                            accept="image/*"
+                            onChange={handleFormChange}
+                            className="fileInput"
+                          />
+                          <label htmlFor="image" className="customFileUpload">
+                            <div className="uploadIconContainer">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                              </svg>
+                            </div>
+                            <span>Choisir une image</span>
+                          </label>
+                          {imagePreview && (
+                            <div className="imagePreviewContainer">
+                              <img
+                                src={imagePreview}
+                                alt="Aperçu"
+                                className="imagePreview"
+                              />
+                              <button
+                                type="button"
+                                className="removeImageBtn"
+                                onClick={() => {
+                                  setImagePreview(null);
+                                  setFormData({ ...formData, image: null });
+                                  document.getElementById("image").value = "";
+                                }}
+                              >
+                                ×
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="formColumn">
+                      <div className="formGroup">
+                        <label htmlFor="description">Description *</label>
+                        <textarea
+                          id="description"
+                          name="description"
+                          value={formData.description}
+                          onChange={handleFormChange}
+                          rows="3"
+                          placeholder="Description courte et attrayante du produit"
+                          required
+                        ></textarea>
+                      </div>
+
+                      <div className="formGroup">
+                        <label htmlFor="characteristics">
+                          Caractéristiques
+                        </label>
+                        <textarea
+                          id="characteristics"
+                          name="characteristics"
+                          value={formData.characteristics}
+                          onChange={handleFormChange}
+                          rows="3"
+                          placeholder="Caractéristiques principales du produit"
+                        ></textarea>
+                      </div>
+
+                      <div className="formGroup">
+                        <label htmlFor="ingredients">Ingrédients</label>
+                        <textarea
+                          id="ingredients"
+                          name="ingredients"
+                          value={formData.ingredients}
+                          onChange={handleFormChange}
+                          rows="3"
+                          placeholder="Liste des ingrédients"
+                        ></textarea>
+                      </div>
+
+                      <div className="formGroup">
+                        <label htmlFor="usageTips">
+                          Conseils d'utilisation
+                        </label>
+                        <textarea
+                          id="usageTips"
+                          name="usageTips"
+                          value={formData.usageTips}
+                          onChange={handleFormChange}
+                          rows="3"
+                          placeholder="Comment utiliser ce produit"
+                        ></textarea>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                
-                <div className={styles.formGroup}>
-                  <div className={styles.checkboxRow}>
-                    <input 
-                      type="checkbox" 
-                      id="editIsActive" 
-                      name="isActive" 
-                      checked={formData.isActive} 
-                      onChange={handleFormChange} 
-                    />
-                    <label htmlFor="editIsActive">Produit actif</label>
+
+                  <div className="formActions">
+                    <button
+                      type="button"
+                      className="cancelButton"
+                      onClick={() => setShowAddModal(false)}
+                    >
+                      Annuler
+                    </button>
+                    <button type="submit" className="submitButton">
+                      Ajouter le produit
+                    </button>
                   </div>
-                </div>
-                
-                <div className={styles.formActions}>
-                  <button type="button" className={styles.cancelButton} onClick={() => setShowEditModal(false)}>
-                    Annuler
-                  </button>
-                  <button type="submit" className={styles.submitButton}>
-                    Enregistrer les modifications
-                  </button>
-                </div>
-              </form>
+                </form>
+              )}
             </div>
           </div>
         </div>
       )}
 
+      {/* Modal d'édition de produit */}
+      {showEditModal && selectedProduct && (
+        <div className="modalOverlay">
+          <div className="modalContainer">
+            <div className="modalHeader">
+              <h2>Modifier le produit</h2>
+              <button
+                className="closeModal"
+                onClick={() => setShowEditModal(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="modalBody">
+              {isLoading ? (
+                <div className="loadingContainer">
+                  <div className="spinner"></div>
+                  <p>Modification en cours...</p>
+                </div>
+              ) : (
+                <form onSubmit={handleUpdateProduct} className="productForm">
+                  <div className="formColumns">
+                    <div className="formColumn">
+                      <div className="formGroup">
+                        <label htmlFor="edit-title">Titre du produit *</label>
+                        <input
+                          type="text"
+                          id="edit-title"
+                          name="title"
+                          value={selectedProduct.title || ""}
+                          onChange={(e) =>
+                            setSelectedProduct({
+                              ...selectedProduct,
+                              title: e.target.value,
+                            })
+                          }
+                          placeholder="Ex: Savon exfoliant à l'avoine"
+                          required
+                        />
+                      </div>
+
+                      <div className="formGroup">
+                        <label htmlFor="edit-price">Prix (€) *</label>
+                        <input
+                          type="number"
+                          id="edit-price"
+                          name="price"
+                          value={selectedProduct.price || ""}
+                          onChange={(e) =>
+                            setSelectedProduct({
+                              ...selectedProduct,
+                              price: e.target.value,
+                            })
+                          }
+                          step="0.01"
+                          min="0"
+                          placeholder="Ex: 8.90"
+                          required
+                        />
+                      </div>
+
+                      <div className="formGroup">
+                        <label htmlFor="edit-stock">Stock *</label>
+                        <input
+                          type="number"
+                          id="edit-stock"
+                          name="stock"
+                          value={selectedProduct.stock || 0}
+                          onChange={(e) =>
+                            setSelectedProduct({
+                              ...selectedProduct,
+                              stock: e.target.value,
+                            })
+                          }
+                          min="0"
+                          placeholder="Ex: 50"
+                          required
+                        />
+                      </div>
+
+                      <div className="formGroup">
+                        <label htmlFor="edit-image">Image du produit</label>
+                        <div className="imageUploadContainer">
+                          <input
+                            type="file"
+                            id="edit-image"
+                            name="image"
+                            accept="image/*"
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              if (file) {
+                                setSelectedProduct({
+                                  ...selectedProduct,
+                                  newImage: file,
+                                });
+
+                                // Prévisualisation de l'image
+                                const reader = new FileReader();
+                                reader.onloadend = () => {
+                                  setSelectedProduct({
+                                    ...selectedProduct,
+                                    newImage: file,
+                                    imagePreview: reader.result,
+                                  });
+                                };
+                                reader.readAsDataURL(file);
+                              }
+                            }}
+                            className="fileInput"
+                          />
+                          <label
+                            htmlFor="edit-image"
+                            className="customFileUpload"
+                          >
+                            <div className="uploadIconContainer">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                              </svg>
+                            </div>
+                            <span>Choisir une nouvelle image</span>
+                          </label>
+
+                          {/* Afficher l'image actuelle ou la nouvelle prévisualisation */}
+                          {(selectedProduct.imagePreview ||
+                            selectedProduct.imageUrl) && (
+                            <div className="imagePreviewContainer">
+                              <img
+                                src={
+                                  selectedProduct.imagePreview ||
+                                  selectedProduct.imageUrl
+                                }
+                                alt="Aperçu"
+                                className="imagePreview"
+                              />
+                              <button
+                                type="button"
+                                className="removeImageBtn"
+                                onClick={() => {
+                                  setSelectedProduct({
+                                    ...selectedProduct,
+                                    newImage: null,
+                                    imagePreview: null,
+                                    imageUrl: null,
+                                  });
+                                  document.getElementById("edit-image").value =
+                                    "";
+                                }}
+                              >
+                                ×
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="formColumn">
+                      <div className="formGroup">
+                        <label htmlFor="edit-description">Description *</label>
+                        <textarea
+                          id="edit-description"
+                          name="description"
+                          value={selectedProduct.description || ""}
+                          onChange={(e) =>
+                            setSelectedProduct({
+                              ...selectedProduct,
+                              description: e.target.value,
+                            })
+                          }
+                          rows="3"
+                          placeholder="Description courte et attrayante du produit"
+                          required
+                        ></textarea>
+                      </div>
+
+                      <div className="formGroup">
+                        <label htmlFor="edit-characteristics">
+                          Caractéristiques
+                        </label>
+                        <textarea
+                          id="edit-characteristics"
+                          name="characteristics"
+                          value={selectedProduct.characteristics || ""}
+                          onChange={(e) =>
+                            setSelectedProduct({
+                              ...selectedProduct,
+                              characteristics: e.target.value,
+                            })
+                          }
+                          rows="3"
+                          placeholder="Caractéristiques principales du produit"
+                        ></textarea>
+                      </div>
+
+                      <div className="formGroup">
+                        <label htmlFor="edit-ingredients">Ingrédients</label>
+                        <textarea
+                          id="edit-ingredients"
+                          name="ingredients"
+                          value={selectedProduct.ingredients || ""}
+                          onChange={(e) =>
+                            setSelectedProduct({
+                              ...selectedProduct,
+                              ingredients: e.target.value,
+                            })
+                          }
+                          rows="3"
+                          placeholder="Liste des ingrédients"
+                        ></textarea>
+                      </div>
+
+                      <div className="formGroup">
+                        <label htmlFor="edit-usageTips">
+                          Conseils d'utilisation
+                        </label>
+                        <textarea
+                          id="edit-usageTips"
+                          name="usageTips"
+                          value={selectedProduct.usageTips || ""}
+                          onChange={(e) =>
+                            setSelectedProduct({
+                              ...selectedProduct,
+                              usageTips: e.target.value,
+                            })
+                          }
+                          rows="3"
+                          placeholder="Comment utiliser ce produit"
+                        ></textarea>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="formActions">
+                    <button
+                      type="button"
+                      className="cancelButton"
+                      onClick={() => setShowEditModal(false)}
+                    >
+                      Annuler
+                    </button>
+
+                    <button
+                      type="button"
+                      className="deleteButton"
+                      onClick={handleDeleteProduct}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M3 6h18"></path>
+                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                      </svg>
+                      Supprimer
+                    </button>
+                    <button type="submit" className="submitButton">
+                      Enregistrer
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de notification */}
+      {showNotificationModal && (
+        <div className="notificationModal">
+          <div className={`notificationContent ${notificationType}`}>
+            <div className="notificationIcon">
+              {notificationType === "success" ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+              )}
+            </div>
+            <div className="notificationMessage">
+              {notificationMessage}
+            </div>
+            <button 
+              className="notificationClose"
+              onClick={() => setShowNotificationModal(false)}
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de confirmation */}
+      {showConfirmationModal && (
+        <div className="modalOverlay">
+          <div className="confirmationModal">
+            <div className="confirmationHeader">
+              <h3>Confirmation</h3>
+            </div>
+            <div className="confirmationBody">
+              <div className="confirmationIcon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+              </div>
+              <p>{confirmationMessage}</p>
+            </div>
+            <div className="confirmationActions">
+              <button 
+                className="confirmCancel"
+                onClick={() => setShowConfirmationModal(false)}
+              >
+                Annuler
+              </button>
+              <button 
+                className="confirmAction"
+                onClick={confirmationAction}
+              >
+                Confirmer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Styles pour le modal et l'état vide */}
       <style jsx>{`
+        .emptyState {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 100px 20px;
+          text-align: center;
+          background-color: #f9f9f9;
+          border-radius: 8px;
+          margin: 20px 0;
+        }
+
+        .emptyState svg {
+          color: #cecece;
+          margin-bottom: 20px;
+        }
+
+        .emptyState h2 {
+          font-size: 20px;
+          margin-bottom: 10px;
+          color: #333;
+        }
+
+        .emptyState p {
+          color: #666;
+          max-width: 400px;
+          line-height: 1.6;
+        }
+
         .productsSection {
           flex: 1;
-          padding: var(--spacing-xl) 0;
+          padding: 30px 0;
         }
-        
+
         .productsContainer {
           max-width: 1400px;
           margin: 0 auto;
-          padding: 0 var(--spacing-xl);
+          padding: 0 30px;
         }
-        
-        .productRow {
-          cursor: pointer;
-        }
-        
-        .inactiveProduct {
-          background-color: rgba(0, 0, 0, 0.03);
-          color: var(--color-text-light);
-        }
-        
-        .productImageCell {
-          width: 80px;
-        }
-        
-        .productThumb {
-          width: 60px;
-          height: 60px;
-          border-radius: var(--radius-sm);
-          overflow: hidden;
-          position: relative;
-          border: 1px solid var(--color-border);
-        }
-        
-        .productThumb img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-        
-        .newBadge {
-          position: absolute;
-          top: 0;
-          right: 0;
-          background-color: var(--color-primary);
+
+        .addProductButton {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 16px;
+          background-color: #2e7d32;
           color: white;
-          font-size: 10px;
-          padding: 2px 4px;
-          border-radius: 0 0 0 4px;
-        }
-        
-        .productNameCell {
-          display: flex;
-          flex-direction: column;
-        }
-        
-        .productName {
+          border: none;
+          border-radius: 4px;
+          font-size: 14px;
           font-weight: 500;
-          margin-bottom: 4px;
+          cursor: pointer;
+          transition: all 0.2s;
         }
-        
-        .productShortDesc {
-          font-size: 12px;
-          color: var(--color-text-light);
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
+
+        .deleteButton {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          padding: 12px 24px;
+          border-radius: 6px;
+          font-size: 14px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          background-color: #fff;
+          color: #f44336;
+          border: 1px solid #f44336;
+          position: relative;
           overflow: hidden;
-          max-width: 300px;
         }
-        
-        .stockBadge {
-          display: inline-block;
-          padding: 2px 6px;
-          border-radius: var(--radius-full);
-          font-size: 12px;
-          font-weight: 600;
-          margin-right: 6px;
+
+        .deleteButton svg {
+          transition: transform 0.3s ease;
         }
-        
-        .inStock {
-          background-color: rgba(76, 175, 80, 0.1);
-          color: var(--color-success);
+
+        .deleteButton:hover {
+          background-color: #f44336;
+          color: white;
+          box-shadow: 0 4px 8px rgba(244, 67, 54, 0.3);
+          transform: translateY(-1px);
         }
-        
-        .lowStock {
-          background-color: rgba(255, 152, 0, 0.1);
-          color: var(--color-warning);
+
+        .deleteButton:hover svg {
+          transform: rotate(12deg);
         }
-        
-        .outOfStock {
-          background-color: rgba(244, 67, 54, 0.1);
-          color: var(--color-error);
+
+        .deleteButton:active {
+          transform: translateY(1px);
+          box-shadow: 0 2px 4px rgba(244, 67, 54, 0.3);
         }
-        
-        .stockCount {
-          font-weight: 500;
+
+        .addProductButton:hover {
+          background-color: #1b5e20;
         }
-        
-        .categoriesList {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 4px;
-        }
-        
-        .categoryBadge {
-          display: inline-block;
-          padding: 2px 6px;
-          background-color: rgba(33, 150, 243, 0.1);
-          color: var(--color-info);
-          border-radius: var(--radius-full);
-          font-size: 11px;
-        }
-        
-        .noCategoryBadge {
-          display: inline-block;
-          padding: 2px 6px;
-          background-color: rgba(0, 0, 0, 0.05);
-          color: var(--color-text-light);
-          border-radius: var(--radius-full);
-          font-size: 11px;
-        }
-        
-        .productStatus {
-          display: inline-block;
-          padding: 4px 8px;
-          border-radius: var(--radius-full);
-          font-size: 12px;
-          font-weight: 600;
-        }
-        
-        .statusActive {
-          background-color: rgba(76, 175, 80, 0.1);
-          color: var(--color-success);
-        }
-        
-        .statusInactive {
-          background-color: rgba(244, 67, 54, 0.1);
-          color: var(--color-error);
-        }
-        
-        /* Modals */
+
+        /* Styles du modal */
         .modalOverlay {
           position: fixed;
           top: 0;
@@ -1326,246 +1207,468 @@ useEffect(() => {
           align-items: center;
           justify-content: center;
           z-index: 1000;
+          animation: fadeIn 0.2s ease-in-out;
         }
-        
+
         .modalContainer {
           background-color: white;
-          border-radius: var(--radius-lg);
-          box-shadow: var(--shadow-xl);
+          border-radius: 8px;
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
           width: 90%;
-          max-width: 600px;
+          max-width: 800px;
           max-height: 90vh;
           overflow-y: auto;
+          animation: slideIn 0.3s ease-out;
         }
-        
+
         .modalHeader {
           padding: 20px;
-          border-bottom: 1px solid var(--color-border);
+          border-bottom: 1px solid #eaeaea;
           display: flex;
           justify-content: space-between;
           align-items: center;
+          position: sticky;
+          top: 0;
+          background-color: white;
+          z-index: 1;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
-        
+
         .modalHeader h2 {
-          font-size: 18px;
+          font-size: 20px;
           font-weight: 600;
-          color: var(--color-text);
+          color: #333;
           margin: 0;
         }
-        
+
         .closeModal {
           background: none;
           border: none;
           font-size: 24px;
           cursor: pointer;
-          color: var(--color-text-light);
+          color: #666;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          transition: all 0.2s;
         }
-        
+
+        .closeModal:hover {
+          background-color: #f5f5f5;
+          color: #333;
+        }
+
         .modalBody {
           padding: 20px;
         }
-        
-        .formGroup {
-          margin-bottom: 20px;
+
+        /* Styles du formulaire */
+        .productForm {
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
         }
-        
+
+        .formColumns {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 24px;
+        }
+
+        .formColumn {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+
+        .formGroup {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
         .formGroup label {
-          display: block;
           font-size: 14px;
           font-weight: 500;
-          margin-bottom: 8px;
+          color: #333;
         }
-        
+
         .formGroup input[type="text"],
         .formGroup input[type="number"],
         .formGroup textarea {
-          width: 100%;
-          padding: 10px;
-          border: 1px solid var(--color-border);
-          border-radius: var(--radius-sm);
+          padding: 12px;
+          border: 1px solid #ddd;
+          border-radius: 6px;
           font-size: 14px;
+          transition: all 0.2s;
         }
-        
+
         .formGroup input[type="text"]:focus,
         .formGroup input[type="number"]:focus,
         .formGroup textarea:focus {
           outline: none;
-          border-color: var(--color-primary);
+          border-color: #2e7d32;
           box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.1);
         }
-        
-        .formRow {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 20px;
+
+        /* Styles pour l'upload d'image */
+        .imageUploadContainer {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
         }
-        
-        .checkboxGrid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 10px;
+
+        .fileInput {
+          display: none;
         }
-        
-        .checkboxItem {
+
+        .customFileUpload {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
+          border: 2px dashed #ddd;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .customFileUpload:hover {
+          border-color: #2e7d32;
+          background-color: rgba(46, 125, 50, 0.05);
+        }
+
+        .uploadIconContainer {
           display: flex;
           align-items: center;
-          gap: 8px;
+          justify-content: center;
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          background-color: rgba(46, 125, 50, 0.1);
+          color: #2e7d32;
+          margin-bottom: 12px;
         }
-        
-        .checkboxRow {
+
+        .imagePreviewContainer {
+          position: relative;
+          width: 100%;
+          border-radius: 6px;
+          overflow: hidden;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .imagePreview {
+          width: 100%;
+          height: auto;
+          display: block;
+        }
+
+        .removeImageBtn {
+          position: absolute;
+          top: 8px;
+          right: 8px;
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          background-color: rgba(0, 0, 0, 0.6);
+          color: white;
+          border: none;
           display: flex;
           align-items: center;
-          gap: 8px;
+          justify-content: center;
+          cursor: pointer;
+          font-size: 16px;
+          transition: all 0.2s;
         }
-        
+
+        .removeImageBtn:hover {
+          background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        /* Actions du formulaire */
         .formActions {
           display: flex;
           justify-content: flex-end;
           gap: 16px;
-          margin-top: 30px;
+          padding-top: 16px;
+          border-top: 1px solid #eaeaea;
         }
-        
+
         .cancelButton,
         .submitButton {
-          padding: 10px 20px;
-          border-radius: var(--radius-md);
+          padding: 12px 24px;
+          border-radius: 6px;
           font-size: 14px;
           font-weight: 500;
           cursor: pointer;
+          transition: all 0.2s;
         }
-        
+
         .cancelButton {
           background-color: white;
-          border: 1px solid var(--color-border);
-          color: var(--color-text);
+          border: 1px solid #ddd;
+          color: #333;
         }
-        
+
+        .cancelButton:hover {
+          background-color: #f5f5f5;
+        }
+
         .submitButton {
-          background-color: var(--color-primary);
+          background-color: #2e7d32;
           border: none;
           color: white;
         }
-        
-        .productDescription {
-          background-color: var(--color-background-light);
-          border-radius: var(--radius-md);
-          padding: var(--spacing-lg);
-          box-shadow: var(--shadow-sm);
-          margin-bottom: var(--spacing-xl);
+
+        .submitButton:hover {
+          background-color: #1b5e20;
         }
-        
-        .productDescription h3 {
-          font-size: 16px;
-          font-weight: 600;
-          margin: 0 0 var(--spacing-md);
-          color: var(--color-text);
-          padding-bottom: var(--spacing-sm);
-          border-bottom: 1px solid var(--color-border);
+
+        /* Chargement */
+        .loadingContainer {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 40px;
         }
-        
-        .descriptionContent {
-          display: grid;
-          grid-template-columns: 1fr 2fr;
-          gap: var(--spacing-lg);
+
+        .spinner {
+          width: 40px;
+          height: 40px;
+          border: 4px solid rgba(46, 125, 50, 0.1);
+          border-radius: 50%;
+          border-top-color: #2e7d32;
+          animation: spin 1s ease-in-out infinite;
+          margin-bottom: 16px;
         }
-        
-        .shortDescription h4,
-        .longDescription h4 {
+
+        /* Notification Modal */
+        .notificationModal {
+          position: fixed;
+          bottom: 30px;
+          right: 30px;
+          z-index: 1010;
+          animation: slideUp 0.3s ease-out;
+        }
+
+        .notificationContent {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 16px 20px;
+          border-radius: 8px;
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+          max-width: 400px;
+          min-width: 300px;
+          position: relative;
+          background-color: white;
+        }
+
+        .notificationContent.success {
+          border-left: 4px solid #4caf50;
+        }
+
+        .notificationContent.error {
+          border-left: 4px solid #f44336;
+        }
+
+        .notificationIcon {
+          flex-shrink: 0;
+        }
+
+        .notificationContent.success .notificationIcon {
+          color: #4caf50;
+        }
+
+        .notificationContent.error .notificationIcon {
+          color: #f44336;
+        }
+
+        .notificationMessage {
           font-size: 14px;
-          font-weight: 600;
-          margin: 0 0 var(--spacing-sm);
-          color: var(--color-text);
+          color: #333;
+          line-height: 1.4;
+          flex-grow: 1;
         }
-        
-        .shortDescription p,
-        .longDescription p {
-          font-size: 14px;
-          color: var(--color-text);
+
+        .notificationClose {
+          position: absolute;
+          top: 8px;
+          right: 8px;
+          background: none;
+          border: none;
+          font-size: 18px;
+          color: #999;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          transition: all 0.2s;
+        }
+
+        .notificationClose:hover {
+          background-color: rgba(0, 0, 0, 0.05);
+          color: #666;
+        }
+
+        /* Confirmation Modal */
+        .confirmationModal {
+          background-color: white;
+          border-radius: 8px;
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+          width: 90%;
+          max-width: 420px;
+          overflow: hidden;
+          animation: pop 0.3s ease-out;
+        }
+
+        .confirmationHeader {
+          padding: 16px 20px;
+          border-bottom: 1px solid #eaeaea;
+        }
+
+        .confirmationHeader h3 {
           margin: 0;
+          font-size: 18px;
+          font-weight: 600;
+          color: #333;
+        }
+
+        .confirmationBody {
+          padding: 20px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 16px;
+          text-align: center;
+        }
+
+        .confirmationIcon {
+          color: #ff9800;
+        }
+
+        .confirmationBody p {
+          margin: 0;
+          color: #555;
+          font-size: 16px;
           line-height: 1.5;
         }
-        
-        .ratingStars {
-          color: var(--color-secondary);
-        }
-        
-        .productDetailActions {
+
+        .confirmationActions {
           display: flex;
-          flex-wrap: wrap;
-          gap: var(--spacing-md);
-          margin-bottom: var(--spacing-xl);
+          border-top: 1px solid #eaeaea;
         }
-        
-        .editProductButton,
-        .stockButton,
-        .statusToggleButton {
-          display: flex;
-          align-items: center;
-          gap: var(--spacing-sm);
-          padding: var(--spacing-md) var(--spacing-lg);
-          border-radius: var(--radius-md);
+
+        .confirmationActions button {
+          flex: 1;
+          padding: 14px;
+          border: none;
           font-size: 14px;
           font-weight: 500;
           cursor: pointer;
-          transition: all var(--transition-fast);
-          border: none;
+          transition: all 0.2s;
         }
-        
-        .editProductButton {
-          background-color: var(--color-primary);
+
+        .confirmCancel {
+          background-color: #f5f5f5;
+          color: #666;
+        }
+
+        .confirmCancel:hover {
+          background-color: #e0e0e0;
+        }
+
+        .confirmAction {
+          background-color: #f44336;
           color: white;
         }
-        
-        .stockButton {
-          background-color: var(--color-info);
-          color: white;
+
+        .confirmAction:hover {
+          background-color: #d32f2f;
         }
-        
-        .deactivateButton {
-          background-color: var(--color-error);
-          color: white;
+
+        /* Animations */
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
         }
-        
-        .activateButton {
-          background-color: var(--color-success);
-          color: white;
+
+        @keyframes slideIn {
+          from {
+            transform: translateY(20px);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
         }
-        
-        .addProductButton {
-          display: flex;
-          align-items: center;
-          gap: var(--spacing-sm);
-          padding: var(--spacing-md) var(--spacing-lg);
-          background-color: var(--color-primary);
-          color: white;
-          border: none;
-          border-radius: var(--radius-md);
-          font-size: 14px;
-          font-weight: 500;
-          cursor: pointer;
-          transition: all var(--transition-fast);
+
+        @keyframes slideUp {
+          from {
+            transform: translateY(20px);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
         }
-        
-        .addProductButton:hover {
-          background-color: var(--color-primary-dark);
+
+        @keyframes pop {
+          0% {
+            transform: scale(0.9);
+            opacity: 0;
+          }
+          40% {
+            transform: scale(1.05);
+            opacity: 1;
+          }
+          100% {
+            transform: scale(1);
+            opacity: 1;
+          }
         }
-        
+
+        @keyframes spin {
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
+        /* Responsive design */
         @media (max-width: 768px) {
-          .formRow,
-          .checkboxGrid,
-          .descriptionContent {
+          .formColumns {
             grid-template-columns: 1fr;
           }
-          
-          .productDetailActions {
-            flex-direction: column;
+
+          .modalContainer {
+            width: 95%;
+            max-height: 95vh;
           }
           
-          .editProductButton,
-          .stockButton,
-          .statusToggleButton {
+          .notificationModal {
+            bottom: 20px;
+            right: 20px;
+            left: 20px;
+          }
+          
+          .notificationContent {
+            min-width: auto;
             width: 100%;
-            justify-content: center;
           }
         }
       `}</style>

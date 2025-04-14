@@ -129,9 +129,16 @@ export default function Register() {
         console.log('🔑 Token stocké:', data.token.substring(0, 10) + '...');
       }
   
+      if (data.userId) {
+        localStorage.setItem('userId', data.userId);
+        console.log('✅ userId stocké:', data.userId);
+      } else {
+        throw new Error('userId manquant dans la réponse du serveur.');
+      }
+  
       // Redirection vers la page de profil
       console.log('🔀 Redirection vers /profile');
-      window.location.href = '/profile';
+      router.push('/profile'); // Utilisation de router.push pour une redirection propre
   
     } catch (err) {
       console.error('❌ Erreur lors de l\'inscription:', err.message);
@@ -140,7 +147,6 @@ export default function Register() {
       setLoading(false);
     }
   };
-
   // Rendu de base sans contenu dynamique (pour éviter les erreurs d'hydratation)
   if (!isClient) {
     return (
@@ -248,7 +254,7 @@ export default function Register() {
                   </svg>
                 </a>
               </Link>
-              <Link href="/panier" legacyBehavior>
+              <Link href="/cart" legacyBehavior>
                 <a className={styles.cartLink} aria-label="Panier">
                   <div className={styles.cartIcon} id="cartIcon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
