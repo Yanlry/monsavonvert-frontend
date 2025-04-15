@@ -2,9 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
-import { getProductById } from "../../lib/contentful";
 import styles from "../../styles/product.module.css";
-import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 
 export default function ProductDetail({ product }) {
   const router = useRouter();
@@ -26,17 +24,26 @@ export default function ProductDetail({ product }) {
 
   // Simulation d'ajout au panier avec notification
   const addToCart = () => {
-    const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
-    const existingItem = storedCart.find(item => item.id === product.id);
+    const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const existingItem = storedCart.find(item => item.id === product._id);
 
     if (existingItem) {
       existingItem.quantity += quantity;
     } else {
-      storedCart.push({ id: product.id, name: product.productName, price: product.price, image: product.mainImage.fields.file.url, quantity });
+      storedCart.push({ 
+        id: product._id, 
+        name: product.title, 
+        price: product.price, 
+        image: product.images[0], 
+        quantity 
+      });
     }
 
     localStorage.setItem('cart', JSON.stringify(storedCart));
-    setCartCount(cartCount + quantity);
+    setCartCount(prevCount => {
+      const newItems = storedCart.reduce((sum, item) => sum + item.quantity, 0);
+      return newItems;
+    });
 
     if (typeof window !== 'undefined') {
       const cartIcon = document.getElementById('cartIcon');
@@ -99,9 +106,11 @@ export default function ProductDetail({ product }) {
 
   useEffect(() => {
     // Synchroniser le nombre d'articles dans le panier avec le localStorage
-    const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
-    const totalItems = storedCart.reduce((sum, item) => sum + item.quantity, 0);
-    setCartCount(totalItems);
+    if (typeof window !== "undefined") {
+      const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const totalItems = storedCart.reduce((sum, item) => sum + item.quantity, 0);
+      setCartCount(totalItems);
+    }
   }, []);
 
   // Si le produit est en cours de chargement ou non trouvé
@@ -114,22 +123,16 @@ export default function ProductDetail({ product }) {
   }
 
   // Pour simplifier, on crée des données placeholders si certaines parties du produit ne sont pas définies
-  // Conserve exactement la même logique que dans le code original
-  const productDescription =
-    typeof product.description === "string"
-      ? product.description
-      : product.shortDescription || "Description non disponible";
-  const productFeatures = Array.isArray(product.features)
-    ? product.features
-    : typeof product.features === "string"
-    ? [product.features]
+  const productDescription = product.description || "Description non disponible";
+  const productFeatures = product.characteristics 
+    ? product.characteristics.split(',').map(feat => feat.trim()) 
     : ["Produit naturel", "Fabriqué en France"];
   const productOptions = {
     sizes: ["Standard (200g)"],
     packaging: ["Emballage plastique recyclable", "Sans emballage"],
   };
 
-  // Ces données ne sont pas dans Contentful pour l'instant, donc on garde les fausses données
+  // Ces données ne sont pas dans la base de données pour l'instant, donc on garde les fausses données
   const reviewsData = [
     {
       name: "Marie L.",
@@ -145,15 +148,8 @@ export default function ProductDetail({ product }) {
     },
   ];
 
-  // Gestion des images - utilisation du tableau de galerie ou de l'image principale
-  // Conserve exactement la même logique que dans le code original
-  const galleryImages = [];
-  if (product.mainImage && product.mainImage.fields) {
-    galleryImages.push(product.mainImage);
-  }
-  if (product.gallery && Array.isArray(product.gallery)) {
-    galleryImages.push(...product.gallery);
-  }
+  // Gestion des images - utilisation du tableau d'images de l'API
+  const galleryImages = product.images || [];
 
   // Log des images pour aider au debug
   console.log("Images du produit:", galleryImages);
@@ -161,7 +157,7 @@ export default function ProductDetail({ product }) {
   return (
     <>
       <Head>
-        <title>{product.productName} | MonSavonVert</title>
+        <title>{product.title} | MonSavonVert</title>
         <meta
           name="description"
           content={productDescription.substring(0, 160)}
@@ -189,7 +185,7 @@ export default function ProductDetail({ product }) {
             {/* Navigation principale */}
             <nav className={styles.mainNav}>
               <ul className={styles.navList}>
-              <li className={styles.navItem}>
+                <li className={styles.navItem}>
                   <Link href="/" legacyBehavior>
                     <a className={styles.navLink}>Accueil</a>
                   </Link>
@@ -315,17 +311,9 @@ export default function ProductDetail({ product }) {
               <Link href="/store" legacyBehavior>
                 <a className={styles.breadcrumbLink}>Boutique</a>
               </Link>
-              {product.category && (
-                <>
-                  <span className={styles.breadcrumbSeparator}>/</span>
-                  <Link href={`/boutique/${product.category}`} legacyBehavior>
-                    <a className={styles.breadcrumbLink}>{product.category}</a>
-                  </Link>
-                </>
-              )}
               <span className={styles.breadcrumbSeparator}>/</span>
               <span className={styles.breadcrumbCurrent}>
-                {product.productName}
+                {product.title}
               </span>
             </div>
           </div>
@@ -342,11 +330,9 @@ export default function ProductDetail({ product }) {
                     onClick={() => setShowZoomModal(true)}
                     onMouseMove={handleImageMouseMove}
                     style={{
-                      backgroundImage:
-                        galleryImages.length > 0 &&
-                        galleryImages[activeImage]?.fields?.file
-                          ? `url(https:${galleryImages[activeImage].fields.file.url})`
-                          : undefined,
+                      backgroundImage: galleryImages.length > 0 
+                        ? `url(${galleryImages[activeImage]})` 
+                        : undefined,
                     }}
                   >
                     {galleryImages.length === 0 && (
@@ -373,7 +359,7 @@ export default function ProductDetail({ product }) {
                       </svg>
                     </div>
                   </div>
-                  {galleryImages.length > 0 && (
+                  {galleryImages.length > 1 && (
                     <div className={styles.productThumbnails}>
                       {galleryImages.slice(0, 4).map((image, index) => (
                         <div
@@ -382,15 +368,9 @@ export default function ProductDetail({ product }) {
                             activeImage === index ? styles.activeThumbnail : ""
                           }`}
                           onClick={() => setActiveImage(index)}
-                          style={
-                            image?.fields?.file
-                              ? {
-                                  backgroundImage: `url(https:${image.fields.file.url})`,
-                                }
-                              : undefined
-                          }
+                          style={{ backgroundImage: `url(${image})` }}
                         >
-                          {!image?.fields?.file && `Photo ${index + 1}`}
+                          {!image && `Photo ${index + 1}`}
                         </div>
                       ))}
                     </div>
@@ -417,7 +397,7 @@ export default function ProductDetail({ product }) {
               {/* Colonne de droite - Informations produit */}
               <div className={styles.productInfoColumn}>
                 <div className={styles.productInfo}>
-                  <h1 className={styles.productTitle}>{product.productName}</h1>
+                  <h1 className={styles.productTitle}>{product.title}</h1>
 
                   {/* Note et avis */}
                   <div className={styles.productRating}>
@@ -425,14 +405,16 @@ export default function ProductDetail({ product }) {
                       {"★".repeat(4)}
                       {"☆".repeat(1)}
                     </div>
-                    <span className={styles.ratingCount}>(42 avis)</span>
+                    <span className={styles.ratingCount}>
+                      ({product.reviews ? product.reviews.length : 0} avis)
+                    </span>
                   </div>
 
                   {/* Prix */}
                   <div className={styles.productPriceContainer}>
                     <div className={styles.productPrice}>
                       {product.price
-                        ? `${product.price} €`
+                        ? `${product.price.toFixed(2)} €`
                         : "Prix non disponible"}
                     </div>
                     {product.oldPrice && (
@@ -469,7 +451,6 @@ export default function ProductDetail({ product }) {
                     ))}
                   </ul>
 
-                  {/* Options du produit - Utilise l'ancien style */}
                   {/* Options du produit - Style moderne avec cartes */}
                   <div className={styles.productForm}>
                     {/* Sélection du format */}
@@ -499,7 +480,7 @@ export default function ProductDetail({ product }) {
                     </div>
                   </div>
 
-                  {/* Quantité - Utilise l'ancien style */}
+                  {/* Quantité */}
                   <div className={styles.quantityControl}>
                     <button
                       className={`${styles.quantityButton} ${styles.quantityButtonLeft}`}
@@ -521,9 +502,33 @@ export default function ProductDetail({ product }) {
                     </button>
                   </div>
 
+                  {/* Affichage du stock */}
+                  <div className={styles.stockStatus}>
+                    {product.stock > 0 ? (
+                      <span className={styles.inStock}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        En stock ({product.stock} disponibles)
+                      </span>
+                    ) : (
+                      <span className={styles.outOfStock}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="18" y1="6" x2="6" y2="18"></line>
+                          <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        Rupture de stock
+                      </span>
+                    )}
+                  </div>
+
                   {/* Actions */}
                   <div className={styles.productActions}>
-                    <button className={styles.addToCartBtn} onClick={addToCart}>
+                    <button 
+                      className={styles.addToCartBtn} 
+                      onClick={addToCart}
+                      disabled={product.stock <= 0}
+                    >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="20"
@@ -539,7 +544,7 @@ export default function ProductDetail({ product }) {
                         <circle cx="20" cy="21" r="1"></circle>
                         <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                       </svg>
-                      Ajouter au panier
+                      {product.stock > 0 ? 'Ajouter au panier' : 'Rupture de stock'}
                     </button>
                     <button
                       className={`${styles.wishlistBtn} ${
@@ -634,6 +639,7 @@ export default function ProductDetail({ product }) {
                   <div className={styles.productShare}>
                     <span>Partager :</span>
                     <div className={styles.shareLinks}>
+                      
                       <a
                         href="#"
                         className={styles.shareLink}
@@ -679,6 +685,29 @@ export default function ProductDetail({ product }) {
                           <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
                         </svg>
                       </a>
+
+                        <svg
+                          viewBox="0 0 24 24"
+                          width="20"
+                          height="20"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <rect
+                            x="2"
+                            y="2"
+                            width="20"
+                            height="20"
+                            rx="5"
+                            ry="5"
+                          ></rect>
+                          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                        </svg>
+
                       <a
                         href="#"
                         className={styles.shareLink}
@@ -706,7 +735,7 @@ export default function ProductDetail({ product }) {
             </div>
           </section>
 
-          {/* Onglets d'information - Avec l'ancien style pour ces sections */}
+          {/* Onglets d'information */}
           <section className={styles.tabsSection}>
             <div className={styles.tabsHeader}>
               <div
@@ -748,7 +777,7 @@ export default function ProductDetail({ product }) {
                 activeTab === "description" ? styles.tabContentActive : ""
               }`}
             >
-              <p className={styles.description}>{productDescription}</p>
+              <p className={styles.description}>{product.description}</p>
             </div>
 
             <div
@@ -757,10 +786,12 @@ export default function ProductDetail({ product }) {
               }`}
             >
               <ul className={styles.ingredientList}>
-                {product.ingrdients ? (
-                  <div
-                    dangerouslySetInnerHTML={{ __html: product.ingrdients }}
-                  />
+                {product.ingredients ? (
+                  <li className={styles.ingredient}>
+                    <span className={styles.ingredientName}>
+                      {product.ingredients}
+                    </span>
+                  </li>
                 ) : (
                   <>
                     <li className={styles.ingredient}>
@@ -800,55 +831,59 @@ export default function ProductDetail({ product }) {
               <div className={styles.usageGuide}>
                 <div className={styles.usageSection}>
                   <h3>Comment utiliser votre savon</h3>
-                  <ol className={styles.usageSteps}>
-                    <li className={styles.usageStep}>
-                      <div className={styles.usageStepNumber}>1</div>
-                      <div className={styles.usageStepContent}>
-                        <h4>Mouiller le savon</h4>
-                        <p>
-                          Humidifiez le savon et vos mains avec de l'eau tiède.
-                        </p>
-                      </div>
-                    </li>
-                    <li className={styles.usageStep}>
-                      <div className={styles.usageStepNumber}>2</div>
-                      <div className={styles.usageStepContent}>
-                        <h4>Faire mousser</h4>
-                        <p>
-                          Frottez délicatement le savon entre vos mains pour
-                          créer une mousse onctueuse.
-                        </p>
-                      </div>
-                    </li>
-                    <li className={styles.usageStep}>
-                      <div className={styles.usageStepNumber}>3</div>
-                      <div className={styles.usageStepContent}>
-                        <h4>Appliquer</h4>
-                        <p>
-                          Massez la mousse sur votre peau en effectuant des
-                          mouvements circulaires.
-                        </p>
-                      </div>
-                    </li>
-                    <li className={styles.usageStep}>
-                      <div className={styles.usageStepNumber}>4</div>
-                      <div className={styles.usageStepContent}>
-                        <h4>Rincer</h4>
-                        <p>Rincez abondamment à l'eau claire.</p>
-                      </div>
-                    </li>
-                    <li className={styles.usageStep}>
-                      <div className={styles.usageStepNumber}>5</div>
-                      <div className={styles.usageStepContent}>
-                        <h4>Sécher et ranger</h4>
-                        <p>
-                          Après utilisation, placez le savon sur un porte-savon
-                          qui permet à l'eau de s'écouler pour prolonger sa
-                          durée de vie.
-                        </p>
-                      </div>
-                    </li>
-                  </ol>
+                  {product.usageTips ? (
+                    <p>{product.usageTips}</p>
+                  ) : (
+                    <ol className={styles.usageSteps}>
+                      <li className={styles.usageStep}>
+                        <div className={styles.usageStepNumber}>1</div>
+                        <div className={styles.usageStepContent}>
+                          <h4>Mouiller le savon</h4>
+                          <p>
+                            Humidifiez le savon et vos mains avec de l'eau tiède.
+                          </p>
+                        </div>
+                      </li>
+                      <li className={styles.usageStep}>
+                        <div className={styles.usageStepNumber}>2</div>
+                        <div className={styles.usageStepContent}>
+                          <h4>Faire mousser</h4>
+                          <p>
+                            Frottez délicatement le savon entre vos mains pour
+                            créer une mousse onctueuse.
+                          </p>
+                        </div>
+                      </li>
+                      <li className={styles.usageStep}>
+                        <div className={styles.usageStepNumber}>3</div>
+                        <div className={styles.usageStepContent}>
+                          <h4>Appliquer</h4>
+                          <p>
+                            Massez la mousse sur votre peau en effectuant des
+                            mouvements circulaires.
+                          </p>
+                        </div>
+                      </li>
+                      <li className={styles.usageStep}>
+                        <div className={styles.usageStepNumber}>4</div>
+                        <div className={styles.usageStepContent}>
+                          <h4>Rincer</h4>
+                          <p>Rincez abondamment à l'eau claire.</p>
+                        </div>
+                      </li>
+                      <li className={styles.usageStep}>
+                        <div className={styles.usageStepNumber}>5</div>
+                        <div className={styles.usageStepContent}>
+                          <h4>Sécher et ranger</h4>
+                          <p>
+                            Après utilisation, placez le savon sur un porte-savon
+                            qui permet à l'eau de s'écouler pour prolonger sa
+                            durée de vie.
+                          </p>
+                        </div>
+                      </li>
+                    </ol>
+                  )}
                 </div>
 
                 <div className={styles.usageSection}>
@@ -944,19 +979,35 @@ export default function ProductDetail({ product }) {
                 activeTab === "reviews" ? styles.tabContentActive : ""
               }`}
             >
-              {reviewsData.map((review, index) => (
-                <div key={index} className={styles.review}>
-                  <div className={styles.reviewHeader}>
-                    <div className={styles.reviewerName}>{review.name}</div>
-                    <div className={styles.reviewDate}>{review.date}</div>
+              {product.reviews && product.reviews.length > 0 ? (
+                product.reviews.map((review, index) => (
+                  <div key={index} className={styles.review}>
+                    <div className={styles.reviewHeader}>
+                      <div className={styles.reviewerName}>{review.name}</div>
+                      <div className={styles.reviewDate}>{review.date}</div>
+                    </div>
+                    <div className={styles.stars}>
+                      {"★".repeat(review.rating)}
+                      {"☆".repeat(5 - review.rating)}
+                    </div>
+                    <p className={styles.reviewText}>{review.text}</p>
                   </div>
-                  <div className={styles.stars}>
-                    {"★".repeat(review.rating)}
-                    {"☆".repeat(5 - review.rating)}
+                ))
+              ) : (
+                reviewsData.map((review, index) => (
+                  <div key={index} className={styles.review}>
+                    <div className={styles.reviewHeader}>
+                      <div className={styles.reviewerName}>{review.name}</div>
+                      <div className={styles.reviewDate}>{review.date}</div>
+                    </div>
+                    <div className={styles.stars}>
+                      {"★".repeat(review.rating)}
+                      {"☆".repeat(5 - review.rating)}
+                    </div>
+                    <p className={styles.reviewText}>{review.text}</p>
                   </div>
-                  <p className={styles.reviewText}>{review.text}</p>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </section>
 
@@ -1015,9 +1066,7 @@ export default function ProductDetail({ product }) {
               <div
                 className={styles.zoomModalImage}
                 style={{
-                  backgroundImage: galleryImages[activeImage]?.fields?.file
-                    ? `url(https:${galleryImages[activeImage].fields.file.url})`
-                    : undefined,
+                  backgroundImage: `url(${galleryImages[activeImage]})`,
                   backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
                 }}
               ></div>
@@ -1032,13 +1081,7 @@ export default function ProductDetail({ product }) {
                       e.stopPropagation();
                       setActiveImage(index);
                     }}
-                    style={
-                      image?.fields?.file
-                        ? {
-                            backgroundImage: `url(https:${image.fields.file.url})`,
-                          }
-                        : undefined
-                    }
+                    style={{ backgroundImage: `url(${image})` }}
                   />
                 ))}
               </div>
@@ -1103,29 +1146,29 @@ export default function ProductDetail({ product }) {
 }
 
 // Cette fonction s'exécute côté serveur à chaque requête
-// Conserve exactement la même logique que dans le code original
 export async function getServerSideProps({ params }) {
   try {
-    // Récupération du produit par son ID
-    const product = await getProductById(params.id);
-    console.log("Produit récupéré:", product?.productName);
-
-    // Si le produit n'est pas trouvé, retourne une 404
-    if (!product) {
-      console.log("Produit non trouvé, retourne 404");
+    // Récupération du produit par son ID depuis l'API locale
+    const response = await fetch(`http://localhost:8888/products/${params.id}`);
+    
+    if (!response.ok) {
+      console.log(`Erreur lors de la récupération du produit: ${response.status}`);
       return { notFound: true };
     }
-
-    // Conversion des ingrédients s'ils proviennent d'un Rich Text de Contentful
-    // Remarque : on utilise product.ingrdients au lieu de product.ingredients
-    if (product.ingrdients && typeof product.ingrdients !== "string") {
-      product.ingrdients = documentToHtmlString(product.ingrdients);
-      console.log("Conversion des ingrédients réussie");
+    
+    const data = await response.json();
+    
+    // Si la requête a réussi mais ne contient pas de produit
+    if (!data.result || !data.product) {
+      console.log("Produit non trouvé dans la réponse de l'API");
+      return { notFound: true };
     }
-
+    
+    console.log("Produit récupéré:", data.product.title);
+    
     return {
       props: {
-        product,
+        product: data.product,
       },
     };
   } catch (error) {

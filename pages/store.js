@@ -3,15 +3,18 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { getAllProducts } from '../lib/contentful';
 import styles from '../styles/store.module.css';
 
-export default function Boutique({ products: initialProducts }) {
+export default function Boutique() {
   // État pour détecter si nous sommes côté client
   const [isClient, setIsClient] = useState(false);
   
-  // État pour les produits
-  const [products, setProducts] = useState(initialProducts || []);
+  // État pour les produits (vide par défaut avant chargement depuis l'API)
+  const [products, setProducts] = useState([]);
+  
+  // État pour le chargement des produits
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   
   // État pour la pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -30,22 +33,58 @@ export default function Boutique({ products: initialProducts }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState([]);
 
+  // Effet pour charger les produits depuis l'API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:8888/products');
+        
+        // Vérifier si la réponse est ok
+        if (!response.ok) {
+          throw new Error(`Erreur HTTP: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // Vérifier si la requête a réussi et si products existe
+        if (data.result && data.products) {
+          console.log('Produits récupérés depuis l\'API:', data.products);
+          setProducts(data.products);
+        } else {
+          console.error('Format de réponse API incorrect:', data);
+          setError('Format de données incorrect');
+        }
+      } catch (err) {
+        console.error('Erreur lors de la récupération des produits:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // Ne charger les produits que côté client
+    if (isClient) {
+      fetchProducts();
+    }
+  }, [isClient]);
+
   // Fonction pour ajouter au panier
   const addToCart = (product) => {
     // Vérifier que localStorage est disponible (côté client)
     if (typeof window === 'undefined') return;
 
     const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const existingItem = storedCart.find(item => item.id === product.id);
+    const existingItem = storedCart.find(item => item.id === product._id);
 
     if (existingItem) {
       existingItem.quantity += 1;
     } else {
       storedCart.push({ 
-        id: product.id, 
-        name: product.productName, 
+        id: product._id, 
+        name: product.title, 
         price: product.price, 
-        image: product.mainImage.fields.file.url, 
+        image: product.images[0], // Première image comme image principale
         quantity: 1 
       });
     }
@@ -105,70 +144,18 @@ export default function Boutique({ products: initialProducts }) {
     }
   }, []);
   
-  // Produits fictifs pour la démo si aucun n'est fourni
-  const demoProducts = [
-    {
-      id: 1,
-      productName: "Savon Exfoliant à l'Avoine",
-      price: 8.90,
-      mainImage: { fields: { file: { url: '/images/1.JPEG' } } },
-      shortDescription: "Exfoliation douce pour peaux sensibles, enrichi en huile d'amande douce.",
-      categories: ['exfoliating', 'sensitive-skin'],
-      popularity: 10,
-      rating: 4.5,
-      reviewCount: 42,
-      isNew: true
-    },
-    {
-      id: 2,
-      productName: "Shampooing Solide Nourrissant",
-      price: 11.50,
-      mainImage: { fields: { file: { url: '/images/2.JPEG' } } },
-      shortDescription: "Nourrit en profondeur tous types de cheveux, avec beurre de karité bio.",
-      categories: ['moisturizing'],
-      popularity: 8,
-      rating: 4.7,
-      reviewCount: 36,
-      isBestSeller: true
-    },
-    {
-      id: 3,
-      productName: "Savon Surgras à l'Huile d'Olive",
-      price: 7.90,
-      mainImage: { fields: { file: { url: '/images/3.JPEG' } } },
-      shortDescription: "Hydratation intense pour peaux sèches, enrichi en huile d'olive vierge.",
-      categories: ['moisturizing', 'sensitive-skin'],
-      popularity: 9,
-      rating: 4.8,
-      reviewCount: 29
-    }
-  ];
-  
-  useEffect(() => {
-    // Si aucun produit n'est fourni, utiliser les produits de démo
-    // Limiter à exactement 3 produits pour cette version
-    if (!initialProducts || initialProducts.length === 0) {
-      setProducts(demoProducts.slice(0, 3));
-    } else {
-      // Si des vrais produits sont fournis, limiter à 3 également
-      setProducts(initialProducts.slice(0, 3));
-    }
-    
-    // Ajout de logs pour diagnostiquer les problèmes éventuels
-    console.log("Initialisation des produits: ", initialProducts ? initialProducts.length : 0, " produits reçus");
-  }, [initialProducts]);
-  
   // Calcul des produits à afficher selon pagination, filtre, et recherche
   const filteredProducts = products
     .filter(product => {
       if (filterBy === 'all') return true;
-      return product.categories && product.categories.includes(filterBy);
+      // Si des catégories sont ajoutées plus tard, on pourra filtrer ici
+      return true;
     })
     .filter(product => {
       if (!searchTerm.trim()) return true;
       return (
-        product.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.shortDescription?.toLowerCase().includes(searchTerm.toLowerCase())
+        product.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.description?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     });
     
@@ -181,8 +168,8 @@ export default function Boutique({ products: initialProducts }) {
         return (b.price || 0) - (a.price || 0);
       case 'newest':
         return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
-      default: // popularité par défaut
-        return (b.popularity || 0) - (a.popularity || 0);
+      default: // popularité par défaut - fallback sur createdAt
+        return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
     }
   });
   
@@ -196,6 +183,139 @@ export default function Boutique({ products: initialProducts }) {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const nextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
   const prevPage = () => setCurrentPage(prev => Math.max(prev - 1, 1));
+
+  // Fonction pour mettre à jour la quantité d'un article dans le panier
+  const updateCartItemQuantity = (itemId, newQuantity) => {
+    if (typeof window === 'undefined') return;
+    
+    // Récupération du panier actuel
+    const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
+    
+    // Recherche de l'article avec l'ID spécifié
+    const itemIndex = storedCart.findIndex(item => item.id === itemId);
+    
+    if (itemIndex !== -1) {
+      // Calculer la différence de quantité pour mettre à jour le compteur
+      const oldQuantity = storedCart[itemIndex].quantity;
+      const quantityDiff = newQuantity - oldQuantity;
+      
+      // Mise à jour de la quantité
+      storedCart[itemIndex].quantity = newQuantity;
+      
+      // Mise à jour du localStorage
+      localStorage.setItem('cart', JSON.stringify(storedCart));
+      
+      // Mise à jour des états du panier
+      setCartItems([...storedCart]);
+      setCartCount(prev => prev + quantityDiff);
+      
+      // Log pour le diagnostic
+      console.log(`Quantité mise à jour: article #${itemId}, nouvelle quantité: ${newQuantity}`);
+    } else {
+      console.error(`Article avec l'ID ${itemId} non trouvé dans le panier`);
+    }
+  };
+
+  // Fonction pour supprimer un article du panier
+  const removeCartItem = (itemId) => {
+    if (typeof window === 'undefined') return;
+    
+    // Récupération du panier actuel
+    const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
+    
+    // Recherche de l'article avec l'ID spécifié
+    const itemIndex = storedCart.findIndex(item => item.id === itemId);
+    
+    if (itemIndex !== -1) {
+      // Récupérer la quantité de l'article à supprimer pour mettre à jour le compteur
+      const removedQuantity = storedCart[itemIndex].quantity;
+      
+      // Suppression de l'article
+      storedCart.splice(itemIndex, 1);
+      
+      // Mise à jour du localStorage
+      localStorage.setItem('cart', JSON.stringify(storedCart));
+      
+      // Mise à jour des états du panier
+      setCartItems([...storedCart]);
+      setCartCount(prev => prev - removedQuantity);
+      
+      // Log pour le diagnostic
+      console.log(`Article #${itemId} supprimé du panier`);
+      
+      // Si le panier est maintenant vide, on peut fermer la bannière
+      if (storedCart.length === 0) {
+        setTimeout(() => setIsCartOpen(false), 300);
+      }
+    } else {
+      console.error(`Article avec l'ID ${itemId} non trouvé dans le panier`);
+    }
+  };
+
+  // Fonction pour calculer le sous-total du panier
+  const calculateSubtotal = () => {
+    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+  };
+
+  // Seuil pour la livraison gratuite
+  const FREE_SHIPPING_THRESHOLD = 49;
+
+  // Fonction pour calculer les frais de livraison
+  const calculateShipping = () => {
+    const subtotal = calculateSubtotal();
+    // Livraison gratuite à partir de 49€
+    if (subtotal >= FREE_SHIPPING_THRESHOLD) {
+      return 0;
+    }
+    // Sinon, frais fixes de 5.90€
+    return 5.90;
+  };
+
+  // Fonction pour calculer le total du panier
+  const calculateTotal = () => {
+    const subtotal = calculateSubtotal();
+    const shipping = calculateShipping();
+    return subtotal + shipping;
+  };
+
+  // Fonction pour vérifier si on doit afficher le message de livraison gratuite
+  const shouldShowFreeShippingMessage = () => {
+    const subtotal = calculateSubtotal();
+    return subtotal > 0 && subtotal < FREE_SHIPPING_THRESHOLD;
+  };
+
+  // Fonction pour obtenir le message de livraison gratuite
+  const getFreeShippingMessage = () => {
+    const subtotal = calculateSubtotal();
+    const remaining = FREE_SHIPPING_THRESHOLD - subtotal;
+    
+    if (remaining <= 0) {
+      return "Vous bénéficiez de la livraison gratuite !";
+    }
+    
+    return `Plus que ${remaining.toFixed(2)} € pour bénéficier de la livraison gratuite`;
+  };
+
+  // Fonction pour obtenir la date de livraison estimée
+  const getEstimatedDeliveryDate = () => {
+    const today = new Date();
+    
+    // Ajouter 3 jours ouvrables pour la livraison
+    const deliveryDate = new Date(today);
+    let daysToAdd = 3;
+    
+    while (daysToAdd > 0) {
+      deliveryDate.setDate(deliveryDate.getDate() + 1);
+      // Si ce n'est pas un week-end (0 = dimanche, 6 = samedi)
+      if (deliveryDate.getDay() !== 0 && deliveryDate.getDay() !== 6) {
+        daysToAdd--;
+      }
+    }
+    
+    // Formatage de la date en français
+    const options = { weekday: 'long', day: 'numeric', month: 'long' };
+    return deliveryDate.toLocaleDateString('fr-FR', options);
+  };
 
   // Rendu de base sans contenu dynamique (pour éviter les erreurs d'hydratation)
   if (!isClient) {
@@ -212,139 +332,6 @@ export default function Boutique({ products: initialProducts }) {
       </>
     );
   }
-
-  // Fonction pour mettre à jour la quantité d'un article dans le panier
-const updateCartItemQuantity = (itemId, newQuantity) => {
-  if (typeof window === 'undefined') return;
-  
-  // Récupération du panier actuel
-  const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
-  
-  // Recherche de l'article avec l'ID spécifié
-  const itemIndex = storedCart.findIndex(item => item.id === itemId);
-  
-  if (itemIndex !== -1) {
-    // Calculer la différence de quantité pour mettre à jour le compteur
-    const oldQuantity = storedCart[itemIndex].quantity;
-    const quantityDiff = newQuantity - oldQuantity;
-    
-    // Mise à jour de la quantité
-    storedCart[itemIndex].quantity = newQuantity;
-    
-    // Mise à jour du localStorage
-    localStorage.setItem('cart', JSON.stringify(storedCart));
-    
-    // Mise à jour des états du panier
-    setCartItems([...storedCart]);
-    setCartCount(prev => prev + quantityDiff);
-    
-    // Log pour le diagnostic
-    console.log(`Quantité mise à jour: article #${itemId}, nouvelle quantité: ${newQuantity}`);
-  } else {
-    console.error(`Article avec l'ID ${itemId} non trouvé dans le panier`);
-  }
-};
-
-// Fonction pour supprimer un article du panier
-const removeCartItem = (itemId) => {
-  if (typeof window === 'undefined') return;
-  
-  // Récupération du panier actuel
-  const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
-  
-  // Recherche de l'article avec l'ID spécifié
-  const itemIndex = storedCart.findIndex(item => item.id === itemId);
-  
-  if (itemIndex !== -1) {
-    // Récupérer la quantité de l'article à supprimer pour mettre à jour le compteur
-    const removedQuantity = storedCart[itemIndex].quantity;
-    
-    // Suppression de l'article
-    storedCart.splice(itemIndex, 1);
-    
-    // Mise à jour du localStorage
-    localStorage.setItem('cart', JSON.stringify(storedCart));
-    
-    // Mise à jour des états du panier
-    setCartItems([...storedCart]);
-    setCartCount(prev => prev - removedQuantity);
-    
-    // Log pour le diagnostic
-    console.log(`Article #${itemId} supprimé du panier`);
-    
-    // Si le panier est maintenant vide, on peut fermer la bannière
-    if (storedCart.length === 0) {
-      setTimeout(() => setIsCartOpen(false), 300);
-    }
-  } else {
-    console.error(`Article avec l'ID ${itemId} non trouvé dans le panier`);
-  }
-};
-
-// Fonction pour calculer le sous-total du panier
-const calculateSubtotal = () => {
-  return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-};
-
-// Seuil pour la livraison gratuite
-const FREE_SHIPPING_THRESHOLD = 49;
-
-// Fonction pour calculer les frais de livraison
-const calculateShipping = () => {
-  const subtotal = calculateSubtotal();
-  // Livraison gratuite à partir de 49€
-  if (subtotal >= FREE_SHIPPING_THRESHOLD) {
-    return 0;
-  }
-  // Sinon, frais fixes de 5.90€
-  return 5.90;
-};
-
-// Fonction pour calculer le total du panier
-const calculateTotal = () => {
-  const subtotal = calculateSubtotal();
-  const shipping = calculateShipping();
-  return subtotal + shipping;
-};
-
-// Fonction pour vérifier si on doit afficher le message de livraison gratuite
-const shouldShowFreeShippingMessage = () => {
-  const subtotal = calculateSubtotal();
-  return subtotal > 0 && subtotal < FREE_SHIPPING_THRESHOLD;
-};
-
-// Fonction pour obtenir le message de livraison gratuite
-const getFreeShippingMessage = () => {
-  const subtotal = calculateSubtotal();
-  const remaining = FREE_SHIPPING_THRESHOLD - subtotal;
-  
-  if (remaining <= 0) {
-    return "Vous bénéficiez de la livraison gratuite !";
-  }
-  
-  return `Plus que ${remaining.toFixed(2)} € pour bénéficier de la livraison gratuite`;
-};
-
-// Fonction pour obtenir la date de livraison estimée
-const getEstimatedDeliveryDate = () => {
-  const today = new Date();
-  
-  // Ajouter 3 jours ouvrables pour la livraison
-  const deliveryDate = new Date(today);
-  let daysToAdd = 3;
-  
-  while (daysToAdd > 0) {
-    deliveryDate.setDate(deliveryDate.getDate() + 1);
-    // Si ce n'est pas un week-end (0 = dimanche, 6 = samedi)
-    if (deliveryDate.getDay() !== 0 && deliveryDate.getDay() !== 6) {
-      daysToAdd--;
-    }
-  }
-  
-  // Formatage de la date en français
-  const options = { weekday: 'long', day: 'numeric', month: 'long' };
-  return deliveryDate.toLocaleDateString('fr-FR', options);
-};
 
   return (
     <>
@@ -444,83 +431,139 @@ const getEstimatedDeliveryDate = () => {
             </div>
           </div>
           
-          {/* Grille de produits optimisée pour 3 articles */}
-          <div className={styles.enhancedProductGrid}>
-            {currentProducts.length > 0 ? (
-              currentProducts.map((product) => (
-                <div key={product.id} className={styles.enhancedProductCard}>
-                  {product.isNew && <div className={styles.productBadge}>Nouveau</div>}
-                  {product.isBestSeller && <div className={`${styles.productBadge} ${styles.badgeBestseller}`}>Bestseller</div>}
-                  <Link href={`/produit/${product.id}`} legacyBehavior>
-                    <a className={styles.productImageContainer}>
-                      <img
-                        src={product.mainImage && product.mainImage.fields ? 
-                          `https:${product.mainImage.fields.file.url}` : 
-                          `/images/${product.id}.JPEG`}
-                        alt={product.productName}
-                        className={styles.productImage}
-                      />
-                      <div className={styles.productOverlay}>
-                        <button 
-                          className={styles.addToCartButton}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            addToCart(product);
-                          }}
-                          aria-label="Ajouter au panier"
-                        >
-                          Ajouter au panier
-                        </button>
-                        <button className={styles.quickViewButton} aria-label="Aperçu rapide">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                            <circle cx="12" cy="12" r="3"></circle>
-                          </svg>
-                        </button>
-                      </div>
-                    </a>
-                  </Link>
-                  <div className={styles.productInfo}>
-                    <h3 className={styles.productName}>{product.productName}</h3>
-                    <div className={styles.productRating}>
-                      <div className={styles.stars}>
-                        {"★".repeat(Math.floor(product.rating || 4.5))}
-                        {(product.rating || 4.5) % 1 !== 0 && "½"}
-                        {"☆".repeat(5 - Math.ceil(product.rating || 4.5))}
-                      </div>
-                      <div className={styles.reviewCount}>({product.reviewCount || 24})</div>
-                    </div>
-                    <div className={styles.productPrice}>{product.price ? `${product.price.toFixed(2)} €` : 'Prix indisponible'}</div>
-                    <p className={styles.productDescription}>
-                      {product.shortDescription || 'Aucune description disponible'}
-                    </p>
-                    <div className={styles.productActions}>
-                      <button 
-                        className={styles.addToCartButtonLarge}
-                        onClick={() => addToCart(product)}
-                      >
-                        Ajouter au panier
-                      </button>
-                      <Link href={`/produit/${product.id}`} legacyBehavior>
-                        <a className={styles.viewDetailsButton}>
-                          Voir les détails
+          {/* Affichage des produits ou message de chargement/erreur */}
+          {loading ? (
+            <div className={styles.loadingState}>
+              <div className={styles.spinner}></div>
+              <p>Chargement des produits...</p>
+            </div>
+          ) : error ? (
+            <div className={styles.errorState}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              <h2>Une erreur est survenue</h2>
+              <p>{error}</p>
+              <p>Veuillez rafraîchir la page ou réessayer plus tard.</p>
+            </div>
+          ) : products.length === 0 ? (
+            <div className={styles.emptyState}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+              </svg>
+              <h2>Aucun produit disponible pour le moment</h2>
+              <p>Notre catalogue est en cours de mise à jour. Revenez bientôt pour découvrir nos produits.</p>
+            </div>
+          ) : (
+            <>
+              {/* Grille de produits */}
+              <div className={styles.enhancedProductGrid}>
+                {currentProducts.map((product) => {
+                  // Déterminer si c'est un nouveau produit (moins de 30 jours)
+                  const isNew = new Date(product.createdAt) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+                  
+                  return (
+                    <div key={product._id} className={styles.enhancedProductCard}>
+                      {isNew && <div className={styles.productBadge}>Nouveau</div>}
+                      <Link href={`/produit/${product._id}`} legacyBehavior>
+                        <a className={styles.productImageContainer}>
+                          <img
+                            src={product.images && product.images.length > 0 ? product.images[0] : '/images/default-product.png'}
+                            alt={product.title}
+                            className={styles.productImage}
+                          />
+                          <div className={styles.productOverlay}>
+                            <button 
+                              className={styles.addToCartButton}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                addToCart(product);
+                              }}
+                              aria-label="Ajouter au panier"
+                            >
+                              Ajouter au panier
+                            </button>
+                            <button className={styles.quickViewButton} aria-label="Aperçu rapide">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                              </svg>
+                            </button>
+                          </div>
                         </a>
                       </Link>
+                      <div className={styles.productInfo}>
+                        <h3 className={styles.productName}>{product.title}</h3>
+                        <div className={styles.productRating}>
+                          <div className={styles.stars}>
+                            {"★".repeat(5)} {/* On met 5 étoiles par défaut */}
+                          </div>
+                          <div className={styles.reviewCount}>
+                            ({product.reviews ? product.reviews.length : 0})
+                          </div>
+                        </div>
+                        <div className={styles.productPrice}>{product.price ? `${product.price.toFixed(2)} €` : 'Prix indisponible'}</div>
+                        <p className={styles.productDescription}>
+                          {product.description || 'Aucune description disponible'}
+                        </p>
+                        <div className={styles.productActions}>
+                          <button 
+                            className={styles.addToCartButtonLarge}
+                            onClick={() => addToCart(product)}
+                            disabled={product.stock <= 0}
+                          >
+                            {product.stock > 0 ? 'Ajouter au panier' : 'Rupture de stock'}
+                          </button>
+                          <Link href={`/produit/${product._id}`} legacyBehavior>
+                            <a className={styles.viewDetailsButton}>
+                              Voir les détails
+                            </a>
+                          </Link>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className={styles.noProductsMessage}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <line x1="12" y1="8" x2="12" y2="12"></line>
-                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                </svg>
-                <p>Aucun produit disponible pour le moment.</p>
+                  );
+                })}
               </div>
-            )}
-          </div>
+              
+              {/* Pagination si nécessaire */}
+              {totalPages > 1 && (
+                <div className={styles.pagination}>
+                  <button 
+                    onClick={prevPage} 
+                    disabled={currentPage === 1}
+                    className={styles.paginationButton}
+                  >
+                    &laquo; Précédent
+                  </button>
+                  
+                  <div className={styles.pageNumbers}>
+                    {Array.from({ length: totalPages }, (_, i) => (
+                      <button
+                        key={i + 1}
+                        onClick={() => paginate(i + 1)}
+                        className={`${styles.pageNumber} ${currentPage === i + 1 ? styles.activePage : ''}`}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+                  </div>
+                  
+                  <button 
+                    onClick={nextPage} 
+                    disabled={currentPage === totalPages}
+                    className={styles.paginationButton}
+                  >
+                    Suivant &raquo;
+                  </button>
+                </div>
+              )}
+            </>
+          )}
           
           {/* Section des avantages */}
           <div className={styles.benefitsSection}>
@@ -713,7 +756,7 @@ const getEstimatedDeliveryDate = () => {
                 return (
                   <li key={item.id} className={styles.cartItem}>
                     <div className={styles.cartItemImage}>
-                      <img src={`https:${item.image}`} alt={item.name} />
+                      <img src={item.image} alt={item.name} />
                     </div>
                     
                     <div className={styles.cartItemContent}>
@@ -873,29 +916,4 @@ const getEstimatedDeliveryDate = () => {
 )}
     </>
   );
-}
-
-// Cette fonction s'exécute côté serveur à chaque requête
-export async function getServerSideProps() {
-  try {
-    // Récupération des produits depuis Contentful avec logs de diagnostic
-    console.log("Tentative de récupération des produits depuis Contentful...");
-    const products = await getAllProducts();
-    console.log(`${products.length} produits récupérés avec succès.`);
-    
-    return {
-      props: {
-        products,
-      },
-    };
-  } catch (error) {
-    console.error("Erreur lors de la récupération des produits:", error);
-    
-    // En cas d'erreur, retourner un tableau vide plutôt que de planter la page
-    return {
-      props: {
-        products: [],
-      },
-    };
-  }
 }
