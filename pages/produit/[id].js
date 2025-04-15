@@ -8,6 +8,11 @@ export default function ProductDetail({ product }) {
   const router = useRouter();
   const { id } = router.query;
 
+  if (!id) {
+    console.error("ID du produit introuvable !");
+    return null; // Ou affichez un message d'erreur
+  }
+
   // États pour la page
   const [isClient, setIsClient] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -24,29 +29,48 @@ export default function ProductDetail({ product }) {
 
   // Simulation d'ajout au panier avec notification
   const addToCart = () => {
-    const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const existingItem = storedCart.find(item => item.id === product._id);
+    const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const existingItem = storedCart.find((item) => item.id === product._id);
+
+    // Calculer la quantité totale possible
+    const maxQuantity = Math.min(20, product.stock);
 
     if (existingItem) {
+      // Vérifier si la quantité totale dépasse la limite
+      if (existingItem.quantity + quantity > maxQuantity) {
+        alert(
+          `Vous ne pouvez ajouter que ${
+            maxQuantity - existingItem.quantity
+          } article(s) supplémentaire(s) pour ce produit.`
+        );
+        return;
+      }
       existingItem.quantity += quantity;
     } else {
-      storedCart.push({ 
-        id: product._id, 
-        name: product.title, 
-        price: product.price, 
-        image: product.images[0], 
-        quantity 
+      // Vérifier si la quantité initiale dépasse la limite
+      if (quantity > maxQuantity) {
+        alert(
+          `Vous ne pouvez ajouter que ${maxQuantity} article(s) pour ce produit.`
+        );
+        return;
+      }
+      storedCart.push({
+        id: product._id,
+        name: product.title,
+        price: product.price,
+        image: product.images[0],
+        quantity,
       });
     }
 
-    localStorage.setItem('cart', JSON.stringify(storedCart));
-    setCartCount(prevCount => {
+    localStorage.setItem("cart", JSON.stringify(storedCart));
+    setCartCount((prevCount) => {
       const newItems = storedCart.reduce((sum, item) => sum + item.quantity, 0);
       return newItems;
     });
 
-    if (typeof window !== 'undefined') {
-      const cartIcon = document.getElementById('cartIcon');
+    if (typeof window !== "undefined") {
+      const cartIcon = document.getElementById("cartIcon");
       if (cartIcon) {
         cartIcon.classList.add(styles.cartBump);
         setTimeout(() => cartIcon.classList.remove(styles.cartBump), 300);
@@ -77,7 +101,9 @@ export default function ProductDetail({ product }) {
   // Gestion de la quantité
   const handleQuantityChange = (amount) => {
     const newQuantity = quantity + amount;
-    if (newQuantity > 0) {
+
+    // Limiter la quantité à 1 minimum et au stock ou 20 maximum
+    if (newQuantity > 0 && newQuantity <= Math.min(20, product.stock)) {
       setQuantity(newQuantity);
     }
   };
@@ -107,8 +133,11 @@ export default function ProductDetail({ product }) {
   useEffect(() => {
     // Synchroniser le nombre d'articles dans le panier avec le localStorage
     if (typeof window !== "undefined") {
-      const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
-      const totalItems = storedCart.reduce((sum, item) => sum + item.quantity, 0);
+      const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
+      const totalItems = storedCart.reduce(
+        (sum, item) => sum + item.quantity,
+        0
+      );
       setCartCount(totalItems);
     }
   }, []);
@@ -123,9 +152,10 @@ export default function ProductDetail({ product }) {
   }
 
   // Pour simplifier, on crée des données placeholders si certaines parties du produit ne sont pas définies
-  const productDescription = product.description || "Description non disponible";
-  const productFeatures = product.characteristics 
-    ? product.characteristics.split(',').map(feat => feat.trim()) 
+  const productDescription =
+    product.description || "Description non disponible";
+  const productFeatures = product.characteristics
+    ? product.characteristics.split(",").map((feat) => feat.trim())
     : ["Produit naturel", "Fabriqué en France"];
   const productOptions = {
     sizes: ["Standard (200g)"],
@@ -192,26 +222,49 @@ export default function ProductDetail({ product }) {
                 </li>
                 <li className={styles.navItem}>
                   <Link href="/store" legacyBehavior>
-                    <a className={styles.navLink}>Boutique
+                    <a className={styles.navLink}>
+                      Boutique
                       <div className={styles.megaMenu}>
                         <div className={styles.megaMenuGrid}>
                           <div className={styles.megaMenuCategory}>
                             <h3>Catégories</h3>
-                            <Link href="/boutique/visage" legacyBehavior><a>Soins visage</a></Link>
-                            <Link href="/boutique/corps" legacyBehavior><a>Soins corps</a></Link>
-                            <Link href="/boutique/cheveux" legacyBehavior><a>Cheveux</a></Link>
-                            <Link href="/boutique/accessoires" legacyBehavior><a>Accessoires</a></Link>
+                            <Link href="/boutique/visage" legacyBehavior>
+                              <a>Soins visage</a>
+                            </Link>
+                            <Link href="/boutique/corps" legacyBehavior>
+                              <a>Soins corps</a>
+                            </Link>
+                            <Link href="/boutique/cheveux" legacyBehavior>
+                              <a>Cheveux</a>
+                            </Link>
+                            <Link href="/boutique/accessoires" legacyBehavior>
+                              <a>Accessoires</a>
+                            </Link>
                           </div>
                           <div className={styles.megaMenuCategory}>
                             <h3>Collections</h3>
-                            <Link href="/boutique/aromatherapie" legacyBehavior><a>Aromathérapie</a></Link>
-                            <Link href="/boutique/peaux-sensibles" legacyBehavior><a>Peaux sensibles</a></Link>
-                            <Link href="/boutique/hydratation" legacyBehavior><a>Hydratation intense</a></Link>
+                            <Link href="/boutique/aromatherapie" legacyBehavior>
+                              <a>Aromathérapie</a>
+                            </Link>
+                            <Link
+                              href="/boutique/peaux-sensibles"
+                              legacyBehavior
+                            >
+                              <a>Peaux sensibles</a>
+                            </Link>
+                            <Link href="/boutique/hydratation" legacyBehavior>
+                              <a>Hydratation intense</a>
+                            </Link>
                           </div>
                           <div className={styles.megaMenuImage}>
                             <p>Nouveau</p>
-                            <img src="/images/2.JPEG" alt="Nouvelle collection" />
-                            <Link href="/boutique/nouveautes" legacyBehavior><a className={styles.megaMenuButton}>Découvrir</a></Link>
+                            <img
+                              src="/images/2.JPEG"
+                              alt="Nouvelle collection"
+                            />
+                            <Link href="/boutique/nouveautes" legacyBehavior>
+                              <a className={styles.megaMenuButton}>Découvrir</a>
+                            </Link>
                           </div>
                         </div>
                       </div>
@@ -312,9 +365,7 @@ export default function ProductDetail({ product }) {
                 <a className={styles.breadcrumbLink}>Boutique</a>
               </Link>
               <span className={styles.breadcrumbSeparator}>/</span>
-              <span className={styles.breadcrumbCurrent}>
-                {product.title}
-              </span>
+              <span className={styles.breadcrumbCurrent}>{product.title}</span>
             </div>
           </div>
 
@@ -330,9 +381,10 @@ export default function ProductDetail({ product }) {
                     onClick={() => setShowZoomModal(true)}
                     onMouseMove={handleImageMouseMove}
                     style={{
-                      backgroundImage: galleryImages.length > 0 
-                        ? `url(${galleryImages[activeImage]})` 
-                        : undefined,
+                      backgroundImage:
+                        galleryImages.length > 0
+                          ? `url(${galleryImages[activeImage]})`
+                          : undefined,
                     }}
                   >
                     {galleryImages.length === 0 && (
@@ -506,14 +558,21 @@ export default function ProductDetail({ product }) {
                   <div className={styles.stockStatus}>
                     {product.stock > 0 ? (
                       <span className={styles.inStock}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                        En stock ({product.stock} disponibles)
+                      
                       </span>
                     ) : (
                       <span className={styles.outOfStock}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
                           <line x1="18" y1="6" x2="6" y2="18"></line>
                           <line x1="6" y1="6" x2="18" y2="18"></line>
                         </svg>
@@ -524,8 +583,8 @@ export default function ProductDetail({ product }) {
 
                   {/* Actions */}
                   <div className={styles.productActions}>
-                    <button 
-                      className={styles.addToCartBtn} 
+                    <button
+                      className={styles.addToCartBtn}
                       onClick={addToCart}
                       disabled={product.stock <= 0}
                     >
@@ -544,7 +603,9 @@ export default function ProductDetail({ product }) {
                         <circle cx="20" cy="21" r="1"></circle>
                         <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                       </svg>
-                      {product.stock > 0 ? 'Ajouter au panier' : 'Rupture de stock'}
+                      {product.stock > 0
+                        ? "Ajouter au panier"
+                        : "Rupture de stock"}
                     </button>
                     <button
                       className={`${styles.wishlistBtn} ${
@@ -639,7 +700,6 @@ export default function ProductDetail({ product }) {
                   <div className={styles.productShare}>
                     <span>Partager :</span>
                     <div className={styles.shareLinks}>
-                      
                       <a
                         href="#"
                         className={styles.shareLink}
@@ -686,27 +746,27 @@ export default function ProductDetail({ product }) {
                         </svg>
                       </a>
 
-                        <svg
-                          viewBox="0 0 24 24"
+                      <svg
+                        viewBox="0 0 24 24"
+                        width="20"
+                        height="20"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <rect
+                          x="2"
+                          y="2"
                           width="20"
                           height="20"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          fill="none"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <rect
-                            x="2"
-                            y="2"
-                            width="20"
-                            height="20"
-                            rx="5"
-                            ry="5"
-                          ></rect>
-                          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                        </svg>
+                          rx="5"
+                          ry="5"
+                        ></rect>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                      </svg>
 
                       <a
                         href="#"
@@ -840,7 +900,8 @@ export default function ProductDetail({ product }) {
                         <div className={styles.usageStepContent}>
                           <h4>Mouiller le savon</h4>
                           <p>
-                            Humidifiez le savon et vos mains avec de l'eau tiède.
+                            Humidifiez le savon et vos mains avec de l'eau
+                            tiède.
                           </p>
                         </div>
                       </li>
@@ -876,9 +937,9 @@ export default function ProductDetail({ product }) {
                         <div className={styles.usageStepContent}>
                           <h4>Sécher et ranger</h4>
                           <p>
-                            Après utilisation, placez le savon sur un porte-savon
-                            qui permet à l'eau de s'écouler pour prolonger sa
-                            durée de vie.
+                            Après utilisation, placez le savon sur un
+                            porte-savon qui permet à l'eau de s'écouler pour
+                            prolonger sa durée de vie.
                           </p>
                         </div>
                       </li>
@@ -975,40 +1036,182 @@ export default function ProductDetail({ product }) {
             </div>
 
             <div
-              className={`${styles.tabContent} ${
-                activeTab === "reviews" ? styles.tabContentActive : ""
-              }`}
-            >
-              {product.reviews && product.reviews.length > 0 ? (
-                product.reviews.map((review, index) => (
-                  <div key={index} className={styles.review}>
-                    <div className={styles.reviewHeader}>
-                      <div className={styles.reviewerName}>{review.name}</div>
-                      <div className={styles.reviewDate}>{review.date}</div>
-                    </div>
-                    <div className={styles.stars}>
-                      {"★".repeat(review.rating)}
-                      {"☆".repeat(5 - review.rating)}
-                    </div>
-                    <p className={styles.reviewText}>{review.text}</p>
-                  </div>
-                ))
-              ) : (
-                reviewsData.map((review, index) => (
-                  <div key={index} className={styles.review}>
-                    <div className={styles.reviewHeader}>
-                      <div className={styles.reviewerName}>{review.name}</div>
-                      <div className={styles.reviewDate}>{review.date}</div>
-                    </div>
-                    <div className={styles.stars}>
-                      {"★".repeat(review.rating)}
-                      {"☆".repeat(5 - review.rating)}
-                    </div>
-                    <p className={styles.reviewText}>{review.text}</p>
-                  </div>
-                ))
-              )}
+  className={`${styles.tabContent} ${
+    activeTab === "reviews" ? styles.tabContentActive : ""
+  }`}
+>
+  <div className={styles.reviewsContainer}>
+    <div className={styles.reviewsHeader}>
+      <h2 className={styles.reviewsTitle}>Avis clients</h2>
+      <p className={styles.reviewsSubtitle}>
+        Découvrez ce que nos clients pensent de ce produit
+      </p>
+    </div>
+
+    {product.reviews && product.reviews.length > 0 ? (
+      <div className={styles.reviewsList}>
+        {product.reviews.map((review, index) => (
+          <div key={index} className={styles.reviewCard}>
+            <div className={styles.reviewCardHeader}>
+              <div className={styles.reviewerAvatar}>
+                {(review.user || "Anonyme").charAt(0).toUpperCase()}
+              </div>
+              <div className={styles.reviewerInfo}>
+                <div className={styles.reviewerName}>
+                  {review.user || "Utilisateur anonyme"}
+                </div>
+              </div>
             </div>
+            <div className={styles.reviewStars}>
+              {"★".repeat(review.rating)}
+              {"☆".repeat(5 - review.rating)}
+            </div>
+            <p className={styles.reviewText}>{review.comment}</p>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <div className={styles.noReviewsContainer}>
+        <div className={styles.noReviewsIcon}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+          </svg>
+        </div>
+        <p className={styles.noReviewsText}>Aucun avis pour l'instant</p>
+        <p className={styles.noReviewsMessage}>
+          Soyez le premier à partager votre expérience avec ce produit !
+        </p>
+      </div>
+    )}
+
+    {/* Formulaire pour ajouter un avis */}
+    <div className={styles.reviewFormContainer}>
+      <h3 className={styles.reviewFormTitle}>Partagez votre expérience</h3>
+      <p className={styles.reviewFormSubtitle}>
+        Votre avis aide d'autres clients à faire le bon choix
+      </p>
+      
+      <form
+        className={styles.reviewForm}
+        onSubmit={async (e) => {
+          e.preventDefault();
+          const firstName = e.target.firstName.value.trim();
+          const lastName = e.target.lastName.value.trim();
+          const comment = e.target.comment.value.trim();
+          const rating = parseInt(e.target.rating.value, 10);
+
+          console.log("Données envoyées :", {
+            firstName,
+            lastName,
+            comment,
+            rating,
+          });
+
+          if (!firstName || !lastName || !comment || isNaN(rating)) {
+            alert("Veuillez remplir tous les champs obligatoires.");
+            return;
+          }
+
+          try {
+            const response = await fetch(
+              `http://localhost:8888/products/${id}/review`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  firstName,
+                  lastName,
+                  comment,
+                  rating,
+                }),
+              }
+            );
+
+            const data = await response.json();
+            console.log("Réponse du backend :", data);
+
+            if (!response.ok) {
+              throw new Error(
+                data.error || "Erreur lors de l'ajout de l'avis"
+              );
+            }
+
+            alert("Avis ajouté avec succès !");
+            router.reload(); // Recharger la page pour afficher le nouvel avis
+          } catch (error) {
+            console.error(
+              "Erreur lors de l'ajout de l'avis :",
+              error
+            );
+            alert(error.message);
+          }
+        }}
+      >
+        <div className={styles.reviewFormRow}>
+          <div className={styles.formGroup}>
+            <label htmlFor="firstName">Prénom</label>
+            <input
+              type="text"
+              id="firstName"
+              name="firstName"
+              placeholder="Votre prénom"
+              required
+              className={styles.formInput}
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label htmlFor="lastName">Nom</label>
+            <input
+              type="text"
+              id="lastName"
+              name="lastName"
+              placeholder="Votre nom"
+              required
+              className={styles.formInput}
+            />
+          </div>
+        </div>
+        
+        <div className={styles.formGroup}>
+          <label htmlFor="rating">Votre note</label>
+          <div className={styles.ratingSelector}>
+            <select id="rating" name="rating" required className={styles.formSelect}>
+              <option value="">Choisir une note</option>
+              <option value="5">★★★★★ Excellent</option>
+              <option value="4">★★★★☆ Très bien</option>
+              <option value="3">★★★☆☆ Bien</option>
+              <option value="2">★★☆☆☆ Moyen</option>
+              <option value="1">★☆☆☆☆ Déçu</option>
+            </select>
+          </div>
+        </div>
+        
+        <div className={styles.formGroup}>
+          <label htmlFor="comment">Votre avis</label>
+          <textarea
+            id="comment"
+            name="comment"
+            rows="5"
+            placeholder="Partagez votre expérience avec ce produit..."
+            required
+            className={styles.formTextarea}
+          ></textarea>
+        </div>
+        
+        <div className={styles.formActions}>
+          <button type="submit" className={styles.submitReviewButton}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            Publier mon avis
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
           </section>
 
           {/* CTA d'inscription à la newsletter */}
@@ -1148,27 +1351,25 @@ export default function ProductDetail({ product }) {
 // Cette fonction s'exécute côté serveur à chaque requête
 export async function getServerSideProps({ params }) {
   try {
-    // Récupération du produit par son ID depuis l'API locale
     const response = await fetch(`http://localhost:8888/products/${params.id}`);
-    
+
     if (!response.ok) {
-      console.log(`Erreur lors de la récupération du produit: ${response.status}`);
+      console.log(
+        `Erreur lors de la récupération du produit: ${response.status}`
+      );
       return { notFound: true };
     }
-    
+
     const data = await response.json();
-    
-    // Si la requête a réussi mais ne contient pas de produit
+
     if (!data.result || !data.product) {
       console.log("Produit non trouvé dans la réponse de l'API");
       return { notFound: true };
     }
-    
-    console.log("Produit récupéré:", data.product.title);
-    
+
     return {
       props: {
-        product: data.product,
+        product: data.product, // Inclut les avis dans `product.reviews`
       },
     };
   } catch (error) {

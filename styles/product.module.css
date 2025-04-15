@@ -62,6 +62,274 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.stockStatus {
+  margin: 10px 0;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.inStock {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #2e7d32;
+}
+
+.outOfStock {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #d32f2f;
+}
+
+/* Styles pour la section des avis */
+.reviewsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.reviewsHeader {
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.reviewsTitle {
+  font-size: 24px;
+  color: #2e7d32;
+  margin: 0 0 8px 0;
+}
+
+.reviewsSubtitle {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
+}
+
+/* Style pour la liste des avis */
+.reviewsList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.reviewCard {
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.reviewCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.reviewCardHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.reviewerAvatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: #2e7d32;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 600;
+  margin-right: 12px;
+}
+
+.reviewerInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.reviewerName {
+  font-weight: 600;
+  color: #333;
+  font-size: 16px;
+}
+
+.reviewDate {
+  font-size: 14px;
+  color: #777;
+}
+
+.reviewStars {
+  font-size: 18px;
+  color: #ff9800;
+  margin-bottom: 12px;
+}
+
+.reviewText {
+  color: #444;
+  line-height: 1.6;
+  font-size: 15px;
+  margin: 0;
+}
+
+/* Style pour l'absence d'avis */
+.noReviewsContainer {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.noReviewsIcon {
+  color: #ccc;
+  margin-bottom: 16px;
+}
+
+.noReviewsText {
+  font-size: 18px;
+  font-weight: 600;
+  color: #555;
+  margin: 0 0 8px 0;
+}
+
+.noReviewsMessage {
+  font-size: 15px;
+  color: #777;
+  margin: 0;
+}
+
+/* Style pour le formulaire d'avis */
+.reviewFormContainer {
+  background-color: #f0f5f0;
+  border-radius: 12px;
+  padding: 30px;
+  margin-top: 20px;
+}
+
+.reviewFormTitle {
+  font-size: 20px;
+  color: #2e7d32;
+  margin: 0 0 6px 0;
+}
+
+.reviewFormSubtitle {
+  font-size: 15px;
+  color: #666;
+  margin: 0 0 24px 0;
+}
+
+.reviewForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.reviewFormRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formGroup label {
+  font-weight: 500;
+  color: #444;
+  font-size: 15px;
+}
+
+.formInput,
+.formSelect,
+.formTextarea {
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 15px;
+  background-color: white;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.formInput:focus,
+.formSelect:focus,
+.formTextarea:focus {
+  outline: none;
+  border-color: #2e7d32;
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+}
+
+.ratingSelector {
+  position: relative;
+}
+
+.formSelect {
+  width: 100%;
+  appearance: none;
+  padding-right: 30px;
+}
+
+.ratingSelector::after {
+  content: "▼";
+  font-size: 12px;
+  color: #666;
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.formTextarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.formActions {
+  margin-top: 10px;
+}
+
+.submitReviewButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.submitReviewButton:hover {
+  background-color: #1b5e20;
+  transform: translateY(-2px);
+}
+
+.submitReviewButton:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .reviewFormRow {
+    grid-template-columns: 1fr;
+  }
+}
+
 .resetMargins {
   margin: 0;
   padding: 0;

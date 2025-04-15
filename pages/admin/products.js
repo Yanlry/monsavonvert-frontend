@@ -318,28 +318,29 @@ export default function AdminProducts() {
 
   const handleUpdateProduct = async (e) => {
     e.preventDefault();
-
+  
     const productData = new FormData();
     productData.append("title", selectedProduct.title);
     productData.append("description", selectedProduct.description);
     productData.append("price", selectedProduct.price);
     productData.append("stock", selectedProduct.stock);
-
+    productData.append("characteristics", selectedProduct.characteristics || "");
+    productData.append("ingredients", selectedProduct.ingredients || "");
+    productData.append("usageTips", selectedProduct.usageTips || "");
+  
     // Ajouter les images existantes
     const existingImages = selectedProduct.images
-      .filter((image) => typeof image === "string" && image.trim() !== "") // Filtrer les chaînes valides
-      .map((image) => image.url || image); // Récupérer les URLs des images existantes
+      .filter((image) => typeof image === "string" && image.trim() !== "")
+      .map((image) => image.url || image);
     productData.append("existingImages", JSON.stringify(existingImages));
-
+  
     // Ajouter les nouvelles images
     selectedProduct.images.forEach((image) => {
       if (image.file) {
-        productData.append("images", image.file); // Le champ `name` doit être `images`
+        productData.append("images", image.file);
       }
     });
-
-    console.log("Données envoyées :", Array.from(productData.entries())); // Log des données envoyées
-
+  
     try {
       const response = await fetch(
         `http://localhost:8888/products/update/${selectedProduct._id}`,
@@ -348,21 +349,21 @@ export default function AdminProducts() {
           body: productData,
         }
       );
-
+  
       if (!response.ok) {
         throw new Error("Erreur lors de la mise à jour du produit");
       }
-
+  
       const result = await response.json();
       console.log("Produit mis à jour :", result);
-
+  
       // Mettre à jour la liste des produits
       setProducts((prevProducts) =>
         prevProducts.map((product) =>
           product._id === result.product._id ? result.product : product
         )
       );
-
+  
       setShowEditModal(false);
       showNotification("success", "Produit mis à jour avec succès !");
     } catch (error) {
@@ -370,7 +371,6 @@ export default function AdminProducts() {
       showNotification("error", "Erreur lors de la mise à jour du produit.");
     }
   };
-
   const handleEditProduct = (product) => {
     if (!product) {
       console.error("Produit non défini");
