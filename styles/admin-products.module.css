@@ -106,6 +106,50 @@
     color: #333;
   }
   
+  .productImageContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .thumbnailsContainer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+  
+  .thumbnailBox {
+    width: 23%;  /* Légèrement moins que 25% pour avoir un petit espace entre les images */
+    height: 60px;
+    border: 1px dashed #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f9f9f9;
+  }
+  
+  .thumbnailImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .addImagePlaceholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 10px;
+    cursor: pointer;
+  }
+  
+  .addImagePlaceholder svg {
+    margin-bottom: 2px;
+  }
+
   .productDetails p {
     margin: 4px 0;
     color: #666;
