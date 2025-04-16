@@ -5,6 +5,11 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import styles from '../styles/checkout.module.css'; // Vous devrez créer ce fichier
+import { loadStripe } from '@stripe/stripe-js'; // Importation de Stripe
+
+// Initialisez Stripe avec votre clé publique
+// IMPORTANT: On utilise directement la clé comme une chaîne de caractères
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 export default function Checkout() {
   // État pour détecter si nous sommes côté client
@@ -37,6 +42,9 @@ export default function Checkout() {
   
   // État pour vérifier si le formulaire est valide
   const [isFormValid, setIsFormValid] = useState(false);
+  
+  // État pour afficher un message de chargement pendant la redirection vers Stripe
+  const [isLoading, setIsLoading] = useState(false);
   
   // Router pour la navigation
   const router = useRouter();
@@ -155,35 +163,70 @@ export default function Checkout() {
     return (parseFloat(getTotalPrice()) + getShippingCost()).toFixed(2);
   };
   
-  // Simuler la soumission du formulaire et la redirection vers Stripe
-  const handleCheckout = () => {
-    // Enregistrer les données de commande dans le localStorage
-    const orderData = {
-      items: cartItems,
-      customer: formData,
-      shipping: {
-        method: shippingMethod,
-        cost: getShippingCost()
-      },
-      total: getFinalTotal()
-    };
-    
+  // Fonction pour rediriger vers Stripe Checkout
+  const handleCheckout = async () => {
     try {
+      setIsLoading(true); // Activer l'indicateur de chargement
+      console.log('Préparation de la session Stripe...');
+      
+      // Enregistrer les données de commande dans le localStorage
+      const orderData = {
+        items: cartItems,
+        customer: formData,
+        shipping: {
+          method: shippingMethod,
+          cost: getShippingCost()
+        },
+        total: getFinalTotal()
+      };
+      
       localStorage.setItem('pendingOrder', JSON.stringify(orderData));
       console.log('Données de commande enregistrées:', orderData);
       
-      // Ici, vous redirigerez vers Stripe plus tard
-      alert('Redirection vers la page de paiement...');
-      // Simuler une redirection
-      console.log('Redirection vers la passerelle de paiement Stripe');
+      // Créer une session Stripe côté client en appelant votre API
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          items: cartItems,
+          shipping: {
+            name: `${formData.firstName} ${formData.lastName}`,
+            address: {
+              line1: formData.address,
+              postal_code: formData.postalCode,
+              city: formData.city,
+              country: formData.country,
+            },
+          },
+          shippingCost: getShippingCost(),
+          shippingMethod: shippingMethod,
+          email: formData.email,
+        }),
+      });
       
-      // Vider le panier après une commande réussie
-      // localStorage.removeItem('cart');
-      // setCartItems([]);
-      // setCartCount(0);
+      if (!response.ok) {
+        throw new Error('Erreur lors de la création de la session de paiement');
+      }
+      
+      const { sessionId } = await response.json();
+      console.log('Session Stripe créée avec succès, ID:', sessionId);
+      
+      // Rediriger vers Stripe Checkout
+      const stripe = await stripePromise;
+      const { error } = await stripe.redirectToCheckout({ sessionId });
+      
+      if (error) {
+        console.error('Erreur lors de la redirection vers Stripe:', error);
+        alert(`Erreur de paiement: ${error.message}`);
+        setIsLoading(false);
+      }
+      
     } catch (error) {
-      console.error('Erreur lors de l\'enregistrement des données de commande:', error);
-      alert('Une erreur est survenue. Veuillez réessayer.');
+      console.error('Erreur lors du processus de paiement:', error);
+      alert('Une erreur est survenue lors de la préparation du paiement. Veuillez réessayer.');
+      setIsLoading(false);
     }
   };
 
@@ -570,13 +613,13 @@ export default function Checkout() {
                       <div className={styles.paymentInfo}>
                         <div className={styles.paymentMethods}>
                           <p className={styles.paymentNote}>
-                            En cliquant sur le bouton ci-dessous, vous serez redirigé vers notre partenaire de paiement sécurisé.
+                            En cliquant sur "Payer", vous serez redirigé vers notre partenaire de paiement sécurisé Stripe.
                           </p>
                           <div className={styles.paymentLogos}>
-                            <img src="/images/payments/visa.svg" alt="Visa" className={styles.paymentLogo} />
-                            <img src="/images/payments/mastercard.svg" alt="Mastercard" className={styles.paymentLogo} />
-                            <img src="/images/payments/amex.svg" alt="American Express" className={styles.paymentLogo} />
-                            <img src="/images/payments/applepay.svg" alt="Apple Pay" className={styles.paymentLogo} />
+                            <img src="/images/payments/visa.png" alt="Visa" className={styles.paymentLogo} />
+                            <img src="/images/payments/mastercard.png" alt="Mastercard" className={styles.paymentLogo} />
+                            <img src="/images/payments/paypal.png" alt="Paypal" className={styles.paymentLogo} />
+                            <img src="/images/payments/applepay.png" alt="Apple Pay" className={styles.paymentLogo} />
                           </div>
                         </div>
                         
@@ -627,12 +670,22 @@ export default function Checkout() {
                         <button 
                           onClick={handleCheckout}
                           className={`${styles.button} ${styles.primaryButton} ${styles.paymentButton}`}
+                          disabled={isLoading}
                         >
-                          Payer {getFinalTotal()} €
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                            <line x1="1" y1="10" x2="23" y2="10"></line>
-                          </svg>
+                          {isLoading ? (
+                            <>
+                              <span className={styles.loadingSpinner}></span>
+                              Traitement en cours...
+                            </>
+                          ) : (
+                            <>
+                              Payer {getFinalTotal()} €
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                                <line x1="1" y1="10" x2="23" y2="10"></line>
+                              </svg>
+                            </>
+                          )}
                         </button>
                       </div>
                     </div>

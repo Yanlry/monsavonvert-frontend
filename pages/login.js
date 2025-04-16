@@ -107,7 +107,9 @@ export default function Login() {
   
       // Vérification du rôle
       const userRole = data.role || 'user'; // Par défaut, rôle "user"
-  
+      localStorage.setItem('userRole', userRole);
+      console.log('Rôle utilisateur détecté:', userRole);
+      
       // Redirection en fonction du rôle
       if (userRole.toLowerCase() === 'admin') {
         console.log('Rôle Admin détecté, redirection vers le dashboard admin');
