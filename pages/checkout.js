@@ -261,7 +261,7 @@ export default function Checkout() {
       }
   
       try {
-        const response = await fetch('https://monsavonvert-backend.vercel.app/customers', {
+        const response = await fetch('http://localhost:8888/customers', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
