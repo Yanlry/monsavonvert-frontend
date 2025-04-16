@@ -228,7 +228,7 @@ export default function Home() {
         <meta property="og:image" content="/images/og-image.jpg" />
       </Head>
 
-      <div className={styles.globalWrapper}>
+      <div className={styles.container}>
         {/* Header avec navigation */}
         <header
           className={`${styles.header} ${

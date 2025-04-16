@@ -4,7 +4,7 @@
     padding: 0;
   }
   
-  .globalWrapper {
+  .container {
     display: flex;
     flex-direction: column;
     min-height: 100vh;

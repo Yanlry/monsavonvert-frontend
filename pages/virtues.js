@@ -154,7 +154,7 @@ export default function VertusBienfaits() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
 
-      <div className={styles.globalWrapper}>
+      <div className={styles.container}>
         {/* Header avec navigation */}
         <header className={`${styles.header} ${scrolled ? styles.headerScrolled : ''}`}>
           <div className={styles.headerContent}>
@@ -169,7 +169,7 @@ export default function VertusBienfaits() {
             {/* Navigation principale */}
             <nav className={styles.mainNav}>
               <ul className={styles.navList}>
-              <li className={styles.navItem}>
+                <li className={styles.navItem}>
                   <Link href="/" legacyBehavior>
                     <a className={styles.navLink}>Accueil</a>
                   </Link>
@@ -204,7 +204,7 @@ export default function VertusBienfaits() {
                 </li>
                 <li className={styles.navItem}>
                   <Link href="/virtues" legacyBehavior>
-                    <a className={styles.navLink}>Vertu & bienfaits</a>
+                    <a className={`${styles.navLink} ${styles.active}`}>Vertu & bienfaits</a>
                   </Link>
                 </li>
                 <li className={styles.navItem}>
@@ -269,7 +269,7 @@ export default function VertusBienfaits() {
 
           {/* Section d'introduction */}
           <section className={styles.introSection}>
-            <div className={styles.container}>
+            <div className={styles.flexContainer}>
               <div className={styles.introContent}>
                 <span className={styles.sectionTag}>Le savon d'Alep</span>
                 <h2 className={styles.introTitle}>Le trésor ancestral de la cosmétique</h2>
@@ -307,84 +307,82 @@ export default function VertusBienfaits() {
 
           {/* Section sur l'huile de baie de laurier */}
           <section className={styles.laurelSection}>
-            <div className={styles.container}>
-              <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>L'huile de baie de laurier: le secret de ses vertus</h2>
-                <p className={styles.sectionSubtitle}>
-                  Comprendre le composant magique qui donne au savon d'Alep toutes ses propriétés
-                </p>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>L'huile de baie de laurier: le secret de ses vertus</h2>
+              <p className={styles.sectionSubtitle}>
+                Comprendre le composant magique qui donne au savon d'Alep toutes ses propriétés
+              </p>
+            </div>
+            
+            <div className={styles.laurelContent}>
+              <div className={styles.laurelImageWrapper}>
+                <img src="/images/7.JPEG" alt="Huile de baie de laurier" className={styles.laurelImage} />
               </div>
-              
-              <div className={styles.laurelContent}>
-                <div className={styles.laurelImageWrapper}>
-                  <img src="/images/7.JPEG" alt="Huile de baie de laurier" className={styles.laurelImage} />
-                </div>
-                <div className={styles.laurelInfo}>
-                  <h3>Un concentré de bienfaits naturels</h3>
-                  <p>
-                    L'huile de baie de laurier est extraite des baies du laurier noble (Laurus nobilis), un arbuste méditerranéen aux vertus médicinales reconnues depuis l'Antiquité. Riche en composés actifs, cette huile précieuse est le secret qui fait du savon d'Alep un produit d'exception.
-                  </p>
-                  
-                  <h3>Ses propriétés exceptionnelles</h3>
-                  <ul className={styles.propertiesList}>
-                    <li>
-                      <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                      </svg>
-                      <span>
-                        <strong>Antiseptique & antibactérienne</strong> - Combat naturellement les bactéries et prévient les infections cutanées
-                      </span>
-                    </li>
-                    <li>
-                      <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                      </svg>
-                      <span>
-                        <strong>Anti-inflammatoire</strong> - Apaise les irritations et réduit les rougeurs cutanées
-                      </span>
-                    </li>
-                    <li>
-                      <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                      </svg>
-                      <span>
-                        <strong>Séborégulatrice</strong> - Équilibre la production de sébum, idéale pour les peaux mixtes à grasses
-                      </span>
-                    </li>
-                    <li>
-                      <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                      </svg>
-                      <span>
-                        <strong>Cicatrisante</strong> - Favorise la guérison des petites lésions et accélère la régénération cellulaire
-                      </span>
-                    </li>
-                    <li>
-                      <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                      </svg>
-                      <span>
-                        <strong>Antioxydante</strong> - Protège la peau contre les agressions extérieures et les radicaux libres
-                      </span>
-                    </li>
-                  </ul>
-                  
-                  <p className={styles.laurelNote}>
-                    <strong>La concentration en huile de baie de laurier est clé :</strong> Plus le pourcentage est élevé, plus les propriétés curatives du savon sont intenses. C'est cette concentration qui détermine l'efficacité du savon selon les différents types de peau et problèmes cutanés.
-                  </p>
-                </div>
+              <div className={styles.laurelInfo}>
+                <h3>Un concentré de bienfaits naturels</h3>
+                <p>
+                  L'huile de baie de laurier est extraite des baies du laurier noble (Laurus nobilis), un arbuste méditerranéen aux vertus médicinales reconnues depuis l'Antiquité. Riche en composés actifs, cette huile précieuse est le secret qui fait du savon d'Alep un produit d'exception.
+                </p>
+                
+                <h3>Ses propriétés exceptionnelles</h3>
+                <ul className={styles.propertiesList}>
+                  <li>
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    <span>
+                      <strong>Antiseptique & antibactérienne</strong> - Combat naturellement les bactéries et prévient les infections cutanées
+                    </span>
+                  </li>
+                  <li>
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    <span>
+                      <strong>Anti-inflammatoire</strong> - Apaise les irritations et réduit les rougeurs cutanées
+                    </span>
+                  </li>
+                  <li>
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    <span>
+                      <strong>Séborégulatrice</strong> - Équilibre la production de sébum, idéale pour les peaux mixtes à grasses
+                    </span>
+                  </li>
+                  <li>
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    <span>
+                      <strong>Cicatrisante</strong> - Favorise la guérison des petites lésions et accélère la régénération cellulaire
+                    </span>
+                  </li>
+                  <li>
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    <span>
+                      <strong>Antioxydante</strong> - Protège la peau contre les agressions extérieures et les radicaux libres
+                    </span>
+                  </li>
+                </ul>
+                
+                <p className={styles.laurelNote}>
+                  <strong>La concentration en huile de baie de laurier est clé :</strong> Plus le pourcentage est élevé, plus les propriétés curatives du savon sont intenses. C'est cette concentration qui détermine l'efficacité du savon selon les différents types de peau et problèmes cutanés.
+                </p>
               </div>
             </div>
           </section>
 
           {/* Caractéristiques générales du savon d'Alep */}
           <section className={styles.featuresSection}>
-            <div className={styles.container}>
+            <div className={styles.contentContainer}>
               <div className={styles.sectionHeader}>
                 <h2 className={styles.sectionTitle}>Pourquoi choisir le savon d'Alep ?</h2>
                 <p className={styles.sectionSubtitle}>
@@ -408,190 +406,189 @@ export default function VertusBienfaits() {
 
           {/* Sections des différentes concentrations */}
           <section className={styles.concentrationsSection}>
-            <div className={styles.container}>
-              <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>Les différentes concentrations et leurs bienfaits</h2>
-                <p className={styles.sectionSubtitle}>
-                  Chaque concentration d'huile de baie de laurier offre des vertus spécifiques adaptées à vos besoins
-                </p>
-              </div>
-              
-              <div className={styles.concentrationsContent}>
-                {concentrationDetails.map((concentration, index) => (
-                  <div key={concentration.id} className={`${styles.concentrationCard} ${index % 2 !== 0 ? styles.reverseCard : ''}`}>
-                    <div className={styles.concentrationImageWrapper}>
-                      <div className={styles.concentrationPercentage}>
-                        <span>{concentration.percentage}</span>
-                        <p>Huile de<br />baie de laurier</p>
-                      </div>
-                      <img 
-                        src={concentration.image} 
-                        alt={`Savon d'Alep ${concentration.percentage} huile de baie de laurier`} 
-                        className={styles.concentrationImage}
-                      />
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>Les différentes concentrations et leurs bienfaits</h2>
+              <p className={styles.sectionSubtitle}>
+                Chaque concentration d'huile de baie de laurier offre des vertus spécifiques adaptées à vos besoins
+              </p>
+            </div>
+            
+            <div className={styles.concentrationsContent}>
+              {concentrationDetails.map((concentration, index) => (
+                <div 
+                  key={concentration.id} 
+                  className={`${styles.concentrationCard} ${index % 2 !== 0 ? styles.reverseCard : ''}`}
+                >
+                  <div className={styles.concentrationImageWrapper}>
+                    <div className={styles.concentrationPercentage}>
+                      <span>{concentration.percentage}</span>
+                      <p>Huile de<br />baie de laurier</p>
                     </div>
-                    <div className={styles.concentrationInfo}>
-                      <h3 className={styles.concentrationTitle}>{concentration.title}</h3>
-                      <div className={styles.concentrationSuitable}>
-                        <span>Idéal pour :</span> {concentration.suitableFor}
-                      </div>
-                      <p className={styles.concentrationDescription}>
-                        {concentration.description}
-                      </p>
-                      <h4 className={styles.benefitsTitle}>Bienfaits spécifiques</h4>
-                      <ul className={styles.benefitsList}>
-                        {concentration.benefits.map((benefit, idx) => (
-                          <li key={idx}>
-                            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none">
-                              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                              <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                            </svg>
-                            <span>{benefit}</span>
-                          </li>
-                        ))}
-                      </ul>
-                      <a href={`/store#savon-${concentration.percentage.replace('%', '')}`} className={styles.shopButton}>
-                        Découvrir le savon à {concentration.percentage}
-                      </a>
-                    </div>
+                    <img 
+                      src={concentration.image} 
+                      alt={`Savon d'Alep ${concentration.percentage} huile de baie de laurier`} 
+                      className={styles.concentrationImage}
+                    />
                   </div>
-                ))}
-              </div>
+                  <div className={styles.concentrationInfo}>
+                    <h3 className={styles.concentrationTitle}>{concentration.title}</h3>
+                    <div className={styles.concentrationSuitable}>
+                      <span>Idéal pour :</span> {concentration.suitableFor}
+                    </div>
+                    <p className={styles.concentrationDescription}>
+                      {concentration.description}
+                    </p>
+                    <h4 className={styles.benefitsTitle}>Bienfaits spécifiques</h4>
+                    <ul className={styles.benefitsList}>
+                      {concentration.benefits.map((benefit, idx) => (
+                        <li key={idx}>
+                          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                          </svg>
+                          <span>{benefit}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <a href={`/store#savon-${concentration.percentage.replace('%', '')}`} className={styles.shopButton}>
+                      Découvrir le savon à {concentration.percentage}
+                    </a>
+                  </div>
+                </div>
+              ))}
             </div>
           </section>
 
           {/* Guide de choix */}
           <section className={styles.guideSection}>
-            <div className={styles.container}>
-              <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>Comment choisir votre savon d'Alep ?</h2>
-                <p className={styles.sectionSubtitle}>
-                  Guide simple pour sélectionner la concentration parfaite selon votre type de peau
-                </p>
-              </div>
-              
-              <div className={styles.guideContent}>
-                <div className={styles.guideTable}>
-                  <div className={styles.guideTableHeader}>
-                    <div className={styles.guideTableCell}>Type de peau/Besoin</div>
-                    <div className={styles.guideTableCell}>Concentration recommandée</div>
-                    <div className={styles.guideTableCell}>Pourquoi</div>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>Comment choisir votre savon d'Alep ?</h2>
+              <p className={styles.sectionSubtitle}>
+                Guide simple pour sélectionner la concentration parfaite selon votre type de peau
+              </p>
+            </div>
+            
+            <div className={styles.guideContent}>
+              <div className={styles.guideTable}>
+                <div className={styles.guideTableHeader}>
+                  <div className={styles.guideTableCell}>Type de peau/Besoin</div>
+                  <div className={styles.guideTableCell}>Concentration recommandée</div>
+                  <div className={styles.guideTableCell}>Pourquoi</div>
+                </div>
+                
+                <div className={styles.guideTableRow}>
+                  <div className={styles.guideTableCell}>
+                    <strong>Peau normale à sèche</strong>
                   </div>
-                  
-                  <div className={styles.guideTableRow}>
-                    <div className={styles.guideTableCell}>
-                      <strong>Peau normale à sèche</strong>
-                    </div>
-                    <div className={styles.guideTableCell}>
-                      <span className={styles.concentrationTag}>5%</span>
-                    </div>
-                    <div className={styles.guideTableCell}>
-                      Hydratation légère, nettoyage doux quotidien
-                    </div>
+                  <div className={styles.guideTableCell}>
+                    <span className={styles.concentrationTag}>5%</span>
                   </div>
-                  
-                  <div className={styles.guideTableRow}>
-                    <div className={styles.guideTableCell}>
-                      <strong>Peau sensible/Enfants</strong>
-                    </div>
-                    <div className={styles.guideTableCell}>
-                      <span className={styles.concentrationTag}>5%</span>
-                    </div>
-                    <div className={styles.guideTableCell}>
-                      Formule douce, apaisante, non irritante
-                    </div>
-                  </div>
-                  
-                  <div className={styles.guideTableRow}>
-                    <div className={styles.guideTableCell}>
-                      <strong>Peau mixte</strong>
-                    </div>
-                    <div className={styles.guideTableCell}>
-                      <span className={styles.concentrationTag}>5-20%</span>
-                    </div>
-                    <div className={styles.guideTableCell}>
-                      Équilibre entre hydratation et régulation du sébum
-                    </div>
-                  </div>
-                  
-                  <div className={styles.guideTableRow}>
-                    <div className={styles.guideTableCell}>
-                      <strong>Peau grasse/Acné légère</strong>
-                    </div>
-                    <div className={styles.guideTableCell}>
-                      <span className={styles.concentrationTag}>20%</span>
-                    </div>
-                    <div className={styles.guideTableCell}>
-                      Propriétés séborégulatrices et antibactériennes
-                    </div>
-                  </div>
-                  
-                  <div className={styles.guideTableRow}>
-                    <div className={styles.guideTableCell}>
-                      <strong>Acné modérée à sévère</strong>
-                    </div>
-                    <div className={styles.guideTableCell}>
-                      <span className={styles.concentrationTag}>20-30%</span>
-                    </div>
-                    <div className={styles.guideTableCell}>
-                      Action antiseptique puissante, diminue l'inflammation
-                    </div>
-                  </div>
-                  
-                  <div className={styles.guideTableRow}>
-                    <div className={styles.guideTableCell}>
-                      <strong>Eczéma/Psoriasis</strong>
-                    </div>
-                    <div className={styles.guideTableCell}>
-                      <span className={styles.concentrationTag}>30%</span>
-                    </div>
-                    <div className={styles.guideTableCell}>
-                      Effet apaisant intense, propriétés anti-inflammatoires et cicatrisantes
-                    </div>
-                  </div>
-                  
-                  <div className={styles.guideTableRow}>
-                    <div className={styles.guideTableCell}>
-                      <strong>Cheveux gras</strong>
-                    </div>
-                    <div className={styles.guideTableCell}>
-                      <span className={styles.concentrationTag}>20%</span>
-                    </div>
-                    <div className={styles.guideTableCell}>
-                      Régule l'excès de sébum, purifie le cuir chevelu
-                    </div>
-                  </div>
-                  
-                  <div className={styles.guideTableRow}>
-                    <div className={styles.guideTableCell}>
-                      <strong>Pellicules/Démangeaisons</strong>
-                    </div>
-                    <div className={styles.guideTableCell}>
-                      <span className={styles.concentrationTag}>30%</span>
-                    </div>
-                    <div className={styles.guideTableCell}>
-                      Propriétés antifongiques, apaise le cuir chevelu
-                    </div>
+                  <div className={styles.guideTableCell}>
+                    Hydratation légère, nettoyage doux quotidien
                   </div>
                 </div>
                 
-                <div className={styles.guideNote}>
-                  <div className={styles.guideNoteIcon}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <line x1="12" y1="8" x2="12" y2="12"></line>
-                      <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                    </svg>
+                <div className={styles.guideTableRow}>
+                  <div className={styles.guideTableCell}>
+                    <strong>Peau sensible/Enfants</strong>
                   </div>
-                  <div className={styles.guideNoteContent}>
-                    <h4>Conseil d'utilisation</h4>
-                    <p>
-                      Si vous utilisez le savon d'Alep pour la première fois, nous recommandons de commencer par la concentration à 5%, particulièrement si vous avez la peau sensible. Vous pourrez ensuite augmenter progressivement la concentration selon les besoins de votre peau.
-                    </p>
-                    <p>
-                      Pour les problèmes cutanés spécifiques, consultez un dermatologue avant d'utiliser la concentration à 30%.
-                    </p>
+                  <div className={styles.guideTableCell}>
+                    <span className={styles.concentrationTag}>5%</span>
                   </div>
+                  <div className={styles.guideTableCell}>
+                    Formule douce, apaisante, non irritante
+                  </div>
+                </div>
+                
+                <div className={styles.guideTableRow}>
+                  <div className={styles.guideTableCell}>
+                    <strong>Peau mixte</strong>
+                  </div>
+                  <div className={styles.guideTableCell}>
+                    <span className={styles.concentrationTag}>5-20%</span>
+                  </div>
+                  <div className={styles.guideTableCell}>
+                    Équilibre entre hydratation et régulation du sébum
+                  </div>
+                </div>
+                
+                <div className={styles.guideTableRow}>
+                  <div className={styles.guideTableCell}>
+                    <strong>Peau grasse/Acné légère</strong>
+                  </div>
+                  <div className={styles.guideTableCell}>
+                    <span className={styles.concentrationTag}>20%</span>
+                  </div>
+                  <div className={styles.guideTableCell}>
+                    Propriétés séborégulatrices et antibactériennes
+                  </div>
+                </div>
+                
+                <div className={styles.guideTableRow}>
+                  <div className={styles.guideTableCell}>
+                    <strong>Acné modérée à sévère</strong>
+                  </div>
+                  <div className={styles.guideTableCell}>
+                    <span className={styles.concentrationTag}>20-30%</span>
+                  </div>
+                  <div className={styles.guideTableCell}>
+                    Action antiseptique puissante, diminue l'inflammation
+                  </div>
+                </div>
+                
+                <div className={styles.guideTableRow}>
+                  <div className={styles.guideTableCell}>
+                    <strong>Eczéma/Psoriasis</strong>
+                  </div>
+                  <div className={styles.guideTableCell}>
+                    <span className={styles.concentrationTag}>30%</span>
+                  </div>
+                  <div className={styles.guideTableCell}>
+                    Effet apaisant intense, propriétés anti-inflammatoires et cicatrisantes
+                  </div>
+                </div>
+                
+                <div className={styles.guideTableRow}>
+                  <div className={styles.guideTableCell}>
+                    <strong>Cheveux gras</strong>
+                  </div>
+                  <div className={styles.guideTableCell}>
+                    <span className={styles.concentrationTag}>20%</span>
+                  </div>
+                  <div className={styles.guideTableCell}>
+                    Régule l'excès de sébum, purifie le cuir chevelu
+                  </div>
+                </div>
+                
+                <div className={styles.guideTableRow}>
+                  <div className={styles.guideTableCell}>
+                    <strong>Pellicules/Démangeaisons</strong>
+                  </div>
+                  <div className={styles.guideTableCell}>
+                    <span className={styles.concentrationTag}>30%</span>
+                  </div>
+                  <div className={styles.guideTableCell}>
+                    Propriétés antifongiques, apaise le cuir chevelu
+                  </div>
+                </div>
+              </div>
+              
+              <div className={styles.guideNote}>
+                <div className={styles.guideNoteIcon}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                </div>
+                <div className={styles.guideNoteContent}>
+                  <h4>Conseil d'utilisation</h4>
+                  <p>
+                    Si vous utilisez le savon d'Alep pour la première fois, nous recommandons de commencer par la concentration à 5%, particulièrement si vous avez la peau sensible. Vous pourrez ensuite augmenter progressivement la concentration selon les besoins de votre peau.
+                  </p>
+                  <p>
+                    Pour les problèmes cutanés spécifiques, consultez un dermatologue avant d'utiliser la concentration à 30%.
+                  </p>
                 </div>
               </div>
             </div>
@@ -599,106 +596,102 @@ export default function VertusBienfaits() {
 
           {/* Section utilisation optimale */}
           <section className={styles.usageSection}>
-            <div className={styles.container}>
-              <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>Comment utiliser votre savon d'Alep</h2>
-                <p className={styles.sectionSubtitle}>
-                  Maximisez les bienfaits de votre savon avec ces conseils d'utilisation
-                </p>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>Comment utiliser votre savon d'Alep</h2>
+              <p className={styles.sectionSubtitle}>
+                Maximisez les bienfaits de votre savon avec ces conseils d'utilisation
+              </p>
+            </div>
+            
+            <div className={styles.usageContent}>
+              <div className={styles.usageStep}>
+                <div className={styles.usageStepNumber}>1</div>
+                <div className={styles.usageStepContent}>
+                  <h3>Préparation</h3>
+                  <p>
+                    Mouillez votre peau avec de l'eau tiède pour ouvrir les pores. Humidifiez également le savon d'Alep.
+                  </p>
+                </div>
               </div>
               
-              <div className={styles.usageContent}>
-                <div className={styles.usageStep}>
-                  <div className={styles.usageStepNumber}>1</div>
-                  <div className={styles.usageStepContent}>
-                    <h3>Préparation</h3>
-                    <p>
-                      Mouillez votre peau avec de l'eau tiède pour ouvrir les pores. Humidifiez également le savon d'Alep.
-                    </p>
-                  </div>
+              <div className={styles.usageStep}>
+                <div className={styles.usageStepNumber}>2</div>
+                <div className={styles.usageStepContent}>
+                  <h3>Application</h3>
+                  <p>
+                    Frottez doucement le savon entre vos mains pour créer une mousse riche et crémeuse. Appliquez sur la peau en massant délicatement avec des mouvements circulaires.
+                  </p>
                 </div>
-                
-                <div className={styles.usageStep}>
-                  <div className={styles.usageStepNumber}>2</div>
-                  <div className={styles.usageStepContent}>
-                    <h3>Application</h3>
-                    <p>
-                      Frottez doucement le savon entre vos mains pour créer une mousse riche et crémeuse. Appliquez sur la peau en massant délicatement avec des mouvements circulaires.
-                    </p>
-                  </div>
+              </div>
+              
+              <div className={styles.usageStep}>
+                <div className={styles.usageStepNumber}>3</div>
+                <div className={styles.usageStepContent}>
+                  <h3>Temps de pause</h3>
+                  <p>
+                    Pour les problèmes cutanés spécifiques, laissez la mousse agir 1 à 2 minutes sur la peau afin que les principes actifs puissent pénétrer et faire effet.
+                  </p>
                 </div>
-                
-                <div className={styles.usageStep}>
-                  <div className={styles.usageStepNumber}>3</div>
-                  <div className={styles.usageStepContent}>
-                    <h3>Temps de pause</h3>
-                    <p>
-                      Pour les problèmes cutanés spécifiques, laissez la mousse agir 1 à 2 minutes sur la peau afin que les principes actifs puissent pénétrer et faire effet.
-                    </p>
-                  </div>
+              </div>
+              
+              <div className={styles.usageStep}>
+                <div className={styles.usageStepNumber}>4</div>
+                <div className={styles.usageStepContent}>
+                  <h3>Rinçage</h3>
+                  <p>
+                    Rincez abondamment à l'eau tiède puis terminez par un jet d'eau fraîche pour refermer les pores et tonifier la peau.
+                  </p>
                 </div>
-                
-                <div className={styles.usageStep}>
-                  <div className={styles.usageStepNumber}>4</div>
-                  <div className={styles.usageStepContent}>
-                    <h3>Rinçage</h3>
-                    <p>
-                      Rincez abondamment à l'eau tiède puis terminez par un jet d'eau fraîche pour refermer les pores et tonifier la peau.
-                    </p>
-                  </div>
-                </div>
-                
-                <div className={styles.usageTips}>
-                  <h3>Conseils pour prolonger la durée de vie de votre savon</h3>
-                  <ul>
-                    <li>
-                      <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none">
-                        <polyline points="9 11 12 14 22 4"></polyline>
-                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                      </svg>
-                      <span>Utilisez un porte-savon drainant pour éviter que le savon ne baigne dans l'eau</span>
-                    </li>
-                    <li>
-                      <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none">
-                        <polyline points="9 11 12 14 22 4"></polyline>
-                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                      </svg>
-                      <span>Conservez le savon dans un endroit sec et aéré entre chaque utilisation</span>
-                    </li>
-                    <li>
-                      <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none">
-                        <polyline points="9 11 12 14 22 4"></polyline>
-                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                      </svg>
-                      <span>Coupez le savon en deux pour n'utiliser qu'une moitié à la fois</span>
-                    </li>
-                    <li>
-                      <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none">
-                        <polyline points="9 11 12 14 22 4"></polyline>
-                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                      </svg>
-                      <span>Laissez sécher le savon après chaque utilisation</span>
-                    </li>
-                  </ul>
-                </div>
+              </div>
+              
+              <div className={styles.usageTips}>
+                <h3>Conseils pour prolonger la durée de vie de votre savon</h3>
+                <ul>
+                  <li>
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none">
+                      <polyline points="9 11 12 14 22 4"></polyline>
+                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                    <span>Utilisez un porte-savon drainant pour éviter que le savon ne baigne dans l'eau</span>
+                  </li>
+                  <li>
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none">
+                      <polyline points="9 11 12 14 22 4"></polyline>
+                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                    <span>Conservez le savon dans un endroit sec et aéré entre chaque utilisation</span>
+                  </li>
+                  <li>
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none">
+                      <polyline points="9 11 12 14 22 4"></polyline>
+                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                    <span>Coupez le savon en deux pour n'utiliser qu'une moitié à la fois</span>
+                  </li>
+                  <li>
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none">
+                      <polyline points="9 11 12 14 22 4"></polyline>
+                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                    <span>Laissez sécher le savon après chaque utilisation</span>
+                  </li>
+                </ul>
               </div>
             </div>
           </section>
 
           {/* CTA final */}
           <section className={styles.ctaSection}>
-            <div className={styles.container}>
-              <div className={styles.ctaContent}>
-                <h2>Prêt à découvrir les bienfaits du savon d'Alep ?</h2>
-                <p>
-                  Choisissez la concentration adaptée à votre peau et profitez de tous les bienfaits de ce trésor ancestral de la cosmétique naturelle.
-                </p>
-                <Link href="/store" legacyBehavior>
-                  <a className={styles.ctaButton}>
-                    Découvrir notre gamme de savons d'Alep
-                  </a>
-                </Link>
-              </div>
+            <div className={styles.ctaContent}>
+              <h2>Prêt à découvrir les bienfaits du savon d'Alep ?</h2>
+              <p>
+                Choisissez la concentration adaptée à votre peau et profitez de tous les bienfaits de ce trésor ancestral de la cosmétique naturelle.
+              </p>
+              <Link href="/store" legacyBehavior>
+                <a className={styles.ctaButton}>
+                  Découvrir notre gamme de savons d'Alep
+                </a>
+              </Link>
             </div>
           </section>
         </main>

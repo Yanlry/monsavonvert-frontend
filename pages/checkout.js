@@ -421,7 +421,7 @@ export default function Checkout() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
 
-      <div className={styles.globalWrapper}>
+      <div className={styles.container}>
         {/* Header avec navigation - Copié de la page panier */}
         <header className={`${styles.header} ${scrolled ? styles.headerScrolled : ''}`}>
           <div className={styles.headerContent}>
@@ -830,8 +830,8 @@ export default function Checkout() {
                           <div className={styles.paymentLogos}>
                             <img src="/images/payments/visa.png" alt="Visa" className={styles.paymentLogo} />
                             <img src="/images/payments/mastercard.png" alt="Mastercard" className={styles.paymentLogo} />
-                            <img src="/images/payments/paypal.png" alt="Paypal" className={styles.paymentLogo} />
-                            <img src="/images/payments/applepay.png" alt="Apple Pay" className={styles.paymentLogo} />
+                            <img src="/images/payments/americanexpress.png" alt="americanexpress" className={styles.paymentLogo} />
+                            <img src="/images/payments/diners.png" alt="Diners Club" className={styles.paymentLogo} />
                           </div>
                         </div>
                         

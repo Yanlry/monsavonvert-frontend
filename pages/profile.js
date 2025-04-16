@@ -582,7 +582,7 @@ export default function Profile() {
         </div>
       )}
 
-      <div className={styles.globalWrapper}>
+      <div className={styles.container}>
         {/* Header avec navigation */}
         <header
           className={`${styles.header} ${

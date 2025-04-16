@@ -1,5 +1,5 @@
 /* Importe les styles globaux */
-.globalWrapper {
+.container {
   --color-primary: #2e7d32;
   --color-primary-dark: #1b5e20;
   --color-primary-light: #4caf50;

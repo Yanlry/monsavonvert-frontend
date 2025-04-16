@@ -146,7 +146,7 @@ export default function Contact() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
 
-      <div className={styles.globalWrapper}>
+      <div className={styles.container}>
         {/* Header avec navigation */}
         <header className={`${styles.header} ${scrolled ? styles.headerScrolled : ''}`}>
           <div className={styles.headerContent}>
