@@ -99,7 +99,7 @@ export default function Register() {
       console.log('⏳ Tentative d\'inscription avec:', { email, firstName, lastName });
   
       // Envoi des données au backend
-      const response = await fetch('https://monsavonvert-frontend.vercel.app/users/signup', {
+      const response = await fetch('https://monsavonvert-backend.vercel.app/users/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -38,7 +38,7 @@ export default function Boutique() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await fetch('https://monsavonvert-frontend.vercel.app/products');
+        const response = await fetch('https://monsavonvert-backend.vercel.app/products');
         
         // Vérifier si la réponse est ok
         if (!response.ok) {

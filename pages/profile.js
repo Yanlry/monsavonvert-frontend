@@ -174,7 +174,7 @@ export default function Profile() {
           return;
         }
 
-        const response = await fetch(`https://monsavonvert-frontend.vercel.app/users/${userId}`);
+        const response = await fetch(`https://monsavonvert-backend.vercel.app/users/${userId}`);
         const data = await response.json();
 
         if (data.result) {
@@ -231,7 +231,7 @@ export default function Profile() {
         userId
       );
       const response = await fetch(
-        `https://monsavonvert-frontend.vercel.app/users/update/${userId}`,
+        `https://monsavonvert-backend.vercel.app/users/update/${userId}`,
         {
           method: "PUT",
           headers: {
@@ -343,7 +343,7 @@ export default function Profile() {
         "📤 [Frontend] Envoi de la requête PUT à /users/change-password/:id"
       );
       const response = await fetch(
-        `https://monsavonvert-frontend.vercel.app/users/change-password/${userId}`,
+        `https://monsavonvert-backend.vercel.app/users/change-password/${userId}`,
         {
           method: "PUT",
           headers: {
