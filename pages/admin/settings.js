@@ -71,7 +71,7 @@ export default function AdminSettings() {
     // Paramètres SEO
     seo: {
       metaTitle: 'MonSavonVert | Savons artisanaux naturels et écologiques',
-      metaDescription: 'Découvrez notre gamme de savons artisanaux fabriqués à la main avec des ingrédients naturels et biologiques. Livraison offerte dès 49€ d\'achat.',
+      metaDescription: 'Découvrez notre gamme de savons artisanaux fabriqués à la main avec des ingrédients naturels et biologiques. Livraison offerte dès 29€ d\'achat.',
       ogImage: '/images/og-image.jpg',
       googleAnalyticsId: 'UA-XXXXXXXXX-X',
       enableSitemap: true,

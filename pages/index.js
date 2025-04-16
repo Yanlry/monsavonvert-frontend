@@ -427,11 +427,11 @@ export default function Home() {
           {/* Bannière de confiance */}
           <section className={styles.trustBanner}>
             <div className={styles.trustItem}>
-              <div className={styles.trustIcon}>🇫🇷</div>
+              <div className={styles.trustIcon}>🇸🇾</div>
               <div className={styles.trustText}>
                 Fabrication
                 <br />
-                française
+                Syrienne
               </div>
             </div>
             <div className={styles.trustDivider}></div>
@@ -440,7 +440,7 @@ export default function Home() {
               <div className={styles.trustText}>
                 Ingrédients
                 <br />
-                biologiques
+                naturels
               </div>
             </div>
             <div className={styles.trustDivider}></div>
@@ -449,7 +449,7 @@ export default function Home() {
               <div className={styles.trustText}>
                 Emballages
                 <br />
-                écologiques
+                réduits
               </div>
             </div>
             <div className={styles.trustDivider}></div>
@@ -458,7 +458,7 @@ export default function Home() {
               <div className={styles.trustText}>
                 Livraison offerte
                 <br />
-                dès 49€
+                dès 29€
               </div>
             </div>
           </section>
@@ -578,7 +578,7 @@ export default function Home() {
             <div className={styles.shippingContent}>
               <h2 className={styles.shippingTitle}>Livraison gratuite</h2>
               <p className={styles.shippingText}>
-                Pour toute commande à partir de 49€
+                Pour toute commande à partir de 29€
               </p>
               <Link href="/store" legacyBehavior>
                 <a className={`${styles.button} ${styles.whiteButton}`}>

@@ -650,7 +650,7 @@ export default function ProductDetail({ product }) {
                       </svg>
                       <div>
                         <h4>Livraison offerte</h4>
-                        <p>À partir de 39€ d'achats</p>
+                        <p>À partir de 29€ d'achats</p>
                       </div>
                     </div>
                     <div className={styles.infoItem}>

@@ -8,8 +8,13 @@ import styles from '../styles/checkout.module.css'; // Vous devrez créer ce fic
 import { loadStripe } from '@stripe/stripe-js'; // Importation de Stripe
 
 // Initialisez Stripe avec votre clé publique
-// IMPORTANT: On utilise directement la clé comme une chaîne de caractères
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+
+// Expressions régulières pour la validation
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+const PHONE_REGEX = /^(\+\d{1,3}[- ]?)?\d{9,15}$/; // Format international flexible
+const POSTAL_CODE_REGEX = /^\d{5}$/; // Pour la France (5 chiffres)
+const ADDRESS_REGEX = /^\d+\s+\S+/; // Commence par un numéro suivi d'un espace et du nom de rue
 
 export default function Checkout() {
   // État pour détecter si nous sommes côté client
@@ -28,6 +33,19 @@ export default function Checkout() {
     city: '',
     postalCode: '',
     country: 'France',
+    termsAccepted: false,
+  });
+  
+  // État pour les erreurs de validation
+  const [formErrors, setFormErrors] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    address: '',
+    city: '',
+    postalCode: '',
+    country: '',
   });
   
   // État pour les étapes du processus de commande
@@ -45,6 +63,11 @@ export default function Checkout() {
   
   // État pour afficher un message de chargement pendant la redirection vers Stripe
   const [isLoading, setIsLoading] = useState(false);
+  
+  // États pour le modal
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalTitle, setModalTitle] = useState('');
   
   // Router pour la navigation
   const router = useRouter();
@@ -101,20 +124,98 @@ export default function Checkout() {
   
   // Effet pour vérifier si le formulaire est valide
   useEffect(() => {
-    const { firstName, lastName, email, phone, address, city, postalCode, country } = formData;
-    const isValid = firstName && lastName && email && phone && address && city && postalCode && country;
+    // Fonction de validation des champs
+    const validateFields = () => {
+      const errors = {};
+      
+      // Validation prénom
+      if (!formData.firstName.trim()) {
+        errors.firstName = '';
+      }
+      
+      // Validation nom
+      if (!formData.lastName.trim()) {
+        errors.lastName = '';
+      }
+      
+      // Validation email
+      if (!formData.email.trim()) {
+        errors.email = '';
+      } else if (!EMAIL_REGEX.test(formData.email)) {
+        errors.email = 'Format d\'email invalide';
+      }
+      
+      // Validation téléphone
+      if (!formData.phone.trim()) {
+        errors.phone = '';
+      } else if (!PHONE_REGEX.test(formData.phone)) {
+        errors.phone = 'Format de téléphone invalide';
+      }
+      
+      // Validation adresse
+      if (!formData.address.trim()) {
+        errors.address = '';
+      } else if (!ADDRESS_REGEX.test(formData.address)) {
+        errors.address = 'Format: Numéro + nom de la rue';
+      }
+      
+      // Validation ville
+      if (!formData.city.trim()) {
+        errors.city = '';
+      }
+      
+      // Validation code postal
+      if (!formData.postalCode.trim()) {
+        errors.postalCode = '';
+      } else if (!POSTAL_CODE_REGEX.test(formData.postalCode) && formData.country === 'France') {
+        errors.postalCode = 'Le code postal doit contenir 5 chiffres';
+      }
+      
+      // Mise à jour des erreurs
+      setFormErrors(errors);
+      
+      // Vérification que tous les champs obligatoires sont remplis
+      const allFieldsFilled = formData.firstName.trim() && 
+                              formData.lastName.trim() && 
+                              formData.email.trim() && 
+                              formData.phone.trim() && 
+                              formData.address.trim() && 
+                              formData.city.trim() && 
+                              formData.postalCode.trim();
+      
+      // Vérification qu'aucune erreur de format n'est présente
+      const noFormatErrors = !errors.email && !errors.phone && !errors.address && !errors.postalCode;
+      
+      // Retourne vrai si tous les champs sont remplis, sans erreur de format, et les termes acceptés
+      return allFieldsFilled && noFormatErrors && formData.termsAccepted;
+    };
+    
+    // Vérification de la validité du formulaire
+    const isValid = validateFields();
     setIsFormValid(isValid);
     console.log('Validation du formulaire:', isValid);
   }, [formData]);
 
-  // Gestionnaire de changement des champs du formulaire
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevData => ({
+    
+    // Nettoyage des données utilisateur pour éviter les injections XSS
+    const sanitizedValue = value.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+    
+    setFormData((prevData) => ({
       ...prevData,
-      [name]: value
+      [name]: sanitizedValue,
     }));
-    console.log(`Champ ${name} mis à jour avec la valeur: ${value}`);
+    console.log(`Champ ${name} mis à jour avec la valeur: ${sanitizedValue}`);
+  };
+  
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: checked,
+    }));
+    console.log(`Champ ${name} mis à jour avec la valeur: ${checked}`);
   };
 
   // Gestionnaire de changement de méthode de livraison
@@ -123,11 +224,92 @@ export default function Checkout() {
     console.log('Méthode de livraison sélectionnée:', method);
   };
 
-  // Fonction pour passer à l'étape suivante
-  const goToNextStep = () => {
-    if (currentStep < 3) {
+  // Récupération du prix total du panier
+  const getTotalPrice = () => {
+    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
+  };
+  
+  // Calcul des frais de livraison
+  const getShippingCost = () => {
+    // Vérification si le panier atteint le seuil de 29€ pour la livraison standard gratuite
+    const cartTotal = parseFloat(getTotalPrice());
+    
+    switch (shippingMethod) {
+      case 'express':
+        return 9.95;
+      case 'pickup':
+        return 0;
+      default: // standard
+        // Livraison standard gratuite si le panier est >= 29€
+        return cartTotal >= 29 ? 0 : 4.95;
+    }
+  };
+  
+  // Calcul du total final
+  const getFinalTotal = () => {
+    return (parseFloat(getTotalPrice()) + getShippingCost()).toFixed(2);
+  };
+
+  const goToNextStep = async () => {
+    if (currentStep === 1) {
+      if (!isFormValid) {
+        // Utilisation du modal pour afficher les erreurs
+        setModalTitle('Informations incomplètes');
+        setModalMessage('Veuillez remplir correctement tous les champs du formulaire et accepter les termes et conditions avant de continuer.');
+        setShowModal(true);
+        return;
+      }
+  
+      try {
+        const response = await fetch('http://localhost:8888/customers', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+  
+        const data = await response.json();
+        if (!response.ok) {
+          // Utilisation du modal au lieu de alert
+          setModalTitle('Erreur');
+          setModalMessage(data.error || 'Erreur lors de la gestion des informations client.');
+          setShowModal(true);
+          return;
+        }
+  
+        console.log(data.message); // Affiche si le client est trouvé ou créé
+  
+        // Si un mot de passe temporaire est retourné, l'afficher dans le modal
+        if (data.temporaryPassword) {
+          setModalTitle('Compte créé');
+          setModalMessage(`Un compte utilisateur a été créé pour vous. Votre mot de passe temporaire est : ${data.temporaryPassword}. Veuillez le modifier après connexion.`);
+          setShowModal(true);
+          // On continue quand même à l'étape suivante
+          setCurrentStep(currentStep + 1);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else if (data.message && data.message.includes('existant')) {
+          // Si le client existe déjà
+          setModalTitle('Client existant');
+          setModalMessage('Un compte avec ces informations existe déjà. Vous pouvez continuer votre commande ou vous connecter à votre compte.');
+          setShowModal(true);
+          // On continue quand même à l'étape suivante
+          setCurrentStep(currentStep + 1);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          // Cas normal, on passe simplement à l'étape suivante
+          setCurrentStep(currentStep + 1);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      } catch (error) {
+        console.error('Erreur lors de la gestion des informations client :', error);
+        // Utilisation du modal au lieu de alert
+        setModalTitle('Erreur');
+        setModalMessage('Une erreur est survenue. Veuillez réessayer.');
+        setShowModal(true);
+      }
+    } else if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
-      console.log('Passage à l\'étape', currentStep + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
@@ -139,28 +321,6 @@ export default function Checkout() {
       console.log('Retour à l\'étape', currentStep - 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  };
-  
-  // Récupération du prix total du panier
-  const getTotalPrice = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
-  };
-  
-  // Calcul des frais de livraison
-  const getShippingCost = () => {
-    switch (shippingMethod) {
-      case 'express':
-        return 9.95;
-      case 'pickup':
-        return 0;
-      default: // standard
-        return 4.95;
-    }
-  };
-  
-  // Calcul du total final
-  const getFinalTotal = () => {
-    return (parseFloat(getTotalPrice()) + getShippingCost()).toFixed(2);
   };
   
   // Fonction pour rediriger vers Stripe Checkout
@@ -219,13 +379,19 @@ export default function Checkout() {
       
       if (error) {
         console.error('Erreur lors de la redirection vers Stripe:', error);
-        alert(`Erreur de paiement: ${error.message}`);
+        // Utilisation du modal au lieu de alert
+        setModalTitle('Erreur de paiement');
+        setModalMessage(error.message);
+        setShowModal(true);
         setIsLoading(false);
       }
       
     } catch (error) {
       console.error('Erreur lors du processus de paiement:', error);
-      alert('Une erreur est survenue lors de la préparation du paiement. Veuillez réessayer.');
+      // Utilisation du modal au lieu de alert
+      setModalTitle('Erreur de paiement');
+      setModalMessage('Une erreur est survenue lors de la préparation du paiement. Veuillez réessayer.');
+      setShowModal(true);
       setIsLoading(false);
     }
   };
@@ -406,11 +572,15 @@ export default function Checkout() {
                             type="text"
                             id="firstName"
                             name="firstName"
-                            className={styles.formInput}
+                            className={`${styles.formInput} ${formErrors.firstName ? styles.inputError : ''}`}
                             value={formData.firstName}
                             onChange={handleInputChange}
                             required
+                            placeholder="Jean"
                           />
+                          {formErrors.firstName && (
+                            <p className={styles.errorText}>{formErrors.firstName}</p>
+                          )}
                         </div>
                         <div className={styles.formGroup}>
                           <label htmlFor="lastName">Nom *</label>
@@ -418,11 +588,15 @@ export default function Checkout() {
                             type="text"
                             id="lastName"
                             name="lastName"
-                            className={styles.formInput}
+                            className={`${styles.formInput} ${formErrors.lastName ? styles.inputError : ''}`}
                             value={formData.lastName}
                             onChange={handleInputChange}
                             required
+                            placeholder="Dupont"
                           />
+                          {formErrors.lastName && (
+                            <p className={styles.errorText}>{formErrors.lastName}</p>
+                          )}
                         </div>
                         <div className={styles.formGroup}>
                           <label htmlFor="email">Email *</label>
@@ -430,11 +604,15 @@ export default function Checkout() {
                             type="email"
                             id="email"
                             name="email"
-                            className={styles.formInput}
+                            className={`${styles.formInput} ${formErrors.email ? styles.inputError : ''}`}
                             value={formData.email}
                             onChange={handleInputChange}
                             required
+                            placeholder="jean.dupont@example.com"
                           />
+                          {formErrors.email && (
+                            <p className={styles.errorText}>{formErrors.email}</p>
+                          )}
                         </div>
                         <div className={styles.formGroup}>
                           <label htmlFor="phone">Téléphone *</label>
@@ -442,11 +620,15 @@ export default function Checkout() {
                             type="tel"
                             id="phone"
                             name="phone"
-                            className={styles.formInput}
+                            className={`${styles.formInput} ${formErrors.phone ? styles.inputError : ''}`}
                             value={formData.phone}
                             onChange={handleInputChange}
                             required
+                            placeholder="+33 6 12 34 56 78"
                           />
+                          {formErrors.phone && (
+                            <p className={styles.errorText}>{formErrors.phone}</p>
+                          )}
                         </div>
                         <div className={styles.formGroupFull}>
                           <label htmlFor="address">Adresse *</label>
@@ -454,11 +636,16 @@ export default function Checkout() {
                             type="text"
                             id="address"
                             name="address"
-                            className={styles.formInput}
+                            className={`${styles.formInput} ${formErrors.address ? styles.inputError : ''}`}
                             value={formData.address}
                             onChange={handleInputChange}
                             required
+                            placeholder="42 rue des Oliviers"
+                            autoComplete="street-address"
                           />
+                          {formErrors.address && (
+                            <p className={styles.errorText}>{formErrors.address}</p>
+                          )}
                         </div>
                         <div className={styles.formGroup}>
                           <label htmlFor="city">Ville *</label>
@@ -466,11 +653,15 @@ export default function Checkout() {
                             type="text"
                             id="city"
                             name="city"
-                            className={styles.formInput}
+                            className={`${styles.formInput} ${formErrors.city ? styles.inputError : ''}`}
                             value={formData.city}
                             onChange={handleInputChange}
                             required
+                            placeholder="Lyon"
                           />
+                          {formErrors.city && (
+                            <p className={styles.errorText}>{formErrors.city}</p>
+                          )}
                         </div>
                         <div className={styles.formGroup}>
                           <label htmlFor="postalCode">Code postal *</label>
@@ -478,11 +669,15 @@ export default function Checkout() {
                             type="text"
                             id="postalCode"
                             name="postalCode"
-                            className={styles.formInput}
+                            className={`${styles.formInput} ${formErrors.postalCode ? styles.inputError : ''}`}
                             value={formData.postalCode}
                             onChange={handleInputChange}
                             required
+                            placeholder="69001"
                           />
+                          {formErrors.postalCode && (
+                            <p className={styles.errorText}>{formErrors.postalCode}</p>
+                          )}
                         </div>
                         <div className={styles.formGroup}>
                           <label htmlFor="country">Pays *</label>
@@ -501,6 +696,19 @@ export default function Checkout() {
                             <option value="Canada">Canada</option>
                           </select>
                         </div>
+                        <div className={styles.formGroupFull}>
+                          <label htmlFor="termsAccepted" className={styles.checkboxLabel}>
+                            <input
+                              type="checkbox"
+                              id="termsAccepted"
+                              name="termsAccepted"
+                              className={styles.checkboxInput}
+                              checked={formData.termsAccepted}
+                              onChange={handleCheckboxChange}
+                            />
+                            J'accepte les <Link href="/terms" legacyBehavior><a>termes et conditions</a></Link>.
+                          </label>
+                        </div>
                       </div>
                       <div className={styles.formActions}>
                         <Link href="/cart" legacyBehavior>
@@ -515,7 +723,7 @@ export default function Checkout() {
                         <button 
                           onClick={goToNextStep}
                           className={`${styles.button} ${styles.primaryButton}`}
-                          disabled={!isFormValid}
+                          disabled={!isFormValid} // Désactiver si le formulaire n'est pas valide
                         >
                           Continuer
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -544,8 +752,12 @@ export default function Checkout() {
                           <div className={styles.shippingOptionInfo}>
                             <h3>Livraison standard</h3>
                             <p>Livraison en 3-5 jours ouvrés</p>
+                            {/* Indication de la promotion */}
+                            <p className={styles.shippingPromo}>Gratuite à partir de 29€ d'achat</p>
                           </div>
-                          <div className={styles.shippingOptionPrice}>4,95 €</div>
+                          <div className={styles.shippingOptionPrice}>
+                            {parseFloat(getTotalPrice()) >= 29 ? 'Gratuit' : '4,95 €'}
+                          </div>
                         </div>
                         
                         <div 
@@ -836,6 +1048,31 @@ export default function Checkout() {
             </div>
           </div>
         </footer>
+
+        {/* Modal */}
+        {showModal && (
+          <div className={styles.modalOverlay}>
+            <div className={styles.modal}>
+              <div className={styles.modalHeader}>
+                <h3 className={styles.modalTitle}>{modalTitle}</h3>
+                <button className={styles.modalClose} onClick={() => setShowModal(false)}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+              <div className={styles.modalBody}>
+                <p>{modalMessage}</p>
+              </div>
+              <div className={styles.modalFooter}>
+                <button className={`${styles.button} ${styles.primaryButton}`} onClick={() => setShowModal(false)}>
+                  Fermer
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

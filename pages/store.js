@@ -258,7 +258,7 @@ export default function Boutique() {
   };
 
   // Seuil pour la livraison gratuite
-  const FREE_SHIPPING_THRESHOLD = 49;
+  const FREE_SHIPPING_THRESHOLD = 29;
 
   // Fonction pour calculer les frais de livraison
   const calculateShipping = () => {
@@ -629,7 +629,7 @@ export default function Boutique() {
           <div className={styles.enhancedPromoSection}>
             <div className={styles.promoContent}>
               <h2 className={styles.promoTitle}>Livraison gratuite</h2>
-              <p className={styles.promoText}>Pour toute commande à partir de 49€</p>
+              <p className={styles.promoText}>Pour toute commande à partir de 29€</p>
               <a href="/boutique" className={styles.promoButton}>Voir tous nos produits</a>
             </div>
           </div>
