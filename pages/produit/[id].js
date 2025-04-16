@@ -1114,7 +1114,7 @@ export default function ProductDetail({ product }) {
 
           try {
             const response = await fetch(
-              `http://monsavonvert-frontend.vercel.app/products/${id}/review`,
+              `https://monsavonvert-frontend.vercel.app/products/${id}/review`,
               {
                 method: "POST",
                 headers: {
@@ -1351,7 +1351,7 @@ export default function ProductDetail({ product }) {
 // Cette fonction s'exécute côté serveur à chaque requête
 export async function getServerSideProps({ params }) {
   try {
-    const response = await fetch(`http://monsavonvert-frontend.vercel.app/products/${params.id}`);
+    const response = await fetch(`https://monsavonvert-frontend.vercel.app/products/${params.id}`);
 
     if (!response.ok) {
       console.log(
