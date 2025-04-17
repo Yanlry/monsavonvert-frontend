@@ -1351,6 +1351,13 @@ export default function ProductDetail({ product }) {
 // Cette fonction s'exécute côté serveur à chaque requête
 export async function getServerSideProps({ params }) {
   try {
+    // Utilisez process.env pour accéder à la variable d'environnement
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+    if (!API_URL) {
+      throw new Error("La variable d'environnement NEXT_PUBLIC_API_URL n'est pas définie.");
+    }
+
     const response = await fetch(`${API_URL}/products/${params.id}`);
 
     if (!response.ok) {
