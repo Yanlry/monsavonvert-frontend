@@ -76,7 +76,7 @@ export default function AdminProducts() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("http://localhost:8888/products");
+        const response = await fetch("https://monsavonvert-backend.vercel.app/products");
         if (!response.ok) {
           throw new Error("Erreur lors de la récupération des produits");
         }
@@ -238,7 +238,7 @@ export default function AdminProducts() {
     });
 
     try {
-      const response = await fetch("http://localhost:8888/products/add", {
+      const response = await fetch("https://monsavonvert-backend.vercel.app/products/add", {
         method: "POST",
         body: productData,
       });
@@ -280,7 +280,7 @@ export default function AdminProducts() {
         setIsLoading(true);
 
         const response = await fetch(
-          `http://localhost:8888/products/delete/${selectedProduct._id}`,
+          `https://monsavonvert-backend.vercel.app/products/delete/${selectedProduct._id}`,
           {
             method: "DELETE",
           }
@@ -343,7 +343,7 @@ export default function AdminProducts() {
   
     try {
       const response = await fetch(
-        `http://localhost:8888/products/update/${selectedProduct._id}`,
+        `https://monsavonvert-backend.vercel.app/products/update/${selectedProduct._id}`,
         {
           method: "PUT",
           body: productData,
