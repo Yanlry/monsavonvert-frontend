@@ -174,7 +174,7 @@ export default function Profile() {
           return;
         }
 
-        const response = await fetch(`https://monsavonvert-backend.onrender.com/users/${userId}`);
+        const response = await fetch(`${API_URL}/users/${userId}`);
         const data = await response.json();
 
         if (data.result) {
@@ -231,7 +231,7 @@ export default function Profile() {
         userId
       );
       const response = await fetch(
-        `https://monsavonvert-backend.onrender.com/users/update/${userId}`,
+        `${API_URL}/users/update/${userId}`,
         {
           method: "PUT",
           headers: {
@@ -343,7 +343,7 @@ export default function Profile() {
         "📤 [Frontend] Envoi de la requête PUT à /users/change-password/:id"
       );
       const response = await fetch(
-        `https://monsavonvert-backend.onrender.com/users/change-password/${userId}`,
+        `${API_URL}/users/change-password/${userId}`,
         {
           method: "PUT",
           headers: {

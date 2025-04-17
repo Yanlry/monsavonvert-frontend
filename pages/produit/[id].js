@@ -1114,7 +1114,7 @@ export default function ProductDetail({ product }) {
 
           try {
             const response = await fetch(
-             `https://monsavonvert-backend.onrender.com/products/${id}/review`,
+             `${API_URL}/products/${id}/review`,
               {
                 method: "POST",
                 headers: {
@@ -1358,7 +1358,7 @@ export async function getServerSideProps({ params }) {
       throw new Error("La variable d'environnement NEXT_PUBLIC_API_URL n'est pas définie.");
     }
 
-    const response = await fetch(`https://monsavonvert-backend.onrender.com/products/${params.id}`);
+    const response = await fetch(`${API_URL}/products/${params.id}`);
 
     if (!response.ok) {
       console.log(

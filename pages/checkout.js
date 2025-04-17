@@ -262,7 +262,7 @@ export default function Checkout() {
       }
   
       try {
-        const response = await fetch(`https://monsavonvert-backend.onrender.com/customers`, {
+        const response = await fetch(`${API_URL}/customers`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
