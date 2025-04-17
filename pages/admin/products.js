@@ -76,7 +76,7 @@ export default function AdminProducts() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch(`${API_URL}/products`);
+        const response = await fetch(`https://monsavonvert-backend.onrender.com/products`);
         if (!response.ok) {
           throw new Error("Erreur lors de la récupération des produits");
         }
@@ -238,7 +238,7 @@ export default function AdminProducts() {
     });
 
     try {
-      const response = await fetch(`${API_URL}/products/add`, {
+      const response = await fetch(`https://monsavonvert-backend.onrender.com/products/add`, {
         method: "POST",
         body: productData,
       });
@@ -280,7 +280,7 @@ export default function AdminProducts() {
         setIsLoading(true);
 
         const response = await fetch(
-          `${API_URL}/products/delete/${selectedProduct._id}`,
+          `https://monsavonvert-backend.onrender.com/products/delete/${selectedProduct._id}`,
           {
             method: "DELETE",
           }
@@ -343,7 +343,7 @@ export default function AdminProducts() {
   
     try {
       const response = await fetch(
-        `${API_URL}/products/update/${selectedProduct._id}`,
+        `https://monsavonvert-backend.onrender.com/products/update/${selectedProduct._id}`,
         {
           method: "PUT",
           body: productData,

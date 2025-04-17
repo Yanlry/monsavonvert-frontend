@@ -39,7 +39,7 @@ export default function Boutique() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${API_URL}/products`);
+        const response = await fetch(`https://monsavonvert-backend.onrender.com/products`);
         
         // Vérifier si la réponse est ok
         if (!response.ok) {

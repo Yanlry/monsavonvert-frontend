@@ -122,7 +122,7 @@ export default function AdminCustomers() {
   const fetchCustomers = async (token) => {
     try {
       // URL de l'API backend pour récupérer tous les clients
-      const response = await fetch(`${API_URL}/customers/`, {
+      const response = await fetch(`https://monsavonvert-backend.onrender.com/customers/`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -317,7 +317,7 @@ export default function AdminCustomers() {
       const token = localStorage.getItem('token');
       
       // Appel API pour mettre à jour le client
-      const response = await fetch(`${API_URL}/customers/${currentCustomer._id}`, {
+      const response = await fetch(`https://monsavonvert-backend.onrender.com/customers/${currentCustomer._id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
