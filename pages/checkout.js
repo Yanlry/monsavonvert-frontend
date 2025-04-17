@@ -15,6 +15,7 @@ const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const PHONE_REGEX = /^(\+\d{1,3}[- ]?)?\d{9,15}$/; // Format international flexible
 const POSTAL_CODE_REGEX = /^\d{5}$/; // Pour la France (5 chiffres)
 const ADDRESS_REGEX = /^\d+\s+\S+/; // Commence par un numéro suivi d'un espace et du nom de rue
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Checkout() {
   // État pour détecter si nous sommes côté client
@@ -261,7 +262,7 @@ export default function Checkout() {
       }
   
       try {
-        const response = await fetch('https://monsavonvert-backend.vercel.app/customers', {
+        const response = await fetch(`${API_URL}/customers`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

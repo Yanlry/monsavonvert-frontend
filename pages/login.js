@@ -14,7 +14,7 @@ export default function Login() {
   const [isClient, setIsClient] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [cartCount, setCartCount] = useState(0);
-
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
   // Effet pour l'initialisation côté client
   useEffect(() => {
     // Marquer que nous sommes côté client
@@ -75,7 +75,7 @@ export default function Login() {
       }
   
       // Appel à l'API pour la connexion
-      const response = await fetch('https://monsavonvert-backend.vercel.app/users/signin', {
+      const response = await fetch(`${API_URL}/users/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

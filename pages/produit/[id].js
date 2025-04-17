@@ -7,7 +7,7 @@ import styles from "../../styles/product.module.css";
 export default function ProductDetail({ product }) {
   const router = useRouter();
   const { id } = router.query;
-
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
   if (!id) {
     console.error("ID du produit introuvable !");
     return null; // Ou affichez un message d'erreur
@@ -1114,7 +1114,7 @@ export default function ProductDetail({ product }) {
 
           try {
             const response = await fetch(
-              `https://monsavonvert-backend.vercel.app/products/${id}/review`,
+             `${API_URL}/products/${id}/review`,
               {
                 method: "POST",
                 headers: {
@@ -1351,7 +1351,7 @@ export default function ProductDetail({ product }) {
 // Cette fonction s'exécute côté serveur à chaque requête
 export async function getServerSideProps({ params }) {
   try {
-    const response = await fetch(`https://monsavonvert-backend.vercel.app/products/${params.id}`);
+    const response = await fetch(`${API_URL}/products/${params.id}`);
 
     if (!response.ok) {
       console.log(

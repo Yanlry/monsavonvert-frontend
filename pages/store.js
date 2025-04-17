@@ -5,6 +5,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import styles from '../styles/store.module.css';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 export default function Boutique() {
   // État pour détecter si nous sommes côté client
   const [isClient, setIsClient] = useState(false);
@@ -38,7 +39,7 @@ export default function Boutique() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await fetch('https://monsavonvert-backend.vercel.app/products');
+        const response = await fetch(`${API_URL}/products`);
         
         // Vérifier si la réponse est ok
         if (!response.ok) {
