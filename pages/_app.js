@@ -1,15 +1,10 @@
-import '../styles/globals.css';
-import Head from 'next/head';
+import { UserProvider } from "../context/UserContext";
+import "../styles/globals.css";
 
-function App({ Component, pageProps }) {
+export default function App({ Component, pageProps }) {
   return (
-    <>
-      <Head>
-        <title>Next.js App</title>
-      </Head>
+    <UserProvider>
       <Component {...pageProps} />
-    </>
+    </UserProvider>
   );
 }
-
-export default App;

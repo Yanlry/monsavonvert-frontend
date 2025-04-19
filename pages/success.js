@@ -14,56 +14,63 @@ export default function Success() {
 
   useEffect(() => {
     setIsClient(true);
-    
-    // Générer un ID de commande simple
-    const generateOrderId = () => {
-      const date = new Date();
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-      return `MSV-${year}${month}${day}-${random}`;
-    };
-    
-    // Si nous avons un ID de session, c'est que le paiement a réussi
-    if (session_id) {
-      console.log('Session ID reçu:', session_id);
-      
-      // Récupérer les données de commande du localStorage
-      try {
-        const pendingOrder = JSON.parse(localStorage.getItem('pendingOrder')) || {};
-        console.log('Données de commande récupérées:', pendingOrder);
-        
-        // Créer un numéro de commande
-        const newOrderId = generateOrderId();
-        setOrderId(newOrderId);
-        
-        // Sauvegarder la commande complète pour l'historique
-        const completedOrder = {
-          ...pendingOrder,
-          orderId: newOrderId,
-          status: 'confirmed',
-          paymentDate: new Date().toISOString(),
-          sessionId: session_id
-        };
-        
-        // Sauvegarder dans l'historique des commandes
-        const orderHistory = JSON.parse(localStorage.getItem('orderHistory')) || [];
-        orderHistory.push(completedOrder);
-        localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
-        
-        // Vider le panier après une commande réussie
-        localStorage.removeItem('cart');
-        localStorage.removeItem('pendingOrder');
-        console.log('Panier vidé et commande enregistrée dans l\'historique');
-      } catch (error) {
-        console.error('Erreur lors du traitement de la commande:', error);
+  
+    const confirmOrder = async () => {
+      if (session_id) {
+        console.log("Session ID reçu:", session_id);
+  
+        try {
+          // Récupérer les données de commande du localStorage
+          const pendingOrder = JSON.parse(localStorage.getItem("pendingOrder")) || {};
+          console.log("Données de commande récupérées:", pendingOrder);
+  
+          // Appeler l'API pour associer la commande au client
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders/confirm`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              customerId: pendingOrder.customer.id, // ID du client
+              items: pendingOrder.items, // Articles commandés
+              totalAmount: pendingOrder.total, // Montant total
+              sessionId: session_id, // ID de session Stripe
+            }),
+          });
+  
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data.error || "Erreur lors de la confirmation de la commande.");
+          }
+  
+          console.log("Commande confirmée et associée au client :", data);
+  
+          // Sauvegarder la commande dans l'historique local
+          const completedOrder = {
+            ...pendingOrder,
+            orderId: data.order._id,
+            status: "completed",
+            paymentDate: new Date().toISOString(),
+          };
+  
+          const orderHistory = JSON.parse(localStorage.getItem("orderHistory")) || [];
+          orderHistory.push(completedOrder);
+          localStorage.setItem("orderHistory", JSON.stringify(orderHistory));
+  
+          // Vider le panier après une commande réussie
+          localStorage.removeItem("cart");
+          localStorage.removeItem("pendingOrder");
+          console.log("Panier vidé et commande enregistrée dans l'historique.");
+        } catch (error) {
+          console.error("Erreur lors de la confirmation de la commande :", error);
+        }
+      } else {
+        console.log("Aucun ID de session trouvé, redirection...");
+        router.push("/");
       }
-    } else {
-      // Rediriger vers la page d'accueil si pas d'ID de session
-      console.log('Aucun ID de session trouvé, redirection...');
-      router.push('/');
-    }
+    };
+  
+    confirmOrder();
   }, [session_id, router]);
 
   if (!isClient || !session_id) {

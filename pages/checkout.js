@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import styles from '../styles/checkout.module.css'; // Vous devrez créer ce fichier
 import { loadStripe } from '@stripe/stripe-js'; // Importation de Stripe
+import Header from "../components/Header";
 
 // Initialisez Stripe avec votre clé publique
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
@@ -20,7 +21,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 export default function Checkout() {
   // État pour détecter si nous sommes côté client
   const [isClient, setIsClient] = useState(false);
-  
+  const [user, setUser] = useState(null);
   // État pour l'animation du header au scroll
   const [scrolled, setScrolled] = useState(false);
   
@@ -35,6 +36,7 @@ export default function Checkout() {
     postalCode: '',
     country: 'France',
     termsAccepted: false,
+    password: ''
   });
   
   // État pour les erreurs de validation
@@ -123,6 +125,14 @@ export default function Checkout() {
     };
   }, [router]);
   
+  useEffect(() => {
+    // Vérifiez si un utilisateur est connecté en récupérant les données du localStorage
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser)); // Chargez les infos utilisateur
+    }
+  }, []);
+
   // Effet pour vérifier si le formulaire est valide
   useEffect(() => {
     // Fonction de validation des champs
@@ -251,6 +261,31 @@ export default function Checkout() {
     return (parseFloat(getTotalPrice()) + getShippingCost()).toFixed(2);
   };
 
+  // Fonction pour connecter l'utilisateur directement avec les données du formulaire
+  const loginUser = (userData) => {
+    // Utiliser toujours les données du formulaire qui sont plus fiables
+    // mais si nous avons un ID utilisateur de l'API, nous l'incluons
+    const userToSave = {
+      _id: userData._id, // Assurez-vous que l'ID est bien récupéré
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      phone: formData.phone,
+      address: formData.address,
+      city: formData.city,
+      postalCode: formData.postalCode,
+      country: formData.country
+    };
+    
+    localStorage.setItem('user', JSON.stringify(userToSave));
+    
+    
+    // Mettre à jour l'état user pour refléter la connexion immédiatement
+    setUser(userToSave);
+    
+    console.log('Utilisateur connecté automatiquement:', userToSave);
+  };
+
   const goToNextStep = async () => {
     if (currentStep === 1) {
       if (!isFormValid) {
@@ -279,7 +314,11 @@ export default function Checkout() {
           return;
         }
   
-        console.log(data.message); // Affiche si le client est trouvé ou créé
+        console.log("Réponse de l'API:", data); // Affiche la réponse complète pour déboguer
+  
+        // Connecter l'utilisateur avec les données du formulaire, 
+        // même si l'API ne retourne pas toutes les données utilisateur
+        loginUser(data.user || data || {});
   
         // Si un mot de passe temporaire est retourné, l'afficher dans le modal
         if (data.temporaryPassword) {
@@ -327,6 +366,14 @@ export default function Checkout() {
   // Fonction pour rediriger vers Stripe Checkout
   const handleCheckout = async () => {
     try {
+      // Vérifiez si l'utilisateur est connecté
+      if (!user) {
+        setModalTitle('Connexion requise');
+        setModalMessage('Vous devez être connecté pour finaliser votre commande.');
+        setShowModal(true);
+        return; // Arrêtez l'exécution si l'utilisateur n'est pas connecté
+      }
+  
       setIsLoading(true); // Activer l'indicateur de chargement
       console.log('Préparation de la session Stripe...');
       
@@ -380,7 +427,6 @@ export default function Checkout() {
       
       if (error) {
         console.error('Erreur lors de la redirection vers Stripe:', error);
-        // Utilisation du modal au lieu de alert
         setModalTitle('Erreur de paiement');
         setModalMessage(error.message);
         setShowModal(true);
@@ -389,7 +435,6 @@ export default function Checkout() {
       
     } catch (error) {
       console.error('Erreur lors du processus de paiement:', error);
-      // Utilisation du modal au lieu de alert
       setModalTitle('Erreur de paiement');
       setModalMessage('Une erreur est survenue lors de la préparation du paiement. Veuillez réessayer.');
       setShowModal(true);
@@ -425,101 +470,8 @@ export default function Checkout() {
       <div className={styles.container}>
         {/* Header avec navigation - Copié de la page panier */}
         <header className={`${styles.header} ${scrolled ? styles.headerScrolled : ''}`}>
-          <div className={styles.headerContent}>
-            <div className={styles.logoContainer}>
-              <Link href="/" legacyBehavior>
-                <a className={styles.logoLink}>
-                  <span className={styles.logo}>MonSavonVert</span>
-                </a>
-              </Link>
-            </div>
-
-            {/* Navigation principale */}
-            <nav className={styles.mainNav}>
-              <ul className={styles.navList}>
-                <li className={styles.navItem}>
-                  <Link href="/" legacyBehavior>
-                    <a className={styles.navLink}>Accueil</a>
-                  </Link>
-                </li>
-                <li className={styles.navItem}>
-                  <Link href="/store" legacyBehavior>
-                    <a className={styles.navLink}>Boutique
-                      <div className={styles.megaMenu}>
-                        <div className={styles.megaMenuGrid}>
-                          <div className={styles.megaMenuCategory}>
-                            <h3>Catégories</h3>
-                            <Link href="/boutique/visage" legacyBehavior><a>Soins visage</a></Link>
-                            <Link href="/boutique/corps" legacyBehavior><a>Soins corps</a></Link>
-                            <Link href="/boutique/cheveux" legacyBehavior><a>Cheveux</a></Link>
-                            <Link href="/boutique/accessoires" legacyBehavior><a>Accessoires</a></Link>
-                          </div>
-                          <div className={styles.megaMenuCategory}>
-                            <h3>Collections</h3>
-                            <Link href="/boutique/aromatherapie" legacyBehavior><a>Aromathérapie</a></Link>
-                            <Link href="/boutique/peaux-sensibles" legacyBehavior><a>Peaux sensibles</a></Link>
-                            <Link href="/boutique/hydratation" legacyBehavior><a>Hydratation intense</a></Link>
-                          </div>
-                          <div className={styles.megaMenuImage}>
-                            <p>Nouveau</p>
-                            <img src="/images/2.JPEG" alt="Nouvelle collection" />
-                            <Link href="/boutique/nouveautes" legacyBehavior><a className={styles.megaMenuButton}>Découvrir</a></Link>
-                          </div>
-                        </div>
-                      </div>
-                    </a>
-                  </Link>
-                </li>
-                <li className={styles.navItem}>
-                  <Link href="/virtues" legacyBehavior>
-                    <a className={styles.navLink}>Vertu & bienfaits</a>
-                  </Link>
-                </li>
-                <li className={styles.navItem}>
-                  <Link href="/info" legacyBehavior>
-                    <a className={styles.navLink}>Notre Histoire</a>
-                  </Link>
-                </li>
-                <li className={styles.navItem}>
-                  <Link href="/contact" legacyBehavior>
-                    <a className={styles.navLink}>Contact</a>
-                  </Link>
-                </li>
-              </ul>
-            </nav>
-
-            {/* Barre d'outils utilisateur */}
-            <div className={styles.userTools}>
-              <button className={styles.searchToggle} aria-label="Rechercher">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-              </button>
-              <Link href="/login" legacyBehavior>
-                <a className={styles.userAccount} aria-label="Mon compte">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>
-                </a>
-              </Link>
-              <Link href="/cart" legacyBehavior>
-                <a className={styles.cartLink} aria-label="Panier">
-                  <div className={styles.cartIcon} id="cartIcon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="9" cy="21" r="1"></circle>
-                      <circle cx="20" cy="21" r="1"></circle>
-                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                    </svg>
-                    {cartCount > 0 && (
-                      <span className={styles.cartCount}>{cartCount}</span>
-                    )}
-                  </div>
-                </a>
-              </Link>
-            </div>
-          </div>
+                         <Header cartCount={cartCount}/>
+         
         </header>
 
         <main className={styles.mainContent}>
@@ -616,21 +568,22 @@ export default function Checkout() {
                           )}
                         </div>
                         <div className={styles.formGroup}>
-                          <label htmlFor="phone">Téléphone *</label>
-                          <input
-                            type="tel"
-                            id="phone"
-                            name="phone"
-                            className={`${styles.formInput} ${formErrors.phone ? styles.inputError : ''}`}
-                            value={formData.phone}
-                            onChange={handleInputChange}
-                            required
-                            placeholder="+33 6 12 34 56 78"
-                          />
-                          {formErrors.phone && (
-                            <p className={styles.errorText}>{formErrors.phone}</p>
-                          )}
-                        </div>
+  <label htmlFor="password">Mot de passe *</label>
+  <input
+    type="password"
+    id="password"
+    name="password"
+    className={`${styles.formInput} ${formErrors.password ? styles.inputError : ''}`}
+    value={formData.password || ''}
+    onChange={handleInputChange}
+    required
+    placeholder="Votre mot de passe"
+  />
+  {formErrors.password && (
+    <p className={styles.errorText}>{formErrors.password}</p>
+  )}
+</div>
+                       
                         <div className={styles.formGroupFull}>
                           <label htmlFor="address">Adresse *</label>
                           <input
@@ -696,6 +649,22 @@ export default function Checkout() {
                             <option value="Luxembourg">Luxembourg</option>
                             <option value="Canada">Canada</option>
                           </select>
+                        </div>
+                        <div className={styles.formGroup}>
+                          <label htmlFor="phone">Téléphone *</label>
+                          <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            className={`${styles.formInput} ${formErrors.phone ? styles.inputError : ''}`}
+                            value={formData.phone}
+                            onChange={handleInputChange}
+                            required
+                            placeholder="+33 6 12 34 56 78"
+                          />
+                          {formErrors.phone && (
+                            <p className={styles.errorText}>{formErrors.phone}</p>
+                          )}
                         </div>
                         <div className={styles.formGroupFull}>
                           <label htmlFor="termsAccepted" className={styles.checkboxLabel}>

@@ -1,0 +1,464 @@
+/* Base du header */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 15px 0;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.headerScrolled {
+  padding: 10px 0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  background-color: rgba(255, 255, 255, 0.98);
+}
+
+.headerContent {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Logo */
+.logoContainer {
+  position: relative;
+  z-index: 101;
+}
+
+.logoLink {
+  text-decoration: none;
+  display: inline-block;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+  color: #4CAF50; /* Couleur verte thématique */
+  letter-spacing: -0.5px;
+  font-family: 'Playfair Display', serif;
+  position: relative;
+  display: inline-block;
+  transition: color 0.2s ease;
+}
+
+.logo::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #4CAF50;
+  transition: width 0.3s ease;
+}
+
+.logoLink:hover .logo {
+  color: #2E7D32; /* Vert plus foncé au survol */
+}
+
+.logoLink:hover .logo::after {
+  width: 100%;
+}
+
+/* Navigation principale */
+.mainNav {
+  position: relative;
+  z-index: 100;
+}
+
+.navList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 2rem;
+}
+
+.navItem {
+  position: relative;
+}
+
+.navLink {
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 16px;
+  padding: 0.5rem 0;
+  position: relative;
+  transition: color 0.2s ease;
+  display: inline-block;
+}
+
+.navLink::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #4CAF50;
+  transition: width 0.3s ease;
+}
+
+.navLink:hover,
+.navLink.active {
+  color: #4CAF50;
+}
+
+.navLink:hover::after,
+.navLink.active::after {
+  width: 100%;
+}
+
+/* Mega Menu */
+.megaMenu {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  width: 600px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  z-index: 101;
+}
+
+.navLink:hover .megaMenu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+.megaMenuGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.megaMenuCategory h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 1rem;
+  color: #4CAF50;
+}
+
+.megaMenuCategory a {
+  display: block;
+  color: #555;
+  text-decoration: none;
+  margin-bottom: 0.5rem;
+  font-size: 14px;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.megaMenuCategory a:hover {
+  color: #4CAF50;
+  transform: translateX(4px);
+}
+
+.megaMenuImage {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  text-align: center;
+}
+
+.megaMenuImage p {
+  font-weight: 600;
+  color: #4CAF50;
+  margin-bottom: 0.5rem;
+}
+
+.megaMenuImage img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+.megaMenuImage:hover img {
+  transform: scale(1.05);
+}
+
+.megaMenuButton {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.3rem 1rem;
+  background-color: #4CAF50;
+  color: white;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.megaMenuButton:hover {
+  background-color: #2E7D32;
+}
+
+/* Outils utilisateur (recherche, compte, panier) */
+.userTools {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.searchToggle {
+  background: none;
+  border: none;
+  padding: 0.3rem;
+  color: #333;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.searchToggle:hover {
+  color: #4CAF50;
+  transform: translateY(-2px);
+}
+
+/* Style pour le bouton de compte non connecté */
+.userAccount {
+  background: none;
+  border: none;
+  padding: 0.4rem 1rem;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  border-radius: 30px;
+  border: 1px solid #e0e0e0;
+}
+
+.userAccount:hover {
+  color: #4CAF50;
+  background-color: #f5f5f5;
+  border-color: #4CAF50;
+  transform: translateY(-2px);
+}
+
+/* Style amélioré pour l'utilisateur connecté */
+.userAccountConnected {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1rem 0.4rem 0.4rem;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #4CAF50, #8BC34A);
+  color: white;
+  text-decoration: none;
+  box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+  transition: all 0.3s ease;
+}
+
+.userAccountConnected:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(76, 175, 80, 0.4);
+}
+
+.userAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.welcomeText {
+  font-size: 10px;
+  opacity: 0.9;
+}
+
+.userName {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* Style du panier */
+.cartLink {
+  background: none;
+  border: none;
+  padding: 0.3rem;
+  color: #333;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cartLink:hover {
+  color: #4CAF50;
+  transform: translateY(-2px);
+}
+
+.cartIcon {
+  position: relative;
+}
+
+.cartCount {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #4CAF50;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 10px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  animation: cartPulse 2s infinite;
+}
+
+@keyframes cartPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Menu hamburger pour mobile */
+.mobileMenuToggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 21px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 102;
+}
+
+.mobileMenuToggle span {
+  width: 100%;
+  height: 3px;
+  background-color: #333;
+  transition: all 0.3s ease;
+}
+
+.mobileMenuToggle.active span:nth-child(1) {
+  transform: translateY(9px) rotate(45deg);
+}
+
+.mobileMenuToggle.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.mobileMenuToggle.active span:nth-child(3) {
+  transform: translateY(-9px) rotate(-45deg);
+}
+
+/* Media queries pour la responsivité */
+@media (max-width: 1024px) {
+  .navList {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .mobileMenuToggle {
+    display: flex;
+  }
+
+  .mainNav {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 80%;
+    height: 100vh;
+    background-color: white;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    transition: left 0.3s ease;
+    padding: 80px 2rem 2rem;
+    z-index: 99;
+  }
+
+  .mainNav.active {
+    left: 0;
+  }
+
+  .navList {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .navItem {
+    width: 100%;
+  }
+
+  .navLink {
+    display: block;
+    padding: 0.8rem 0;
+    font-size: 18px;
+  }
+
+  .megaMenu {
+    position: static;
+    width: 100%;
+    transform: none;
+    box-shadow: none;
+    padding: 1rem 0;
+    opacity: 1;
+    visibility: visible;
+    display: none;
+  }
+
+  .navLink:hover .megaMenu {
+    display: block;
+  }
+
+  .megaMenuGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .headerContent {
+    padding: 0 1rem;
+  }
+}
