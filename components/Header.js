@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useContext, useState, useEffect } from "react";
 import { UserContext } from "../context/UserContext";
-import styles from "../styles/header.module.css"; // Nous utiliserons un nouveau fichier CSS
+import styles from "../styles/header.module.css";
 
 export default function Header({ cartCount }) {
   const { user } = useContext(UserContext);
@@ -20,6 +20,11 @@ export default function Header({ cartCount }) {
     };
   }, []);
 
+  // Fonction pour fermer le menu quand on clique sur un lien
+  const closeMenu = () => {
+    setMenuOpen(false);
+  };
+
   return (
     <header className={`${styles.header} ${scrolled ? styles.headerScrolled : ""}`}>
       <div className={styles.headerContent}>
@@ -31,52 +36,52 @@ export default function Header({ cartCount }) {
           </Link>
         </div>
 
-        {/* Navigation principale */}
-        <nav className={styles.mainNav}>
+        {/* Navigation principale - Ajout de la classe active conditionnelle */}
+        <nav className={`${styles.mainNav} ${menuOpen ? styles.active : ""}`}>
           <ul className={styles.navList}>
             <li className={styles.navItem}>
               <Link href="/" legacyBehavior>
-                <a className={styles.navLink}>Accueil</a>
+                <a className={styles.navLink} onClick={closeMenu}>Accueil</a>
               </Link>
             </li>
             <li className={styles.navItem}>
               <Link href="/store" legacyBehavior>
-                <a className={styles.navLink}>
+                <a className={styles.navLink} onClick={closeMenu}>
                   Boutique
                   <div className={styles.megaMenu}>
                     <div className={styles.megaMenuGrid}>
                       <div className={styles.megaMenuCategory}>
                         <h3>Catégories</h3>
                         <Link href="/boutique/visage" legacyBehavior>
-                          <a>Soins visage</a>
+                          <a onClick={closeMenu}>Soins visage</a>
                         </Link>
                         <Link href="/boutique/corps" legacyBehavior>
-                          <a>Soins corps</a>
+                          <a onClick={closeMenu}>Soins corps</a>
                         </Link>
                         <Link href="/boutique/cheveux" legacyBehavior>
-                          <a>Cheveux</a>
+                          <a onClick={closeMenu}>Cheveux</a>
                         </Link>
                         <Link href="/boutique/accessoires" legacyBehavior>
-                          <a>Accessoires</a>
+                          <a onClick={closeMenu}>Accessoires</a>
                         </Link>
                       </div>
                       <div className={styles.megaMenuCategory}>
                         <h3>Collections</h3>
                         <Link href="/boutique/aromatherapie" legacyBehavior>
-                          <a>Aromathérapie</a>
+                          <a onClick={closeMenu}>Aromathérapie</a>
                         </Link>
                         <Link href="/boutique/peaux-sensibles" legacyBehavior>
-                          <a>Peaux sensibles</a>
+                          <a onClick={closeMenu}>Peaux sensibles</a>
                         </Link>
                         <Link href="/boutique/hydratation" legacyBehavior>
-                          <a>Hydratation intense</a>
+                          <a onClick={closeMenu}>Hydratation intense</a>
                         </Link>
                       </div>
                       <div className={styles.megaMenuImage}>
                         <p>Nouveau</p>
                         <img src="/images/2.JPEG" alt="Nouvelle collection" />
                         <Link href="/boutique/nouveautes" legacyBehavior>
-                          <a className={styles.megaMenuButton}>Découvrir</a>
+                          <a className={styles.megaMenuButton} onClick={closeMenu}>Découvrir</a>
                         </Link>
                       </div>
                     </div>
@@ -86,17 +91,17 @@ export default function Header({ cartCount }) {
             </li>
             <li className={styles.navItem}>
               <Link href="/virtues" legacyBehavior>
-                <a className={styles.navLink}>Vertu & bienfaits</a>
+                <a className={styles.navLink} onClick={closeMenu}>Vertu & bienfaits</a>
               </Link>
             </li>
             <li className={styles.navItem}>
               <Link href="/info" legacyBehavior>
-                <a className={styles.navLink}>Notre Histoire</a>
+                <a className={styles.navLink} onClick={closeMenu}>Notre Histoire</a>
               </Link>
             </li>
             <li className={styles.navItem}>
               <Link href="/contact" legacyBehavior>
-                <a className={styles.navLink}>Contact</a>
+                <a className={styles.navLink} onClick={closeMenu}>Contact</a>
               </Link>
             </li>
           </ul>
@@ -194,6 +199,14 @@ export default function Header({ cartCount }) {
           <span></span>
         </button>
       </div>
+
+      {/* Overlay pour fermer le menu en cliquant à l'extérieur */}
+      {menuOpen && (
+        <div 
+          className={styles.menuOverlay} 
+          onClick={() => setMenuOpen(false)}
+        ></div>
+      )}
     </header>
   );
 }

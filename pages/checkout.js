@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';  // Ajout de useContext
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import styles from '../styles/checkout.module.css'; // Vous devrez créer ce fichier
-import { loadStripe } from '@stripe/stripe-js'; // Importation de Stripe
+import styles from '../styles/checkout.module.css';
+import { loadStripe } from '@stripe/stripe-js';
 import Header from "../components/Header";
+import { UserContext } from "../context/UserContext";  // Ajout du UserContext
 
 // Initialisez Stripe avec votre clé publique
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
@@ -19,6 +20,9 @@ const ADDRESS_REGEX = /^\d+\s+\S+/; // Commence par un numéro suivi d'un espace
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Checkout() {
+  // État pour le contexte utilisateur global
+  const { setUser: setContextUser } = useContext(UserContext);
+  
   // État pour détecter si nous sommes côté client
   const [isClient, setIsClient] = useState(false);
   const [user, setUser] = useState(null);
@@ -39,7 +43,7 @@ export default function Checkout() {
     password: ''
   });
   
-  // État pour les erreurs de validation
+  // États pour les erreurs de validation
   const [formErrors, setFormErrors] = useState({
     firstName: '',
     lastName: '',
@@ -49,7 +53,23 @@ export default function Checkout() {
     city: '',
     postalCode: '',
     country: '',
+    password: '',
   });
+
+  // Nouvel état pour gérer le mode de formulaire (inscription ou connexion)
+  const [formMode, setFormMode] = useState('register'); // 'register' ou 'login'
+  
+  // Nouvel état pour les informations de connexion
+  const [loginData, setLoginData] = useState({
+    email: '',
+    password: ''
+  });
+  
+  // État pour "Se souvenir de moi"
+  const [rememberMe, setRememberMe] = useState(false);
+
+  // Nouvel état pour les erreurs de connexion
+  const [loginError, setLoginError] = useState('');
   
   // État pour les étapes du processus de commande
   const [currentStep, setCurrentStep] = useState(1);
@@ -71,6 +91,23 @@ export default function Checkout() {
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [modalTitle, setModalTitle] = useState('');
+  
+  // NOUVEAU: État pour gérer le formulaire de complément d'information
+  const [showAddressPhoneForm, setShowAddressPhoneForm] = useState(false);
+  const [addressPhoneFormValid, setAddressPhoneFormValid] = useState(false);
+  const [addressPhoneData, setAddressPhoneData] = useState({
+    phone: '',
+    address: '',
+    city: '',
+    postalCode: '',
+    country: 'France'
+  });
+  const [addressPhoneErrors, setAddressPhoneErrors] = useState({
+    phone: '',
+    address: '',
+    city: '',
+    postalCode: ''
+  });
   
   // Router pour la navigation
   const router = useRouter();
@@ -125,61 +162,242 @@ export default function Checkout() {
     };
   }, [router]);
   
-  useEffect(() => {
-    // Vérifiez si un utilisateur est connecté en récupérant les données du localStorage
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser)); // Chargez les infos utilisateur
+  // Nouveau: fonction pour charger les informations utilisateur directement depuis l'API
+  const fetchUserData = async (userId, token) => {
+    try {
+      console.log(`Récupération des données utilisateur depuis l'API pour l'ID: ${userId}`);
+      const response = await fetch(`${API_URL}/users/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Erreur lors de la récupération des données utilisateur');
+      }
+      
+      const data = await response.json();
+      console.log('Réponse API utilisateur complète:', data);
+      
+      if (data.result && data.user) {
+        // Formater l'utilisateur avec les données d'adresse et de téléphone
+        const userData = {
+          ...data.user,
+          // Ajouter des champs formatés pour l'affichage
+          address: data.user.addresses && data.user.addresses.length > 0 
+                 ? data.user.addresses[0].street 
+                 : '',
+          city: data.user.addresses && data.user.addresses.length > 0 
+               ? data.user.addresses[0].city 
+               : '',
+          postalCode: data.user.addresses && data.user.addresses.length > 0 
+                    ? data.user.addresses[0].postalCode 
+                    : '',
+          country: data.user.addresses && data.user.addresses.length > 0 
+                 ? data.user.addresses[0].country 
+                 : 'France'
+        };
+        
+        console.log('Données utilisateur formatées depuis API:', userData);
+        
+        // Mettre à jour l'état utilisateur
+        setUser(userData);
+        
+        // Mettre à jour le localStorage avec les données fraîches
+        localStorage.setItem('user', JSON.stringify(userData));
+        
+        // Préremplir le formulaire
+        setFormData(prevData => ({
+          ...prevData,
+          firstName: userData.firstName || '',
+          lastName: userData.lastName || '',
+          email: userData.email || '',
+          phone: userData.phone || '',
+          address: userData.address || '',
+          city: userData.city || '',
+          postalCode: userData.postalCode || '',
+          country: userData.country || 'France',
+        }));
+        
+        // NOUVEAU: Préremplir le formulaire d'adresse et téléphone
+        setAddressPhoneData({
+          phone: userData.phone || '',
+          address: userData.address || '',
+          city: userData.city || '',
+          postalCode: userData.postalCode || '',
+          country: userData.country || 'France'
+        });
+        
+        console.log('Formulaire prérempli avec les données fraîches:', {
+          firstName: userData.firstName || '',
+          lastName: userData.lastName || '',
+          email: userData.email || '',
+          phone: userData.phone || '',
+          address: userData.address || '',
+          city: userData.city || '',
+          postalCode: userData.postalCode || '',
+          country: userData.country || 'France',
+        });
+      }
+    } catch (error) {
+      console.error('Erreur lors de la récupération des données utilisateur:', error);
     }
-  }, []);
+  };
+  
+  useEffect(() => {
+    // Vérifiez si un utilisateur est connecté en récupérant les données du localStorage ou sessionStorage
+    const storedToken = localStorage.getItem("token") || sessionStorage.getItem("token");
+    const storedUserId = localStorage.getItem("userId") || sessionStorage.getItem("userId");
+    const storedUser = localStorage.getItem("user") || sessionStorage.getItem("user");
+    
+    if (storedToken && storedUserId) {
+      console.log('Token et UserID trouvés, récupération des données depuis l\'API...');
+      // Récupérer les données fraîches depuis l'API
+      fetchUserData(storedUserId, storedToken);
+    } else if (storedUser) {
+      try {
+        // Fallback sur le localStorage si pas de token ou userId
+        const parsedUser = JSON.parse(storedUser);
+        console.log('Données utilisateur chargées depuis localStorage:', parsedUser);
+        setUser(parsedUser);
+        
+        // Préremplir le formulaire
+        setFormData(prevData => ({
+          ...prevData,
+          firstName: parsedUser.firstName || '',
+          lastName: parsedUser.lastName || '',
+          email: parsedUser.email || '',
+          phone: parsedUser.phone || '',
+          address: parsedUser.address || '',
+          city: parsedUser.city || '',
+          postalCode: parsedUser.postalCode || '',
+          country: parsedUser.country || 'France',
+        }));
+        
+        // NOUVEAU: Préremplir le formulaire d'adresse et téléphone
+        setAddressPhoneData({
+          phone: parsedUser.phone || '',
+          address: parsedUser.address || '',
+          city: parsedUser.city || '',
+          postalCode: parsedUser.postalCode || '',
+          country: parsedUser.country || 'France'
+        });
+      } catch (error) {
+        console.error('Erreur lors du traitement des données utilisateur:', error);
+      }
+    }
+  }, []);  // S'exécute une seule fois au montage
+
+  // NOUVEAU: Effet pour vérifier la validité du formulaire d'adresse et téléphone
+  useEffect(() => {
+    const validateAddressPhoneFields = () => {
+      const errors = {};
+      
+      // Validation téléphone
+      if (!addressPhoneData.phone.trim()) {
+        errors.phone = 'Le téléphone est requis';
+      } else if (!PHONE_REGEX.test(addressPhoneData.phone)) {
+        errors.phone = 'Format de téléphone invalide';
+      }
+      
+      // Validation adresse
+      if (!addressPhoneData.address.trim()) {
+        errors.address = 'L\'adresse est requise';
+      } else if (!ADDRESS_REGEX.test(addressPhoneData.address)) {
+        errors.address = 'Format: Numéro + nom de la rue';
+      }
+      
+      // Validation ville
+      if (!addressPhoneData.city.trim()) {
+        errors.city = 'La ville est requise';
+      }
+      
+      // Validation code postal
+      if (!addressPhoneData.postalCode.trim()) {
+        errors.postalCode = 'Le code postal est requis';
+      } else if (!POSTAL_CODE_REGEX.test(addressPhoneData.postalCode) && addressPhoneData.country === 'France') {
+        errors.postalCode = 'Le code postal doit contenir 5 chiffres';
+      }
+      
+      setAddressPhoneErrors(errors);
+      
+      // Vérifier si le formulaire est valide (aucune erreur et tous les champs requis remplis)
+      const isValid = Object.keys(errors).length === 0 && 
+                      addressPhoneData.phone.trim() && 
+                      addressPhoneData.address.trim() && 
+                      addressPhoneData.city.trim() && 
+                      addressPhoneData.postalCode.trim();
+      
+      setAddressPhoneFormValid(isValid);
+      console.log('Validation du formulaire adresse/téléphone:', isValid);
+      return isValid;
+    };
+    
+    validateAddressPhoneFields();
+  }, [addressPhoneData]);
 
   // Effet pour vérifier si le formulaire est valide
   useEffect(() => {
-    // Fonction de validation des champs
+    // Si nous sommes en mode connexion, vérifier uniquement les champs de connexion
+    if (formMode === 'login') {
+      const isLoginValid = loginData.email.trim() && loginData.password.trim() 
+                          && EMAIL_REGEX.test(loginData.email);
+      setIsFormValid(isLoginValid);
+      return;
+    }
+    
+    // Fonction de validation des champs pour le mode inscription
     const validateFields = () => {
       const errors = {};
       
       // Validation prénom
       if (!formData.firstName.trim()) {
-        errors.firstName = '';
+        errors.firstName = 'Le prénom est requis';
       }
       
       // Validation nom
       if (!formData.lastName.trim()) {
-        errors.lastName = '';
+        errors.lastName = 'Le nom est requis';
       }
       
       // Validation email
       if (!formData.email.trim()) {
-        errors.email = '';
+        errors.email = 'L\'email est requis';
       } else if (!EMAIL_REGEX.test(formData.email)) {
         errors.email = 'Format d\'email invalide';
       }
       
       // Validation téléphone
       if (!formData.phone.trim()) {
-        errors.phone = '';
+        errors.phone = 'Le téléphone est requis';
       } else if (!PHONE_REGEX.test(formData.phone)) {
         errors.phone = 'Format de téléphone invalide';
       }
       
       // Validation adresse
       if (!formData.address.trim()) {
-        errors.address = '';
+        errors.address = 'L\'adresse est requise';
       } else if (!ADDRESS_REGEX.test(formData.address)) {
         errors.address = 'Format: Numéro + nom de la rue';
       }
       
       // Validation ville
       if (!formData.city.trim()) {
-        errors.city = '';
+        errors.city = 'La ville est requise';
       }
       
       // Validation code postal
       if (!formData.postalCode.trim()) {
-        errors.postalCode = '';
+        errors.postalCode = 'Le code postal est requis';
       } else if (!POSTAL_CODE_REGEX.test(formData.postalCode) && formData.country === 'France') {
         errors.postalCode = 'Le code postal doit contenir 5 chiffres';
+      }
+      
+      // Validation mot de passe (au moins 6 caractères)
+      if (!formData.password.trim()) {
+        errors.password = 'Le mot de passe est requis';
+      } else if (formData.password.length < 6) {
+        errors.password = 'Le mot de passe doit contenir au moins 6 caractères';
       }
       
       // Mise à jour des erreurs
@@ -192,10 +410,11 @@ export default function Checkout() {
                               formData.phone.trim() && 
                               formData.address.trim() && 
                               formData.city.trim() && 
-                              formData.postalCode.trim();
+                              formData.postalCode.trim() &&
+                              formData.password.trim();
       
       // Vérification qu'aucune erreur de format n'est présente
-      const noFormatErrors = !errors.email && !errors.phone && !errors.address && !errors.postalCode;
+      const noFormatErrors = Object.keys(errors).length === 0;
       
       // Retourne vrai si tous les champs sont remplis, sans erreur de format, et les termes acceptés
       return allFieldsFilled && noFormatErrors && formData.termsAccepted;
@@ -205,7 +424,7 @@ export default function Checkout() {
     const isValid = validateFields();
     setIsFormValid(isValid);
     console.log('Validation du formulaire:', isValid);
-  }, [formData]);
+  }, [formData, formMode, loginData]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -220,12 +439,49 @@ export default function Checkout() {
     console.log(`Champ ${name} mis à jour avec la valeur: ${sanitizedValue}`);
   };
   
+  // NOUVEAU: Gestionnaire pour les champs du formulaire d'adresse et téléphone
+  const handleAddressPhoneChange = (e) => {
+    const { name, value } = e.target;
+    
+    // Nettoyage des données utilisateur pour éviter les injections XSS
+    const sanitizedValue = value.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+    
+    setAddressPhoneData((prevData) => ({
+      ...prevData,
+      [name]: sanitizedValue,
+    }));
+    console.log(`Champ complémentaire ${name} mis à jour avec la valeur: ${sanitizedValue}`);
+  };
+  
+  // Gestionnaire pour les champs du formulaire de connexion
+  const handleLoginInputChange = (e) => {
+    const { name, value } = e.target;
+    
+    // Nettoyage des données utilisateur pour éviter les injections XSS
+    const sanitizedValue = value.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+    
+    setLoginData((prevData) => ({
+      ...prevData,
+      [name]: sanitizedValue,
+    }));
+    
+    // Réinitialisation de l'erreur de connexion lors de la modification des champs
+    if (loginError) {
+      setLoginError('');
+    }
+  };
+  
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: checked,
-    }));
+    
+    if (name === 'rememberMe') {
+      setRememberMe(checked);
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: checked,
+      }));
+    }
     console.log(`Champ ${name} mis à jour avec la valeur: ${checked}`);
   };
 
@@ -233,6 +489,174 @@ export default function Checkout() {
   const handleShippingChange = (method) => {
     setShippingMethod(method);
     console.log('Méthode de livraison sélectionnée:', method);
+  };
+
+  // Fonction pour changer le mode du formulaire (inscription ou connexion)
+  const toggleFormMode = (mode) => {
+    setFormMode(mode);
+    // Réinitialiser les erreurs lors du changement de mode
+    setFormErrors({});
+    setLoginError('');
+  };
+
+  // NOUVEAU: Fonction pour mettre à jour les informations de l'utilisateur
+  const updateUserData = async () => {
+    try {
+      setIsLoading(true);
+      
+      // Récupérer l'ID et le token de l'utilisateur
+      const userId = user._id;
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      
+      if (!userId || !token) {
+        throw new Error('Identifiants utilisateur manquants');
+      }
+      
+      console.log(`Mise à jour des informations utilisateur pour l'ID: ${userId}`);
+      
+      // Préparer les données à envoyer à l'API
+      const updatedData = {
+        phone: addressPhoneData.phone,
+      };
+      
+      // Si l'utilisateur a une adresse dans le tableau addresses
+      if (user.addresses && user.addresses.length > 0) {
+        // Mettre à jour l'adresse existante
+        const updatedAddresses = [...user.addresses];
+        updatedAddresses[0] = {
+          ...updatedAddresses[0],
+          street: addressPhoneData.address,
+          city: addressPhoneData.city,
+          postalCode: addressPhoneData.postalCode,
+          country: addressPhoneData.country,
+          isDefault: true
+        };
+        updatedData.addresses = updatedAddresses;
+      } else {
+        // Créer une nouvelle adresse
+        updatedData.addresses = [{
+          street: addressPhoneData.address,
+          city: addressPhoneData.city,
+          postalCode: addressPhoneData.postalCode,
+          country: addressPhoneData.country,
+          isDefault: true
+        }];
+      }
+      
+      console.log('Données à envoyer à l\'API:', updatedData);
+      
+      // Appel à l'API pour mettre à jour l'utilisateur
+      const response = await fetch(`${API_URL}/users/update/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(updatedData)
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Erreur lors de la mise à jour des informations');
+      }
+      
+      console.log('Réponse de l\'API après mise à jour:', data);
+      
+      // Mettre à jour les données utilisateur avec les nouvelles informations
+      await fetchUserData(userId, token);
+      
+      // Masquer le formulaire d'adresse et téléphone
+      setShowAddressPhoneForm(false);
+      
+      // Afficher un message de succès
+      setModalTitle('Informations mises à jour');
+      setModalMessage('Vos informations ont été mises à jour avec succès.');
+      setShowModal(true);
+      
+      // Passer à l'étape suivante
+      setCurrentStep(3);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour des informations utilisateur:', error);
+      setModalTitle('Erreur');
+      setModalMessage(error.message || 'Une erreur est survenue lors de la mise à jour de vos informations.');
+      setShowModal(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Fonction pour tenter la connexion avec les identifiants
+  const handleLogin = async () => {
+    // Vérification préliminaire des champs
+    if (!loginData.email || !loginData.password) {
+      setLoginError('Veuillez remplir tous les champs');
+      return;
+    }
+    
+    // Vérifier le format de l'email
+    if (!EMAIL_REGEX.test(loginData.email)) {
+      setLoginError('Format d\'email invalide');
+      return;
+    }
+    
+    try {
+      setIsLoading(true);
+      console.log('Tentative de connexion...');
+      
+      // Appel à l'API pour la connexion - utilise /users/signin comme dans login.js
+      const response = await fetch(`${API_URL}/users/signin`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: loginData.email,
+          password: loginData.password
+        }),
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Identifiants incorrects');
+      }
+      
+      // Connexion réussie
+      console.log('Connexion réussie:', data);
+      
+      // Stocker les infos utilisateur dans localStorage
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('userId', data.userId);
+      localStorage.setItem('firstName', data.firstName);
+      
+      // Récupérer immédiatement les informations complètes de l'utilisateur
+      await fetchUserData(data.userId, data.token);
+      
+      // Mettre à jour le contexte utilisateur global
+      setContextUser({
+        token: data.token,
+        userId: data.userId,
+        firstName: data.firstName,
+      });
+      
+      // Afficher un message de succès
+      setModalTitle('Connexion réussie');
+      setModalMessage('Vous êtes maintenant connecté. Vous pouvez continuer votre commande.');
+      setShowModal(true);
+      
+      // Passer à l'étape suivante
+      setCurrentStep(2);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+    } catch (error) {
+      console.error('Erreur de connexion:', error);
+      setLoginError(error.message || 'Identifiants incorrects');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Récupération du prix total du panier
@@ -261,93 +685,171 @@ export default function Checkout() {
     return (parseFloat(getTotalPrice()) + getShippingCost()).toFixed(2);
   };
 
-  // Fonction pour connecter l'utilisateur directement avec les données du formulaire
-  const loginUser = (userData) => {
-    // Utiliser toujours les données du formulaire qui sont plus fiables
-    // mais si nous avons un ID utilisateur de l'API, nous l'incluons
-    const userToSave = {
-      _id: userData._id, // Assurez-vous que l'ID est bien récupéré
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      email: formData.email,
-      phone: formData.phone,
-      address: formData.address,
-      city: formData.city,
-      postalCode: formData.postalCode,
-      country: formData.country
-    };
-    
-    localStorage.setItem('user', JSON.stringify(userToSave));
-    
-    
-    // Mettre à jour l'état user pour refléter la connexion immédiatement
-    setUser(userToSave);
-    
-    console.log('Utilisateur connecté automatiquement:', userToSave);
-  };
+  // CORRIGÉ: Fonction pour créer/enregistrer un compte - Ajout d'adresse dans le format approprié
+  const handleSignup = async () => {
+    if (!isFormValid) {
+      // Utilisation du modal pour afficher les erreurs
+      setModalTitle('Informations incomplètes');
+      setModalMessage('Veuillez remplir correctement tous les champs du formulaire et accepter les termes et conditions avant de continuer.');
+      setShowModal(true);
+      return false;
+    }
 
-  const goToNextStep = async () => {
-    if (currentStep === 1) {
-      if (!isFormValid) {
-        // Utilisation du modal pour afficher les erreurs
-        setModalTitle('Informations incomplètes');
-        setModalMessage('Veuillez remplir correctement tous les champs du formulaire et accepter les termes et conditions avant de continuer.');
-        setShowModal(true);
-        return;
-      }
-  
-      try {
-        const response = await fetch(`${API_URL}/customers`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
-        });
-  
-        const data = await response.json();
-        if (!response.ok) {
-          // Utilisation du modal au lieu de alert
-          setModalTitle('Erreur');
-          setModalMessage(data.error || 'Erreur lors de la gestion des informations client.');
-          setShowModal(true);
-          return;
-        }
-  
-        console.log("Réponse de l'API:", data); // Affiche la réponse complète pour déboguer
-  
-        // Connecter l'utilisateur avec les données du formulaire, 
-        // même si l'API ne retourne pas toutes les données utilisateur
-        loginUser(data.user || data || {});
-  
-        // Si un mot de passe temporaire est retourné, l'afficher dans le modal
-        if (data.temporaryPassword) {
-          setModalTitle('Compte créé');
-          setModalMessage(`Un compte utilisateur a été créé pour vous. Votre mot de passe temporaire est : ${data.temporaryPassword}. Veuillez le modifier après connexion.`);
-          setShowModal(true);
-          // On continue quand même à l'étape suivante
-          setCurrentStep(currentStep + 1);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else if (data.message && data.message.includes('existant')) {
-          // Si le client existe déjà
-          setModalTitle('Client existant');
-          setModalMessage('Un compte avec ces informations existe déjà. Vous pouvez continuer votre commande ou vous connecter à votre compte.');
-          setShowModal(true);
-          // On continue quand même à l'étape suivante
-          setCurrentStep(currentStep + 1);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-          // Cas normal, on passe simplement à l'étape suivante
-          setCurrentStep(currentStep + 1);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-      } catch (error) {
-        console.error('Erreur lors de la gestion des informations client :', error);
+    try {
+      setIsLoading(true);
+      console.log('Tentative d\'inscription...');
+      
+      // Préparation des données d'inscription avec l'adresse formatée correctement
+      const signupData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        phone: formData.phone,
+        termsAccepted: formData.termsAccepted,
+        // Ajouter l'adresse dans le format attendu par l'API
+        addresses: [{
+          street: formData.address,
+          city: formData.city,
+          postalCode: formData.postalCode,
+          country: formData.country,
+          isDefault: true
+        }]
+      };
+      
+      console.log('Données d\'inscription à envoyer:', signupData);
+      
+      // Appel à l'API pour l'inscription
+      const response = await fetch(`${API_URL}/users/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(signupData),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
         // Utilisation du modal au lieu de alert
         setModalTitle('Erreur');
-        setModalMessage('Une erreur est survenue. Veuillez réessayer.');
+        setModalMessage(data.error || 'Erreur lors de la gestion des informations client.');
         setShowModal(true);
+        return false;
       }
+
+      console.log("Réponse de l'API (inscription):", data);
+
+      // Format de l'utilisateur adapté à la réponse de ton API
+      const userData = {
+        _id: data.userId,
+        token: data.token,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        addresses: [{
+          street: formData.address,
+          city: formData.city,
+          postalCode: formData.postalCode,
+          country: formData.country,
+          isDefault: true
+        }],
+        // Ajouter aussi les versions simples pour l'affichage
+        address: formData.address,
+        city: formData.city, 
+        postalCode: formData.postalCode,
+        country: formData.country
+      };
+      
+      // Sauvegarder dans localStorage
+      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('userId', data.userId);
+      localStorage.setItem('firstName', formData.firstName);
+      
+      // Mettre à jour le contexte utilisateur global
+      setContextUser({
+        token: data.token,
+        userId: data.userId,
+        firstName: formData.firstName,
+      });
+      
+      // Mettre à jour l'état user pour refléter la connexion immédiatement
+      setUser(userData);
+      
+      console.log('Utilisateur inscrit avec succès:', userData);
+      
+      // Afficher un message de succès
+      setModalTitle('Compte créé');
+      setModalMessage('Votre compte a été créé avec succès. Vous êtes maintenant connecté.');
+      setShowModal(true);
+      
+      return true;
+    } catch (error) {
+      console.error('Erreur lors de l\'inscription:', error);
+      setModalTitle('Erreur');
+      setModalMessage('Une erreur est survenue. Veuillez réessayer.');
+      setShowModal(true);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // MODIFIÉ: Fonction pour passer à l'étape suivante
+  const goToNextStep = async () => {
+    if (currentStep === 1) {
+      // Si l'utilisateur est déjà connecté, passer directement à l'étape suivante
+      if (user) {
+        setCurrentStep(currentStep + 1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+      
+      // Si nous sommes en mode connexion, essayer de se connecter
+      if (formMode === 'login') {
+        await handleLogin();
+        return;
+      }
+      
+      // Mode inscription - tenter l'inscription
+      const success = await handleSignup();
+      if (success) {
+        // Passer à l'étape suivante
+        setCurrentStep(currentStep + 1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    } else if (currentStep === 2) {
+      // NOUVEAU: Vérifier si l'adresse et le téléphone sont renseignés
+      if (user) {
+        const hasPhone = user.phone && user.phone.trim() !== '';
+        const hasAddress = (user.address && user.address.trim() !== '') || 
+                           (user.addresses && user.addresses.length > 0 && 
+                            user.addresses[0].street && user.addresses[0].street.trim() !== '');
+        
+        if (!hasPhone || !hasAddress) {
+          console.log('Informations manquantes: téléphone ou adresse');
+          console.log('Téléphone présent:', hasPhone);
+          console.log('Adresse présente:', hasAddress);
+          
+          // Préremplir le formulaire avec les données existantes
+          setAddressPhoneData({
+            phone: user.phone || '',
+            address: user.address || (user.addresses && user.addresses.length > 0 ? user.addresses[0].street : ''),
+            city: user.city || (user.addresses && user.addresses.length > 0 ? user.addresses[0].city : ''),
+            postalCode: user.postalCode || (user.addresses && user.addresses.length > 0 ? user.addresses[0].postalCode : ''),
+            country: user.country || (user.addresses && user.addresses.length > 0 ? user.addresses[0].country : 'France')
+          });
+          
+          // Afficher le formulaire de complément d'information
+          setShowAddressPhoneForm(true);
+          return;
+        }
+      }
+      
+      // Si tout est OK, passer à l'étape suivante
+      setCurrentStep(currentStep + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -357,6 +859,12 @@ export default function Checkout() {
   // Fonction pour revenir à l'étape précédente
   const goToPreviousStep = () => {
     if (currentStep > 1) {
+      // Si le formulaire d'adresse et téléphone est affiché, le masquer
+      if (showAddressPhoneForm) {
+        setShowAddressPhoneForm(false);
+        return;
+      }
+      
       setCurrentStep(currentStep - 1);
       console.log('Retour à l\'étape', currentStep - 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -442,6 +950,31 @@ export default function Checkout() {
     }
   };
 
+  // Fonction pour déconnecter l'utilisateur
+  const handleLogout = () => {
+    // Supprimer les données utilisateur de localStorage et sessionStorage
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('firstName');
+    
+    sessionStorage.removeItem('user');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('firstName');
+    
+    // Mettre à jour le contexte utilisateur global
+    setContextUser(null);
+    
+    // Mettre à jour l'état utilisateur local
+    setUser(null);
+    
+    // Revenir au mode inscription
+    setFormMode('register');
+    
+    console.log('Utilisateur déconnecté');
+  };
+
   // Rendu de base sans contenu dynamique (pour éviter les erreurs d'hydratation)
   if (!isClient) {
     return (
@@ -470,8 +1003,7 @@ export default function Checkout() {
       <div className={styles.container}>
         {/* Header avec navigation - Copié de la page panier */}
         <header className={`${styles.header} ${scrolled ? styles.headerScrolled : ''}`}>
-                         <Header cartCount={cartCount}/>
-         
+          <Header cartCount={cartCount}/>
         </header>
 
         <main className={styles.mainContent}>
@@ -518,195 +1050,345 @@ export default function Checkout() {
                   {currentStep === 1 && (
                     <div className={styles.checkoutStep}>
                       <h2 className={styles.stepTitle}>Vos informations</h2>
-                      <div className={styles.formGrid}>
-                        <div className={styles.formGroup}>
-                          <label htmlFor="firstName">Prénom *</label>
-                          <input
-                            type="text"
-                            id="firstName"
-                            name="firstName"
-                            className={`${styles.formInput} ${formErrors.firstName ? styles.inputError : ''}`}
-                            value={formData.firstName}
-                            onChange={handleInputChange}
-                            required
-                            placeholder="Jean"
-                          />
-                          {formErrors.firstName && (
-                            <p className={styles.errorText}>{formErrors.firstName}</p>
+                      
+                      {/* Si l'utilisateur est déjà connecté, afficher ses informations */}
+                      {user ? (
+                        <div className={styles.userConnected}>
+                          <div className={styles.userInfoBox}>
+                            <div className={styles.userInfoHeader}>
+                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                              </svg>
+                              <h3>Vous êtes connecté</h3>
+                            </div>
+                            <div className={styles.userInfoContent}>
+                              <p><strong>Nom :</strong> {user.firstName || ''} {user.lastName || ''}</p>
+                              <p><strong>Email :</strong> {user.email || ''}</p>
+                              <p><strong>Adresse :</strong> {user.address ? `${user.address}, ${user.postalCode || ''} ${user.city || ''}` : (user.addresses && user.addresses.length > 0) ? `${user.addresses[0].street}, ${user.addresses[0].postalCode} ${user.addresses[0].city}` : 'Non renseignée'}</p>
+                              <p><strong>Téléphone :</strong> {user.phone || 'Non renseigné'}</p>
+                              {console.log('Données affichées dans le bloc utilisateur:', user)}
+                            </div>
+                            {/* MISE À JOUR: Nouveau style pour le bouton de déconnexion */}
+                            <button 
+                              className={styles.logoutButton}
+                              onClick={handleLogout}
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                              </svg>
+                              Se déconnecter
+                            </button>
+                          </div>
+                          
+                          <div className={styles.formActions}>
+                            <Link href="/cart" legacyBehavior>
+                              <a className={styles.backButton}>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <line x1="19" y1="12" x2="5" y2="12"></line>
+                                  <polyline points="12 19 5 12 12 5"></polyline>
+                                </svg>
+                                Retour au panier
+                              </a>
+                            </Link>
+                            <button 
+                              onClick={goToNextStep}
+                              className={`${styles.button} ${styles.primaryButton}`}
+                            >
+                              Continuer
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          {/* Onglets pour choisir entre inscription et connexion */}
+                          <div className={styles.formTabs}>
+                            <button 
+                              className={`${styles.formTab} ${formMode === 'register' ? styles.formTabActive : ''}`}
+                              onClick={() => toggleFormMode('register')}
+                            >
+                              Nouveau client
+                            </button>
+                            <button 
+                              className={`${styles.formTab} ${formMode === 'login' ? styles.formTabActive : ''}`}
+                              onClick={() => toggleFormMode('login')}
+                            >
+                              Déjà client
+                            </button>
+                          </div>
+                        
+                          {/* Formulaire d'inscription */}
+                          {formMode === 'register' && (
+                            <div className={styles.formGrid}>
+                              <div className={styles.formGroup}>
+                                <label htmlFor="firstName">Prénom *</label>
+                                <input
+                                  type="text"
+                                  id="firstName"
+                                  name="firstName"
+                                  className={`${styles.formInput} ${formErrors.firstName ? styles.inputError : ''}`}
+                                  value={formData.firstName}
+                                  onChange={handleInputChange}
+                                  required
+                                  placeholder="Jean"
+                                />
+                                {formErrors.firstName && (
+                                  <p className={styles.errorText}>{formErrors.firstName}</p>
+                                )}
+                              </div>
+                              <div className={styles.formGroup}>
+                                <label htmlFor="lastName">Nom *</label>
+                                <input
+                                  type="text"
+                                  id="lastName"
+                                  name="lastName"
+                                  className={`${styles.formInput} ${formErrors.lastName ? styles.inputError : ''}`}
+                                  value={formData.lastName}
+                                  onChange={handleInputChange}
+                                  required
+                                  placeholder="Dupont"
+                                />
+                                {formErrors.lastName && (
+                                  <p className={styles.errorText}>{formErrors.lastName}</p>
+                                )}
+                              </div>
+                              <div className={styles.formGroup}>
+                                <label htmlFor="email">Email *</label>
+                                <input
+                                  type="email"
+                                  id="email"
+                                  name="email"
+                                  className={`${styles.formInput} ${formErrors.email ? styles.inputError : ''}`}
+                                  value={formData.email}
+                                  onChange={handleInputChange}
+                                  required
+                                  placeholder="jean.dupont@example.com"
+                                />
+                                {formErrors.email && (
+                                  <p className={styles.errorText}>{formErrors.email}</p>
+                                )}
+                              </div>
+                              <div className={styles.formGroup}>
+                                <label htmlFor="password">Mot de passe *</label>
+                                <input
+                                  type="password"
+                                  id="password"
+                                  name="password"
+                                  className={`${styles.formInput} ${formErrors.password ? styles.inputError : ''}`}
+                                  value={formData.password || ''}
+                                  onChange={handleInputChange}
+                                  required
+                                  placeholder="Votre mot de passe"
+                                />
+                                {formErrors.password && (
+                                  <p className={styles.errorText}>{formErrors.password}</p>
+                                )}
+                              </div>
+                            
+                              <div className={styles.formGroupFull}>
+                                <label htmlFor="address">Adresse *</label>
+                                <input
+                                  type="text"
+                                  id="address"
+                                  name="address"
+                                  className={`${styles.formInput} ${formErrors.address ? styles.inputError : ''}`}
+                                  value={formData.address}
+                                  onChange={handleInputChange}
+                                  required
+                                  placeholder="42 rue des Oliviers"
+                                  autoComplete="street-address"
+                                />
+                                {formErrors.address && (
+                                  <p className={styles.errorText}>{formErrors.address}</p>
+                                )}
+                              </div>
+                              <div className={styles.formGroup}>
+                                <label htmlFor="city">Ville *</label>
+                                <input
+                                  type="text"
+                                  id="city"
+                                  name="city"
+                                  className={`${styles.formInput} ${formErrors.city ? styles.inputError : ''}`}
+                                  value={formData.city}
+                                  onChange={handleInputChange}
+                                  required
+                                  placeholder="Lyon"
+                                />
+                                {formErrors.city && (
+                                  <p className={styles.errorText}>{formErrors.city}</p>
+                                )}
+                              </div>
+                              <div className={styles.formGroup}>
+                                <label htmlFor="postalCode">Code postal *</label>
+                                <input
+                                  type="text"
+                                  id="postalCode"
+                                  name="postalCode"
+                                  className={`${styles.formInput} ${formErrors.postalCode ? styles.inputError : ''}`}
+                                  value={formData.postalCode}
+                                  onChange={handleInputChange}
+                                  required
+                                  placeholder="69001"
+                                />
+                                {formErrors.postalCode && (
+                                  <p className={styles.errorText}>{formErrors.postalCode}</p>
+                                )}
+                              </div>
+                              <div className={styles.formGroup}>
+                                <label htmlFor="country">Pays *</label>
+                                <select
+                                  id="country"
+                                  name="country"
+                                  className={styles.formSelect}
+                                  value={formData.country}
+                                  onChange={handleInputChange}
+                                  required
+                                >
+                                  <option value="France">France</option>
+                                  <option value="Belgique">Belgique</option>
+                                  <option value="Suisse">Suisse</option>
+                                  <option value="Luxembourg">Luxembourg</option>
+                                  <option value="Canada">Canada</option>
+                                </select>
+                              </div>
+                              <div className={styles.formGroup}>
+                                <label htmlFor="phone">Téléphone *</label>
+                                <input
+                                  type="tel"
+                                  id="phone"
+                                  name="phone"
+                                  className={`${styles.formInput} ${formErrors.phone ? styles.inputError : ''}`}
+                                  value={formData.phone}
+                                  onChange={handleInputChange}
+                                  required
+                                  placeholder="+33 6 12 34 56 78"
+                                />
+                                {formErrors.phone && (
+                                  <p className={styles.errorText}>{formErrors.phone}</p>
+                                )}
+                              </div>
+                              <div className={styles.formGroupFull}>
+                                <label htmlFor="termsAccepted" className={styles.checkboxLabel}>
+                                  <input
+                                    type="checkbox"
+                                    id="termsAccepted"
+                                    name="termsAccepted"
+                                    className={styles.checkboxInput}
+                                    checked={formData.termsAccepted}
+                                    onChange={handleCheckboxChange}
+                                  />
+                                  J'accepte les <Link href="/terms" legacyBehavior><a>termes et conditions</a></Link>.
+                                </label>
+                              </div>
+                            </div>
                           )}
-                        </div>
-                        <div className={styles.formGroup}>
-                          <label htmlFor="lastName">Nom *</label>
-                          <input
-                            type="text"
-                            id="lastName"
-                            name="lastName"
-                            className={`${styles.formInput} ${formErrors.lastName ? styles.inputError : ''}`}
-                            value={formData.lastName}
-                            onChange={handleInputChange}
-                            required
-                            placeholder="Dupont"
-                          />
-                          {formErrors.lastName && (
-                            <p className={styles.errorText}>{formErrors.lastName}</p>
+                          
+                          {/* Formulaire de connexion */}
+                          {formMode === 'login' && (
+                            <div className={styles.loginForm}>
+                              <div className={styles.formGroup}>
+                                <label htmlFor="loginEmail">Email *</label>
+                                <input
+                                  type="email"
+                                  id="loginEmail"
+                                  name="email"
+                                  className={styles.formInput}
+                                  value={loginData.email}
+                                  onChange={handleLoginInputChange}
+                                  required
+                                  placeholder="jean.dupont@example.com"
+                                />
+                              </div>
+                              <div className={styles.formGroup}>
+                                <label htmlFor="loginPassword">Mot de passe *</label>
+                                <input
+                                  type="password"
+                                  id="loginPassword"
+                                  name="password"
+                                  className={styles.formInput}
+                                  value={loginData.password}
+                                  onChange={handleLoginInputChange}
+                                  required
+                                  placeholder="Votre mot de passe"
+                                />
+                              </div>
+                              
+                              {loginError && (
+                                <div className={styles.loginError}>
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                  </svg>
+                                  <p>{loginError}</p>
+                                </div>
+                              )}
+                              
+                              <div className={styles.formGroup}>
+                                <div className={styles.rememberMe}>
+                                  <input 
+                                    type="checkbox" 
+                                    id="rememberMe" 
+                                    name="rememberMe"
+                                    checked={rememberMe}
+                                    onChange={handleCheckboxChange}
+                                  />
+                                  <label htmlFor="rememberMe">Se souvenir de moi</label>
+                                </div>
+                              </div>
+                              
+                              <div className={styles.forgotPassword}>
+                                <Link href="/forgot-password" legacyBehavior>
+                                  <a>Mot de passe oublié ?</a>
+                                </Link>
+                              </div>
+                            </div>
                           )}
-                        </div>
-                        <div className={styles.formGroup}>
-                          <label htmlFor="email">Email *</label>
-                          <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            className={`${styles.formInput} ${formErrors.email ? styles.inputError : ''}`}
-                            value={formData.email}
-                            onChange={handleInputChange}
-                            required
-                            placeholder="jean.dupont@example.com"
-                          />
-                          {formErrors.email && (
-                            <p className={styles.errorText}>{formErrors.email}</p>
-                          )}
-                        </div>
-                        <div className={styles.formGroup}>
-  <label htmlFor="password">Mot de passe *</label>
-  <input
-    type="password"
-    id="password"
-    name="password"
-    className={`${styles.formInput} ${formErrors.password ? styles.inputError : ''}`}
-    value={formData.password || ''}
-    onChange={handleInputChange}
-    required
-    placeholder="Votre mot de passe"
-  />
-  {formErrors.password && (
-    <p className={styles.errorText}>{formErrors.password}</p>
-  )}
-</div>
-                       
-                        <div className={styles.formGroupFull}>
-                          <label htmlFor="address">Adresse *</label>
-                          <input
-                            type="text"
-                            id="address"
-                            name="address"
-                            className={`${styles.formInput} ${formErrors.address ? styles.inputError : ''}`}
-                            value={formData.address}
-                            onChange={handleInputChange}
-                            required
-                            placeholder="42 rue des Oliviers"
-                            autoComplete="street-address"
-                          />
-                          {formErrors.address && (
-                            <p className={styles.errorText}>{formErrors.address}</p>
-                          )}
-                        </div>
-                        <div className={styles.formGroup}>
-                          <label htmlFor="city">Ville *</label>
-                          <input
-                            type="text"
-                            id="city"
-                            name="city"
-                            className={`${styles.formInput} ${formErrors.city ? styles.inputError : ''}`}
-                            value={formData.city}
-                            onChange={handleInputChange}
-                            required
-                            placeholder="Lyon"
-                          />
-                          {formErrors.city && (
-                            <p className={styles.errorText}>{formErrors.city}</p>
-                          )}
-                        </div>
-                        <div className={styles.formGroup}>
-                          <label htmlFor="postalCode">Code postal *</label>
-                          <input
-                            type="text"
-                            id="postalCode"
-                            name="postalCode"
-                            className={`${styles.formInput} ${formErrors.postalCode ? styles.inputError : ''}`}
-                            value={formData.postalCode}
-                            onChange={handleInputChange}
-                            required
-                            placeholder="69001"
-                          />
-                          {formErrors.postalCode && (
-                            <p className={styles.errorText}>{formErrors.postalCode}</p>
-                          )}
-                        </div>
-                        <div className={styles.formGroup}>
-                          <label htmlFor="country">Pays *</label>
-                          <select
-                            id="country"
-                            name="country"
-                            className={styles.formSelect}
-                            value={formData.country}
-                            onChange={handleInputChange}
-                            required
-                          >
-                            <option value="France">France</option>
-                            <option value="Belgique">Belgique</option>
-                            <option value="Suisse">Suisse</option>
-                            <option value="Luxembourg">Luxembourg</option>
-                            <option value="Canada">Canada</option>
-                          </select>
-                        </div>
-                        <div className={styles.formGroup}>
-                          <label htmlFor="phone">Téléphone *</label>
-                          <input
-                            type="tel"
-                            id="phone"
-                            name="phone"
-                            className={`${styles.formInput} ${formErrors.phone ? styles.inputError : ''}`}
-                            value={formData.phone}
-                            onChange={handleInputChange}
-                            required
-                            placeholder="+33 6 12 34 56 78"
-                          />
-                          {formErrors.phone && (
-                            <p className={styles.errorText}>{formErrors.phone}</p>
-                          )}
-                        </div>
-                        <div className={styles.formGroupFull}>
-                          <label htmlFor="termsAccepted" className={styles.checkboxLabel}>
-                            <input
-                              type="checkbox"
-                              id="termsAccepted"
-                              name="termsAccepted"
-                              className={styles.checkboxInput}
-                              checked={formData.termsAccepted}
-                              onChange={handleCheckboxChange}
-                            />
-                            J'accepte les <Link href="/terms" legacyBehavior><a>termes et conditions</a></Link>.
-                          </label>
-                        </div>
-                      </div>
-                      <div className={styles.formActions}>
-                        <Link href="/cart" legacyBehavior>
-                          <a className={styles.backButton}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                              <line x1="19" y1="12" x2="5" y2="12"></line>
-                              <polyline points="12 19 5 12 12 5"></polyline>
-                            </svg>
-                            Retour au panier
-                          </a>
-                        </Link>
-                        <button 
-                          onClick={goToNextStep}
-                          className={`${styles.button} ${styles.primaryButton}`}
-                          disabled={!isFormValid} // Désactiver si le formulaire n'est pas valide
-                        >
-                          Continuer
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                            <polyline points="12 5 19 12 12 19"></polyline>
-                          </svg>
-                        </button>
-                      </div>
+                          
+                          <div className={styles.formActions}>
+                            <Link href="/cart" legacyBehavior>
+                              <a className={styles.backButton}>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <line x1="19" y1="12" x2="5" y2="12"></line>
+                                  <polyline points="12 19 5 12 12 5"></polyline>
+                                </svg>
+                                Retour au panier
+                              </a>
+                            </Link>
+                            <button 
+                              onClick={goToNextStep}
+                              className={`${styles.button} ${styles.primaryButton}`}
+                              disabled={isLoading} // Désactiver pendant le chargement
+                            >
+                              {isLoading ? (
+                                <>
+                                  <span className={styles.loadingSpinner}></span>
+                                  Traitement...
+                                </>
+                              ) : (
+                                <>
+                                  {formMode === 'login' ? 'Se connecter' : 'Continuer'}
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                  </svg>
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        </>
+                      )}
                     </div>
                   )}
 
                   {/* Étape 2: Livraison */}
-                  {currentStep === 2 && (
+                  {currentStep === 2 && !showAddressPhoneForm && (
                     <div className={styles.checkoutStep}>
                       <h2 className={styles.stepTitle}>Méthode de livraison</h2>
                       <div className={styles.shippingOptions}>
@@ -783,6 +1465,143 @@ export default function Checkout() {
                             <line x1="5" y1="12" x2="19" y2="12"></line>
                             <polyline points="12 5 19 12 12 19"></polyline>
                           </svg>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* NOUVEAU: Formulaire pour compléter les informations manquantes (téléphone/adresse) */}
+                  {currentStep === 2 && showAddressPhoneForm && (
+                    <div className={styles.checkoutStep}>
+                      <h2 className={styles.stepTitle}>Compléter vos informations</h2>
+                      <div className={styles.infoAlert}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <line x1="12" y1="16" x2="12" y2="12"></line>
+                          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        <p>Veuillez compléter votre adresse et numéro de téléphone pour continuer la commande.</p>
+                      </div>
+                      
+                      <div className={styles.formGrid}>
+                        <div className={styles.formGroup}>
+                          <label htmlFor="phone">Téléphone *</label>
+                          <input
+                            type="tel"
+                            id="addressPhonePhone"
+                            name="phone"
+                            className={`${styles.formInput} ${addressPhoneErrors.phone ? styles.inputError : ''}`}
+                            value={addressPhoneData.phone}
+                            onChange={handleAddressPhoneChange}
+                            required
+                            placeholder="+33 6 12 34 56 78"
+                          />
+                          {addressPhoneErrors.phone && (
+                            <p className={styles.errorText}>{addressPhoneErrors.phone}</p>
+                          )}
+                        </div>
+                        
+                        <div className={styles.formGroupFull}>
+                          <label htmlFor="address">Adresse *</label>
+                          <input
+                            type="text"
+                            id="addressPhoneAddress"
+                            name="address"
+                            className={`${styles.formInput} ${addressPhoneErrors.address ? styles.inputError : ''}`}
+                            value={addressPhoneData.address}
+                            onChange={handleAddressPhoneChange}
+                            required
+                            placeholder="42 rue des Oliviers"
+                            autoComplete="street-address"
+                          />
+                          {addressPhoneErrors.address && (
+                            <p className={styles.errorText}>{addressPhoneErrors.address}</p>
+                          )}
+                        </div>
+                        
+                        <div className={styles.formGroup}>
+                          <label htmlFor="city">Ville *</label>
+                          <input
+                            type="text"
+                            id="addressPhoneCity"
+                            name="city"
+                            className={`${styles.formInput} ${addressPhoneErrors.city ? styles.inputError : ''}`}
+                            value={addressPhoneData.city}
+                            onChange={handleAddressPhoneChange}
+                            required
+                            placeholder="Lyon"
+                          />
+                          {addressPhoneErrors.city && (
+                            <p className={styles.errorText}>{addressPhoneErrors.city}</p>
+                          )}
+                        </div>
+                        
+                        <div className={styles.formGroup}>
+                          <label htmlFor="postalCode">Code postal *</label>
+                          <input
+                            type="text"
+                            id="addressPhonePostalCode"
+                            name="postalCode"
+                            className={`${styles.formInput} ${addressPhoneErrors.postalCode ? styles.inputError : ''}`}
+                            value={addressPhoneData.postalCode}
+                            onChange={handleAddressPhoneChange}
+                            required
+                            placeholder="69001"
+                          />
+                          {addressPhoneErrors.postalCode && (
+                            <p className={styles.errorText}>{addressPhoneErrors.postalCode}</p>
+                          )}
+                        </div>
+                        
+                        <div className={styles.formGroup}>
+                          <label htmlFor="country">Pays *</label>
+                          <select
+                            id="addressPhoneCountry"
+                            name="country"
+                            className={styles.formSelect}
+                            value={addressPhoneData.country}
+                            onChange={handleAddressPhoneChange}
+                            required
+                          >
+                            <option value="France">France</option>
+                            <option value="Belgique">Belgique</option>
+                            <option value="Suisse">Suisse</option>
+                            <option value="Luxembourg">Luxembourg</option>
+                            <option value="Canada">Canada</option>
+                          </select>
+                        </div>
+                      </div>
+                      
+                      <div className={styles.formActions}>
+                        <button 
+                          onClick={goToPreviousStep}
+                          className={styles.backButton}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                          </svg>
+                          Retour
+                        </button>
+                        <button 
+                          onClick={updateUserData}
+                          className={`${styles.button} ${styles.primaryButton}`}
+                          disabled={!addressPhoneFormValid || isLoading} // Désactiver si le formulaire n'est pas valide
+                        >
+                          {isLoading ? (
+                            <>
+                              <span className={styles.loadingSpinner}></span>
+                              Traitement...
+                            </>
+                          ) : (
+                            <>
+                              Enregistrer et continuer
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                              </svg>
+                            </>
+                          )}
                         </button>
                       </div>
                     </div>
@@ -1047,3 +1866,4 @@ export default function Checkout() {
     </>
   );
 }
+

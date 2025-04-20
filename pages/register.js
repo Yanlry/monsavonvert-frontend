@@ -23,6 +23,7 @@ export default function Register() {
   const [isClient, setIsClient] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   // Effet pour l'initialisation côté client
   useEffect(() => {

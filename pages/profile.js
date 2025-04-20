@@ -284,21 +284,19 @@ useEffect(() => {
 
   const handleUpdateUser = async (updatedFields) => {
     try {
-      const userId = localStorage.getItem("userId");
-      console.log("🔍 [Frontend] userId récupéré depuis localStorage:", userId);
-
-      if (!userId) {
+      if (!userData || !userData._id) {
         console.error("❌ [Frontend] Erreur : ID utilisateur introuvable.");
         showMessageModal("Erreur : ID utilisateur introuvable.");
         return;
       }
-
+  
       console.log(
         "📤 [Frontend] Envoi de la requête PUT à /users/update/:id avec userId:",
-        userId
+        userData._id
       );
+  
       const response = await fetch(
-        `${API_URL}/users/update/${userId}`,
+        `${API_URL}/users/update/${userData._id}`,
         {
           method: "PUT",
           headers: {
@@ -307,14 +305,12 @@ useEffect(() => {
           body: JSON.stringify(updatedFields),
         }
       );
-
+  
       const data = await response.json();
       console.log("📥 [Frontend] Réponse reçue du backend:", data);
-
+  
       if (data.result) {
-        console.log(
-          "✅ [Frontend] Mise à jour réussie des données utilisateur."
-        );
+        console.log("✅ [Frontend] Mise à jour réussie des données utilisateur.");
         setUserData(data.user); // Met à jour les données localement
         showMessageModal(
           "Vos informations ont été mises à jour avec succès.",
