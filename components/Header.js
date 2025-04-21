@@ -45,50 +45,50 @@ export default function Header({ cartCount }) {
               </Link>
             </li>
             <li className={styles.navItem}>
-              <Link href="/store" legacyBehavior>
-                <a className={styles.navLink} onClick={closeMenu}>
-                  Boutique
-                  <div className={styles.megaMenu}>
-                    <div className={styles.megaMenuGrid}>
-                      <div className={styles.megaMenuCategory}>
-                        <h3>Catégories</h3>
-                        <Link href="/boutique/visage" legacyBehavior>
-                          <a onClick={closeMenu}>Soins visage</a>
-                        </Link>
-                        <Link href="/boutique/corps" legacyBehavior>
-                          <a onClick={closeMenu}>Soins corps</a>
-                        </Link>
-                        <Link href="/boutique/cheveux" legacyBehavior>
-                          <a onClick={closeMenu}>Cheveux</a>
-                        </Link>
-                        <Link href="/boutique/accessoires" legacyBehavior>
-                          <a onClick={closeMenu}>Accessoires</a>
-                        </Link>
-                      </div>
-                      <div className={styles.megaMenuCategory}>
-                        <h3>Collections</h3>
-                        <Link href="/boutique/aromatherapie" legacyBehavior>
-                          <a onClick={closeMenu}>Aromathérapie</a>
-                        </Link>
-                        <Link href="/boutique/peaux-sensibles" legacyBehavior>
-                          <a onClick={closeMenu}>Peaux sensibles</a>
-                        </Link>
-                        <Link href="/boutique/hydratation" legacyBehavior>
-                          <a onClick={closeMenu}>Hydratation intense</a>
-                        </Link>
-                      </div>
-                      <div className={styles.megaMenuImage}>
-                        <p>Nouveau</p>
-                        <img src="/images/2.JPEG" alt="Nouvelle collection" />
-                        <Link href="/boutique/nouveautes" legacyBehavior>
-                          <a className={styles.megaMenuButton} onClick={closeMenu}>Découvrir</a>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </a>
-              </Link>
-            </li>
+  <div className={styles.navLinkWrapper}>
+    <Link href="/store" legacyBehavior>
+      <a className={styles.navLink} onClick={closeMenu}>Boutique</a>
+    </Link>
+    <div className={styles.megaMenu}>
+      <div className={styles.megaMenuGrid}>
+        <div className={styles.megaMenuCategory}>
+          <h3>Catégories</h3>
+          <Link href="/boutique/visage" legacyBehavior>
+            <a onClick={closeMenu}>Soins visage</a>
+          </Link>
+          <Link href="/boutique/corps" legacyBehavior>
+            <a onClick={closeMenu}>Soins corps</a>
+          </Link>
+          <Link href="/boutique/cheveux" legacyBehavior>
+            <a onClick={closeMenu}>Cheveux</a>
+          </Link>
+          <Link href="/boutique/accessoires" legacyBehavior>
+            <a onClick={closeMenu}>Accessoires</a>
+          </Link>
+        </div>
+        <div className={styles.megaMenuCategory}>
+          <h3>Collections</h3>
+          <Link href="/boutique/aromatherapie" legacyBehavior>
+            <a onClick={closeMenu}>Aromathérapie</a>
+          </Link>
+          <Link href="/boutique/peaux-sensibles" legacyBehavior>
+            <a onClick={closeMenu}>Peaux sensibles</a>
+          </Link>
+          <Link href="/boutique/hydratation" legacyBehavior>
+            <a onClick={closeMenu}>Hydratation intense</a>
+          </Link>
+        </div>
+        <div className={styles.megaMenuImage}>
+          <p>Nouveau</p>
+          <img src="/images/2.JPEG" alt="Nouvelle collection" />
+          <Link href="/boutique/nouveautes" legacyBehavior>
+            <a className={styles.megaMenuButton} onClick={closeMenu}>Découvrir</a>
+          </Link>
+        </div>
+      </div>
+    </div>
+  </div>
+</li>
             <li className={styles.navItem}>
               <Link href="/virtues" legacyBehavior>
                 <a className={styles.navLink} onClick={closeMenu}>Vertu & bienfaits</a>

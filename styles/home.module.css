@@ -889,7 +889,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url('/images/pattern.svg');
+  background-image: url('/images/pattern.png');
   background-size: 200px;
   opacity: 0.1;
   z-index: 1;
@@ -1477,7 +1477,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url('/images/pattern.svg');
+  background-image: url('/images/pattern.png');
   background-size: 200px;
   opacity: 0.1;
   z-index: 1;

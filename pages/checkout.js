@@ -1620,7 +1620,7 @@ export default function Checkout() {
                             <img src="/images/payments/visa.png" alt="Visa" className={styles.paymentLogo} />
                             <img src="/images/payments/mastercard.png" alt="Mastercard" className={styles.paymentLogo} />
                             <img src="/images/payments/americanexpress.png" alt="americanexpress" className={styles.paymentLogo} />
-                            <img src="/images/payments/diners.png" alt="Diners Club" className={styles.paymentLogo} />
+                            <img src="/images/payments/applepay.png" alt="Apple pay" className={styles.paymentLogo} />
                           </div>
                         </div>
                         

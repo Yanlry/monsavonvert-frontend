@@ -794,10 +794,10 @@ export default function Home() {
                     Moyens de paiement
                   </span>
                   <div className={styles.paymentIcons}>
-                    <img src="/images/visa.svg" alt="Visa" />
-                    <img src="/images/mastercard.svg" alt="Mastercard" />
-                    <img src="/images/paypal.svg" alt="PayPal" />
-                    <img src="/images/applepay.svg" alt="Apple Pay" />
+                    <img src="/images/payments/visa.png" alt="Visa" />
+                    <img src="/images/payments/mastercard.png" alt="Mastercard" />
+                    <img src="/images/payments/americanexpress.png" alt="American Express" />
+                    <img src="/images/payments/applepay.png" alt="Apple Pay" />
                   </div>
                 </div>
               </div>
