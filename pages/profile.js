@@ -7,7 +7,6 @@ import { useRouter } from "next/router";
 import styles from "../styles/profile.module.css";
 import Header from "../components/Header";
 
-
 export default function Profile() {
   // États
   const [isClient, setIsClient] = useState(false);
@@ -183,85 +182,111 @@ export default function Profile() {
   };
 
   // Vérification de la connexion et chargement des données
-// Dans useEffect de la fonction fetchUserData
-useEffect(() => {
-  const fetchUserData = async () => {
-    try {
-      console.log("Tentative de récupération des données utilisateur...");
-      
-      // Essayer d'abord localStorage
-      let storedUser = localStorage.getItem("user") 
-        ? JSON.parse(localStorage.getItem("user")) 
-        : null;
-      
-      // Si pas trouvé dans localStorage, essayer sessionStorage
-      if (!storedUser) {
-        storedUser = sessionStorage.getItem("user") 
-          ? JSON.parse(sessionStorage.getItem("user")) 
-          : null;
-      }
-      
-      // Si toujours pas trouvé, essayer de construire l'objet à partir des clés individuelles
-      if (!storedUser) {
-        const userId = localStorage.getItem("userId") || sessionStorage.getItem("userId");
-        const firstName = localStorage.getItem("firstName") || sessionStorage.getItem("firstName");
-        
-        if (userId && firstName) {
-          storedUser = {
-            _id: userId,
-            firstName: firstName
-          };
-          console.log("Utilisateur construit à partir des clés individuelles:", storedUser);
-        }
-      }
-      
-      console.log("Données utilisateur récupérées du stockage:", storedUser);
-      
-      if (!storedUser || !storedUser._id) {
-        console.log("❌ Aucun utilisateur trouvé dans le stockage.");
-        router.push("/login");
-        return;
-      }
+  // Dans useEffect de la fonction fetchUserData
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        console.log("Tentative de récupération des données utilisateur...");
 
-      console.log("🔍 ID utilisateur récupéré :", storedUser._id);
-      
-      // Si API_URL est défini, faire la requête au backend
-      if (API_URL) {
-        const response = await fetch(`${API_URL}/users/${storedUser._id}`);
-        const data = await response.json();
-  
-        if (data.result) {
-          console.log("✅ Données utilisateur récupérées du backend:", data.user);
-          setUserData(data.user);
-          setAddresses(data.user.addresses || []);
-          setIsSubscribedToNewsletter(data.user.isSubscribedToNewsletter || false);
+        // Essayer d'abord localStorage
+        let storedUser = localStorage.getItem("user")
+          ? JSON.parse(localStorage.getItem("user"))
+          : null;
+
+        // Si pas trouvé dans localStorage, essayer sessionStorage
+        if (!storedUser) {
+          storedUser = sessionStorage.getItem("user")
+            ? JSON.parse(sessionStorage.getItem("user"))
+            : null;
+        }
+
+        // Si toujours pas trouvé, essayer de construire l'objet à partir des clés individuelles
+        if (!storedUser) {
+          const userId =
+            localStorage.getItem("userId") || sessionStorage.getItem("userId");
+          const firstName =
+            localStorage.getItem("firstName") ||
+            sessionStorage.getItem("firstName");
+
+          if (userId && firstName) {
+            storedUser = {
+              _id: userId,
+              firstName: firstName,
+            };
+            console.log(
+              "Utilisateur construit à partir des clés individuelles:",
+              storedUser
+            );
+          }
+        }
+
+        console.log("Données utilisateur récupérées du stockage:", storedUser);
+
+        if (!storedUser || !storedUser._id) {
+          console.log("❌ Aucun utilisateur trouvé dans le stockage.");
+          router.push("/login");
+          return;
+        }
+
+        console.log("🔍 ID utilisateur récupéré :", storedUser._id);
+
+        // Si API_URL est défini, faire la requête au backend
+        if (API_URL) {
+          const response = await fetch(`${API_URL}/users/${storedUser._id}`);
+          const data = await response.json();
+
+          if (data.result) {
+            console.log(
+              "✅ Données utilisateur récupérées du backend:",
+              data.user
+            );
+            setUserData(data.user);
+            setAddresses(data.user.addresses || []);
+            setIsSubscribedToNewsletter(
+              data.user.isSubscribedToNewsletter || false
+            );
+          } else {
+            console.error(
+              "❌ Erreur lors de la récupération des données utilisateur :",
+              data.error
+            );
+            showMessageModal(`Erreur: ${data.error}`);
+            // Si l'API ne répond pas correctement, utiliser les données du stockage
+            setUserData(storedUser);
+          }
         } else {
-          console.error("❌ Erreur lors de la récupération des données utilisateur :", data.error);
-          showMessageModal(`Erreur: ${data.error}`);
-          // Si l'API ne répond pas correctement, utiliser les données du stockage
+          // Si API_URL n'est pas défini, utiliser les données du stockage
+          console.log(
+            "⚠️ API_URL non défini, utilisation des données du stockage"
+          );
           setUserData(storedUser);
         }
-      } else {
-        // Si API_URL n'est pas défini, utiliser les données du stockage
-        console.log("⚠️ API_URL non défini, utilisation des données du stockage");
-        setUserData(storedUser);
-      }
-    } catch (error) {
-      console.error("❌ Erreur de connexion au serveur :", error);
-      showMessageModal("Erreur de connexion au serveur. Veuillez réessayer plus tard.");
-      
-      // Tentative de récupération des données minimales du stockage
-      const storedUser = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "{}");
-      if (storedUser && storedUser._id) {
-        setUserData(storedUser);
-      }
-    }
-  };
+      } catch (error) {
+        console.error("❌ Erreur de connexion au serveur :", error);
+        showMessageModal(
+          "Erreur de connexion au serveur. Veuillez réessayer plus tard."
+        );
 
-  if (isClient) {
-    fetchUserData();
-  }
-}, [isClient, router, API_URL]);
+        // Tentative de récupération des données minimales du stockage
+        const storedUser = JSON.parse(
+          localStorage.getItem("user") || sessionStorage.getItem("user") || "{}"
+        );
+        if (storedUser && storedUser._id) {
+          setUserData(storedUser);
+        }
+      }
+    };
+
+    if (isClient) {
+      fetchUserData();
+    }
+  }, [isClient, router, API_URL]);
+
+  // Fonction pour vérifier si le profil utilisateur est complet
+  const isProfileComplete = () => {
+    // Vérifier si l'utilisateur a au moins une adresse et un numéro de téléphone
+    return addresses.length > 0 && userData.phone;
+  };
 
   // Effet pour valider le mot de passe à chaque changement
   useEffect(() => {
@@ -289,28 +314,27 @@ useEffect(() => {
         showMessageModal("Erreur : ID utilisateur introuvable.");
         return;
       }
-  
+
       console.log(
         "📤 [Frontend] Envoi de la requête PUT à /users/update/:id avec userId:",
         userData._id
       );
-  
-      const response = await fetch(
-        `${API_URL}/users/update/${userData._id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedFields),
-        }
-      );
-  
+
+      const response = await fetch(`${API_URL}/users/update/${userData._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedFields),
+      });
+
       const data = await response.json();
       console.log("📥 [Frontend] Réponse reçue du backend:", data);
-  
+
       if (data.result) {
-        console.log("✅ [Frontend] Mise à jour réussie des données utilisateur.");
+        console.log(
+          "✅ [Frontend] Mise à jour réussie des données utilisateur."
+        );
         setUserData(data.user); // Met à jour les données localement
         showMessageModal(
           "Vos informations ont été mises à jour avec succès.",
@@ -361,7 +385,7 @@ useEffect(() => {
     // Supprime toutes les données du localStorage et du sessionStorage
     localStorage.clear();
     sessionStorage.clear();
-  
+
     // Redirige vers la page de connexion et recharge la page
     router.push("/login").then(() => {
       window.location.reload(); // Recharge la page pour mettre à jour le Header
@@ -658,8 +682,7 @@ useEffect(() => {
             scrolled ? styles.headerScrolled : ""
           }`}
         >
-                         <Header cartCount={cartCount}/>
-         
+          <Header cartCount={cartCount} />
         </header>
 
         <main className={styles.mainContent}>
@@ -668,9 +691,7 @@ useEffect(() => {
             <div className={styles.pageHeroContent}>
               <h1 className={styles.pageTitle}>Mon Compte</h1>
               <div className={styles.pageBreadcrumb}>
-                <Link href="/" legacyBehavior>
-                  <a>Accueil</a>
-                </Link>
+                <Link href="/">Accueil</Link>
                 <span className={styles.breadcrumbSeparator}>/</span>
                 <span className={styles.breadcrumbCurrent}>Mon Compte</span>
               </div>
@@ -851,6 +872,63 @@ useEffect(() => {
               <div className={styles.profileContent}>
                 {activeTab === "dashboard" && (
                   <div className={styles.dashboardTab}>
+                    {/* Alerte de profil incomplet */}
+                    {!isProfileComplete() && (
+                      <div className={styles.profileAlert}>
+                        <div className={styles.alertIcon}>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                          </svg>
+                        </div>
+                        <div className={styles.alertContent}>
+                          <h3>Informations manquantes</h3>
+                          <p>
+                            Pour faciliter vos futures commandes, veuillez
+                            compléter votre profil avec :
+                          </p>
+                          <ul>
+                            {addresses.length === 0 && (
+                              <li>
+                                <span>Une adresse de livraison</span>
+                                <button
+                                  className={styles.alertActionButton}
+                                  onClick={() => {
+                                    setActiveTab("addresses");
+                                    handleAddAddress();
+                                  }}
+                                >
+                                  Ajouter
+                                </button>
+                              </li>
+                            )}
+                            {!userData.phone && (
+                              <li>
+                                <span>Un numéro de téléphone</span>
+                                <button
+                                  className={styles.alertActionButton}
+                                  onClick={() => setActiveTab("settings")}
+                                >
+                                  Ajouter
+                                </button>
+                              </li>
+                            )}
+                          </ul>
+                        </div>
+                      </div>
+                    )}
+
                     <div className={styles.welcomeMessage}>
                       <h2>Bonjour, {userData.firstName} !</h2>
                       <p>
@@ -1011,9 +1089,9 @@ useEffect(() => {
                               <div className={styles.orderActionColumn}>
                                 <Link
                                   href={`/profile/orders/${order.id}`}
-                                  legacyBehavior
+                                  className={styles.viewOrderButton}
                                 >
-                                  <a className={styles.viewOrderButton}>Voir</a>
+                                 Voir
                                 </Link>
                               </div>
                             </div>
@@ -1077,9 +1155,9 @@ useEffect(() => {
                             <div className={styles.orderActionColumn}>
                               <Link
                                 href={`/profile/orders/${order.id}`}
-                                legacyBehavior
+                                className={styles.viewOrderButton}
                               >
-                                <a className={styles.viewOrderButton}>Voir</a>
+                                Voir
                               </Link>
                             </div>
                           </div>
@@ -1106,10 +1184,8 @@ useEffect(() => {
                         </div>
                         <h3>Aucune commande</h3>
                         <p>Vous n'avez pas encore passé de commande.</p>
-                        <Link href="/store" legacyBehavior>
-                          <a className={styles.emptyStateButton}>
+                        <Link href="/store" className={styles.emptyStateButton}>
                             Découvrir nos produits
-                          </a>
                         </Link>
                       </div>
                     )}
@@ -1193,10 +1269,8 @@ useEffect(() => {
                           Vous n'avez pas encore ajouté de produits à votre
                           liste d'envies.
                         </p>
-                        <Link href="/store" legacyBehavior>
-                          <a className={styles.emptyStateButton}>
+                        <Link href="/store" className={styles.emptyStateButton}>
                             Découvrir nos produits
-                          </a>
                         </Link>
                       </div>
                     )}
@@ -1570,6 +1644,7 @@ useEffect(() => {
                   passion en France depuis 2018.
                 </p>
                 <div className={styles.footerSocial}>
+                  
                   <a
                     href="https://facebook.com/monsavonvert"
                     className={styles.socialLink}
@@ -1596,7 +1671,7 @@ useEffect(() => {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Instagram"
-                  >
+                  />
                     <svg
                       viewBox="0 0 24 24"
                       width="20"
@@ -1618,7 +1693,6 @@ useEffect(() => {
                       <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                       <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
                     </svg>
-                  </a>
                   <a
                     href="https://pinterest.com/monsavonvert"
                     className={styles.socialLink}
@@ -1646,45 +1720,48 @@ useEffect(() => {
 
               <div className={styles.footerColumn}>
                 <h3 className={styles.footerTitle}>Boutique</h3>
-                <Link href="/boutique/nouveautes" legacyBehavior>
-                  <a className={styles.footerLink}>Nouveautés</a>
+                <Link href="/boutique/nouveautes" className={styles.footerLink}>
+                  Nouveautés
                 </Link>
-                <Link href="/boutique/visage" legacyBehavior>
-                  <a className={styles.footerLink}>Soins visage</a>
+                <Link href="/boutique/visage" className={styles.footerLink}>
+                  Soins visage
                 </Link>
-                <Link href="/boutique/corps" legacyBehavior>
-                  <a className={styles.footerLink}>Soins corps</a>
+                <Link href="/boutique/corps" className={styles.footerLink}>
+                  Soins corps
                 </Link>
-                <Link href="/boutique/cheveux" legacyBehavior>
-                  <a className={styles.footerLink}>Cheveux</a>
+                <Link href="/boutique/cheveux" className={styles.footerLink}>
+                  Cheveux
                 </Link>
-                <Link href="/boutique/coffrets" legacyBehavior>
-                  <a className={styles.footerLink}>Coffrets cadeaux</a>
+                <Link href="/boutique/coffrets" className={styles.footerLink}>
+                  Coffrets cadeaux
                 </Link>
-                <Link href="/boutique/accessoires" legacyBehavior>
-                  <a className={styles.footerLink}>Accessoires</a>
+                <Link
+                  href="/boutique/accessoires"
+                  className={styles.footerLink}
+                >
+                  Accessoires
                 </Link>
               </div>
 
               <div className={styles.footerColumn}>
                 <h3 className={styles.footerTitle}>Informations</h3>
-                <Link href="/a-propos" legacyBehavior>
-                  <a className={styles.footerLink}>Notre histoire</a>
+                <Link href="/a-propos" className={styles.footerLink}>
+                  Notre histoire
                 </Link>
-                <Link href="/virtues" legacyBehavior>
-                  <a className={styles.footerLink}>Vertu & bienfaits</a>
+                <Link href="/virtues" className={styles.footerLink}>
+                  Vertu & bienfaits
                 </Link>
-                <Link href="/blog" legacyBehavior>
-                  <a className={styles.footerLink}>Journal</a>
+                <Link href="/blog" className={styles.footerLink}>
+                  Journal
                 </Link>
-                <Link href="/faq" legacyBehavior>
-                  <a className={styles.footerLink}>FAQ</a>
+                <Link href="/faq" className={styles.footerLink}>
+                  FAQ
                 </Link>
-                <Link href="/contact" legacyBehavior>
-                  <a className={styles.footerLink}>Contact</a>
+                <Link href="/contact" className={styles.footerLink}>
+                  Contact
                 </Link>
-                <Link href="/programme-fidelite" legacyBehavior>
-                  <a className={styles.footerLink}>Programme fidélité</a>
+                <Link href="/programme-fidelite" className={styles.footerLink}>
+                  Programme fidélité
                 </Link>
               </div>
 
@@ -1754,16 +1831,20 @@ useEffect(() => {
                 © 2023 MonSavonVert. Tous droits réservés.
               </p>
               <div className={styles.footerLinks}>
-                <Link href="/cgv" legacyBehavior>
-                  <a className={styles.footerSmallLink}>CGV</a>
+                <Link href="/cgv" className={styles.footerSmallLink}>
+                  CGV
                 </Link>
-                <Link href="/politique-de-confidentialite" legacyBehavior>
-                  <a className={styles.footerSmallLink}>
-                    Politique de confidentialité
-                  </a>
+                <Link
+                  href="/politique-de-confidentialite"
+                  className={styles.footerSmallLink}
+                >
+                  Politique de confidentialité
                 </Link>
-                <Link href="/mentions-legales" legacyBehavior>
-                  <a className={styles.footerSmallLink}>Mentions légales</a>
+                <Link
+                  href="/mentions-legales"
+                  className={styles.footerSmallLink}
+                >
+                  Mentions légales
                 </Link>
               </div>
             </div>

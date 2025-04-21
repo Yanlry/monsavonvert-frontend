@@ -1,16 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import styles from '../styles/login.module.css'; // Réutilisation du même fichier CSS
 import { useRouter } from 'next/navigation';
+import { UserContext } from "../context/UserContext"; // Import du contexte utilisateur
+
 /**
  * Composant de page d'inscription pour MonSavonVert
  * Permet aux utilisateurs de créer un nouveau compte
  */
 export default function Register() {
   const router = useRouter();
+  const { setUser } = useContext(UserContext); // Utiliser le contexte utilisateur
+  
   // États
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -24,6 +28,22 @@ export default function Register() {
   const [scrolled, setScrolled] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+  // Fonction pour mettre la première lettre en majuscule
+  const capitalizeFirstLetter = (string) => {
+    if (!string) return '';
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  };
+
+  // Fonction pour formater le prénom lors de la saisie
+  const handleFirstNameChange = (e) => {
+    setFirstName(e.target.value);
+  };
+
+  // Fonction pour formater le nom lors de la saisie
+  const handleLastNameChange = (e) => {
+    setLastName(e.target.value);
+  };
 
   // Effet pour l'initialisation côté client
   useEffect(() => {
@@ -97,7 +117,9 @@ export default function Register() {
         throw new Error('Vous devez accepter les conditions générales.');
       }
   
-      console.log('⏳ Tentative d\'inscription avec:', { email, firstName, lastName });
+      // Mettre en forme le prénom et le nom avec majuscule
+      const formattedFirstName = capitalizeFirstLetter(firstName);
+      const formattedLastName = capitalizeFirstLetter(lastName);
   
       // Envoi des données au backend
       const response = await fetch(`${API_URL}/users/signup`, {
@@ -106,8 +128,8 @@ export default function Register() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          firstName,
-          lastName,
+          firstName: formattedFirstName, // Utilisez les valeurs formatées
+          lastName: formattedLastName,  // Utilisez les valeurs formatées
           email,
           password,
           termsAccepted,
@@ -116,38 +138,33 @@ export default function Register() {
       });
   
       const data = await response.json();
-      console.log('📡 Réponse du serveur:', data);
   
       if (!response.ok) {
         throw new Error(data.error || 'Erreur lors de l\'inscription');
       }
   
-      // Stockage dans localStorage
-      localStorage.setItem('userEmail', email);
+      // Stockage des données utilisateur
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('userId', data.userId);
+      localStorage.setItem('firstName', formattedFirstName);
+      localStorage.setItem('lastName', formattedLastName);
   
-      if (data.token) {
-        localStorage.setItem('token', data.token);
-        console.log('🔑 Token stocké:', data.token.substring(0, 10) + '...');
-      }
+      setUser({
+        userId: data.userId,
+        firstName: formattedFirstName,
+        lastName: formattedLastName,
+        email,
+        token: data.token,
+      });
   
-      if (data.userId) {
-        localStorage.setItem('userId', data.userId);
-        console.log('✅ userId stocké:', data.userId);
-      } else {
-        throw new Error('userId manquant dans la réponse du serveur.');
-      }
-  
-      // Redirection vers la page de profil
-      console.log('🔀 Redirection vers /profile');
-      router.push('/profile'); // Utilisation de router.push pour une redirection propre
-  
+      router.push('/profile');
     } catch (err) {
-      console.error('❌ Erreur lors de l\'inscription:', err.message);
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
+
   // Rendu de base sans contenu dynamique (pour éviter les erreurs d'hydratation)
   if (!isClient) {
     return (
@@ -178,63 +195,53 @@ export default function Register() {
         <header className={`${styles.header} ${scrolled ? styles.headerScrolled : ''}`}>
           <div className={styles.headerContent}>
             <div className={styles.logoContainer}>
-              <Link href="/" legacyBehavior>
-                <a className={styles.logoLink}>
-                  <span className={styles.logo}>MonSavonVert</span>
-                </a>
+              <Link href="/" className={styles.logoLink}>
+                <span className={styles.logo}>MonSavonVert</span>
               </Link>
             </div>
 
             {/* Navigation principale */}
             <nav className={styles.mainNav}>
               <ul className={styles.navList}>
-              <li className={styles.navItem}>
-                  <Link href="/" legacyBehavior>
-                    <a className={styles.navLink}>Accueil</a>
-                  </Link>
-                </li>
                 <li className={styles.navItem}>
-                  <Link href="/store" legacyBehavior>
-                    <a className={styles.navLink}>Boutique
-                      <div className={styles.megaMenu}>
-                        <div className={styles.megaMenuGrid}>
-                          <div className={styles.megaMenuCategory}>
-                            <h3>Catégories</h3>
-                            <Link href="/boutique/visage" legacyBehavior><a>Soins visage</a></Link>
-                            <Link href="/boutique/corps" legacyBehavior><a>Soins corps</a></Link>
-                            <Link href="/boutique/cheveux" legacyBehavior><a>Cheveux</a></Link>
-                            <Link href="/boutique/accessoires" legacyBehavior><a>Accessoires</a></Link>
-                          </div>
-                          <div className={styles.megaMenuCategory}>
-                            <h3>Collections</h3>
-                            <Link href="/boutique/aromatherapie" legacyBehavior><a>Aromathérapie</a></Link>
-                            <Link href="/boutique/peaux-sensibles" legacyBehavior><a>Peaux sensibles</a></Link>
-                            <Link href="/boutique/hydratation" legacyBehavior><a>Hydratation intense</a></Link>
-                          </div>
-                          <div className={styles.megaMenuImage}>
-                            <p>Nouveau</p>
-                            <img src="/images/2.JPEG" alt="Nouvelle collection" />
-                            <Link href="/boutique/nouveautes" legacyBehavior><a className={styles.megaMenuButton}>Découvrir</a></Link>
-                          </div>
+                  <Link href="/" className={styles.navLink}>Accueil</Link>
+                </li>
+                {/* Fix pour le menu Boutique - éviter les liens imbriqués */}
+                <li className={styles.navItem}>
+                  <div className={styles.navLink}>
+                    Boutique
+                    <div className={styles.megaMenu}>
+                      <div className={styles.megaMenuGrid}>
+                        <div className={styles.megaMenuCategory}>
+                          <h3>Catégories</h3>
+                          <Link href="/boutique/visage">Soins visage</Link>
+                          <Link href="/boutique/corps">Soins corps</Link>
+                          <Link href="/boutique/cheveux">Cheveux</Link>
+                          <Link href="/boutique/accessoires">Accessoires</Link>
+                        </div>
+                        <div className={styles.megaMenuCategory}>
+                          <h3>Collections</h3>
+                          <Link href="/boutique/aromatherapie">Aromathérapie</Link>
+                          <Link href="/boutique/peaux-sensibles">Peaux sensibles</Link>
+                          <Link href="/boutique/hydratation">Hydratation intense</Link>
+                        </div>
+                        <div className={styles.megaMenuImage}>
+                          <p>Nouveau</p>
+                          <img src="/images/2.JPEG" alt="Nouvelle collection" />
+                          <Link href="/boutique/nouveautes" className={styles.megaMenuButton}>Découvrir</Link>
                         </div>
                       </div>
-                    </a>
-                  </Link>
+                    </div>
+                  </div>
                 </li>
                 <li className={styles.navItem}>
-                  <Link href="/virtues" legacyBehavior>
-                    <a className={styles.navLink}>Vertu & bienfaits</a>
-                  </Link>
+                  <Link href="/virtues" className={styles.navLink}>Vertu & bienfaits</Link>
                 </li>
                 <li className={styles.navItem}>
-                  <Link href="/info" legacyBehavior>
-                    <a className={styles.navLink}>Notre Histoire</a>
-                  </Link>
+                  <Link href="/info" className={styles.navLink}>Notre Histoire</Link>
                 </li>
                 <li className={styles.navItem}>
-                  <Link href="/contact" legacyBehavior>
-                    <a className={styles.navLink}>Contact</a>
-                  </Link>
+                  <Link href="/contact" className={styles.navLink}>Contact</Link>
                 </li>
               </ul>
             </nav>
@@ -247,27 +254,23 @@ export default function Register() {
                   <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
               </button>
-              <Link href="/login" legacyBehavior>
-                <a className={styles.userAccount} aria-label="Mon compte">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>
-                </a>
+              <Link href="/login" className={styles.userAccount} aria-label="Mon compte">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
               </Link>
-              <Link href="/cart" legacyBehavior>
-                <a className={styles.cartLink} aria-label="Panier">
-                  <div className={styles.cartIcon} id="cartIcon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="9" cy="21" r="1"></circle>
-                      <circle cx="20" cy="21" r="1"></circle>
-                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                    </svg>
-                    {cartCount > 0 && (
-                      <span className={styles.cartCount}>{cartCount}</span>
-                    )}
-                  </div>
-                </a>
+              <Link href="/cart" className={styles.cartLink} aria-label="Panier">
+                <div className={styles.cartIcon} id="cartIcon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                  </svg>
+                  {cartCount > 0 && (
+                    <span className={styles.cartCount}>{cartCount}</span>
+                  )}
+                </div>
               </Link>
             </div>
           </div>
@@ -279,7 +282,7 @@ export default function Register() {
             <div className={styles.pageHeroContent}>
               <h1 className={styles.pageTitle}>Créer un compte</h1>
               <div className={styles.pageBreadcrumb}>
-                <Link href="/" legacyBehavior><a>Accueil</a></Link>
+                <Link href="/">Accueil</Link>
                 <span className={styles.breadcrumbSeparator}>/</span>
                 <span className={styles.breadcrumbCurrent}>Inscription</span>
               </div>
@@ -321,7 +324,7 @@ export default function Register() {
                           id="firstName"
                           placeholder="Votre prénom"
                           value={firstName}
-                          onChange={(e) => setFirstName(e.target.value)}
+                          onChange={handleFirstNameChange}
                           required
                         />
                       </div>
@@ -340,7 +343,7 @@ export default function Register() {
                           id="lastName"
                           placeholder="Votre nom"
                           value={lastName}
-                          onChange={(e) => setLastName(e.target.value)}
+                          onChange={handleLastNameChange}
                           required
                         />
                       </div>
@@ -415,7 +418,7 @@ export default function Register() {
                           required
                         />
                         <label htmlFor="terms">
-                          J'accepte les <Link href="/conditions-generales" legacyBehavior><a style={{ color: 'var(--color-primary)' }}>conditions générales</a></Link> et la <Link href="/politique-de-confidentialite" legacyBehavior><a style={{ color: 'var(--color-primary)' }}>politique de confidentialité</a></Link>
+                          J'accepte les <Link href="/conditions-generales" style={{ color: 'var(--color-primary)' }}>conditions générales</Link> et la <Link href="/politique-de-confidentialite" style={{ color: 'var(--color-primary)' }}>politique de confidentialité</Link>
                         </label>
                       </div>
                     </div>
@@ -435,9 +438,7 @@ export default function Register() {
                   
                   <div className={styles.loginBoxFooter}>
                     <p>Vous avez déjà un compte ?</p>
-                    <Link href="/login" legacyBehavior>
-                      <a className={styles.createAccountLink}>Se connecter</a>
-                    </Link>
+                    <Link href="/login" className={styles.createAccountLink}>Se connecter</Link>
                   </div>
                 </div>
                 
@@ -536,22 +537,22 @@ export default function Register() {
               
               <div className={styles.footerColumn}>
                 <h3 className={styles.footerTitle}>Boutique</h3>
-                <Link href="/boutique/nouveautes" legacyBehavior><a className={styles.footerLink}>Nouveautés</a></Link>
-                <Link href="/boutique/visage" legacyBehavior><a className={styles.footerLink}>Soins visage</a></Link>
-                <Link href="/boutique/corps" legacyBehavior><a className={styles.footerLink}>Soins corps</a></Link>
-                <Link href="/boutique/cheveux" legacyBehavior><a className={styles.footerLink}>Cheveux</a></Link>
-                <Link href="/boutique/coffrets" legacyBehavior><a className={styles.footerLink}>Coffrets cadeaux</a></Link>
-                <Link href="/boutique/accessoires" legacyBehavior><a className={styles.footerLink}>Accessoires</a></Link>
+                <Link href="/boutique/nouveautes" className={styles.footerLink}>Nouveautés</Link>
+                <Link href="/boutique/visage" className={styles.footerLink}>Soins visage</Link>
+                <Link href="/boutique/corps" className={styles.footerLink}>Soins corps</Link>
+                <Link href="/boutique/cheveux" className={styles.footerLink}>Cheveux</Link>
+                <Link href="/boutique/coffrets" className={styles.footerLink}>Coffrets cadeaux</Link>
+                <Link href="/boutique/accessoires" className={styles.footerLink}>Accessoires</Link>
               </div>
               
               <div className={styles.footerColumn}>
                 <h3 className={styles.footerTitle}>Informations</h3>
-                <Link href="/a-propos" legacyBehavior><a className={styles.footerLink}>Notre histoire</a></Link>
-                <Link href="/virtues" legacyBehavior><a className={styles.footerLink}>Vertu & bienfaits</a></Link>
-                <Link href="/blog" legacyBehavior><a className={styles.footerLink}>Journal</a></Link>
-                <Link href="/faq" legacyBehavior><a className={styles.footerLink}>FAQ</a></Link>
-                <Link href="/contact" legacyBehavior><a className={styles.footerLink}>Contact</a></Link>
-                <Link href="/programme-fidelite" legacyBehavior><a className={styles.footerLink}>Programme fidélité</a></Link>
+                <Link href="/a-propos" className={styles.footerLink}>Notre histoire</Link>
+                <Link href="/virtues" className={styles.footerLink}>Vertu & bienfaits</Link>
+                <Link href="/blog" className={styles.footerLink}>Journal</Link>
+                <Link href="/faq" className={styles.footerLink}>FAQ</Link>
+                <Link href="/contact" className={styles.footerLink}>Contact</Link>
+                <Link href="/programme-fidelite" className={styles.footerLink}>Programme fidélité</Link>
               </div>
               
               <div className={styles.footerColumn}>
@@ -584,9 +585,9 @@ export default function Register() {
             <div className={styles.footerBottomContent}>
               <p className={styles.copyright}>© 2023 MonSavonVert. Tous droits réservés.</p>
               <div className={styles.footerLinks}>
-                <Link href="/cgv" legacyBehavior><a className={styles.footerSmallLink}>CGV</a></Link>
-                <Link href="/politique-de-confidentialite" legacyBehavior><a className={styles.footerSmallLink}>Politique de confidentialité</a></Link>
-                <Link href="/mentions-legales" legacyBehavior><a className={styles.footerSmallLink}>Mentions légales</a></Link>
+                <Link href="/cgv" className={styles.footerSmallLink}>CGV</Link>
+                <Link href="/politique-de-confidentialite" className={styles.footerSmallLink}>Politique de confidentialité</Link>
+                <Link href="/mentions-legales" className={styles.footerSmallLink}>Mentions légales</Link>
               </div>
             </div>
           </div>

@@ -80,41 +80,35 @@ export default function AdminCustomers() {
   // Vérification de l'authentification
   useEffect(() => {
     if (!isClient) return;
-    
+  
     try {
-      // Vérifier si l'utilisateur est connecté en tant qu'admin
-      const email = localStorage.getItem('userEmail');
-      const userRole = localStorage.getItem('userRole');
-      const token = localStorage.getItem('token');
-
-      console.log('Vérification des autorisations pour:', email);
-      console.log('Rôle utilisateur:', userRole);
-
-      // Vérifier si les informations sont présentes
+      const email = localStorage.getItem("userEmail") || sessionStorage.getItem("userEmail");
+      const userRole = localStorage.getItem("role") || sessionStorage.getItem("role");
+      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+  
+      console.log("Vérification des autorisations pour:", email);
+      console.log("Rôle utilisateur:", userRole);
+  
       if (!email || !userRole || !token) {
-        console.log('Informations manquantes - Email, Rôle ou Token non trouvé');
-        router.push('/login');
+        console.log("Informations manquantes - Email, Rôle ou Token non trouvé");
+        router.push("/login");
         return;
       }
-
-      // Vérifier si l'utilisateur a le rôle admin
-      if (userRole !== 'admin') {
-        console.log('Accès refusé: L\'utilisateur n\'a pas le rôle admin');
-        router.push('/profile');
+  
+      if (userRole !== "admin") {
+        console.log("Accès refusé: L'utilisateur n'a pas le rôle admin");
+        router.push("/profile");
         return;
       }
-
-      // Si l'utilisateur est bien un admin, autoriser l'accès
-      console.log('Accès autorisé pour l\'administrateur');
+  
+      console.log("Accès autorisé pour l'administrateur");
       setUserEmail(email);
       setIsAuthorized(true);
-      
-      // Charger les clients depuis l'API
+  
       fetchCustomers(token);
-      
     } catch (error) {
-      console.error('Erreur lors de la vérification des autorisations:', error);
-      router.push('/login');
+      console.error("Erreur lors de la vérification des autorisations:", error);
+      router.push("/login");
     }
   }, [isClient, router]);
 
@@ -763,14 +757,17 @@ export default function AdminCustomers() {
               <Link href="/admin/help" legacyBehavior><a>Aide</a></Link>
               <Link href="/admin/documentation" legacyBehavior><a>Documentation</a></Link>
               <button onClick={() => {
-                localStorage.removeItem('userEmail');
-                localStorage.removeItem('token');
-                localStorage.removeItem('userRole');
-                console.log('Déconnexion réussie');
-                router.push('/login');
-              }}>
-                Se déconnecter
-              </button>
+  localStorage.removeItem('userEmail');
+  localStorage.removeItem('token');
+  localStorage.removeItem('role'); // Correction ici
+  sessionStorage.removeItem('userEmail');
+  sessionStorage.removeItem('token');
+  sessionStorage.removeItem('role'); // Correction ici
+  console.log('Déconnexion réussie');
+  router.push('/login');
+}}>
+  Se déconnecter
+</button>
             </div>
           </div>
         </footer>

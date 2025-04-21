@@ -73,25 +73,6 @@ export default function AdminProducts() {
     };
   }, [imagePreviews]);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch(`${API_URL}/products`);
-        if (!response.ok) {
-          throw new Error("Erreur lors de la récupération des produits");
-        }
-        const data = await response.json();
-        console.log(data.products); // Vérifiez si le champ "image" est présent
-        setProducts(data.products);
-      } catch (error) {
-        console.error("Erreur:", error);
-        showNotification("error", "Erreur lors du chargement des produits");
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
   // Initialisation côté client
   useEffect(() => {
     setIsClient(true);
@@ -125,41 +106,62 @@ export default function AdminProducts() {
   }, []);
 
   // Vérification de l'authentification
-  useEffect(() => {
-    if (!isClient) return;
-
-    try {
-      // Vérifier si l'utilisateur est connecté en tant qu'admin
-      const email = localStorage.getItem("userEmail");
-      const userRole = localStorage.getItem("userRole");
-
-      console.log("Vérification des autorisations pour:", email);
-      console.log("Rôle utilisateur:", userRole);
-
-      // Si pas connecté, rediriger vers login
-      if (!email || !userRole) {
-        console.log("Informations manquantes - Email ou Rôle non trouvé");
-        router.push("/login");
-        return;
-      }
-
-      // Vérifier si admin
-      if (userRole !== "admin") {
-        console.log("Accès refusé: L'utilisateur n'a pas le rôle admin");
-        router.push("/profile");
-        return;
-      }
-
-      // Autoriser l'accès
-      console.log("Accès autorisé pour l'administrateur");
-      setUserEmail(email);
-      setIsAuthorized(true);
-    } catch (error) {
-      console.error("Erreur lors de la vérification des autorisations:", error);
-      router.push("/login");
+// Déplacez fetchProducts ici pour qu'elle soit accessible globalement
+const fetchProducts = async () => {
+  try {
+    const response = await fetch(`${API_URL}/products`);
+    if (!response.ok) {
+      throw new Error("Erreur lors de la récupération des produits");
     }
-  }, [isClient, router]);
+    const data = await response.json();
+    console.log(data.products); // Vérifiez si le champ "image" est présent
+    setProducts(data.products);
+  } catch (error) {
+    console.error("Erreur:", error);
+    showNotification("error", "Erreur lors du chargement des produits");
+  }
+};
 
+// Vérification de l'authentification
+useEffect(() => {
+  if (!isClient) return;
+
+  try {
+    const email = localStorage.getItem("userEmail") || sessionStorage.getItem("userEmail");
+    const userRole = localStorage.getItem("role") || sessionStorage.getItem("role");
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+
+    console.log("Vérification des autorisations pour:", email);
+    console.log("Rôle utilisateur:", userRole);
+
+    if (!email || !userRole || !token) {
+      console.log("Informations manquantes - Email, Rôle ou Token non trouvé");
+      router.push("/login");
+      return;
+    }
+
+    if (userRole !== "admin") {
+      console.log("Accès refusé: L'utilisateur n'a pas le rôle admin");
+      router.push("/profile");
+      return;
+    }
+
+    console.log("Accès autorisé pour l'administrateur");
+    setUserEmail(email);
+    setIsAuthorized(true);
+
+    // Charger les produits
+    fetchProducts(); // Appel de la fonction ici
+  } catch (error) {
+    console.error("Erreur lors de la vérification des autorisations:", error);
+    router.push("/login");
+  }
+}, [isClient, router]);
+
+// Chargement initial des produits
+useEffect(() => {
+  fetchProducts(); // Appel de la fonction ici
+}, []);
   // Gestion des changements dans le formulaire
   const handleFormChange = (e) => {
     const { name, value, type } = e.target;
@@ -452,7 +454,6 @@ export default function AdminProducts() {
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
-
       <div className={styles.container}>
         {/* Header avec navigation */}
         <header
@@ -462,10 +463,8 @@ export default function AdminProducts() {
         >
           <div className={styles.headerContent}>
             <div className={styles.logoContainer}>
-              <Link href="/" legacyBehavior>
-                <a className={styles.logoLink}>
-                  <span className={styles.logo}>MonSavonVert</span>
-                </a>
+              <Link href="/" className={styles.logoLink}> 
+                  <span className={styles.logo}>MonSavonVert</span> 
               </Link>
             </div>
 
@@ -473,30 +472,28 @@ export default function AdminProducts() {
             <nav className={styles.mainNav}>
               <ul className={styles.navList}>
                 <li className={styles.navItem}>
-                  <Link href="/admin/dashboard" legacyBehavior>
-                    <a className={styles.navLink}>Tableau de bord</a>
+                  <Link href="/admin/dashboard" className={styles.navLink}>
+                    Tableau de bord
                   </Link>
                 </li>
                 <li className={styles.navItem}>
-                  <Link href="/admin/orders" legacyBehavior>
-                    <a className={styles.navLink}>Commandes</a>
+                  <Link href="/admin/orders" className={styles.navLink}>
+                    Commandes
                   </Link>
                 </li>
                 <li className={styles.navItem}>
-                  <Link href="/admin/products" legacyBehavior>
-                    <a className={`${styles.navLink} ${styles.active}`}>
+                  <Link href="/admin/products" className={`${styles.navLink} ${styles.active}`}>
                       Produits
-                    </a>
                   </Link>
                 </li>
                 <li className={styles.navItem}>
-                  <Link href="/admin/customers" legacyBehavior>
-                    <a className={styles.navLink}>Clients</a>
+                  <Link href="/admin/customers" className={styles.navLink}>
+                    Clients
                   </Link>
                 </li>
                 <li className={styles.navItem}>
-                  <Link href="/admin/settings" legacyBehavior>
-                    <a className={styles.navLink}>Paramètres</a>
+                  <Link href="/admin/settings" className={styles.navLink}>
+                    Paramètres
                   </Link>
                 </li>
               </ul>
@@ -611,7 +608,7 @@ export default function AdminProducts() {
                                 />
                               ) : (
                                 /* Sinon on affiche un placeholder "Ajouter une image" */
-                                <div className={styles.addImagePlaceholder}>
+                                (<div className={styles.addImagePlaceholder}>
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     width="16"
@@ -628,7 +625,7 @@ export default function AdminProducts() {
                                     <polyline points="7 3 7 8 15 8"></polyline>
                                   </svg>
                                   <span>Ajouter</span>
-                                </div>
+                                </div>)
                               )}
                             </div>
                           ))}
@@ -660,28 +657,30 @@ export default function AdminProducts() {
               © 2025 MonSavonVert. Panneau d'administration.
             </p>
             <div className={styles.footerLinks}>
-              <Link href="/admin/help" legacyBehavior>
-                <a>Aide</a>
+              <Link href="/admin/help">
+                Aide
               </Link>
-              <Link href="/admin/documentation" legacyBehavior>
-                <a>Documentation</a>
+              <Link href="/admin/documentation">
+                Documentation
               </Link>
               <button
-                onClick={() => {
-                  localStorage.removeItem("userEmail");
-                  localStorage.removeItem("token");
-                  localStorage.removeItem("userRole");
-                  console.log("Déconnexion réussie");
-                  router.push("/login");
-                }}
-              >
-                Se déconnecter
-              </button>
+  onClick={() => {
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("token");
+    localStorage.removeItem("role"); // Correction ici
+    sessionStorage.removeItem("userEmail");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("role"); // Correction ici
+    console.log("Déconnexion réussie");
+    router.push("/login");
+  }}
+>
+  Se déconnecter
+</button>
             </div>
           </div>
         </footer>
       </div>
-
       {/* Modal d'ajout de produit */}
       {showAddModal && (
         <div className="modalOverlay">
@@ -908,7 +907,7 @@ export default function AdminProducts() {
                           </>
                         ) : (
                           // Placeholder pour l'image principale
-                          <div
+                          (<div
                             className="addImageMainPlaceholder"
                             onClick={() =>
                               document.getElementById("images").click()
@@ -939,7 +938,7 @@ export default function AdminProducts() {
                               <line x1="9" y1="12" x2="15" y2="12"></line>
                             </svg>
                             <span>Ajouter l'image principale</span>
-                          </div>
+                          </div>)
                         )}
                       </div>
 
@@ -984,7 +983,7 @@ export default function AdminProducts() {
                               </>
                             ) : (
                               // Placeholder pour ajouter une image
-                              <div
+                              (<div
                                 className="addImagePlaceholder"
                                 onClick={() =>
                                   document.getElementById("images").click()
@@ -1013,7 +1012,7 @@ export default function AdminProducts() {
                                   <line x1="8" y1="12" x2="16" y2="12"></line>
                                 </svg>
                                 <span>Ajouter</span>
-                              </div>
+                              </div>)
                             )}
                           </div>
                         ))}
@@ -1043,7 +1042,6 @@ export default function AdminProducts() {
           </div>
         </div>
       )}
-
       {/* Modal d'édition de produit */}
       {showEditModal && selectedProduct && (
         <div className="modalOverlay">
@@ -1280,7 +1278,7 @@ export default function AdminProducts() {
                           </>
                         ) : (
                           // Placeholder pour l'image principale
-                          <div
+                          (<div
                             className="addImageMainPlaceholder"
                             onClick={() =>
                               document.getElementById("edit-images").click()
@@ -1311,7 +1309,7 @@ export default function AdminProducts() {
                               <line x1="9" y1="12" x2="15" y2="12"></line>
                             </svg>
                             <span>Ajouter l'image principale</span>
-                          </div>
+                          </div>)
                         )}
                       </div>
 
@@ -1379,7 +1377,7 @@ export default function AdminProducts() {
                               </>
                             ) : (
                               // Placeholder pour ajouter une image
-                              <div
+                              (<div
                                 className="addImagePlaceholder"
                                 onClick={() =>
                                   document.getElementById("edit-images").click()
@@ -1408,7 +1406,7 @@ export default function AdminProducts() {
                                   <line x1="8" y1="12" x2="16" y2="12"></line>
                                 </svg>
                                 <span>Ajouter</span>
-                              </div>
+                              </div>)
                             )}
                           </div>
                         ))}
@@ -1459,9 +1457,7 @@ export default function AdminProducts() {
           </div>
         </div>
       )}
-
       {/* Modal de notification */}
-
       {showNotificationModal && (
         <div className="notificationModal">
           <div className={`notificationContent ${notificationType}`}>
@@ -1509,7 +1505,6 @@ export default function AdminProducts() {
           </div>
         </div>
       )}
-
       {/* Modal de confirmation */}
       {showConfirmationModal && (
         <div className="modalOverlay">
@@ -1552,567 +1547,567 @@ export default function AdminProducts() {
         </div>
       )}
       {/* Styles pour le modal et l'état vide */}
-<style jsx>{`
-  /* Style général pour le modal */
-  .modalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    animation: fadeIn 0.25s ease-out;
-    backdrop-filter: blur(5px);
-  }
+      <style jsx>{`
+        /* Style général pour le modal */
+        .modalOverlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(0, 0, 0, 0.6);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+          animation: fadeIn 0.25s ease-out;
+          backdrop-filter: blur(5px);
+        }
 
-  .modalContainer {
-    background-color: white;
-    border-radius: 16px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-    width: 90%;
-    max-width: 900px;
-    max-height: 90vh;
-    overflow-y: auto;
-    animation: slideUp 0.35s ease-out forwards;
-    position: relative;
-  }
+        .modalContainer {
+          background-color: white;
+          border-radius: 16px;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+          width: 90%;
+          max-width: 900px;
+          max-height: 90vh;
+          overflow-y: auto;
+          animation: slideUp 0.35s ease-out forwards;
+          position: relative;
+        }
 
-  .modalHeader {
-    padding: 24px 32px;
-    border-bottom: 1px solid #f0f0f0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: sticky;
-    top: 0;
-    background-color: white;
-    z-index: 10;
-    border-radius: 16px 16px 0 0;
-  }
+        .modalHeader {
+          padding: 24px 32px;
+          border-bottom: 1px solid #f0f0f0;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          position: sticky;
+          top: 0;
+          background-color: white;
+          z-index: 10;
+          border-radius: 16px 16px 0 0;
+        }
 
-  .modalHeader h2 {
-    font-size: 24px;
-    font-weight: 600;
-    color: #222;
-    margin: 0;
-  }
+        .modalHeader h2 {
+          font-size: 24px;
+          font-weight: 600;
+          color: #222;
+          margin: 0;
+        }
 
-  .closeModal {
-    background: none;
-    border: none;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #555;
-    font-size: 28px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
+        .closeModal {
+          background: none;
+          border: none;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #555;
+          font-size: 28px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
 
-  .closeModal:hover {
-    background-color: #f5f5f5;
-    color: #333;
-    transform: rotate(90deg);
-  }
+        .closeModal:hover {
+          background-color: #f5f5f5;
+          color: #333;
+          transform: rotate(90deg);
+        }
 
-  .modalBody {
-    padding: 32px;
-  }
+        .modalBody {
+          padding: 32px;
+        }
 
-  /* Style du formulaire */
-  .productForm {
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-  }
+        /* Style du formulaire */
+        .productForm {
+          display: flex;
+          flex-direction: column;
+          gap: 32px;
+        }
 
-  .formColumns {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 32px;
-  }
+        .formColumns {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 32px;
+        }
 
-  .formColumn {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
+        .formColumn {
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+        }
 
-  .formGroup {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
+        .formGroup {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
 
-  .formGroup label {
-    font-size: 15px;
-    font-weight: 500;
-    color: #444;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
+        .formGroup label {
+          font-size: 15px;
+          font-weight: 500;
+          color: #444;
+          display: flex;
+          align-items: center;
+          gap: 5px;
+        }
 
-  .formGroup input[type="text"],
-  .formGroup input[type="number"],
-  .formGroup textarea {
-    padding: 14px 16px;
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
-    font-size: 15px;
-    color: #333;
-    transition: all 0.2s ease;
-    background-color: #f9f9f9;
-  }
+        .formGroup input[type="text"],
+        .formGroup input[type="number"],
+        .formGroup textarea {
+          padding: 14px 16px;
+          border: 1px solid #e0e0e0;
+          border-radius: 12px;
+          font-size: 15px;
+          color: #333;
+          transition: all 0.2s ease;
+          background-color: #f9f9f9;
+        }
 
-  .formGroup input[type="text"]:focus,
-  .formGroup input[type="number"]:focus,
-  .formGroup textarea:focus {
-    outline: none;
-    border-color: #2e7d32;
-    background-color: white;
-    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
-  }
+        .formGroup input[type="text"]:focus,
+        .formGroup input[type="number"]:focus,
+        .formGroup textarea:focus {
+          outline: none;
+          border-color: #2e7d32;
+          background-color: white;
+          box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
 
-  /* Style pour la section d'images */
-  .imagesSection {
-    background-color: #f9f9f9;
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  }
+        /* Style pour la section d'images */
+        .imagesSection {
+          background-color: #f9f9f9;
+          border-radius: 16px;
+          padding: 24px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
 
-  .imagesSection h3 {
-    margin-top: 0;
-    margin-bottom: 16px;
-    color: #333;
-    font-size: 18px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
+        .imagesSection h3 {
+          margin-top: 0;
+          margin-bottom: 16px;
+          color: #333;
+          font-size: 18px;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
 
-  .imageCounter {
-    font-size: 14px;
-    background-color: #e8f5e9;
-    color: #2e7d32;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-weight: 500;
-  }
+        .imageCounter {
+          font-size: 14px;
+          background-color: #e8f5e9;
+          color: #2e7d32;
+          padding: 4px 10px;
+          border-radius: 20px;
+          font-weight: 500;
+        }
 
-  /* Section d'aperçu des images */
-  .imagePreviewSection {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
+        /* Section d'aperçu des images */
+        .imagePreviewSection {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+        }
 
-  /* Conteneur de l'image principale */
-  .mainImageContainer {
-    position: relative;
-    width: 100%;
-    height: 250px;
-    border-radius: 12px;
-    overflow: hidden;
-    background-color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
-    transition: transform 0.3s ease;
-  }
-  
-  .mainImageContainer:hover {
-    transform: scale(1.02);
-  }
+        /* Conteneur de l'image principale */
+        .mainImageContainer {
+          position: relative;
+          width: 100%;
+          height: 250px;
+          border-radius: 12px;
+          overflow: hidden;
+          background-color: white;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+          transition: transform 0.3s ease;
+        }
+        
+        .mainImageContainer:hover {
+          transform: scale(1.02);
+        }
 
-  /* Image principale */
-  .mainImage {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
+        /* Image principale */
+        .mainImage {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+        }
 
-  /* Bouton pour supprimer l'image principale */
-  .removeImageBtn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.9);
-    border: none;
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: #e53935;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    transition: all 0.2s ease;
-    opacity: 0;
-    transform: scale(0.8);
-  }
+        /* Bouton pour supprimer l'image principale */
+        .removeImageBtn {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          background-color: rgba(255, 255, 255, 0.9);
+          border: none;
+          font-size: 18px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: #e53935;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+          transition: all 0.2s ease;
+          opacity: 0;
+          transform: scale(0.8);
+        }
 
-  .mainImageContainer:hover .removeImageBtn {
-    opacity: 1;
-    transform: scale(1);
-  }
+        .mainImageContainer:hover .removeImageBtn {
+          opacity: 1;
+          transform: scale(1);
+        }
 
-  .removeImageBtn:hover {
-    background-color: #e53935;
-    color: white;
-    transform: scale(1.1);
-  }
+        .removeImageBtn:hover {
+          background-color: #e53935;
+          color: white;
+          transform: scale(1.1);
+        }
 
-  /* Container pour les miniatures */
-  .thumbnailsContainer {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-  }
+        /* Container pour les miniatures */
+        .thumbnailsContainer {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 16px;
+        }
 
-  /* Boîte de miniature */
-  .thumbnailBox {
-    position: relative;
-    aspect-ratio: 1/1;
-    border-radius: 12px;
-    overflow: hidden;
-    background-color: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
+        /* Boîte de miniature */
+        .thumbnailBox {
+          position: relative;
+          aspect-ratio: 1/1;
+          border-radius: 12px;
+          overflow: hidden;
+          background-color: white;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
 
-  .thumbnailBox:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  }
+        .thumbnailBox:hover {
+          transform: scale(1.05);
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
 
-  /* Image de miniature */
-  .thumbnailImage {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
+        /* Image de miniature */
+        .thumbnailImage {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
 
-  /* Bouton pour supprimer une miniature */
-  .removeThumbnailBtn {
-    position: absolute;
-    top: 6px;
-    right: 6px;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.9);
-    border: none;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: #e53935;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: all 0.2s ease;
-    opacity: 0;
-    transform: scale(0.8);
-    z-index: 5;
-  }
+        /* Bouton pour supprimer une miniature */
+        .removeThumbnailBtn {
+          position: absolute;
+          top: 6px;
+          right: 6px;
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          background-color: rgba(255, 255, 255, 0.9);
+          border: none;
+          font-size: 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: #e53935;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          transition: all 0.2s ease;
+          opacity: 0;
+          transform: scale(0.8);
+          z-index: 5;
+        }
 
-  .thumbnailBox:hover .removeThumbnailBtn {
-    opacity: 1;
-    transform: scale(1);
-  }
+        .thumbnailBox:hover .removeThumbnailBtn {
+          opacity: 1;
+          transform: scale(1);
+        }
 
-  .removeThumbnailBtn:hover {
-    background-color: #e53935;
-    color: white;
-  }
+        .removeThumbnailBtn:hover {
+          background-color: #e53935;
+          color: white;
+        }
 
-  /* Styles pour les placeholders d'images */
-  .addImageMainPlaceholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: #f0f5f0;
-    cursor: pointer;
-    border-radius: 12px;
-    border: 2px dashed #c0d6c0;
-    transition: all 0.3s ease;
-  }
+        /* Styles pour les placeholders d'images */
+        .addImageMainPlaceholder {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          background-color: #f0f5f0;
+          cursor: pointer;
+          border-radius: 12px;
+          border: 2px dashed #c0d6c0;
+          transition: all 0.3s ease;
+        }
 
-  .addImageMainPlaceholder:hover {
-    background-color: #e8f5e9;
-    border-color: #2e7d32;
-    transform: scale(1.01);
-  }
+        .addImageMainPlaceholder:hover {
+          background-color: #e8f5e9;
+          border-color: #2e7d32;
+          transform: scale(1.01);
+        }
 
-  .addImageMainPlaceholder svg {
-    color: #2e7d32;
-    margin-bottom: 16px;
-    opacity: 0.8;
-    transition: all 0.3s ease;
-  }
+        .addImageMainPlaceholder svg {
+          color: #2e7d32;
+          margin-bottom: 16px;
+          opacity: 0.8;
+          transition: all 0.3s ease;
+        }
 
-  .addImageMainPlaceholder:hover svg {
-    transform: scale(1.1);
-    opacity: 1;
-  }
+        .addImageMainPlaceholder:hover svg {
+          transform: scale(1.1);
+          opacity: 1;
+        }
 
-  .addImageMainPlaceholder span {
-    font-size: 15px;
-    color: #43a047;
-    font-weight: 500;
-    transition: all 0.3s ease;
-  }
+        .addImageMainPlaceholder span {
+          font-size: 15px;
+          color: #43a047;
+          font-weight: 500;
+          transition: all 0.3s ease;
+        }
 
-  .addImageMainPlaceholder:hover span {
-    color: #2e7d32;
-  }
+        .addImageMainPlaceholder:hover span {
+          color: #2e7d32;
+        }
 
-  .addImagePlaceholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: #f0f5f0;
-    cursor: pointer;
-    border-radius: 12px;
-    border: 2px dashed #c0d6c0;
-    transition: all 0.3s ease;
-  }
+        .addImagePlaceholder {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          background-color: #f0f5f0;
+          cursor: pointer;
+          border-radius: 12px;
+          border: 2px dashed #c0d6c0;
+          transition: all 0.3s ease;
+        }
 
-  .addImagePlaceholder:hover {
-    background-color: #e8f5e9;
-    border-color: #2e7d32;
-    transform: scale(1.05);
-  }
+        .addImagePlaceholder:hover {
+          background-color: #e8f5e9;
+          border-color: #2e7d32;
+          transform: scale(1.05);
+        }
 
-  .addImagePlaceholder svg {
-    color: #2e7d32;
-    margin-bottom: 8px;
-    opacity: 0.8;
-    transition: all 0.3s ease;
-  }
+        .addImagePlaceholder svg {
+          color: #2e7d32;
+          margin-bottom: 8px;
+          opacity: 0.8;
+          transition: all 0.3s ease;
+        }
 
-  .addImagePlaceholder:hover svg {
-    transform: scale(1.1);
-    opacity: 1;
-  }
+        .addImagePlaceholder:hover svg {
+          transform: scale(1.1);
+          opacity: 1;
+        }
 
-  .addImagePlaceholder span {
-    font-size: 13px;
-    color: #43a047;
-    font-weight: 500;
-  }
+        .addImagePlaceholder span {
+          font-size: 13px;
+          color: #43a047;
+          font-weight: 500;
+        }
 
-  /* Cacher l'input file */
-  .fileInput {
-    display: none;
-  }
+        /* Cacher l'input file */
+        .fileInput {
+          display: none;
+        }
 
-  /* Actions du formulaire */
-  .formActions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 16px;
-    padding-top: 20px;
-  }
+        /* Actions du formulaire */
+        .formActions {
+          display: flex;
+          justify-content: flex-end;
+          gap: 16px;
+          padding-top: 20px;
+        }
 
-  .cancelButton,
-  .submitButton,
-  .deleteButton {
-    padding: 12px 24px;
-    border-radius: 12px;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
+        .cancelButton,
+        .submitButton,
+        .deleteButton {
+          padding: 12px 24px;
+          border-radius: 12px;
+          font-size: 15px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+        }
 
-  .cancelButton {
-    background-color: white;
-    border: 1px solid #e0e0e0;
-    color: #666;
-  }
+        .cancelButton {
+          background-color: white;
+          border: 1px solid #e0e0e0;
+          color: #666;
+        }
 
-  .cancelButton:hover {
-    background-color: #f5f5f5;
-    color: #333;
-  }
+        .cancelButton:hover {
+          background-color: #f5f5f5;
+          color: #333;
+        }
 
-  .submitButton {
-    background-color: #2e7d32;
-    border: none;
-    color: white;
-    box-shadow: 0 4px 10px rgba(46, 125, 50, 0.2);
-  }
+        .submitButton {
+          background-color: #2e7d32;
+          border: none;
+          color: white;
+          box-shadow: 0 4px 10px rgba(46, 125, 50, 0.2);
+        }
 
-  .submitButton:hover {
-    background-color: #1b5e20;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(46, 125, 50, 0.25);
-  }
+        .submitButton:hover {
+          background-color: #1b5e20;
+          transform: translateY(-2px);
+          box-shadow: 0 6px 15px rgba(46, 125, 50, 0.25);
+        }
 
-  .submitButton:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 5px rgba(46, 125, 50, 0.2);
-  }
+        .submitButton:active {
+          transform: translateY(0);
+          box-shadow: 0 2px 5px rgba(46, 125, 50, 0.2);
+        }
 
-  .deleteButton {
-    background-color: white;
-    border: 1px solid #e57373;
-    color: #e53935;
-    position: relative;
-    overflow: hidden;
-  }
+        .deleteButton {
+          background-color: white;
+          border: 1px solid #e57373;
+          color: #e53935;
+          position: relative;
+          overflow: hidden;
+        }
 
-  .deleteButton svg {
-    transition: transform 0.3s ease;
-  }
+        .deleteButton svg {
+          transition: transform 0.3s ease;
+        }
 
-  .deleteButton:hover {
-    background-color: #ffebee;
-    border-color: #e53935;
-    color: #c62828;
-  }
+        .deleteButton:hover {
+          background-color: #ffebee;
+          border-color: #e53935;
+          color: #c62828;
+        }
 
-  .deleteButton:hover svg {
-    transform: rotate(15deg);
-  }
+        .deleteButton:hover svg {
+          transform: rotate(15deg);
+        }
 
-  /* Chargement */
-  .loadingContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 20px;
-    height: 300px;
-  }
+        /* Chargement */
+        .loadingContainer {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 40px 20px;
+          height: 300px;
+        }
 
-  .spinner {
-    width: 50px;
-    height: 50px;
-    border: 3px solid rgba(46, 125, 50, 0.1);
-    border-radius: 50%;
-    border-top-color: #2e7d32;
-    animation: spin 1s linear infinite;
-    margin-bottom: 20px;
-  }
+        .spinner {
+          width: 50px;
+          height: 50px;
+          border: 3px solid rgba(46, 125, 50, 0.1);
+          border-radius: 50%;
+          border-top-color: #2e7d32;
+          animation: spin 1s linear infinite;
+          margin-bottom: 20px;
+        }
 
-  .loadingContainer p {
-    color: #555;
-    font-size: 16px;
-    font-weight: 500;
-  }
+        .loadingContainer p {
+          color: #555;
+          font-size: 16px;
+          font-weight: 500;
+        }
 
-  /* État vide */
-  .emptyState {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 100px 20px;
-    text-align: center;
-    background-color: #f9f9f9;
-    border-radius: 16px;
-    margin: 20px 0;
-  }
+        /* État vide */
+        .emptyState {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 100px 20px;
+          text-align: center;
+          background-color: #f9f9f9;
+          border-radius: 16px;
+          margin: 20px 0;
+        }
 
-  .emptyState svg {
-    color: #a5d6a7;
-    margin-bottom: 24px;
-  }
+        .emptyState svg {
+          color: #a5d6a7;
+          margin-bottom: 24px;
+        }
 
-  .emptyState h2 {
-    font-size: 22px;
-    margin-bottom: 12px;
-    color: #2e7d32;
-  }
+        .emptyState h2 {
+          font-size: 22px;
+          margin-bottom: 12px;
+          color: #2e7d32;
+        }
 
-  .emptyState p {
-    color: #666;
-    max-width: 450px;
-    line-height: 1.6;
-  }
+        .emptyState p {
+          color: #666;
+          max-width: 450px;
+          line-height: 1.6;
+        }
 
-  /* Animations */
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
+        /* Animations */
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
 
-  @keyframes slideUp {
-    from {
-      opacity: 0;
-      transform: translateY(40px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(40px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
 
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
+        @keyframes spin {
+          to {
+            transform: rotate(360deg);
+          }
+        }
 
-  /* Responsive design */
-  @media (max-width: 768px) {
-    .modalContainer {
-      width: 95%;
-      border-radius: 12px;
-    }
-    
-    .modalHeader {
-      padding: 16px 20px;
-    }
-    
-    .modalBody {
-      padding: 20px;
-    }
-    
-    .formColumns {
-      grid-template-columns: 1fr;
-      gap: 20px;
-    }
-    
-    .thumbnailsContainer {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-    
-    .formActions {
-      flex-direction: column-reverse;
-    }
-    
-    .submitButton, .cancelButton, .deleteButton {
-      width: 100%;
-    }
-  }
-`}</style>
+        /* Responsive design */
+        @media (max-width: 768px) {
+          .modalContainer {
+            width: 95%;
+            border-radius: 12px;
+          }
+          
+          .modalHeader {
+            padding: 16px 20px;
+          }
+          
+          .modalBody {
+            padding: 20px;
+          }
+          
+          .formColumns {
+            grid-template-columns: 1fr;
+            gap: 20px;
+          }
+          
+          .thumbnailsContainer {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+          }
+          
+          .formActions {
+            flex-direction: column-reverse;
+          }
+          
+          .submitButton, .cancelButton, .deleteButton {
+            width: 100%;
+          }
+        }
+      `}</style>
     </>
   );
 }

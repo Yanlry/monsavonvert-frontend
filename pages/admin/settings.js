@@ -142,38 +142,42 @@ export default function AdminSettings() {
 
 // Vérification de l'authentification
 useEffect(() => {
-  if (!isClient) return;
-  
-  try {
-    // Vérifier si l'utilisateur est connecté en tant qu'admin
-    const email = localStorage.getItem('userEmail');
-    const userRole = localStorage.getItem('userRole');
+  const verifyUser = async () => {
+    try {
+      const email = localStorage.getItem("userEmail") || sessionStorage.getItem("userEmail");
+      const userRole = localStorage.getItem("role") || sessionStorage.getItem("role");
+      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
 
-    console.log('Vérification des autorisations pour:', email);
-    console.log('Rôle utilisateur:', userRole);
+      console.log("Vérification des autorisations pour:", email);
+      console.log("Rôle utilisateur:", userRole);
 
-    // Vérifier si les informations sont présentes
-    if (!email || !userRole) {
-      console.log('Informations manquantes - Email ou Rôle non trouvé');
-      router.push('/login');
-      return;
+      // Vérifiez si les informations sont présentes
+      if (!email || !userRole || !token) {
+        console.warn("Informations manquantes - Redirection vers la page de connexion");
+        router.push("/login");
+        return;
+      }
+
+      // Vérifiez si l'utilisateur a le rôle admin
+      if (userRole !== "admin") {
+        console.warn("Accès refusé: L'utilisateur n'a pas le rôle admin");
+        router.push("/profile");
+        return;
+      }
+
+      // Si tout est valide, mettez à jour les états
+      console.log("Accès autorisé pour l'administrateur");
+      setUserEmail(email);
+      setIsAuthorized(true);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Erreur lors de la vérification des autorisations:", error);
+      router.push("/login");
     }
+  };
 
-    // Vérifier si l'utilisateur a le rôle admin
-    if (userRole !== 'admin') {
-      console.log('Accès refusé: L\'utilisateur n\'a pas le rôle admin');
-      router.push('/profile');
-      return;
-    }
-
-    // Si l'utilisateur est bien un admin, autoriser l'accès
-    console.log('Accès autorisé pour l\'administrateur');
-    setUserEmail(email);
-    setIsAuthorized(true);
-    setIsLoading(false);
-  } catch (error) {
-    console.error('Erreur lors de la vérification des autorisations:', error);
-    router.push('/login');
+  if (isClient) {
+    verifyUser();
   }
 }, [isClient, router]);
 
@@ -298,10 +302,8 @@ useEffect(() => {
         <header className={`${styles.header} ${scrolled ? styles.headerScrolled : ''}`}>
           <div className={styles.headerContent}>
             <div className={styles.logoContainer}>
-              <Link href="/" legacyBehavior>
-                <a className={styles.logoLink}>
+              <Link href="/" className={styles.logoLink}>
                   <span className={styles.logo}>MonSavonVert</span>
-                </a>
               </Link>
             </div>
 
@@ -309,28 +311,28 @@ useEffect(() => {
             <nav className={styles.mainNav}>
               <ul className={styles.navList}>
                 <li className={styles.navItem}>
-                  <Link href="/admin/dashboard" legacyBehavior>
-                    <a className={styles.navLink}>Tableau de bord</a>
+                  <Link href="/admin/dashboard" className={styles.navLink}>
+                    Tableau de bord
                   </Link>
                 </li>
                 <li className={styles.navItem}>
-                  <Link href="/admin/orders" legacyBehavior>
-                    <a className={styles.navLink}>Commandes</a>
+                  <Link href="/admin/orders" className={styles.navLink}>
+                    Commandes
                   </Link>
                 </li>
                 <li className={styles.navItem}>
-                  <Link href="/admin/products" legacyBehavior>
-                    <a className={styles.navLink}>Produits</a>
+                  <Link href="/admin/products" className={styles.navLink}>
+                    Produits
                   </Link>
                 </li>
                 <li className={styles.navItem}>
-                  <Link href="/admin/customers" legacyBehavior>
-                    <a className={styles.navLink}>Clients</a>
+                  <Link href="/admin/customers" className={styles.navLink}>
+                    Clients
                   </Link>
                 </li>
                 <li className={styles.navItem}>
-                  <Link href="/admin/settings" legacyBehavior>
-                    <a className={`${styles.navLink} ${styles.active}`}>Paramètres</a>
+                  <Link href="/admin/settings" className={`${styles.navLink} ${styles.active}`}>
+                    Paramètres
                   </Link>
                 </li>
               </ul>
@@ -1380,17 +1382,22 @@ useEffect(() => {
           <div className={styles.footerContent}>
             <p className={styles.copyright}>© 2025 MonSavonVert. Panneau d'administration.</p>
             <div className={styles.footerLinks}>
-              <Link href="/admin/help" legacyBehavior><a>Aide</a></Link>
-              <Link href="/admin/documentation" legacyBehavior><a>Documentation</a></Link>
-              <button onClick={() => {
-                localStorage.removeItem('userEmail');
-                localStorage.removeItem('token');
-                localStorage.removeItem('userRole');
-                console.log('Déconnexion réussie');
-                router.push('/login');
-              }}>
-                Se déconnecter
-              </button>
+              <Link href="/admin/help">Aide</Link>
+              <Link href="/admin/documentation">Documentation</Link>
+              <button
+  onClick={() => {
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("token");
+    localStorage.removeItem("role"); // Correction ici
+    sessionStorage.removeItem("userEmail");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("role"); // Correction ici
+    console.log("Déconnexion réussie");
+    router.push("/login");
+  }}
+>
+  Se déconnecter
+</button>
             </div>
           </div>
         </footer>

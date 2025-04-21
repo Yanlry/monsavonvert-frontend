@@ -29,10 +29,8 @@ export default function Header({ cartCount }) {
     <header className={`${styles.header} ${scrolled ? styles.headerScrolled : ""}`}>
       <div className={styles.headerContent}>
         <div className={styles.logoContainer}>
-          <Link href="/" legacyBehavior>
-            <a className={styles.logoLink}>
-              <span className={styles.logo}>MonSavonVert</span>
-            </a>
+          <Link href="/" className={styles.logoLink}>
+            <span className={styles.logo}>MonSavonVert</span>
           </Link>
         </div>
 
@@ -40,68 +38,68 @@ export default function Header({ cartCount }) {
         <nav className={`${styles.mainNav} ${menuOpen ? styles.active : ""}`}>
           <ul className={styles.navList}>
             <li className={styles.navItem}>
-              <Link href="/" legacyBehavior>
-                <a className={styles.navLink} onClick={closeMenu}>Accueil</a>
+              <Link href="/" className={styles.navLink} onClick={closeMenu}>
+                Accueil
               </Link>
             </li>
             <li className={styles.navItem}>
-  <div className={styles.navLinkWrapper}>
-    <Link href="/store" legacyBehavior>
-      <a className={styles.navLink} onClick={closeMenu}>Boutique</a>
-    </Link>
-    <div className={styles.megaMenu}>
-      <div className={styles.megaMenuGrid}>
-        <div className={styles.megaMenuCategory}>
-          <h3>Catégories</h3>
-          <Link href="/boutique/visage" legacyBehavior>
-            <a onClick={closeMenu}>Soins visage</a>
-          </Link>
-          <Link href="/boutique/corps" legacyBehavior>
-            <a onClick={closeMenu}>Soins corps</a>
-          </Link>
-          <Link href="/boutique/cheveux" legacyBehavior>
-            <a onClick={closeMenu}>Cheveux</a>
-          </Link>
-          <Link href="/boutique/accessoires" legacyBehavior>
-            <a onClick={closeMenu}>Accessoires</a>
-          </Link>
-        </div>
-        <div className={styles.megaMenuCategory}>
-          <h3>Collections</h3>
-          <Link href="/boutique/aromatherapie" legacyBehavior>
-            <a onClick={closeMenu}>Aromathérapie</a>
-          </Link>
-          <Link href="/boutique/peaux-sensibles" legacyBehavior>
-            <a onClick={closeMenu}>Peaux sensibles</a>
-          </Link>
-          <Link href="/boutique/hydratation" legacyBehavior>
-            <a onClick={closeMenu}>Hydratation intense</a>
-          </Link>
-        </div>
-        <div className={styles.megaMenuImage}>
-          <p>Nouveau</p>
-          <img src="/images/2.JPEG" alt="Nouvelle collection" />
-          <Link href="/boutique/nouveautes" legacyBehavior>
-            <a className={styles.megaMenuButton} onClick={closeMenu}>Découvrir</a>
-          </Link>
-        </div>
-      </div>
-    </div>
-  </div>
-</li>
+              <div className={styles.navLinkWrapper}>
+                <Link href="/store" className={styles.navLink} onClick={closeMenu}>
+                  Boutique
+                </Link>
+                <div className={styles.megaMenu}>
+                  <div className={styles.megaMenuGrid}>
+                    <div className={styles.megaMenuCategory}>
+                      <h3>Catégories</h3>
+                      <Link href="/boutique/visage" onClick={closeMenu}>
+                        Soins visage
+                      </Link>
+                      <Link href="/boutique/corps" onClick={closeMenu}>
+                        Soins corps
+                      </Link>
+                      <Link href="/boutique/cheveux" onClick={closeMenu}>
+                        Cheveux
+                      </Link>
+                      <Link href="/boutique/accessoires" onClick={closeMenu}>
+                        Accessoires
+                      </Link>
+                    </div>
+                    <div className={styles.megaMenuCategory}>
+                      <h3>Collections</h3>
+                      <Link href="/boutique/aromatherapie" onClick={closeMenu}>
+                        Aromathérapie
+                      </Link>
+                      <Link href="/boutique/peaux-sensibles" onClick={closeMenu}>
+                        Peaux sensibles
+                      </Link>
+                      <Link href="/boutique/hydratation" onClick={closeMenu}>
+                        Hydratation intense
+                      </Link>
+                    </div>
+                    <div className={styles.megaMenuImage}>
+                      <p>Nouveau</p>
+                      <img src="/images/2.JPEG" alt="Nouvelle collection" />
+                      <Link href="/boutique/nouveautes" className={styles.megaMenuButton} onClick={closeMenu}>
+                        Découvrir
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
             <li className={styles.navItem}>
-              <Link href="/virtues" legacyBehavior>
-                <a className={styles.navLink} onClick={closeMenu}>Vertu & bienfaits</a>
+              <Link href="/virtues" className={styles.navLink} onClick={closeMenu}>
+                Vertu & bienfaits
               </Link>
             </li>
             <li className={styles.navItem}>
-              <Link href="/info" legacyBehavior>
-                <a className={styles.navLink} onClick={closeMenu}>Notre Histoire</a>
+              <Link href="/info" className={styles.navLink} onClick={closeMenu}>
+                Notre Histoire
               </Link>
             </li>
             <li className={styles.navItem}>
-              <Link href="/contact" legacyBehavior>
-                <a className={styles.navLink} onClick={closeMenu}>Contact</a>
+              <Link href="/contact" className={styles.navLink} onClick={closeMenu}>
+                Contact
               </Link>
             </li>
           </ul>
@@ -125,72 +123,62 @@ export default function Header({ cartCount }) {
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
           </button>
-          
+
           {user ? (
-            // Si l'utilisateur est connecté - Version améliorée
-            <Link href="/profile" legacyBehavior>
-              <a className={styles.userAccountConnected} aria-label="Mon compte">
-                <div className={styles.userAvatar}>
-                  {user.firstName ? user.firstName.charAt(0).toUpperCase() : '?'}
-                </div>
-                <div className={styles.userInfo}>
-                  <span className={styles.welcomeText}>Bonjour,</span>
-                  <span className={styles.userName}>{user.firstName}</span>
-                </div>
-              </a>
+            <Link href="/profile" className={styles.userAccountConnected} aria-label="Mon compte">
+              <div className={styles.userAvatar}>
+                {user.firstName ? user.firstName.charAt(0).toUpperCase() : "?"}
+              </div>
+              <div className={styles.userInfo}>
+                <span className={styles.welcomeText}>Bonjour,</span>
+                <span className={styles.userName}>{user.firstName}</span>
+              </div>
             </Link>
           ) : (
-            // Si l'utilisateur n'est pas connecté - Version améliorée
-            <Link href="/login" legacyBehavior>
-              <a className={styles.userAccount} aria-label="Se connecter">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-                <span>Connexion</span>
-              </a>
+            <Link href="/login" className={styles.userAccount} aria-label="Se connecter">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <span>Connexion</span>
             </Link>
           )}
-          
-          <Link href="/cart" legacyBehavior>
-            <a className={styles.cartLink} aria-label="Panier">
-              <div className={styles.cartIcon}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <circle cx="9" cy="21" r="1"></circle>
-                  <circle cx="20" cy="21" r="1"></circle>
-                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                </svg>
-                {cartCount > 0 && (
-                  <span className={styles.cartCount}>{cartCount}</span>
-                )}
-              </div>
-            </a>
+
+          <Link href="/cart" className={styles.cartLink} aria-label="Panier">
+            <div className={styles.cartIcon}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+              </svg>
+              {cartCount > 0 && <span className={styles.cartCount}>{cartCount}</span>}
+            </div>
           </Link>
         </div>
-        
+
         {/* Menu hamburger pour mobile */}
-        <button 
-          className={`${styles.mobileMenuToggle} ${menuOpen ? styles.active : ''}`} 
+        <button
+          className={`${styles.mobileMenuToggle} ${menuOpen ? styles.active : ""}`}
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Menu"
         >
@@ -199,14 +187,8 @@ export default function Header({ cartCount }) {
           <span></span>
         </button>
       </div>
-
       {/* Overlay pour fermer le menu en cliquant à l'extérieur */}
-      {menuOpen && (
-        <div 
-          className={styles.menuOverlay} 
-          onClick={() => setMenuOpen(false)}
-        ></div>
-      )}
+      {menuOpen && <div className={styles.menuOverlay} onClick={() => setMenuOpen(false)}></div>}
     </header>
   );
 }

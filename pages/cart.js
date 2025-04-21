@@ -168,8 +168,8 @@ export default function Cart() {
             <div className={styles.pageHeroContent}>
               <h1 className={styles.pageTitle}>Votre Panier</h1>
               <div className={styles.pageBreadcrumb}>
-                <Link href="/" legacyBehavior>
-                  <a>Accueil</a>
+                <Link href="/">
+                  Accueil
                 </Link>
                 <span className={styles.breadcrumbSeparator}>/</span>
                 <span className={styles.breadcrumbCurrent}>Panier</span>
@@ -292,31 +292,28 @@ export default function Cart() {
                       />
                       <button className={styles.promoButton}>Appliquer</button>
                     </div>
-                    <Link href="/checkout" legacyBehavior>
-                      <a
-                        className={`${styles.button} ${styles.primaryButton} ${styles.checkoutButton}`}
-                      >
-                        Passer à la caisse
-                      </a>
+                    <Link
+                      href="/checkout"
+                      className={`${styles.button} ${styles.primaryButton} ${styles.checkoutButton}`}
+                    >
+                      Passer à la caisse
                     </Link>
-                    <Link href="/store" legacyBehavior>
-                      <a className={styles.continueShopping}>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <line x1="19" y1="12" x2="5" y2="12"></line>
-                          <polyline points="12 19 5 12 12 5"></polyline>
-                        </svg>
-                        Continuer mes achats
-                      </a>
+                    <Link href="/store" className={styles.continueShopping}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                      </svg>
+                      Continuer mes achats
                     </Link>
                   </div>
                 </div>
@@ -345,10 +342,8 @@ export default function Cart() {
                   <p className={styles.emptyCartText}>
                     Vous n'avez pas encore ajouté d'articles à votre panier.
                   </p>
-                  <Link href="/store" legacyBehavior>
-                    <a className={`${styles.button} ${styles.primaryButton}`}>
-                      Découvrir nos produits
-                    </a>
+                  <Link href="/store" className={`${styles.button} ${styles.primaryButton}`}>
+                    Découvrir nos produits
                   </Link>
                 </div>
               )}
@@ -367,6 +362,7 @@ export default function Cart() {
                   passion en France depuis 2018.
                 </p>
                 <div className={styles.footerSocial}>
+                  
                   <a
                     href="https://facebook.com/monsavonvert"
                     className={styles.socialLink}
@@ -443,45 +439,45 @@ export default function Cart() {
 
               <div className={styles.footerColumn}>
                 <h3 className={styles.footerTitle}>Boutique</h3>
-                <Link href="/boutique/nouveautes" legacyBehavior>
-                  <a className={styles.footerLink}>Nouveautés</a>
+                <Link href="/boutique/nouveautes" className={styles.footerLink}>
+                  Nouveautés
                 </Link>
-                <Link href="/boutique/visage" legacyBehavior>
-                  <a className={styles.footerLink}>Soins visage</a>
+                <Link href="/boutique/visage" className={styles.footerLink}>
+                  Soins visage
                 </Link>
-                <Link href="/boutique/corps" legacyBehavior>
-                  <a className={styles.footerLink}>Soins corps</a>
+                <Link href="/boutique/corps" className={styles.footerLink}>
+                  Soins corps
                 </Link>
-                <Link href="/boutique/cheveux" legacyBehavior>
-                  <a className={styles.footerLink}>Cheveux</a>
+                <Link href="/boutique/cheveux" className={styles.footerLink}>
+                  Cheveux
                 </Link>
-                <Link href="/boutique/coffrets" legacyBehavior>
-                  <a className={styles.footerLink}>Coffrets cadeaux</a>
+                <Link href="/boutique/coffrets" className={styles.footerLink}>
+                  Coffrets cadeaux
                 </Link>
-                <Link href="/boutique/accessoires" legacyBehavior>
-                  <a className={styles.footerLink}>Accessoires</a>
+                <Link href="/boutique/accessoires" className={styles.footerLink}>
+                  Accessoires
                 </Link>
               </div>
 
               <div className={styles.footerColumn}>
                 <h3 className={styles.footerTitle}>Informations</h3>
-                <Link href="/a-propos" legacyBehavior>
-                  <a className={styles.footerLink}>Notre histoire</a>
+                <Link href="/a-propos" className={styles.footerLink}>
+                  Notre histoire
                 </Link>
-                <Link href="/virtues" legacyBehavior>
-                  <a className={styles.footerLink}>Vertu & bienfaits</a>
+                <Link href="/virtues" className={styles.footerLink}>
+                  Vertu & bienfaits
                 </Link>
-                <Link href="/blog" legacyBehavior>
-                  <a className={styles.footerLink}>Journal</a>
+                <Link href="/blog" className={styles.footerLink}>
+                  Journal
                 </Link>
-                <Link href="/faq" legacyBehavior>
-                  <a className={styles.footerLink}>FAQ</a>
+                <Link href="/faq" className={styles.footerLink}>
+                  FAQ
                 </Link>
-                <Link href="/contact" legacyBehavior>
-                  <a className={styles.footerLink}>Contact</a>
+                <Link href="/contact" className={styles.footerLink}>
+                  Contact
                 </Link>
-                <Link href="/programme-fidelite" legacyBehavior>
-                  <a className={styles.footerLink}>Programme fidélité</a>
+                <Link href="/programme-fidelite" className={styles.footerLink}>
+                  Programme fidélité
                 </Link>
               </div>
 
@@ -551,16 +547,14 @@ export default function Cart() {
                 © 2023 MonSavonVert. Tous droits réservés.
               </p>
               <div className={styles.footerLinks}>
-                <Link href="/cgv" legacyBehavior>
-                  <a className={styles.footerSmallLink}>CGV</a>
+                <Link href="/cgv" className={styles.footerSmallLink}>
+                  CGV
                 </Link>
-                <Link href="/politique-de-confidentialite" legacyBehavior>
-                  <a className={styles.footerSmallLink}>
-                    Politique de confidentialité
-                  </a>
+                <Link href="/politique-de-confidentialite" className={styles.footerSmallLink}>
+                  Politique de confidentialité
                 </Link>
-                <Link href="/mentions-legales" legacyBehavior>
-                  <a className={styles.footerSmallLink}>Mentions légales</a>
+                <Link href="/mentions-legales" className={styles.footerSmallLink}>
+                  Mentions légales
                 </Link>
               </div>
             </div>

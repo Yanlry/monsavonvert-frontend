@@ -211,12 +211,12 @@ export default function ProductDetail({ product }) {
           {/* Fil d'Ariane */}
           <div className={styles.breadcrumbContainer}>
             <div className={styles.breadcrumbContent}>
-              <Link href="/" legacyBehavior>
-                <a className={styles.breadcrumbLink}>Accueil</a>
+              <Link href="/" className={styles.breadcrumbLink}>
+                Accueil
               </Link>
               <span className={styles.breadcrumbSeparator}>/</span>
-              <Link href="/store" legacyBehavior>
-                <a className={styles.breadcrumbLink}>Boutique</a>
+              <Link href="/store" className={styles.breadcrumbLink}>
+                Boutique
               </Link>
               <span className={styles.breadcrumbSeparator}>/</span>
               <span className={styles.breadcrumbCurrent}>{product.title}</span>
@@ -1160,17 +1160,17 @@ export default function ProductDetail({ product }) {
 
               <div className={styles.footerColumn}>
                 <h3 className={styles.footerTitle}>Liens rapides</h3>
-                <Link href="/" legacyBehavior>
-                  <a className={styles.footerLink}>Accueil</a>
+                <Link href="/" className={styles.footerLink}>
+                  Accueil
                 </Link>
-                <Link href="/store" legacyBehavior>
-                  <a className={styles.footerLink}>Boutique</a>
+                <Link href="/store" className={styles.footerLink}>
+                  Boutique
                 </Link>
-                <Link href="/info" legacyBehavior>
-                  <a className={styles.footerLink}>À propos</a>
+                <Link href="/info" className={styles.footerLink}>
+                  À propos
                 </Link>
-                <Link href="/contact" legacyBehavior>
-                  <a className={styles.footerLink}>Contact</a>
+                <Link href="/contact" className={styles.footerLink}>
+                  Contact
                 </Link>
               </div>
 

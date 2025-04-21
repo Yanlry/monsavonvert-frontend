@@ -55,158 +55,33 @@ export default function AdminOrders() {
 // Vérification de l'authentification
 useEffect(() => {
   if (!isClient) return;
-  
+
   try {
-    // Vérifier si l'utilisateur est connecté en tant qu'admin
-    const email = localStorage.getItem('userEmail');
-    const userRole = localStorage.getItem('userRole');
+    const email = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail');
+    const userRole = localStorage.getItem('role') || sessionStorage.getItem('role');
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
 
     console.log('Vérification des autorisations pour:', email);
     console.log('Rôle utilisateur:', userRole);
 
-    // Vérifier si les informations sont présentes
-    if (!email || !userRole) {
-      console.log('Informations manquantes - Email ou Rôle non trouvé');
+    if (!email || !userRole || !token) {
+      console.log('Informations manquantes - Email, Rôle ou Token non trouvé');
       router.push('/login');
       return;
     }
 
-    // Vérifier si l'utilisateur a le rôle admin
     if (userRole !== 'admin') {
       console.log('Accès refusé: L\'utilisateur n\'a pas le rôle admin');
       router.push('/profile');
       return;
     }
 
-    // Si l'utilisateur est bien un admin, autoriser l'accès
     console.log('Accès autorisé pour l\'administrateur');
     setUserEmail(email);
     setIsAuthorized(true);
-    
+
     // Charger les commandes (simulées ici)
-    const mockOrders = [
-      { 
-        id: 'CMD-001', 
-        status: 'pending', 
-        statusLabel: 'En attente',
-        customer: { 
-          name: 'Marie Lemaire', 
-          email: 'marie.l@example.com',
-          address: '15 rue des Lilas, 75020 Paris',
-          phone: '06 12 34 56 78'
-        }, 
-        date: '2025-04-10T14:30:00',
-        items: [
-          { id: 1, name: 'Savon Lavande', quantity: 2, price: 8.95 },
-          { id: 2, name: 'Savon Citron', quantity: 1, price: 7.95 },
-          { id: 5, name: 'Porte-savon en bois', quantity: 1, price: 12.50 }
-        ],
-        shipping: 5.95,
-        total: 44.30,
-        paymentMethod: 'Carte bancaire'
-      },
-      { 
-        id: 'CMD-002', 
-        status: 'processing', 
-        statusLabel: 'En préparation',
-        customer: { 
-          name: 'Thomas Dubois', 
-          email: 'thomas.d@example.com',
-          address: '8 avenue Victor Hugo, 69003 Lyon',
-          phone: '07 98 76 54 32'
-        }, 
-        date: '2025-04-09T10:15:00',
-        items: [
-          { id: 3, name: 'Savon Menthe', quantity: 3, price: 8.95 },
-          { id: 7, name: 'Shampoing solide Coco', quantity: 1, price: 12.95 }
-        ],
-        shipping: 5.95,
-        total: 45.80,
-        paymentMethod: 'PayPal'
-      },
-      { 
-        id: 'CMD-003', 
-        status: 'shipped', 
-        statusLabel: 'Expédiée',
-        trackingNumber: 'LP123456789FR',
-        customer: { 
-          name: 'Sophie Martin', 
-          email: 'sophie.m@example.com',
-          address: '23 rue de la Paix, 33000 Bordeaux',
-          phone: '06 54 32 10 98'
-        }, 
-        date: '2025-04-08T16:45:00',
-        items: [
-          { id: 4, name: 'Savon Argile', quantity: 1, price: 9.95 },
-          { id: 8, name: 'Coffret Découverte', quantity: 1, price: 29.95 }
-        ],
-        shipping: 0,
-        total: 39.90,
-        paymentMethod: 'Carte bancaire'
-      },
-      { 
-        id: 'CMD-004', 
-        status: 'delivered', 
-        statusLabel: 'Livrée',
-        trackingNumber: 'LP987654321FR',
-        customer: { 
-          name: 'Pierre Durant', 
-          email: 'pierre.d@example.com',
-          address: '42 boulevard Haussmann, 75009 Paris',
-          phone: '07 65 43 21 09'
-        }, 
-        date: '2025-04-05T11:20:00',
-        items: [
-          { id: 6, name: 'Savon Charbon', quantity: 2, price: 9.95 },
-          { id: 9, name: 'Filet à savon', quantity: 2, price: 4.95 }
-        ],
-        shipping: 5.95,
-        total: 35.75,
-        paymentMethod: 'Apple Pay'
-      },
-      { 
-        id: 'CMD-005', 
-        status: 'cancelled', 
-        statusLabel: 'Annulée',
-        customer: { 
-          name: 'Lucie Moreau', 
-          email: 'lucie.m@example.com',
-          address: '7 rue Saint-Antoine, 59000 Lille',
-          phone: '06 87 65 43 21'
-        }, 
-        date: '2025-04-03T09:10:00',
-        items: [
-          { id: 10, name: 'Savon Calendula', quantity: 1, price: 8.95 },
-          { id: 11, name: 'Baume à lèvres', quantity: 1, price: 5.95 }
-        ],
-        shipping: 5.95,
-        total: 20.85,
-        paymentMethod: 'Carte bancaire',
-        cancellationReason: 'Commande passée par erreur'
-      },
-      { 
-        id: 'CMD-006', 
-        status: 'delivered', 
-        statusLabel: 'Livrée',
-        trackingNumber: 'LP543216789FR',
-        customer: { 
-          name: 'Jean Dupont', 
-          email: 'jean.d@example.com',
-          address: '13 rue de la République, 13001 Marseille',
-          phone: '07 12 34 56 78'
-        }, 
-        date: '2025-04-01T14:05:00',
-        items: [
-          { id: 12, name: 'Savon Romarin', quantity: 2, price: 8.95 },
-          { id: 13, name: 'Dentifrice solide', quantity: 1, price: 7.95 },
-          { id: 14, name: 'Boîte de rangement', quantity: 1, price: 14.95 }
-        ],
-        shipping: 5.95,
-        total: 46.75,
-        paymentMethod: 'PayPal'
-      }
-    ];
-    
+    const mockOrders = [/* ... */];
     console.log('Chargement des commandes:', mockOrders.length, 'commandes trouvées');
     setOrders(mockOrders);
     setIsLoading(false);
@@ -215,7 +90,6 @@ useEffect(() => {
     router.push('/login');
   }
 }, [isClient, router]);
-
   // Fonction pour trier les commandes
   const sortOrders = (ordersToSort) => {
     const sortableOrders = [...ordersToSort];
@@ -365,10 +239,8 @@ useEffect(() => {
         <header className={`${styles.header} ${scrolled ? styles.headerScrolled : ''}`}>
           <div className={styles.headerContent}>
             <div className={styles.logoContainer}>
-              <Link href="/" legacyBehavior>
-                <a className={styles.logoLink}>
-                  <span className={styles.logo}>MonSavonVert</span>
-                </a>
+              <Link href="/" className={styles.logoLink}> 
+                  <span className={styles.logo}>MonSavonVert</span> 
               </Link>
             </div>
 
@@ -376,28 +248,28 @@ useEffect(() => {
             <nav className={styles.mainNav}>
               <ul className={styles.navList}>
                 <li className={styles.navItem}>
-                  <Link href="/admin/dashboard" legacyBehavior>
-                    <a className={styles.navLink}>Tableau de bord</a>
+                  <Link href="/admin/dashboard" className={styles.navLink}>
+                    Tableau de bord
                   </Link>
                 </li>
                 <li className={styles.navItem}>
-                  <Link href="/admin/orders" legacyBehavior>
-                    <a className={`${styles.navLink} ${styles.active}`}>Commandes</a>
+                  <Link href="/admin/orders" className={`${styles.navLink} ${styles.active}`}>
+                  Commandes
                   </Link>
                 </li>
                 <li className={styles.navItem}>
-                  <Link href="/admin/products" legacyBehavior>
-                    <a className={styles.navLink}>Produits</a>
+                  <Link href="/admin/products" className={styles.navLink}>
+                    Produits
                   </Link>
                 </li>
                 <li className={styles.navItem}>
-                  <Link href="/admin/customers" legacyBehavior>
-                    <a className={styles.navLink}>Clients</a>
+                  <Link href="/admin/customers" className={styles.navLink}>
+                    Clients
                   </Link>
                 </li>
                 <li className={styles.navItem}>
-                  <Link href="/admin/settings" legacyBehavior>
-                    <a className={styles.navLink}>Paramètres</a>
+                  <Link href="/admin/settings" className={styles.navLink}>
+                    Paramètres
                   </Link>
                 </li>
               </ul>
@@ -863,17 +735,20 @@ useEffect(() => {
           <div className={styles.footerContent}>
             <p className={styles.copyright}>© 2025 MonSavonVert. Panneau d'administration.</p>
             <div className={styles.footerLinks}>
-              <Link href="/admin/help" legacyBehavior><a>Aide</a></Link>
-              <Link href="/admin/documentation" legacyBehavior><a>Documentation</a></Link>
+              <Link href="/admin/help">Aide</Link>
+              <Link href="/admin/documentation">Documentation</Link>
               <button onClick={() => {
-                localStorage.removeItem('userEmail');
-                localStorage.removeItem('token');
-                localStorage.removeItem('userRole');
-                console.log('Déconnexion réussie');
-                router.push('/login');
-              }}>
-                Se déconnecter
-              </button>
+  localStorage.removeItem('userEmail');
+  localStorage.removeItem('token');
+  localStorage.removeItem('role'); // Correction ici
+  sessionStorage.removeItem('userEmail');
+  sessionStorage.removeItem('token');
+  sessionStorage.removeItem('role'); // Correction ici
+  console.log('Déconnexion réussie');
+  router.push('/login');
+}}>
+  Se déconnecter
+</button>
             </div>
           </div>
         </footer>

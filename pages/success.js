@@ -123,15 +123,11 @@ export default function Success() {
           </div>
           
           <div className={styles.successButtons}>
-            <Link href="/" legacyBehavior>
-              <a className={styles.primaryButton}>
+            <Link href="/" className={styles.primaryButton}>
                 Retour à l'accueil
-              </a>
             </Link>
-            <Link href="/boutique" legacyBehavior>
-              <a className={styles.secondaryButton}>
+            <Link href="/boutique" className={styles.secondaryButton}>
                 Continuer mes achats
-              </a>
             </Link>
           </div>
         </div>

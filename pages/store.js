@@ -401,8 +401,7 @@ export default function Boutique() {
                   return (
                     <div key={product._id} className={styles.enhancedProductCard}>
                       {isNew && <div className={styles.productBadge}>Nouveau</div>}
-                      <Link href={`/produit/${product._id}`} legacyBehavior>
-                        <a className={styles.productImageContainer}>
+                      <Link href={`/produit/${product._id}`} className={styles.productImageContainer}>
                           <img
                             src={product.images && product.images.length > 0 ? product.images[0] : '/images/default-product.png'}
                             alt={product.title}
@@ -426,7 +425,6 @@ export default function Boutique() {
                               </svg>
                             </button>
                           </div>
-                        </a>
                       </Link>
                       <div className={styles.productInfo}>
                         <h3 className={styles.productName}>{product.title}</h3>
@@ -450,10 +448,8 @@ export default function Boutique() {
                           >
                             {product.stock > 0 ? 'Ajouter au panier' : 'Rupture de stock'}
                           </button>
-                          <Link href={`/produit/${product._id}`} legacyBehavior>
-                            <a className={styles.viewDetailsButton}>
+                          <Link href={`/produit/${product._id}`} className={styles.viewDetailsButton}>
                               Voir les détails
-                            </a>
                           </Link>
                         </div>
                       </div>
@@ -601,20 +597,20 @@ export default function Boutique() {
               
               <div className={styles.footerColumn}>
                 <h3 className={styles.footerTitle}>Boutique</h3>
-                <Link href="/boutique/nouveautes" legacyBehavior><a className={styles.footerLink}>Nouveautés</a></Link>
-                <Link href="/boutique/visage" legacyBehavior><a className={styles.footerLink}>Soins visage</a></Link>
-                <Link href="/boutique/corps" legacyBehavior><a className={styles.footerLink}>Soins corps</a></Link>
-                <Link href="/boutique/cheveux" legacyBehavior><a className={styles.footerLink}>Cheveux</a></Link>
-                <Link href="/boutique/coffrets" legacyBehavior><a className={styles.footerLink}>Coffrets cadeaux</a></Link>
+                <Link href="/boutique/nouveautes" className={styles.footerLink}>Nouveautés</Link>
+                <Link href="/boutique/visage" className={styles.footerLink}>Soins visage</Link>
+                <Link href="/boutique/corps" className={styles.footerLink}>Soins corps</Link>
+                <Link href="/boutique/cheveux" className={styles.footerLink}>Cheveux</Link>
+                <Link href="/boutique/coffrets" className={styles.footerLink}>Coffrets cadeaux</Link>
               </div>
               
               <div className={styles.footerColumn}>
                 <h3 className={styles.footerTitle}>Informations</h3>
-                <Link href="/a-propos" legacyBehavior><a className={styles.footerLink}>Notre histoire</a></Link>
-                <Link href="/virtues" legacyBehavior><a className={styles.footerLink}>Vertu & bienfaits</a></Link>
-                <Link href="/blog" legacyBehavior><a className={styles.footerLink}>Journal</a></Link>
-                <Link href="/faq" legacyBehavior><a className={styles.footerLink}>FAQ</a></Link>
-                <Link href="/contact" legacyBehavior><a className={styles.footerLink}>Contact</a></Link>
+                <Link href="/a-propos" className={styles.footerLink}>Notre histoire</Link>
+                <Link href="/virtues" className={styles.footerLink}>Vertu & bienfaits</Link>
+                <Link href="/blog" className={styles.footerLink}>Journal</Link>
+                <Link href="/faq" className={styles.footerLink}>FAQ</Link>
+                <Link href="/contact" className={styles.footerLink}>Contact</Link>
               </div>
               
               <div className={styles.footerColumn}>
@@ -640,9 +636,9 @@ export default function Boutique() {
             <div className={styles.footerBottomContent}>
               <p className={styles.copyright}>© 2023 MonSavonVert. Tous droits réservés.</p>
               <div className={styles.footerLinks}>
-                <Link href="/cgv" legacyBehavior><a className={styles.footerSmallLink}>CGV</a></Link>
-                <Link href="/politique-de-confidentialite" legacyBehavior><a className={styles.footerSmallLink}>Politique de confidentialité</a></Link>
-                <Link href="/mentions-legales" legacyBehavior><a className={styles.footerSmallLink}>Mentions légales</a></Link>
+                <Link href="/cgv" className={styles.footerSmallLink}>CGV</Link>
+                <Link href="/politique-de-confidentialite" className={styles.footerSmallLink}>Politique de confidentialité</Link>
+                <Link href="/mentions-legales" className={styles.footerSmallLink}>Mentions légales</Link>
               </div>
             </div>
           </div>
@@ -797,18 +793,16 @@ export default function Boutique() {
           </div>
           
           <div className={styles.cartActions}>
-            <Link href="/cart" legacyBehavior>
-              <a className={styles.viewCartButton}>Voir le panier</a>
+            <Link href="/cart" className={styles.viewCartButton}>
+              Voir le panier
             </Link>
             
-            <Link href="/checkout" legacyBehavior>
-              <a className={styles.checkoutButton}>
+            <Link href="/checkout" className={styles.checkoutButton}>
                 Passer commande
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="5" y1="12" x2="19" y2="12"></line>
                   <polyline points="12 5 19 12 12 19"></polyline>
                 </svg>
-              </a>
             </Link>
           </div>
         </>

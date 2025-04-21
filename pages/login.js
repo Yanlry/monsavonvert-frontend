@@ -6,11 +6,11 @@ import Link from "next/link";
 import styles from "../styles/login.module.css";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 import Header from "../components/Header";
 
 export default function Login() {
-  const router = useRouter()
+  const router = useRouter();
   const { setUser } = useContext(UserContext);
   // États
   const [email, setEmail] = useState("");
@@ -89,41 +89,50 @@ export default function Login() {
         throw new Error(data.error || "Identifiants incorrects.");
       }
 
+      // Création d'un objet utilisateur complet
+      const userObject = {
+        _id: data.userId,
+        userId: data.userId,
+        firstName: data.firstName,
+        lastName: data.lastName || "",
+        email: email,
+        role: data.role || "user", // Stockage du rôle avec une valeur par défaut "user"
+        token: data.token
+      };
+      
+      console.log("✅ Données utilisateur récupérées:", userObject);
+
       // Stocker les informations utilisateur
       if (document.getElementById("remember").checked) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("userId", data.userId);
         localStorage.setItem("firstName", data.firstName);
-        // Ajouter l'objet utilisateur complet
-        localStorage.setItem("user", JSON.stringify({
-          _id: data.userId,
-          firstName: data.firstName,
-          lastName: data.lastName || "",
-          email: email
-        }));
+        localStorage.setItem("role", data.role || "user");
+        localStorage.setItem("userEmail", email); // Correction ici
       } else {
         sessionStorage.setItem("token", data.token);
         sessionStorage.setItem("userId", data.userId);
         sessionStorage.setItem("firstName", data.firstName);
-        // Ajouter l'objet utilisateur complet
-        sessionStorage.setItem("user", JSON.stringify({
-          _id: data.userId,
-          firstName: data.firstName,
-          lastName: data.lastName || "",
-          email: email
-        }));
+        sessionStorage.setItem("role", data.role || "user");
+        sessionStorage.setItem("userEmail", email); // Correction ici
       }
+      // Mettre à jour le contexte utilisateur avec le rôle
+      setUser(userObject);
 
-      // Mettre à jour le contexte utilisateur
-      setUser({
-        token: data.token,
-        userId: data.userId,
-        firstName: data.firstName,
-      });
-
-      // Redirection après connexion
-      window.location.href = "/profile";
+      // Redirection conditionnelle selon le rôle
+      console.log("🔀 Redirection basée sur le rôle:", data.role);
+      if (data.role === "admin") {
+        console.log("🔄 Redirection vers la page admin");
+        router.push("/admin/dashboard");
+      } else if (data.role === "user") {
+        console.log("🔄 Redirection vers la page de profil");
+        router.push("/profile");
+      } else {
+        console.error("❌ Rôle utilisateur inconnu :", data.role);
+        setError("Rôle utilisateur inconnu.");
+      }
     } catch (err) {
+      console.error("❌ Erreur de connexion:", err.message);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -167,8 +176,7 @@ export default function Login() {
             scrolled ? styles.headerScrolled : ""
           }`}
         >
-                               <Header cartCount={cartCount}/>
-      
+          <Header cartCount={cartCount} />
         </header>
 
         <main className={styles.mainContent}>
@@ -177,8 +185,8 @@ export default function Login() {
             <div className={styles.pageHeroContent}>
               <h1 className={styles.pageTitle}>Connexion</h1>
               <div className={styles.pageBreadcrumb}>
-                <Link href="/" legacyBehavior>
-                  <a>Accueil</a>
+                <Link href="/" >
+                  Accueil
                 </Link>
                 <span className={styles.breadcrumbSeparator}>/</span>
                 <span className={styles.breadcrumbCurrent}>Connexion</span>
@@ -314,10 +322,8 @@ export default function Login() {
 
                   <div className={styles.loginBoxFooter}>
                     <p>Vous n'avez pas encore de compte ?</p>
-                    <Link href="/register" legacyBehavior>
-                      <a className={styles.createAccountLink}>
+                    <Link href="/register" className={styles.createAccountLink} >
                         Créer un compte
-                      </a>
                     </Link>
                   </div>
                 </div>
@@ -506,45 +512,45 @@ export default function Login() {
 
               <div className={styles.footerColumn}>
                 <h3 className={styles.footerTitle}>Boutique</h3>
-                <Link href="/boutique/nouveautes" legacyBehavior>
-                  <a className={styles.footerLink}>Nouveautés</a>
+                <Link href="/boutique/nouveautes" className={styles.footerLink}>
+                  Nouveautés
                 </Link>
-                <Link href="/boutique/visage" legacyBehavior>
-                  <a className={styles.footerLink}>Soins visage</a>
+                <Link href="/boutique/visage" className={styles.footerLink}>
+                  Soins visage
                 </Link>
-                <Link href="/boutique/corps" legacyBehavior>
-                  <a className={styles.footerLink}>Soins corps</a>
+                <Link href="/boutique/corps" className={styles.footerLink}>
+                  Soins corps
                 </Link>
-                <Link href="/boutique/cheveux" legacyBehavior>
-                  <a className={styles.footerLink}>Cheveux</a>
+                <Link href="/boutique/cheveux" className={styles.footerLink}>
+                  Cheveux
                 </Link>
-                <Link href="/boutique/coffrets" legacyBehavior>
-                  <a className={styles.footerLink}>Coffrets cadeaux</a>
+                <Link href="/boutique/coffrets" className={styles.footerLink}>
+                  Coffrets cadeaux
                 </Link>
-                <Link href="/boutique/accessoires" legacyBehavior>
-                  <a className={styles.footerLink}>Accessoires</a>
+                <Link href="/boutique/accessoires" className={styles.footerLink}>
+                  Accessoires
                 </Link>
               </div>
 
               <div className={styles.footerColumn}>
                 <h3 className={styles.footerTitle}>Informations</h3>
-                <Link href="/a-propos" legacyBehavior>
-                  <a className={styles.footerLink}>Notre histoire</a>
+                <Link href="/a-propos" className={styles.footerLink}>
+                  Notre histoire
                 </Link>
-                <Link href="/virtues" legacyBehavior>
-                  <a className={styles.footerLink}>Vertu & bienfaits</a>
+                <Link href="/virtues" className={styles.footerLink}>
+                  Vertu & bienfaits
                 </Link>
-                <Link href="/blog" legacyBehavior>
-                  <a className={styles.footerLink}>Journal</a>
+                <Link href="/blog" className={styles.footerLink}>
+                  Journal
                 </Link>
-                <Link href="/faq" legacyBehavior>
-                  <a className={styles.footerLink}>FAQ</a>
+                <Link href="/faq" className={styles.footerLink}>
+                  FAQ
                 </Link>
-                <Link href="/contact" legacyBehavior>
-                  <a className={styles.footerLink}>Contact</a>
+                <Link href="/contact" className={styles.footerLink}>
+                  Contact
                 </Link>
-                <Link href="/programme-fidelite" legacyBehavior>
-                  <a className={styles.footerLink}>Programme fidélité</a>
+                <Link href="/programme-fidelite" className={styles.footerLink}>
+                  Programme fidélité
                 </Link>
               </div>
 
@@ -614,16 +620,14 @@ export default function Login() {
                 © 2023 MonSavonVert. Tous droits réservés.
               </p>
               <div className={styles.footerLinks}>
-                <Link href="/cgv" legacyBehavior>
-                  <a className={styles.footerSmallLink}>CGV</a>
+                <Link href="/cgv" className={styles.footerSmallLink}>
+                  CGV
                 </Link>
-                <Link href="/politique-de-confidentialite" legacyBehavior>
-                  <a className={styles.footerSmallLink}>
+                <Link href="/politique-de-confidentialite" className={styles.footerSmallLink}>
                     Politique de confidentialité
-                  </a>
                 </Link>
-                <Link href="/mentions-legales" legacyBehavior>
-                  <a className={styles.footerSmallLink}>Mentions légales</a>
+                <Link href="/mentions-legales" className={styles.footerSmallLink}>
+                  Mentions légales
                 </Link>
               </div>
             </div>

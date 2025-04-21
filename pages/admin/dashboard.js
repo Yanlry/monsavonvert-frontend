@@ -53,34 +53,34 @@ export default function AdminDashboard() {
   // Vérification de l'authentification
   useEffect(() => {
     if (!isClient) return;
-
+  
     try {
-      // Récupérer l'email et le rôle de l'utilisateur depuis le stockage local
-      const email = localStorage.getItem("userEmail");
-      const userRole = localStorage.getItem("userRole");
-
+      // Récupérer l'email et le rôle de l'utilisateur depuis le stockage local/session
+      const email = localStorage.getItem("userEmail") || sessionStorage.getItem("userEmail");
+      const userRole = localStorage.getItem("role") || sessionStorage.getItem("role");
+  
       console.log("Vérification des autorisations pour:", email);
       console.log("Rôle utilisateur:", userRole);
-
+  
       // Vérifier si les informations nécessaires sont disponibles
       if (!email || !userRole) {
         console.log("Informations manquantes - Email ou Rôle non trouvé");
         router.push("/login");
         return;
       }
-
+  
       // Vérifier si l'utilisateur a le rôle admin
       if (userRole !== "admin") {
         console.log("Accès refusé: L'utilisateur n'a pas le rôle admin");
-        router.push("/profile"); // Redirection vers la page de profil standard
+        router.push("/profile");
         return;
       }
-
+  
       // Si l'utilisateur est bien un admin, autoriser l'accès
       console.log("Accès autorisé pour l'administrateur");
       setUserEmail(email);
       setIsAuthorized(true);
-
+  
       // Charger les données du tableau de bord
       loadDashboardData();
     } catch (error) {
@@ -346,10 +346,8 @@ export default function AdminDashboard() {
         >
           <div className={styles.headerContent}>
             <div className={styles.logoContainer}>
-              <Link href="/" legacyBehavior>
-                <a className={styles.logoLink}>
+              <Link href="/" className={styles.logoLink}>
                   <span className={styles.logo}>MonSavonVert</span>
-                </a>
               </Link>
             </div>
 
@@ -357,30 +355,28 @@ export default function AdminDashboard() {
             <nav className={styles.mainNav}>
               <ul className={styles.navList}>
                 <li className={styles.navItem}>
-                  <Link href="/admin/dashboard" legacyBehavior>
-                    <a className={`${styles.navLink} ${styles.active}`}>
+                  <Link href="/admin/dashboard" className={`${styles.navLink} ${styles.active}`}>
                       Tableau de bord
-                    </a>
                   </Link>
                 </li>
                 <li className={styles.navItem}>
-                  <Link href="/admin/orders" legacyBehavior>
-                    <a className={styles.navLink}>Commandes</a>
+                  <Link href="/admin/orders" className={styles.navLink}>
+                   Commandes
                   </Link>
                 </li>
                 <li className={styles.navItem}>
-                  <Link href="/admin/products" legacyBehavior>
-                    <a className={styles.navLink}>Produits</a>
+                  <Link href="/admin/products" className={styles.navLink}>
+                   Produits
                   </Link>
                 </li>
                 <li className={styles.navItem}>
-                  <Link href="/admin/customers" legacyBehavior>
-                    <a className={styles.navLink}>Clients</a>
+                  <Link href="/admin/customers" className={styles.navLink}>
+                   Clients
                   </Link>
                 </li>
                 <li className={styles.navItem}>
-                  <Link href="/admin/settings" legacyBehavior>
-                    <a className={styles.navLink}>Paramètres</a>
+                  <Link href="/admin/settings" className={styles.navLink}>
+                   Paramètres
                   </Link>
                 </li>
               </ul>
@@ -718,8 +714,8 @@ export default function AdminDashboard() {
                       <div className={styles.dashboardCard}>
                         <div className={styles.cardHeader}>
                           <h2>Commandes Récentes</h2>
-                          <Link href="/admin/orders" legacyBehavior>
-                            <a className={styles.viewAllLink}>Voir toutes</a>
+                          <Link href="/admin/orders" className={styles.viewAllLink}>
+                            Voir toutes
                           </Link>
                         </div>
                         <div className={styles.cardBody}>
@@ -739,11 +735,9 @@ export default function AdminDashboard() {
                                   <td>
                                     <Link
                                       href={`/admin/orders?id=${order.id}`}
-                                      legacyBehavior
+                                      className={styles.orderLink}
                                     >
-                                      <a className={styles.orderLink}>
                                         {order.id}
-                                      </a>
                                     </Link>
                                   </td>
                                   <td>{formatDate(order.date)}</td>
@@ -770,10 +764,8 @@ export default function AdminDashboard() {
                       <div className={styles.dashboardCard}>
                         <div className={styles.cardHeader}>
                           <h2>État du Stock</h2>
-                          <Link href="/admin/products" legacyBehavior>
-                            <a className={styles.viewAllLink}>
+                          <Link href="/admin/products" className={styles.viewAllLink}>
                               Gérer les produits
-                            </a>
                           </Link>
                         </div>
                         <div className={styles.cardBody}>
@@ -888,26 +880,24 @@ export default function AdminDashboard() {
               © 2025 MonSavonVert. Panneau d'administration.
             </p>
             <div className={styles.footerLinks}>
-              <Link href="/admin/help" legacyBehavior>
-                <a>Aide</a>
+              <Link href="/admin/help" >
+                Aide
               </Link>
-              <Link href="/admin/documentation" legacyBehavior>
-                <a>Documentation</a>
+              <Link href="/admin/documentation">
+                Documentation
               </Link>
-              <button
-                onClick={() => {
-                  // Supprimer toutes les informations d'authentification
-                  localStorage.removeItem("userEmail");
-                  localStorage.removeItem("token");
-                  localStorage.removeItem("userRole");
-                  console.log("Déconnexion réussie");
-
-                  // Rediriger vers la page de connexion
-                  router.push("/login");
-                }}
-              >
-                Se déconnecter
-              </button>
+              <button onClick={() => {
+  localStorage.removeItem('userEmail');
+  localStorage.removeItem('token');
+  localStorage.removeItem('role'); // Correction ici
+  sessionStorage.removeItem('userEmail');
+  sessionStorage.removeItem('token');
+  sessionStorage.removeItem('role'); // Correction ici
+  console.log('Déconnexion réussie');
+  router.push('/login');
+}}>
+  Se déconnecter
+</button>
             </div>
           </div>
         </footer>

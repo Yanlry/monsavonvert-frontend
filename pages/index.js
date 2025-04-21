@@ -236,8 +236,7 @@ export default function Home() {
             scrolled ? styles.headerScrolled : ""
           }`}
         >
-                          <Header cartCount={cartCount}/>
-
+          <Header cartCount={cartCount}/>
         </header>
 
         <main className={styles.mainContent}>
@@ -261,17 +260,11 @@ export default function Home() {
                     <h1 className={styles.slideTitle}>{slide.title}</h1>
                     <p className={styles.slideSubtitle}>{slide.subtitle}</p>
                     <div className={styles.slideButtons}>
-                      <Link href="/store" legacyBehavior>
-                        <a
-                          className={`${styles.button} ${styles.primaryButton}`}
-                        >
-                          Découvrir nos produits
-                        </a>
+                      <Link href="/store" className={`${styles.button} ${styles.primaryButton}`}>
+                        Découvrir nos produits
                       </Link>
-                      <Link href="/info" legacyBehavior>
-                        <a className={`${styles.button} ${styles.ghostButton}`}>
-                          Notre philosophie
-                        </a>
+                      <Link href="/info" className={`${styles.button} ${styles.ghostButton}`}>
+                        Notre philosophie
                       </Link>
                     </div>
                   </div>
@@ -345,26 +338,24 @@ export default function Home() {
 
             <div className={styles.categoriesGrid}>
               {productCategories.map((category) => (
-                <Link key={category.id} href="/store" legacyBehavior>
-                  <a className={styles.categoryCard}>
-                    <div className={styles.categoryImageContainer}>
-                      <div className={styles.categoryImageOverlay}></div>
-                      <img
-                        src={category.image || `/images/${category.id}.JPEG`}
-                        alt={category.name}
-                        className={styles.categoryImage}
-                      />
-                    </div>
-                    <div className={styles.categoryInfo}>
-                      <h3 className={styles.categoryName}>{category.name}</h3>
-                      <p className={styles.categoryDescription}>
-                        {category.description}
-                      </p>
-                      <span className={styles.categoryLink}>
-                        Découvrir <span className={styles.arrowIcon}>→</span>
-                      </span>
-                    </div>
-                  </a>
+                <Link key={category.id} href="/store" className={styles.categoryCard}>
+                  <div className={styles.categoryImageContainer}>
+                    <div className={styles.categoryImageOverlay}></div>
+                    <img
+                      src={category.image || `/images/${category.id}.JPEG`}
+                      alt={category.name}
+                      className={styles.categoryImage}
+                    />
+                  </div>
+                  <div className={styles.categoryInfo}>
+                    <h3 className={styles.categoryName}>{category.name}</h3>
+                    <p className={styles.categoryDescription}>
+                      {category.description}
+                    </p>
+                    <span className={styles.categoryLink}>
+                      Découvrir <span className={styles.arrowIcon}>→</span>
+                    </span>
+                  </div>
                 </Link>
               ))}
             </div>
@@ -377,10 +368,8 @@ export default function Home() {
               <p className={styles.shippingText}>
                 Pour toute commande à partir de 29€
               </p>
-              <Link href="/store" legacyBehavior>
-                <a className={`${styles.button} ${styles.whiteButton}`}>
-                  En profiter maintenant
-                </a>
+              <Link href="/store" className={`${styles.button} ${styles.whiteButton}`}>
+                En profiter maintenant
               </Link>
             </div>
           </section>
@@ -429,10 +418,8 @@ export default function Home() {
                     <span>Vegan</span>
                   </div>
                 </div>
-                <Link href="/notre-histoire" legacyBehavior>
-                  <a className={`${styles.button} ${styles.outlineButton}`}>
-                    En savoir plus
-                  </a>
+                <Link href="/notre-histoire" className={`${styles.button} ${styles.outlineButton}`}>
+                  En savoir plus
                 </Link>
               </div>
             </div>
@@ -515,10 +502,8 @@ export default function Home() {
                 </div>
               </div>
 
-              <Link href="/virtues" legacyBehavior>
-                <a className={`${styles.button} ${styles.greenButton}`}>
-                  Découvrir nos actions
-                </a>
+              <Link href="/virtues" className={`${styles.button} ${styles.greenButton}`}>
+                Découvrir nos actions
               </Link>
             </div>
             <div className={styles.environmentImageColumn}>
@@ -610,10 +595,8 @@ export default function Home() {
             </div>
 
             <div className={styles.testimonialsCta}>
-              <Link href="/avis-clients" legacyBehavior>
-                <a className={`${styles.button} ${styles.textButton}`}>
-                  Voir tous les avis <span className={styles.arrowIcon}>→</span>
-                </a>
+              <Link href="/avis-clients" className={`${styles.button} ${styles.textButton}`}>
+                Voir tous les avis <span className={styles.arrowIcon}>→</span>
               </Link>
             </div>
           </section>
@@ -695,9 +678,7 @@ export default function Home() {
                   <input type="checkbox" required />
                   <span>
                     J'accepte de recevoir des emails et je confirme avoir lu la{" "}
-                    <Link href="/politique-de-confidentialite" legacyBehavior>
-                      <a>politique de confidentialité</a>
-                    </Link>
+                    <Link href="/politique-de-confidentialite">politique de confidentialité</Link>
                     .
                   </span>
                 </label>
@@ -804,45 +785,45 @@ export default function Home() {
 
               <div className={styles.footerColumn}>
                 <h3 className={styles.footerTitle}>Boutique</h3>
-                <Link href="/boutique/nouveautes" legacyBehavior>
-                  <a className={styles.footerLink}>Nouveautés</a>
+                <Link href="/boutique/nouveautes" className={styles.footerLink}>
+                  Nouveautés
                 </Link>
-                <Link href="/boutique/visage" legacyBehavior>
-                  <a className={styles.footerLink}>Soins visage</a>
+                <Link href="/boutique/visage" className={styles.footerLink}>
+                  Soins visage
                 </Link>
-                <Link href="/boutique/corps" legacyBehavior>
-                  <a className={styles.footerLink}>Soins corps</a>
+                <Link href="/boutique/corps" className={styles.footerLink}>
+                  Soins corps
                 </Link>
-                <Link href="/boutique/cheveux" legacyBehavior>
-                  <a className={styles.footerLink}>Cheveux</a>
+                <Link href="/boutique/cheveux" className={styles.footerLink}>
+                  Cheveux
                 </Link>
-                <Link href="/boutique/coffrets" legacyBehavior>
-                  <a className={styles.footerLink}>Coffrets cadeaux</a>
+                <Link href="/boutique/coffrets" className={styles.footerLink}>
+                  Coffrets cadeaux
                 </Link>
-                <Link href="/boutique/accessoires" legacyBehavior>
-                  <a className={styles.footerLink}>Accessoires</a>
+                <Link href="/boutique/accessoires" className={styles.footerLink}>
+                  Accessoires
                 </Link>
               </div>
 
               <div className={styles.footerColumn}>
                 <h3 className={styles.footerTitle}>Informations</h3>
-                <Link href="/a-propos" legacyBehavior>
-                  <a className={styles.footerLink}>Notre histoire</a>
+                <Link href="/a-propos" className={styles.footerLink}>
+                  Notre histoire
                 </Link>
-                <Link href="/virtues" legacyBehavior>
-                  <a className={styles.footerLink}>Vertu & bienfaits</a>
+                <Link href="/virtues" className={styles.footerLink}>
+                  Vertu & bienfaits
                 </Link>
-                <Link href="/blog" legacyBehavior>
-                  <a className={styles.footerLink}>Journal</a>
+                <Link href="/blog" className={styles.footerLink}>
+                  Journal
                 </Link>
-                <Link href="/faq" legacyBehavior>
-                  <a className={styles.footerLink}>FAQ</a>
+                <Link href="/faq" className={styles.footerLink}>
+                  FAQ
                 </Link>
-                <Link href="/contact" legacyBehavior>
-                  <a className={styles.footerLink}>Contact</a>
+                <Link href="/contact" className={styles.footerLink}>
+                  Contact
                 </Link>
-                <Link href="/programme-fidelite" legacyBehavior>
-                  <a className={styles.footerLink}>Programme fidélité</a>
+                <Link href="/programme-fidelite" className={styles.footerLink}>
+                  Programme fidélité
                 </Link>
               </div>
 
@@ -934,19 +915,17 @@ export default function Home() {
                 © 2023 MonSavonVert. Tous droits réservés.
               </p>
               <div className={styles.footerLinks}>
-                <Link href="/cgv" legacyBehavior>
-                  <a className={styles.footerSmallLink}>CGV</a>
+                <Link href="/cgv" className={styles.footerSmallLink}>
+                  CGV
                 </Link>
-                <Link href="/politique-de-confidentialite" legacyBehavior>
-                  <a className={styles.footerSmallLink}>
-                    Politique de confidentialité
-                  </a>
+                <Link href="/politique-de-confidentialite" className={styles.footerSmallLink}>
+                  Politique de confidentialité
                 </Link>
-                <Link href="/mentions-legales" legacyBehavior>
-                  <a className={styles.footerSmallLink}>Mentions légales</a>
+                <Link href="/mentions-legales" className={styles.footerSmallLink}>
+                  Mentions légales
                 </Link>
-                <Link href="/cookies" legacyBehavior>
-                  <a className={styles.footerSmallLink}>Gestion des cookies</a>
+                <Link href="/cookies" className={styles.footerSmallLink}>
+                  Gestion des cookies
                 </Link>
               </div>
             </div>
