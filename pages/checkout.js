@@ -710,7 +710,7 @@ export default function Checkout() {
       setShowModal(true);
 
       // Passer à l'étape suivante
-      setCurrentStep(2);
+      setCurrentStep(currentStep + 1);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
       console.error("Erreur de connexion:", error);
@@ -963,87 +963,105 @@ export default function Checkout() {
     }
   };
 
-  // Fonction pour rediriger vers Stripe Checkout
-  const handleCheckout = async () => {
-    try {
-      // Vérifiez si l'utilisateur est connecté
-      if (!user) {
-        setModalTitle("Connexion requise");
-        setModalMessage(
-          "Vous devez être connecté pour finaliser votre commande."
-        );
-        setShowModal(true);
-        return; // Arrêtez l'exécution si l'utilisateur n'est pas connecté
-      }
-
-      setIsLoading(true); // Activer l'indicateur de chargement
-      console.log("Préparation de la session Stripe...");
-
-      // Enregistrer les données de commande dans le localStorage
-      const orderData = {
-        items: cartItems,
-        customer: formData,
-        shipping: {
-          method: shippingMethod,
-          cost: getShippingCost(),
-        },
-        total: getFinalTotal(),
-      };
-
-      localStorage.setItem("pendingOrder", JSON.stringify(orderData));
-      console.log("Données de commande enregistrées:", orderData);
-
-      // Créer une session Stripe côté client en appelant votre API
-      const response = await fetch("/api/create-checkout-session", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          items: cartItems,
-          shipping: {
-            name: `${formData.firstName} ${formData.lastName}`,
-            address: {
-              line1: formData.address,
-              postal_code: formData.postalCode,
-              city: formData.city,
-              country: formData.country,
-            },
-          },
-          shippingCost: getShippingCost(),
-          shippingMethod: shippingMethod,
-          email: formData.email,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Erreur lors de la création de la session de paiement");
-      }
-
-      const { sessionId } = await response.json();
-      console.log("Session Stripe créée avec succès, ID:", sessionId);
-
-      // Rediriger vers Stripe Checkout
-      const stripe = await stripePromise;
-      const { error } = await stripe.redirectToCheckout({ sessionId });
-
-      if (error) {
-        console.error("Erreur lors de la redirection vers Stripe:", error);
-        setModalTitle("Erreur de paiement");
-        setModalMessage(error.message);
-        setShowModal(true);
-        setIsLoading(false);
-      }
-    } catch (error) {
-      console.error("Erreur lors du processus de paiement:", error);
-      setModalTitle("Erreur de paiement");
+  // Fonction pour rediriger vers Stripe Checkout - MODIFIÉE POUR CORRESPONDRE À L'API ACTUELLE
+// Fonction pour rediriger vers Stripe Checkout
+const handleCheckout = async () => {
+  try {
+    // Vérifiez si l'utilisateur est connecté
+    if (!user) {
+      setModalTitle("Connexion requise");
       setModalMessage(
-        "Une erreur est survenue lors de la préparation du paiement. Veuillez réessayer."
+        "Vous devez être connecté pour finaliser votre commande."
       );
       setShowModal(true);
-      setIsLoading(false);
+      return; // Arrêtez l'exécution si l'utilisateur n'est pas connecté
     }
-  };
+
+    setIsLoading(true); // Activer l'indicateur de chargement
+    console.log("Préparation de la session Stripe...");
+
+    // Préparer les données pour l'API
+    const customerInfo = {
+      firstName: user.firstName || formData.firstName,
+      lastName: user.lastName || formData.lastName,
+      phone: user.phone || formData.phone,
+      address: user.address || formData.address,
+      city: user.city || formData.city,
+      postalCode: user.postalCode || formData.postalCode,
+      country: user.country || formData.country,
+    };
+
+    console.log("Informations client pour Stripe:", customerInfo);
+
+    // MODIFIÉ ICI: Port 8888 au lieu de 3000
+    const response = await fetch("http://localhost:8888/api/create-checkout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        items: cartItems,
+        shippingCost: getShippingCost(),
+        shippingMethod: shippingMethod,
+        email: user.email || formData.email,
+        customerInfo: customerInfo,
+      }),
+    });
+
+    // Journaliser la réponse pour le débogage
+    console.log("Statut de la réponse Stripe:", response.status);
+    
+    const data = await response.json();
+    console.log("Réponse de l'API Stripe:", data);
+
+    if (!response.ok) {
+      throw new Error(data.error || "Erreur lors de la création de la session de paiement");
+    }
+
+    console.log("Session Stripe créée avec succès, ID:", data.sessionId);
+
+    // Enregistrer les données de commande dans localStorage pour référence ultérieure
+    const orderData = {
+      items: cartItems,
+      customerInfo: customerInfo,
+      shipping: {
+        method: shippingMethod,
+        cost: getShippingCost(),
+      },
+      total: getFinalTotal(),
+      sessionId: data.sessionId,
+    };
+    
+    localStorage.setItem("pendingOrder", JSON.stringify(orderData));
+
+    // Redirection vers Stripe - utilisation de l'URL directe si disponible
+    if (data.url) {
+      console.log("Redirection vers l'URL Stripe:", data.url);
+      window.location.href = data.url;
+      return;
+    }
+
+    // Fallback à l'ancienne méthode si pas d'URL directe
+    const stripe = await stripePromise;
+    const { error } = await stripe.redirectToCheckout({ sessionId: data.sessionId });
+
+    if (error) {
+      console.error("Erreur lors de la redirection vers Stripe:", error);
+      setModalTitle("Erreur de paiement");
+      setModalMessage(error.message);
+      setShowModal(true);
+    }
+  } catch (error) {
+    console.error("Erreur lors du processus de paiement:", error);
+    setModalTitle("Erreur de paiement");
+    setModalMessage(
+      "Une erreur est survenue lors de la préparation du paiement. Veuillez réessayer."
+    );
+    setShowModal(true);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   // Fonction pour déconnecter l'utilisateur
   const handleLogout = () => {
@@ -2203,6 +2221,7 @@ export default function Checkout() {
                   passion en France depuis 2018.
                 </p>
                 <div className={styles.footerSocial}>
+                  
                   <a
                     href="https://facebook.com/monsavonvert"
                     className={styles.socialLink}

@@ -1,147 +1,243 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import Head from 'next/head';
-import Link from 'next/link';
-import styles from '../../styles/admin-orders.module.css';
+import React , { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import Head from "next/head";
+import Link from "next/link";
+import styles from "../../styles/admin-orders.module.css";
 
 export default function AdminOrders() {
   // États
-  const [isClient, setIsClient] = useState(false);
+  const [isClient, setIsClient] = useState(false);""
   const [scrolled, setScrolled] = useState(false);
-  const [userEmail, setUserEmail] = useState('');
+  const [userEmail, setUserEmail] = useState("");
   const [orders, setOrders] = useState([]);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
   const [expandedOrder, setExpandedOrder] = useState(null);
-  const [sortConfig, setSortConfig] = useState({ key: 'date', direction: 'desc' });
+  const [sortConfig, setSortConfig] = useState({
+    key: "date",
+    direction: "desc",
+  });
   const router = useRouter();
 
   // Effet pour l'initialisation côté client
   useEffect(() => {
     setIsClient(true);
-    
+
     // Réinitialisation des marges
-    if (typeof document !== 'undefined') {
+    if (typeof document !== "undefined") {
       document.body.classList.add(styles.resetMargins);
       document.documentElement.classList.add(styles.resetMargins);
     }
-    
+
     // Détection du scroll pour le header
     const handleScroll = () => {
       setScrolled(window.scrollY > 30);
     };
-    
+
     // Gestionnaires d'événements
-    if (typeof window !== 'undefined') {
-      window.addEventListener('scroll', handleScroll);
+    if (typeof window !== "undefined") {
+      window.addEventListener("scroll", handleScroll);
     }
-    
+
     // Nettoyage
     return () => {
-      if (typeof document !== 'undefined') {
+      if (typeof document !== "undefined") {
         document.body.classList.remove(styles.resetMargins);
         document.documentElement.classList.remove(styles.resetMargins);
       }
-      if (typeof window !== 'undefined') {
-        window.removeEventListener('scroll', handleScroll);
+      if (typeof window !== "undefined") {
+        window.removeEventListener("scroll", handleScroll);
       }
     };
   }, []);
 
-// Vérification de l'authentification
-useEffect(() => {
-  if (!isClient) return;
+  // Vérification de l'authentification et récupération des commandes
+  useEffect(() => {
+    if (!isClient) return;
 
-  try {
-    const email = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail');
-    const userRole = localStorage.getItem('role') || sessionStorage.getItem('role');
-    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    try {
+      // Récupère les informations d'authentification du stockage local ou de session
+      const email = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail');
+      const userRole = localStorage.getItem('role') || sessionStorage.getItem('role');
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      // Récupération de l'URL de l'API depuis les variables d'environnement
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'; // Valeur par défaut en cas d'absence
 
-    console.log('Vérification des autorisations pour:', email);
-    console.log('Rôle utilisateur:', userRole);
+      console.log('Vérification des autorisations pour:', email);
+      console.log('Rôle utilisateur:', userRole);
+      console.log('URL API:', API_URL);
 
-    if (!email || !userRole || !token) {
-      console.log('Informations manquantes - Email, Rôle ou Token non trouvé');
+      // Vérifie si toutes les informations nécessaires sont présentes
+      if (!email || !userRole || !token) {
+        console.log('Informations manquantes - Email, Rôle ou Token non trouvé');
+        router.push('/login');
+        return;
+      }
+
+      // Vérifie si l'utilisateur a le rôle admin
+      if (userRole !== 'admin') {
+        console.log('Accès refusé: L\'utilisateur n\'a pas le rôle admin');
+        router.push('/profile');
+        return;
+      }
+
+      console.log('Accès autorisé pour l\'administrateur');
+      setUserEmail(email);
+      setIsAuthorized(true);
+
+      // Fonction pour récupérer les commandes
+      const fetchOrders = async () => {
+        setIsLoading(true);
+        try {
+          console.log('Tentative de récupération des commandes...');
+          console.log('URL complète:', `${API_URL}/orders`);
+          console.log('Token:', token);
+          
+          // Appel API pour récupérer les commandes
+          const response = await fetch(`${API_URL}/orders`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          });
+
+          console.log('Statut de la réponse:', response.status);
+          
+          if (!response.ok) {
+            console.error('Réponse non OK:', response.status, response.statusText);
+            throw new Error(`Échec de la récupération des commandes: ${response.status} ${response.statusText}`);
+          }
+
+          const data = await response.json();
+          console.log('Données récupérées depuis l\'API:', data);
+          
+          if (data.result && data.orders) {
+            // Préparation des statistiques pour les onglets
+            const orderStats = {
+              all: data.orders.total,
+              pending: data.orders.enAttente.count,
+              processing: data.orders.enCoursLivraison.count,
+              shipped: data.orders.enCoursLivraison.count, // Inclus dans "En cours de livraison"
+              delivered: data.orders.livre.count,
+              cancelled: data.orders.annule.count
+            };
+            
+            console.log('Statistiques des commandes:', orderStats);
+            
+            // Combiner toutes les commandes en une seule liste pour l'affichage
+            const allOrders = [
+              ...data.orders.enAttente.orders,
+              ...data.orders.enCoursLivraison.orders,
+              ...data.orders.livre.orders,
+              ...data.orders.annule.orders
+            ];
+            
+            console.log('Total des commandes chargées:', allOrders.length);
+            console.log('Échantillon de commande:', allOrders.length > 0 ? allOrders[0] : 'Aucune commande');
+            
+            // Mise à jour de l'état des commandes
+            setOrders(allOrders);
+          } else {
+            console.error('Format de données inattendu:', data);
+            
+            // Si aucune commande n'est trouvée, initialiser avec un tableau vide
+            setOrders([]);
+          }
+        } catch (error) {
+          console.error('Erreur lors de la récupération des commandes:', error);
+          // En cas d'erreur, pour les tests, créer quelques commandes fictives
+          setOrders([]);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      // Appel de la fonction de récupération des commandes
+      fetchOrders();
+      
+    } catch (error) {
+      console.error('Erreur lors de la vérification des autorisations:', error);
       router.push('/login');
-      return;
     }
+  }, [isClient, router]);
 
-    if (userRole !== 'admin') {
-      console.log('Accès refusé: L\'utilisateur n\'a pas le rôle admin');
-      router.push('/profile');
-      return;
-    }
-
-    console.log('Accès autorisé pour l\'administrateur');
-    setUserEmail(email);
-    setIsAuthorized(true);
-
-    // Charger les commandes (simulées ici)
-    const mockOrders = [/* ... */];
-    console.log('Chargement des commandes:', mockOrders.length, 'commandes trouvées');
-    setOrders(mockOrders);
-    setIsLoading(false);
-  } catch (error) {
-    console.error('Erreur lors de la vérification des autorisations:', error);
-    router.push('/login');
-  }
-}, [isClient, router]);
   // Fonction pour trier les commandes
   const sortOrders = (ordersToSort) => {
+    if (!ordersToSort || ordersToSort.length === 0) {
+      console.log('Aucune commande à trier');
+      return [];
+    }
+
+    console.log(`Tri des commandes par ${sortConfig.key} en ordre ${sortConfig.direction}`);
     const sortableOrders = [...ordersToSort];
-    
-    if (sortConfig.key === 'date') {
+
+    if (sortConfig.key === "date") {
       sortableOrders.sort((a, b) => {
-        const dateA = new Date(a.date);
-        const dateB = new Date(b.date);
-        if (sortConfig.direction === 'asc') {
+        const dateA = new Date(a.date || a.createdAt || 0);
+        const dateB = new Date(b.date || b.createdAt || 0);
+        if (sortConfig.direction === "asc") {
           return dateA - dateB;
         } else {
           return dateB - dateA;
         }
       });
-    } else if (sortConfig.key === 'total') {
+    } else if (sortConfig.key === "total") {
       sortableOrders.sort((a, b) => {
-        if (sortConfig.direction === 'asc') {
-          return a.total - b.total;
+        const totalA = parseFloat(a.total || 0);
+        const totalB = parseFloat(b.total || 0);
+        if (sortConfig.direction === "asc") {
+          return totalA - totalB;
         } else {
-          return b.total - a.total;
+          return totalB - totalA;
         }
       });
-    } else if (sortConfig.key === 'customer') {
+    } else if (sortConfig.key === "customer") {
       sortableOrders.sort((a, b) => {
-        if (sortConfig.direction === 'asc') {
-          return a.customer.name.localeCompare(b.customer.name);
+        const nameA = (a.customer?.name || '').toLowerCase();
+        const nameB = (b.customer?.name || '').toLowerCase();
+        if (sortConfig.direction === "asc") {
+          return nameA.localeCompare(nameB);
         } else {
-          return b.customer.name.localeCompare(a.customer.name);
+          return nameB.localeCompare(nameA);
         }
       });
     }
-    
+
     return sortableOrders;
   };
 
   // Fonction pour filtrer les commandes
   const getFilteredOrders = () => {
+    if (!orders || orders.length === 0) {
+      console.log('Aucune commande à filtrer');
+      return [];
+    }
+
     // Filtrer par statut
     let filtered = orders;
-    if (activeTab !== 'all') {
-      filtered = filtered.filter(order => order.status === activeTab);
+    if (activeTab !== "all") {
+      console.log(`Filtrage par statut: ${activeTab}`);
+      filtered = filtered.filter((order) => order.status === activeTab);
     }
-    
+
     // Filtrer par recherche
-    if (searchTerm.trim() !== '') {
+    if (searchTerm.trim() !== "") {
+      console.log(`Recherche du terme: ${searchTerm}`);
       const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(order => 
-        order.id.toLowerCase().includes(term) ||
-        order.customer.name.toLowerCase().includes(term) ||
-        order.customer.email.toLowerCase().includes(term)
+      filtered = filtered.filter(
+        (order) =>
+          (order.id && order.id.toString().toLowerCase().includes(term)) ||
+          (order.customer?.name && order.customer.name.toLowerCase().includes(term)) ||
+          (order.customer?.email && order.customer.email.toLowerCase().includes(term))
       );
     }
+
+    console.log(`Commandes filtrées: ${filtered.length}`);
     
     // Trier les commandes
     return sortOrders(filtered);
@@ -149,21 +245,49 @@ useEffect(() => {
 
   // Fonction pour formater une date
   const formatDate = (dateString) => {
-    const options = { 
-      day: '2-digit', 
-      month: '2-digit', 
-      year: 'numeric', 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    };
-    return new Date(dateString).toLocaleDateString('fr-FR', options);
+    if (!dateString) return 'Non disponible';
+    
+    try {
+      const options = {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      };
+      return new Date(dateString).toLocaleDateString("fr-FR", options);
+    } catch (error) {
+      console.error('Erreur lors du formatage de la date:', error);
+      return 'Date invalide';
+    }
   };
 
   // Fonction pour changer le statut d'une commande
-  const updateOrderStatus = (orderId, newStatus) => {
+  const updateOrderStatus = async (orderId, newStatus) => {
     try {
       console.log(`Mise à jour du statut de la commande ${orderId} vers ${newStatus}`);
-      
+
+      // Récupérer le token
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
+      // Appel API pour mettre à jour le statut
+      const response = await fetch(`${API_URL}/orders/${orderId}/status`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Échec de la mise à jour du statut: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Réponse de mise à jour du statut:', data);
+
       // Trouver l'étiquette correspondant au nouveau statut
       const statusLabels = {
         'pending': 'En attente',
@@ -173,7 +297,7 @@ useEffect(() => {
         'cancelled': 'Annulée'
       };
       
-      // Mettre à jour l'état
+      // Mettre à jour l'état local sans avoir à recharger toutes les commandes
       setOrders(orders.map(order => {
         if (order.id === orderId) {
           return { 
@@ -185,7 +309,7 @@ useEffect(() => {
         return order;
       }));
       
-      // Simuler une notification de succès
+      // Notification de succès
       alert(`Le statut de la commande ${orderId} a été mis à jour: ${statusLabels[newStatus]}`);
     } catch (error) {
       console.error('Erreur lors de la mise à jour du statut:', error);
@@ -195,9 +319,9 @@ useEffect(() => {
 
   // Fonction pour changer la méthode de tri
   const requestSort = (key) => {
-    let direction = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
     }
     setSortConfig({ key, direction });
   };
@@ -205,7 +329,7 @@ useEffect(() => {
   // Fonction pour obtenir la classe CSS de tri
   const getSortClass = (key) => {
     if (sortConfig.key !== key) return styles.sortNone;
-    return sortConfig.direction === 'asc' ? styles.sortAsc : styles.sortDesc;
+    return sortConfig.direction === "asc" ? styles.sortAsc : styles.sortDesc;
   };
 
   // Rendu de base sans contenu dynamique (pour éviter les erreurs d'hydratation)
@@ -214,7 +338,10 @@ useEffect(() => {
       <>
         <Head>
           <title>Gestion des Commandes | MonSavonVert</title>
-          <meta name="description" content="Panneau d'administration des commandes - MonSavonVert" />
+          <meta
+            name="description"
+            content="Panneau d'administration des commandes - MonSavonVert"
+          />
           <link rel="icon" href="/favicon.ico" />
         </Head>
         <div className={styles.loadingWrapper}>
@@ -229,18 +356,25 @@ useEffect(() => {
     <>
       <Head>
         <title>Gestion des Commandes | MonSavonVert</title>
-        <meta name="description" content="Panneau d'administration des commandes - MonSavonVert" />
+        <meta
+          name="description"
+          content="Panneau d'administration des commandes - MonSavonVert"
+        />
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
 
       <div className={styles.container}>
         {/* Header avec navigation */}
-        <header className={`${styles.header} ${scrolled ? styles.headerScrolled : ''}`}>
+        <header
+          className={`${styles.header} ${
+            scrolled ? styles.headerScrolled : ""
+          }`}
+        >
           <div className={styles.headerContent}>
             <div className={styles.logoContainer}>
-              <Link href="/" className={styles.logoLink}> 
-                  <span className={styles.logo}>MonSavonVert</span> 
+              <Link href="/" className={styles.logoLink}>
+                <span className={styles.logo}>MonSavonVert</span>
               </Link>
             </div>
 
@@ -253,8 +387,11 @@ useEffect(() => {
                   </Link>
                 </li>
                 <li className={styles.navItem}>
-                  <Link href="/admin/orders" className={`${styles.navLink} ${styles.active}`}>
-                  Commandes
+                  <Link
+                    href="/admin/orders"
+                    className={`${styles.navLink} ${styles.active}`}
+                  >
+                    Commandes
                   </Link>
                 </li>
                 <li className={styles.navItem}>
@@ -295,12 +432,55 @@ useEffect(() => {
               <div className={styles.pageTitle}>
                 <h1>Gestion des Commandes</h1>
                 <p className={styles.pageDescription}>
-                  Suivez et gérez toutes les commandes passées sur votre boutique
+                  Suivez et gérez toutes les commandes passées sur votre
+                  boutique
                 </p>
               </div>
               <div className={styles.pageActions}>
-                <button className={styles.refreshButton} onClick={() => setIsLoading(true)}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <button
+                  className={styles.refreshButton}
+                  onClick={() => {
+                    setIsLoading(true);
+                    // Forcer un rechargement des commandes
+                    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+                    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+                    
+                    fetch(`${API_URL}/orders`, {
+                      method: 'GET',
+                      headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                      }
+                    }).then(res => res.json())
+                    .then(data => {
+                      if (data.result && data.orders) {
+                        const allOrders = [
+                          ...data.orders.enAttente.orders,
+                          ...data.orders.enCoursLivraison.orders,
+                          ...data.orders.livre.orders,
+                          ...data.orders.annule.orders
+                        ];
+                        setOrders(allOrders);
+                      }
+                      setIsLoading(false);
+                    })
+                    .catch(err => {
+                      console.error('Erreur lors du rafraîchissement:', err);
+                      setIsLoading(false);
+                    });
+                  }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <path d="M23 4v6h-6"></path>
                     <path d="M1 20v-6h6"></path>
                     <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"></path>
@@ -309,7 +489,17 @@ useEffect(() => {
                   Actualiser
                 </button>
                 <button className={styles.exportButton}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                     <polyline points="7 10 12 15 17 10"></polyline>
                     <line x1="12" y1="15" x2="12" y2="3"></line>
@@ -319,7 +509,7 @@ useEffect(() => {
               </div>
             </div>
           </section>
-          
+
           {/* Contenu principal */}
           <section className={styles.ordersSection}>
             <div className={styles.ordersContainer}>
@@ -333,95 +523,141 @@ useEffect(() => {
                   {/* Filtres et recherche */}
                   <div className={styles.ordersControls}>
                     <div className={styles.ordersTabs}>
-                      <button 
-                        className={`${styles.orderTab} ${activeTab === 'all' ? styles.activeTab : ''}`}
-                        onClick={() => setActiveTab('all')}
+                      <button
+                        className={`${styles.orderTab} ${
+                          activeTab === "all" ? styles.activeTab : ""
+                        }`}
+                        onClick={() => setActiveTab("all")}
                       >
                         Toutes
                         <span className={styles.tabCount}>{orders.length}</span>
                       </button>
-                      <button 
-                        className={`${styles.orderTab} ${activeTab === 'pending' ? styles.activeTab : ''}`}
-                        onClick={() => setActiveTab('pending')}
+                      <button
+                        className={`${styles.orderTab} ${
+                          activeTab === "pending" ? styles.activeTab : ""
+                        }`}
+                        onClick={() => setActiveTab("pending")}
                       >
                         En attente
                         <span className={styles.tabCount}>
-                          {orders.filter(order => order.status === 'pending').length}
+                          {
+                            orders.filter((order) => order.status === "pending")
+                              .length
+                          }
                         </span>
                       </button>
-                      <button 
-                        className={`${styles.orderTab} ${activeTab === 'processing' ? styles.activeTab : ''}`}
-                        onClick={() => setActiveTab('processing')}
+                      <button
+                        className={`${styles.orderTab} ${
+                          activeTab === "processing" ? styles.activeTab : ""
+                        }`}
+                        onClick={() => setActiveTab("processing")}
                       >
                         En préparation
                         <span className={styles.tabCount}>
-                          {orders.filter(order => order.status === 'processing').length}
+                          {
+                            orders.filter(
+                              (order) => order.status === "processing"
+                            ).length
+                          }
                         </span>
                       </button>
-                      <button 
-                        className={`${styles.orderTab} ${activeTab === 'shipped' ? styles.activeTab : ''}`}
-                        onClick={() => setActiveTab('shipped')}
+                      <button
+                        className={`${styles.orderTab} ${
+                          activeTab === "shipped" ? styles.activeTab : ""
+                        }`}
+                        onClick={() => setActiveTab("shipped")}
                       >
                         Expédiées
                         <span className={styles.tabCount}>
-                          {orders.filter(order => order.status === 'shipped').length}
+                          {
+                            orders.filter((order) => order.status === "shipped")
+                              .length
+                          }
                         </span>
                       </button>
-                      <button 
-                        className={`${styles.orderTab} ${activeTab === 'delivered' ? styles.activeTab : ''}`}
-                        onClick={() => setActiveTab('delivered')}
+                      <button
+                        className={`${styles.orderTab} ${
+                          activeTab === "delivered" ? styles.activeTab : ""
+                        }`}
+                        onClick={() => setActiveTab("delivered")}
                       >
                         Livrées
                         <span className={styles.tabCount}>
-                          {orders.filter(order => order.status === 'delivered').length}
+                          {
+                            orders.filter(
+                              (order) => order.status === "delivered"
+                            ).length
+                          }
                         </span>
                       </button>
-                      <button 
-                        className={`${styles.orderTab} ${activeTab === 'cancelled' ? styles.activeTab : ''}`}
-                        onClick={() => setActiveTab('cancelled')}
+                      <button
+                        className={`${styles.orderTab} ${
+                          activeTab === "cancelled" ? styles.activeTab : ""
+                        }`}
+                        onClick={() => setActiveTab("cancelled")}
                       >
                         Annulées
                         <span className={styles.tabCount}>
-                          {orders.filter(order => order.status === 'cancelled').length}
+                          {
+                            orders.filter(
+                              (order) => order.status === "cancelled"
+                            ).length
+                          }
                         </span>
                       </button>
                     </div>
                     <div className={styles.ordersSearch}>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
                         <circle cx="11" cy="11" r="8"></circle>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                       </svg>
-                      <input 
-                        type="text" 
-                        placeholder="Rechercher une commande, un client..." 
+                      <input
+                        type="text"
+                        placeholder="Rechercher une commande, un client..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                       />
                     </div>
                   </div>
-                  
+
                   {/* Tableau des commandes */}
                   <div className={styles.ordersTableWrapper}>
                     <table className={styles.ordersTable}>
                       <thead>
                         <tr>
                           <th className={styles.orderIdColumn}>Commande</th>
-                          <th 
-                            className={`${styles.sortableColumn} ${getSortClass('date')}`}
-                            onClick={() => requestSort('date')}
+                          <th
+                            className={`${styles.sortableColumn} ${getSortClass(
+                              "date"
+                            )}`}
+                            onClick={() => requestSort("date")}
                           >
                             Date
                           </th>
-                          <th 
-                            className={`${styles.sortableColumn} ${getSortClass('customer')}`}
-                            onClick={() => requestSort('customer')}
+                          <th
+                            className={`${styles.sortableColumn} ${getSortClass(
+                              "customer"
+                            )}`}
+                            onClick={() => requestSort("customer")}
                           >
                             Client
                           </th>
                           <th>Statut</th>
-                          <th 
-                            className={`${styles.sortableColumn} ${getSortClass('total')}`}
-                            onClick={() => requestSort('total')}
+                          <th
+                            className={`${styles.sortableColumn} ${getSortClass(
+                              "total"
+                            )}`}
+                            onClick={() => requestSort("total")}
                           >
                             Total
                           </th>
@@ -429,94 +665,166 @@ useEffect(() => {
                         </tr>
                       </thead>
                       <tbody>
-                        {getFilteredOrders().map(order => (
-                          <>
-                            <tr 
-                              key={order.id} 
+                        {getFilteredOrders().map((order) => (
+                          <React.Fragment key={order.id || order._id}>
+                            <tr
                               className={styles.orderRow}
-                              onClick={() => setExpandedOrder(expandedOrder === order.id ? null : order.id)}
+                              onClick={() =>
+                                setExpandedOrder(
+                                  expandedOrder === (order.id || order._id) ? null : (order.id || order._id)
+                                )
+                              }
                             >
                               <td>
-                                <span className={styles.orderId}>{order.id}</span>
+                                <span className={styles.orderId}>
+                                  {order.id || order._id || 'ID non disponible'}
+                                </span>
                               </td>
-                              <td>{formatDate(order.date)}</td>
+                              <td>{formatDate(order.date || order.createdAt)}</td>
                               <td>
                                 <div className={styles.customerInfo}>
-                                  <span className={styles.customerName}>{order.customer.name}</span>
-                                  <span className={styles.customerEmail}>{order.customer.email}</span>
+                                  <span className={styles.customerName}>
+                                    {order.customer?.name || 'Client non renseigné'}
+                                  </span>
+                                  <span className={styles.customerEmail}>
+                                    {order.customer?.email || 'Email non renseigné'}
+                                  </span>
                                 </div>
                               </td>
                               <td>
-                                <span className={`${styles.orderStatus} ${styles[order.status]}`}>
-                                  {order.statusLabel}
+                                <span
+                                  className={`${styles.orderStatus} ${
+                                    styles[order.status] || ""
+                                  }`}
+                                >
+                                  {order.statusLabel || 'Statut inconnu'}
                                 </span>
                               </td>
-                              <td>{order.total.toFixed(2)} €</td>
+                              <td>{(order.total || 0).toFixed(2)} €</td>
                               <td>
                                 <div className={styles.orderActions}>
-                                  <button 
+                                  <button
                                     className={styles.viewOrderButton}
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      setExpandedOrder(expandedOrder === order.id ? null : order.id);
+                                      setExpandedOrder(
+                                        expandedOrder === (order.id || order._id)
+                                          ? null
+                                          : (order.id || order._id)
+                                      );
                                     }}
                                   >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      width="16"
+                                      height="16"
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="2"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    >
                                       <circle cx="12" cy="12" r="10"></circle>
-                                      <line x1="12" y1="8" x2="12" y2="16"></line>
-                                      <line x1="8" y1="12" x2="16" y2="12"></line>
+                                      <line
+                                        x1="12"
+                                        y1="8"
+                                        x2="12"
+                                        y2="16"
+                                      ></line>
+                                      <line
+                                        x1="8"
+                                        y1="12"
+                                        x2="16"
+                                        y2="12"
+                                      ></line>
                                     </svg>
                                   </button>
                                   <div className={styles.orderActionsDropdown}>
                                     <button className={styles.dropdownToggle}>
-                                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="16"
+                                        height="16"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                      >
                                         <circle cx="12" cy="12" r="1"></circle>
                                         <circle cx="12" cy="5" r="1"></circle>
                                         <circle cx="12" cy="19" r="1"></circle>
                                       </svg>
                                     </button>
                                     <div className={styles.dropdownMenu}>
-                                      {order.status === 'pending' && (
-                                        <button onClick={(e) => {
-                                          e.stopPropagation();
-                                          updateOrderStatus(order.id, 'processing');
-                                        }}>
+                                      {order.status === "pending" && (
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            updateOrderStatus(
+                                              (order.id || order._id),
+                                              "processing"
+                                            );
+                                          }}
+                                        >
                                           Marquer en préparation
                                         </button>
                                       )}
-                                      {order.status === 'processing' && (
-                                        <button onClick={(e) => {
-                                          e.stopPropagation();
-                                          updateOrderStatus(order.id, 'shipped');
-                                        }}>
+                                      {order.status === "processing" && (
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            updateOrderStatus(
+                                              (order.id || order._id),
+                                              "shipped"
+                                            );
+                                          }}
+                                        >
                                           Marquer comme expédiée
                                         </button>
                                       )}
-                                      {order.status === 'shipped' && (
-                                        <button onClick={(e) => {
-                                          e.stopPropagation();
-                                          updateOrderStatus(order.id, 'delivered');
-                                        }}>
+                                      {order.status === "shipped" && (
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            updateOrderStatus(
+                                              (order.id || order._id),
+                                              "delivered"
+                                            );
+                                          }}
+                                        >
                                           Marquer comme livrée
                                         </button>
                                       )}
-                                      {(order.status === 'pending' || order.status === 'processing') && (
-                                        <button 
+                                      {(order.status === "pending" ||
+                                        order.status === "processing") && (
+                                        <button
                                           className={styles.cancelAction}
                                           onClick={(e) => {
                                             e.stopPropagation();
-                                            if (confirm('Êtes-vous sûr de vouloir annuler cette commande ?')) {
-                                              updateOrderStatus(order.id, 'cancelled');
+                                            if (
+                                              confirm(
+                                                "Êtes-vous sûr de vouloir annuler cette commande ?"
+                                              )
+                                            ) {
+                                              updateOrderStatus(
+                                                (order.id || order._id),
+                                                "cancelled"
+                                              );
                                             }
                                           }}
                                         >
                                           Annuler la commande
                                         </button>
                                       )}
-                                      <button onClick={(e) => {
-                                        e.stopPropagation();
-                                        alert('Impression de la facture...');
-                                      }}>
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          alert("Impression de la facture...");
+                                        }}
+                                      >
                                         Imprimer la facture
                                       </button>
                                     </div>
@@ -524,70 +832,158 @@ useEffect(() => {
                                 </div>
                               </td>
                             </tr>
-                            {expandedOrder === order.id && (
+                            {expandedOrder === (order.id || order._id) && (
                               <tr className={styles.orderDetailsRow}>
                                 <td colSpan="6">
                                   <div className={styles.orderDetails}>
-                                    <div className={styles.orderDetailsSections}>
-                                      <div className={styles.orderDetailsSection}>
+                                    <div
+                                      className={styles.orderDetailsSections}
+                                    >
+                                      <div
+                                        className={styles.orderDetailsSection}
+                                      >
                                         <h3>Informations client</h3>
                                         <div className={styles.detailsGrid}>
                                           <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>Nom</span>
-                                            <span className={styles.detailValue}>{order.customer.name}</span>
+                                            <span
+                                              className={styles.detailLabel}
+                                            >
+                                              Nom
+                                            </span>
+                                            <span
+                                              className={styles.detailValue}
+                                            >
+                                              {order.customer?.name || 'Non renseigné'}
+                                            </span>
                                           </div>
                                           <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>Email</span>
-                                            <span className={styles.detailValue}>{order.customer.email}</span>
+                                            <span
+                                              className={styles.detailLabel}
+                                            >
+                                              Email
+                                            </span>
+                                            <span
+                                              className={styles.detailValue}
+                                            >
+                                              {order.customer?.email || 'Non renseigné'}
+                                            </span>
                                           </div>
                                           <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>Téléphone</span>
-                                            <span className={styles.detailValue}>{order.customer.phone}</span>
+                                            <span
+                                              className={styles.detailLabel}
+                                            >
+                                              Téléphone
+                                            </span>
+                                            <span
+                                              className={styles.detailValue}
+                                            >
+                                              {order.customer?.phone || 'Non renseigné'}
+                                            </span>
                                           </div>
                                           <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>Adresse</span>
-                                            <span className={styles.detailValue}>{order.customer.address}</span>
+                                            <span
+                                              className={styles.detailLabel}
+                                            >
+                                              Adresse
+                                            </span>
+                                            <span
+                                              className={styles.detailValue}
+                                            >
+                                              {order.customer?.address || 'Non renseigné'}
+                                            </span>
                                           </div>
                                         </div>
                                       </div>
-                                      
-                                      <div className={styles.orderDetailsSection}>
+
+                                      <div
+                                        className={styles.orderDetailsSection}
+                                      >
                                         <h3>Informations commande</h3>
                                         <div className={styles.detailsGrid}>
                                           <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>Numéro</span>
-                                            <span className={styles.detailValue}>{order.id}</span>
+                                            <span
+                                              className={styles.detailLabel}
+                                            >
+                                              Numéro
+                                            </span>
+                                            <span
+                                              className={styles.detailValue}
+                                            >
+                                              {order.id || order._id || 'Non renseigné'}
+                                            </span>
                                           </div>
                                           <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>Date</span>
-                                            <span className={styles.detailValue}>{formatDate(order.date)}</span>
+                                            <span
+                                              className={styles.detailLabel}
+                                            >
+                                              Date
+                                            </span>
+                                            <span
+                                              className={styles.detailValue}
+                                            >
+                                              {formatDate(order.date || order.createdAt)}
+                                            </span>
                                           </div>
                                           <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>Paiement</span>
-                                            <span className={styles.detailValue}>{order.paymentMethod}</span>
+                                            <span
+                                              className={styles.detailLabel}
+                                            >
+                                              Paiement
+                                            </span>
+                                            <span
+                                              className={styles.detailValue}
+                                            >
+                                              {order.paymentMethod || 'Non renseigné'}
+                                            </span>
                                           </div>
                                           <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>Statut</span>
-                                            <span className={`${styles.detailValue} ${styles.statusBadge} ${styles[order.status]}`}>
-                                              {order.statusLabel}
+                                            <span
+                                              className={styles.detailLabel}
+                                            >
+                                              Statut
+                                            </span>
+                                            <span
+                                              className={`${
+                                                styles.detailValue
+                                              } ${styles.statusBadge} ${
+                                                styles[order.status] || ""
+                                              }`}
+                                            >
+                                              {order.statusLabel || 'Statut inconnu'}
                                             </span>
                                           </div>
                                           {order.trackingNumber && (
                                             <div className={styles.detailItem}>
-                                              <span className={styles.detailLabel}>Numéro de suivi</span>
-                                              <span className={styles.detailValue}>{order.trackingNumber}</span>
+                                              <span
+                                                className={styles.detailLabel}
+                                              >
+                                                Numéro de suivi
+                                              </span>
+                                              <span
+                                                className={styles.detailValue}
+                                              >
+                                                {order.trackingNumber}
+                                              </span>
                                             </div>
                                           )}
                                           {order.cancellationReason && (
                                             <div className={styles.detailItem}>
-                                              <span className={styles.detailLabel}>Raison d'annulation</span>
-                                              <span className={styles.detailValue}>{order.cancellationReason}</span>
+                                              <span
+                                                className={styles.detailLabel}
+                                              >
+                                                Raison d'annulation
+                                              </span>
+                                              <span
+                                                className={styles.detailValue}
+                                              >
+                                                {order.cancellationReason}
+                                              </span>
                                             </div>
                                           )}
                                         </div>
                                       </div>
                                     </div>
-                                    
+
                                     <div className={styles.orderItems}>
                                       <h3>Articles commandés</h3>
                                       <table className={styles.orderItemsTable}>
@@ -600,103 +996,223 @@ useEffect(() => {
                                           </tr>
                                         </thead>
                                         <tbody>
-                                          {order.items.map(item => (
-                                            <tr key={item.id}>
-                                              <td>{item.name}</td>
-                                              <td>{item.price.toFixed(2)} €</td>
-                                              <td>{item.quantity}</td>
-                                              <td>{(item.price * item.quantity).toFixed(2)} €</td>
+                                          {order.items && order.items.length > 0 ? (
+                                            order.items.map((item, index) => (
+                                              <tr key={item.id || index}>
+                                                <td>{item.name || 'Produit inconnu'}</td>
+                                                <td>{(item.price || 0).toFixed(2)} €</td>
+                                                <td>{item.quantity || 0}</td>
+                                                <td>
+                                                  {(
+                                                    (item.price || 0) * (item.quantity || 0)
+                                                  ).toFixed(2)}{" "}
+                                                  €
+                                                </td>
+                                              </tr>
+                                            ))
+                                          ) : (
+                                            <tr>
+                                              <td colSpan="4">Aucun article dans cette commande</td>
                                             </tr>
-                                          ))}
+                                          )}
                                         </tbody>
                                         <tfoot>
                                           <tr>
                                             <td colSpan="3">Sous-total</td>
-                                            <td>{(order.total - order.shipping).toFixed(2)} €</td>
+                                            <td>
+                                              {(
+                                                (order.total || 0) - (order.shipping || 0)
+                                              ).toFixed(2)}{" "}
+                                              €
+                                            </td>
                                           </tr>
                                           <tr>
-                                            <td colSpan="3">Frais de livraison</td>
-                                            <td>{order.shipping.toFixed(2)} €</td>
+                                            <td colSpan="3">
+                                              Frais de livraison
+                                            </td>
+                                            <td>
+                                              {(order.shipping || 0).toFixed(2)} €
+                                            </td>
                                           </tr>
                                           <tr className={styles.orderTotal}>
                                             <td colSpan="3">Total</td>
-                                            <td>{order.total.toFixed(2)} €</td>
+                                            <td>{(order.total || 0).toFixed(2)} €</td>
                                           </tr>
                                         </tfoot>
                                       </table>
                                     </div>
-                                    
+
                                     <div className={styles.orderDetailActions}>
-                                      <div className={styles.statusUpdateSection}>
+                                      <div
+                                        className={styles.statusUpdateSection}
+                                      >
                                         <label>Mettre à jour le statut</label>
                                         <div className={styles.statusOptions}>
-                                          <button 
-                                            className={`${styles.statusOption} ${styles.pendingButton} ${order.status === 'pending' ? styles.activeStatus : ''}`}
-                                            onClick={() => updateOrderStatus(order.id, 'pending')}
-                                            disabled={order.status === 'pending'}
+                                          <button
+                                            className={`${
+                                              styles.statusOption
+                                            } ${styles.pendingButton} ${
+                                              order.status === "pending"
+                                                ? styles.activeStatus
+                                                : ""
+                                            }`}
+                                            onClick={() =>
+                                              updateOrderStatus(
+                                                (order.id || order._id),
+                                                "pending"
+                                              )
+                                            }
+                                            disabled={
+                                              order.status === "pending"
+                                            }
                                           >
                                             En attente
                                           </button>
-                                          <button 
-                                            className={`${styles.statusOption} ${styles.processingButton} ${order.status === 'processing' ? styles.activeStatus : ''}`}
-                                            onClick={() => updateOrderStatus(order.id, 'processing')}
-                                            disabled={order.status === 'processing'}
+                                          <button
+                                            className={`${
+                                              styles.statusOption
+                                            } ${styles.processingButton} ${
+                                              order.status === "processing"
+                                                ? styles.activeStatus
+                                                : ""
+                                            }`}
+                                            onClick={() =>
+                                              updateOrderStatus(
+                                                (order.id || order._id),
+                                                "processing"
+                                              )
+                                            }
+                                            disabled={
+                                              order.status === "processing"
+                                            }
                                           >
                                             En préparation
                                           </button>
-                                          <button 
-                                            className={`${styles.statusOption} ${styles.shippedButton} ${order.status === 'shipped' ? styles.activeStatus : ''}`}
-                                            onClick={() => updateOrderStatus(order.id, 'shipped')}
-                                            disabled={order.status === 'shipped'}
+                                          <button
+                                            className={`${
+                                              styles.statusOption
+                                            } ${styles.shippedButton} ${
+                                              order.status === "shipped"
+                                                ? styles.activeStatus
+                                                : ""
+                                            }`}
+                                            onClick={() =>
+                                              updateOrderStatus(
+                                                (order.id || order._id),
+                                                "shipped"
+                                              )
+                                            }
+                                            disabled={
+                                              order.status === "shipped"
+                                            }
                                           >
                                             Expédiée
                                           </button>
-                                          <button 
-                                            className={`${styles.statusOption} ${styles.deliveredButton} ${order.status === 'delivered' ? styles.activeStatus : ''}`}
-                                            onClick={() => updateOrderStatus(order.id, 'delivered')}
-                                            disabled={order.status === 'delivered'}
+                                          <button
+                                            className={`${
+                                              styles.statusOption
+                                            } ${styles.deliveredButton} ${
+                                              order.status === "delivered"
+                                                ? styles.activeStatus
+                                                : ""
+                                            }`}
+                                            onClick={() =>
+                                              updateOrderStatus(
+                                                (order.id || order._id),
+                                                "delivered"
+                                              )
+                                            }
+                                            disabled={
+                                              order.status === "delivered"
+                                            }
                                           >
                                             Livrée
                                           </button>
-                                          <button 
-                                            className={`${styles.statusOption} ${styles.cancelledButton} ${order.status === 'cancelled' ? styles.activeStatus : ''}`}
+                                          <button
+                                            className={`${
+                                              styles.statusOption
+                                            } ${styles.cancelledButton} ${
+                                              order.status === "cancelled"
+                                                ? styles.activeStatus
+                                                : ""
+                                            }`}
                                             onClick={() => {
-                                              if (confirm('Êtes-vous sûr de vouloir annuler cette commande ?')) {
-                                                updateOrderStatus(order.id, 'cancelled');
+                                              if (
+                                                confirm(
+                                                  "Êtes-vous sûr de vouloir annuler cette commande ?"
+                                                )
+                                              ) {
+                                                updateOrderStatus(
+                                                  (order.id || order._id),
+                                                  "cancelled"
+                                                );
                                               }
                                             }}
-                                            disabled={order.status === 'cancelled'}
+                                            disabled={
+                                              order.status === "cancelled"
+                                            }
                                           >
                                             Annulée
                                           </button>
                                         </div>
                                       </div>
-                                      
+
                                       <div className={styles.actionButtons}>
-                                        <button 
+                                        <button
                                           className={styles.printInvoiceButton}
-                                          onClick={() => alert('Impression de la facture...')}
+                                          onClick={() =>
+                                            alert("Impression de la facture...")
+                                          }
                                         >
-                                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                          <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth="2"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                          >
                                             <polyline points="6 9 6 2 18 2 18 9"></polyline>
                                             <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                                            <rect x="6" y="14" width="12" height="8"></rect>
+                                            <rect
+                                              x="6"
+                                              y="14"
+                                              width="12"
+                                              height="8"
+                                            ></rect>
                                           </svg>
                                           Imprimer la facture
                                         </button>
-                                        <button 
+                                        <button
                                           className={styles.emailCustomerButton}
-                                          onClick={() => window.open(`mailto:${order.customer.email}?subject=Votre commande ${order.id} - MonSavonVert`)}
+                                          onClick={() =>
+                                            window.open(
+                                              `mailto:${order.customer?.email || ''}?subject=Votre commande ${order.id || order._id} - MonSavonVert`
+                                            )
+                                          }
                                         >
-                                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                          <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth="2"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                          >
                                             <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                                             <polyline points="22,6 12,13 2,6"></polyline>
                                           </svg>
                                           Contacter le client
                                         </button>
                                       </div>
-                                      
-                                      <button 
+
+                                      <button
                                         className={styles.closeDetailsButton}
                                         onClick={() => setExpandedOrder(null)}
                                       >
@@ -707,14 +1223,24 @@ useEffect(() => {
                                 </td>
                               </tr>
                             )}
-                          </>
+                          </React.Fragment>
                         ))}
                       </tbody>
                     </table>
-                    
+
                     {getFilteredOrders().length === 0 && (
                       <div className={styles.noOrdersFound}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="32"
+                          height="32"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
                           <circle cx="12" cy="12" r="10"></circle>
                           <path d="M16 16s-1.5-2-4-2-4 2-4 2"></path>
                           <line x1="9" y1="9" x2="9.01" y2="9"></line>
@@ -733,22 +1259,26 @@ useEffect(() => {
         {/* Footer simplifié pour l'admin */}
         <footer className={styles.adminFooter}>
           <div className={styles.footerContent}>
-            <p className={styles.copyright}>© 2025 MonSavonVert. Panneau d'administration.</p>
+            <p className={styles.copyright}>
+              © 2025 MonSavonVert. Panneau d'administration.
+            </p>
             <div className={styles.footerLinks}>
               <Link href="/admin/help">Aide</Link>
               <Link href="/admin/documentation">Documentation</Link>
-              <button onClick={() => {
-  localStorage.removeItem('userEmail');
-  localStorage.removeItem('token');
-  localStorage.removeItem('role'); // Correction ici
-  sessionStorage.removeItem('userEmail');
-  sessionStorage.removeItem('token');
-  sessionStorage.removeItem('role'); // Correction ici
-  console.log('Déconnexion réussie');
-  router.push('/login');
-}}>
-  Se déconnecter
-</button>
+              <button
+                onClick={() => {
+                  localStorage.removeItem("userEmail");
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("role");
+                  sessionStorage.removeItem("userEmail");
+                  sessionStorage.removeItem("token");
+                  sessionStorage.removeItem("role");
+                  console.log("Déconnexion réussie");
+                  router.push("/login");
+                }}
+              >
+                Se déconnecter
+              </button>
             </div>
           </div>
         </footer>

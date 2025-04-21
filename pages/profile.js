@@ -15,7 +15,7 @@ export default function Profile() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const router = useRouter();
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
-  // Données simulées
+  // Données utilisateur
   const [userData, setUserData] = useState(null);
   const [userOrders, setUserOrders] = useState([]);
   const [addresses, setAddresses] = useState([]);
@@ -181,8 +181,72 @@ export default function Profile() {
     setShowAddressModal(false);
   };
 
+// NOUVELLE FONCTION: Récupérer les commandes de l'utilisateur
+const fetchUserOrders = async (userId) => {
+  try {
+    console.log("🔍 Récupération des commandes pour l'utilisateur:", userId);
+    
+    // Obtenir le token d'authentification
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    
+    if (!token) {
+      console.error("Token d'authentification non trouvé");
+      return;
+    }
+    
+    // Appel à l'API pour récupérer les commandes
+    const response = await fetch(`${API_URL}/orders/user/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    
+    console.log("Statut de la réponse:", response.status);
+    
+    if (!response.ok) {
+      throw new Error(`Erreur HTTP: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log("Données reçues:", data);
+    
+    if (data.result) {
+      console.log("✅ Commandes récupérées:", data.orders);
+      
+      // Formater les commandes pour l'affichage
+      const formattedOrders = data.orders.map(order => ({
+        id: order._id,
+        date: new Date(order.createdAt).toLocaleDateString('fr-FR'),
+        status: order.status,
+        statusLabel: getStatusLabel(order.status),
+        total: order.totalAmount,
+        items: order.items
+      }));
+      
+      setUserOrders(formattedOrders);
+    } else {
+      console.error("❌ Erreur API:", data.error);
+    }
+  } catch (error) {
+    console.error("❌ Erreur lors de la récupération des commandes:", error);
+  }
+};
+
+  // Fonction pour convertir le statut en libellé
+  const getStatusLabel = (status) => {
+    const statusMap = {
+      pending: "En attente",
+      processing: "En traitement",
+      shipped: "Expédié",
+      delivered: "Livré",
+      completed: "Terminé",
+      cancelled: "Annulé"
+    };
+    
+    return statusMap[status] || "Inconnu";
+  };
+
   // Vérification de la connexion et chargement des données
-  // Dans useEffect de la fonction fetchUserData
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -245,6 +309,9 @@ export default function Profile() {
             setIsSubscribedToNewsletter(
               data.user.isSubscribedToNewsletter || false
             );
+            
+            // Récupérer les commandes de l'utilisateur
+            await fetchUserOrders(storedUser._id);
           } else {
             console.error(
               "❌ Erreur lors de la récupération des données utilisateur :",
@@ -399,6 +466,7 @@ export default function Profile() {
       processing: styles.statusProcessing,
       shipped: styles.statusShipped,
       delivered: styles.statusDelivered,
+      completed: styles.statusCompleted,
       cancelled: styles.statusCancelled,
     };
 
@@ -1072,7 +1140,7 @@ export default function Profile() {
                                 {order.id}
                               </div>
                               <div className={styles.orderDateColumn}>
-                                {formatDate(order.date)}
+                                {order.date}
                               </div>
                               <div className={styles.orderStatusColumn}>
                                 <span
@@ -1138,7 +1206,7 @@ export default function Profile() {
                               {order.id}
                             </div>
                             <div className={styles.orderDateColumn}>
-                              {formatDate(order.date)}
+                              {order.date}
                             </div>
                             <div className={styles.orderStatusColumn}>
                               <span
@@ -1645,6 +1713,7 @@ export default function Profile() {
                 </p>
                 <div className={styles.footerSocial}>
                   
+                  
                   <a
                     href="https://facebook.com/monsavonvert"
                     className={styles.socialLink}
@@ -1671,7 +1740,8 @@ export default function Profile() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Instagram"
-                  />
+                  >
+                  </a>
                     <svg
                       viewBox="0 0 24 24"
                       width="20"
@@ -1691,8 +1761,7 @@ export default function Profile() {
                         ry="5"
                       ></rect>
                       <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                    </svg>
+                      </svg>
                   <a
                     href="https://pinterest.com/monsavonvert"
                     className={styles.socialLink}
@@ -1700,6 +1769,7 @@ export default function Profile() {
                     rel="noopener noreferrer"
                     aria-label="Pinterest"
                   >
+                  </a>
                     <svg
                       viewBox="0 0 24 24"
                       width="20"
@@ -1714,7 +1784,6 @@ export default function Profile() {
                       <path d="M9 18l3-3 3 3"></path>
                       <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"></path>
                     </svg>
-                  </a>
                 </div>
               </div>
 
