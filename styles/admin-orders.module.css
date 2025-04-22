@@ -912,8 +912,29 @@
     color: white;
   }
   
-  .activeStatus {
-    background-color: currentColor !important;
+  /* Classes pour les boutons actifs */
+  .pendingButton.activeStatus {
+    background-color: var(--color-pending) !important;
+    color: white !important;
+  }
+  
+  .processingButton.activeStatus {
+    background-color: var(--color-processing) !important;
+    color: white !important;
+  }
+  
+  .shippedButton.activeStatus {
+    background-color: var(--color-shipped) !important;
+    color: white !important;
+  }
+  
+  .deliveredButton.activeStatus {
+    background-color: var(--color-success) !important;
+    color: white !important;
+  }
+  
+  .cancelledButton.activeStatus {
+    background-color: var(--color-error) !important;
     color: white !important;
   }
   
@@ -1031,6 +1052,117 @@
   .footerLinks button:hover {
     color: var(--color-primary);
   }
+
+  /* Styles pour la modale de notification */
+.statusModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.statusModal {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  position: relative;
+  animation: slideIn 0.3s ease;
+  border-top: 5px solid #4caf50;
+}
+
+.statusModal.success {
+  border-top-color: #4caf50;
+}
+
+.statusModal.error {
+  border-top-color: #f44336;
+}
+
+.statusModalContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.statusModalContent svg {
+  margin-bottom: 16px;
+  color: #4caf50;
+}
+
+.statusModal.error .statusModalContent svg {
+  color: #f44336;
+}
+
+.statusModalContent p {
+  margin-bottom: 20px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #333;
+}
+
+.statusModalCloseButton {
+  background-color: #f0f0f0;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.statusModalCloseButton:hover {
+  background-color: #e0e0e0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Ensure the active status buttons have text in white */
+.pendingButton.activeStatus,
+.processingButton.activeStatus,
+.shippedButton.activeStatus,
+.deliveredButton.activeStatus,
+.cancelledButton.activeStatus {
+  color: white !important;
+}
+
+.pendingButton.activeStatus {
+  background-color: var(--color-pending) !important;
+}
+
+.processingButton.activeStatus {
+  background-color: var(--color-processing) !important;
+}
+
+.shippedButton.activeStatus {
+  background-color: var(--color-shipped) !important;
+}
+
+.deliveredButton.activeStatus {
+  background-color: var(--color-success) !important;
+}
+
+.cancelledButton.activeStatus {
+  background-color: var(--color-error) !important;
+}
   
   /* Design responsive */
   @media (max-width: 1024px) {

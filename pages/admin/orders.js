@@ -8,7 +8,7 @@ import styles from "../../styles/admin-orders.module.css";
 
 export default function AdminOrders() {
   // États
-  const [isClient, setIsClient] = useState(false);""
+  const [isClient, setIsClient] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const [orders, setOrders] = useState([]);
@@ -17,11 +17,19 @@ export default function AdminOrders() {
   const [activeTab, setActiveTab] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedOrder, setExpandedOrder] = useState(null);
+  const [expandedCustomerDetails, setExpandedCustomerDetails] = useState(null); // Pour stocker les détails complets du client
   const [sortConfig, setSortConfig] = useState({
     key: "date",
     direction: "desc",
   });
+  
+  // Nouveaux états pour la modale de statut
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [statusModalMessage, setStatusModalMessage] = useState("");
+  const [statusModalType, setStatusModalType] = useState("success"); // success, error
+  
   const router = useRouter();
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   // Effet pour l'initialisation côté client
   useEffect(() => {
@@ -64,8 +72,6 @@ export default function AdminOrders() {
       const email = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail');
       const userRole = localStorage.getItem('role') || sessionStorage.getItem('role');
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      // Récupération de l'URL de l'API depuis les variables d'environnement
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'; // Valeur par défaut en cas d'absence
 
       console.log('Vérification des autorisations pour:', email);
       console.log('Rôle utilisateur:', userRole);
@@ -95,7 +101,6 @@ export default function AdminOrders() {
         try {
           console.log('Tentative de récupération des commandes...');
           console.log('URL complète:', `${API_URL}/orders`);
-          console.log('Token:', token);
           
           // Appel API pour récupérer les commandes
           const response = await fetch(`${API_URL}/orders`, {
@@ -122,7 +127,7 @@ export default function AdminOrders() {
               all: data.orders.total,
               pending: data.orders.enAttente.count,
               processing: data.orders.enCoursLivraison.count,
-              shipped: data.orders.enCoursLivraison.count, // Inclus dans "En cours de livraison"
+              shipped: data.orders.enCoursLivraison.count, 
               delivered: data.orders.livre.count,
               cancelled: data.orders.annule.count
             };
@@ -138,7 +143,6 @@ export default function AdminOrders() {
             ];
             
             console.log('Total des commandes chargées:', allOrders.length);
-            console.log('Échantillon de commande:', allOrders.length > 0 ? allOrders[0] : 'Aucune commande');
             
             // Mise à jour de l'état des commandes
             setOrders(allOrders);
@@ -150,7 +154,7 @@ export default function AdminOrders() {
           }
         } catch (error) {
           console.error('Erreur lors de la récupération des commandes:', error);
-          // En cas d'erreur, pour les tests, créer quelques commandes fictives
+          // En cas d'erreur, initialiser avec un tableau vide
           setOrders([]);
         } finally {
           setIsLoading(false);
@@ -164,7 +168,67 @@ export default function AdminOrders() {
       console.error('Erreur lors de la vérification des autorisations:', error);
       router.push('/login');
     }
-  }, [isClient, router]);
+  }, [isClient, router, API_URL]);
+
+  // Fonction pour récupérer les détails complets d'un client par email
+  const fetchCustomerDetails = async (customerEmail) => {
+    if (!customerEmail) return null;
+    
+    try {
+      console.log('Récupération des détails complets pour client:', customerEmail);
+      
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      
+      // CORRECTION: Utiliser l'endpoint correct pour récupérer les détails du client
+      // Au lieu de /users/email/:email, utiliser /customers/find-by-email/:email
+      const response = await fetch(`${API_URL}/customers/find-by-email/${encodeURIComponent(customerEmail)}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        console.error('Échec de la récupération des détails du client:', response.status);
+        return null;
+      }
+      
+      const data = await response.json();
+      console.log('Détails du client récupérés:', data);
+      
+      if (data.result && data.customer) {
+        return data.customer;
+      } else {
+        console.error('Format de données inattendu pour les détails du client:', data);
+        return null;
+      }
+    } catch (error) {
+      console.error('Erreur lors de la récupération des détails du client:', error);
+      return null;
+    }
+  };
+
+  // Effet pour récupérer les détails du client lorsqu'une commande est développée
+  useEffect(() => {
+    if (expandedOrder && orders.length > 0) {
+      const order = orders.find(o => (o.id || o._id) === expandedOrder);
+      
+      if (order && order.customer && order.customer.email) {
+        // Récupérer les détails complets du client
+        fetchCustomerDetails(order.customer.email)
+          .then(customerDetails => {
+            if (customerDetails) {
+              console.log('Détails client trouvés:', customerDetails);
+              setExpandedCustomerDetails(customerDetails);
+            }
+          });
+      }
+    } else {
+      // Réinitialiser les détails du client lorsque aucune commande n'est développée
+      setExpandedCustomerDetails(null);
+    }
+  }, [expandedOrder, orders]);
 
   // Fonction pour trier les commandes
   const sortOrders = (ordersToSort) => {
@@ -232,6 +296,7 @@ export default function AdminOrders() {
       filtered = filtered.filter(
         (order) =>
           (order.id && order.id.toString().toLowerCase().includes(term)) ||
+          (order._id && order._id.toString().toLowerCase().includes(term)) ||
           (order.customer?.name && order.customer.name.toLowerCase().includes(term)) ||
           (order.customer?.email && order.customer.email.toLowerCase().includes(term))
       );
@@ -262,15 +327,46 @@ export default function AdminOrders() {
     }
   };
 
+  // Fonction pour obtenir l'adresse complète du client
+  const getCustomerAddress = (order) => {
+    // Si on a les détails complets du client (depuis la collection customers)
+    if (expandedCustomerDetails && expandedOrder === (order.id || order._id)) {
+      // Construction de l'adresse complète à partir des détails récupérés
+      const addressParts = [];
+      
+      if (expandedCustomerDetails.address) {
+        addressParts.push(expandedCustomerDetails.address);
+      }
+      
+      if (expandedCustomerDetails.postalCode) {
+        addressParts.push(expandedCustomerDetails.postalCode);
+      }
+      
+      if (expandedCustomerDetails.city) {
+        addressParts.push(expandedCustomerDetails.city);
+      }
+      
+      if (expandedCustomerDetails.country) {
+        addressParts.push(expandedCustomerDetails.country);
+      }
+      
+      if (addressParts.length > 0) {
+        return addressParts.join(', ');
+      }
+    }
+    
+    // Fallback sur l'adresse de base dans la commande
+    return order.customer?.address || 'Adresse non disponible';
+  };
+
   // Fonction pour changer le statut d'une commande
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
       console.log(`Mise à jour du statut de la commande ${orderId} vers ${newStatus}`);
-
+  
       // Récupérer le token
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-
+  
       // Appel API pour mettre à jour le statut
       const response = await fetch(`${API_URL}/orders/${orderId}/status`, {
         method: 'PUT',
@@ -280,7 +376,7 @@ export default function AdminOrders() {
         },
         body: JSON.stringify({ status: newStatus })
       });
-
+  
       if (!response.ok) {
         throw new Error(`Échec de la mise à jour du statut: ${response.status}`);
       }
@@ -299,7 +395,7 @@ export default function AdminOrders() {
       
       // Mettre à jour l'état local sans avoir à recharger toutes les commandes
       setOrders(orders.map(order => {
-        if (order.id === orderId) {
+        if (order.id === orderId || order._id === orderId) {
           return { 
             ...order, 
             status: newStatus,
@@ -309,11 +405,23 @@ export default function AdminOrders() {
         return order;
       }));
       
-      // Notification de succès
-      alert(`Le statut de la commande ${orderId} a été mis à jour: ${statusLabels[newStatus]}`);
+      // Utilisez la modale au lieu de alert
+      setStatusModalType('success');
+      setStatusModalMessage(`Le statut de la commande ${orderId} a été mis à jour: ${statusLabels[newStatus]}`);
+      setShowStatusModal(true);
+      
+      // Fermer automatiquement la modale après 3 secondes
+      setTimeout(() => {
+        setShowStatusModal(false);
+      }, 3000);
+      
     } catch (error) {
       console.error('Erreur lors de la mise à jour du statut:', error);
-      alert('Une erreur est survenue lors de la mise à jour du statut.');
+      
+      // Afficher une modale d'erreur
+      setStatusModalType('error');
+      setStatusModalMessage('Une erreur est survenue lors de la mise à jour du statut.');
+      setShowStatusModal(true);
     }
   };
 
@@ -443,7 +551,6 @@ export default function AdminOrders() {
                     setIsLoading(true);
                     // Forcer un rechargement des commandes
                     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-                    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
                     
                     fetch(`${API_URL}/orders`, {
                       method: 'GET',
@@ -461,6 +568,9 @@ export default function AdminOrders() {
                           ...data.orders.annule.orders
                         ];
                         setOrders(allOrders);
+                        
+                        // Log pour vérifier les données actualisées
+                        console.log('Commandes actualisées:', allOrders.length);
                       }
                       setIsLoading(false);
                     })
@@ -740,95 +850,7 @@ export default function AdminOrders() {
                                       ></line>
                                     </svg>
                                   </button>
-                                  <div className={styles.orderActionsDropdown}>
-                                    <button className={styles.dropdownToggle}>
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="16"
-                                        height="16"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                      >
-                                        <circle cx="12" cy="12" r="1"></circle>
-                                        <circle cx="12" cy="5" r="1"></circle>
-                                        <circle cx="12" cy="19" r="1"></circle>
-                                      </svg>
-                                    </button>
-                                    <div className={styles.dropdownMenu}>
-                                      {order.status === "pending" && (
-                                        <button
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            updateOrderStatus(
-                                              (order.id || order._id),
-                                              "processing"
-                                            );
-                                          }}
-                                        >
-                                          Marquer en préparation
-                                        </button>
-                                      )}
-                                      {order.status === "processing" && (
-                                        <button
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            updateOrderStatus(
-                                              (order.id || order._id),
-                                              "shipped"
-                                            );
-                                          }}
-                                        >
-                                          Marquer comme expédiée
-                                        </button>
-                                      )}
-                                      {order.status === "shipped" && (
-                                        <button
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            updateOrderStatus(
-                                              (order.id || order._id),
-                                              "delivered"
-                                            );
-                                          }}
-                                        >
-                                          Marquer comme livrée
-                                        </button>
-                                      )}
-                                      {(order.status === "pending" ||
-                                        order.status === "processing") && (
-                                        <button
-                                          className={styles.cancelAction}
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            if (
-                                              confirm(
-                                                "Êtes-vous sûr de vouloir annuler cette commande ?"
-                                              )
-                                            ) {
-                                              updateOrderStatus(
-                                                (order.id || order._id),
-                                                "cancelled"
-                                              );
-                                            }
-                                          }}
-                                        >
-                                          Annuler la commande
-                                        </button>
-                                      )}
-                                      <button
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          alert("Impression de la facture...");
-                                        }}
-                                      >
-                                        Imprimer la facture
-                                      </button>
-                                    </div>
-                                  </div>
+                              
                                 </div>
                               </td>
                             </tr>
@@ -853,7 +875,9 @@ export default function AdminOrders() {
                                             <span
                                               className={styles.detailValue}
                                             >
-                                              {order.customer?.name || 'Non renseigné'}
+                                              {expandedCustomerDetails?.firstName && expandedCustomerDetails?.lastName ? 
+                                                `${expandedCustomerDetails.firstName} ${expandedCustomerDetails.lastName}` : 
+                                                order.customer?.name || 'Non renseigné'}
                                             </span>
                                           </div>
                                           <div className={styles.detailItem}>
@@ -865,7 +889,7 @@ export default function AdminOrders() {
                                             <span
                                               className={styles.detailValue}
                                             >
-                                              {order.customer?.email || 'Non renseigné'}
+                                              {expandedCustomerDetails?.email || order.customer?.email || 'Non renseigné'}
                                             </span>
                                           </div>
                                           <div className={styles.detailItem}>
@@ -877,7 +901,7 @@ export default function AdminOrders() {
                                             <span
                                               className={styles.detailValue}
                                             >
-                                              {order.customer?.phone || 'Non renseigné'}
+                                              {expandedCustomerDetails?.phone || order.customer?.phone || 'Non renseigné'}
                                             </span>
                                           </div>
                                           <div className={styles.detailItem}>
@@ -889,7 +913,7 @@ export default function AdminOrders() {
                                             <span
                                               className={styles.detailValue}
                                             >
-                                              {order.customer?.address || 'Non renseigné'}
+                                              {getCustomerAddress(order)}
                                             </span>
                                           </div>
                                         </div>
@@ -1282,6 +1306,37 @@ export default function AdminOrders() {
             </div>
           </div>
         </footer>
+        
+        {/* Modale de statut */}
+        {showStatusModal && (
+          <div className={styles.statusModalOverlay}>
+            <div className={`${styles.statusModal} ${styles[statusModalType]}`}>
+              <div className={styles.statusModalContent}>
+                {statusModalType === 'success' && (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="16 12 12 16 8 12"></polyline>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                  </svg>
+                )}
+                {statusModalType === 'error' && (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                )}
+                <p>{statusModalMessage}</p>
+                <button 
+                  className={styles.statusModalCloseButton}
+                  onClick={() => setShowStatusModal(false)}
+                >
+                  Fermer
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
