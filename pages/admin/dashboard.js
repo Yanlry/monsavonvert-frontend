@@ -16,6 +16,7 @@ export default function AdminDashboard() {
   const [dashboardData, setDashboardData] = useState(null);
   const [periodFilter, setPeriodFilter] = useState("month");
   const router = useRouter();
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'; // Assurez-vous que cette variable est définie
 
   // Effet pour l'initialisation côté client
   useEffect(() => {
@@ -50,7 +51,6 @@ export default function AdminDashboard() {
   }, []);
 
   // Vérification de l'authentification
-  // Vérification de l'authentification
   useEffect(() => {
     if (!isClient) return;
   
@@ -58,12 +58,13 @@ export default function AdminDashboard() {
       // Récupérer l'email et le rôle de l'utilisateur depuis le stockage local/session
       const email = localStorage.getItem("userEmail") || sessionStorage.getItem("userEmail");
       const userRole = localStorage.getItem("role") || sessionStorage.getItem("role");
+      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
   
       console.log("Vérification des autorisations pour:", email);
       console.log("Rôle utilisateur:", userRole);
   
       // Vérifier si les informations nécessaires sont disponibles
-      if (!email || !userRole) {
+      if (!email || !userRole || !token) {
         console.log("Informations manquantes - Email ou Rôle non trouvé");
         router.push("/login");
         return;
@@ -89,190 +90,258 @@ export default function AdminDashboard() {
     }
   }, [isClient, router]);
 
+  // Fonction pour générer des données de tendance des ventes sur les 10 derniers jours
+  const generateSalesTrendData = (orders) => {
+    // Date actuelle
+    const currentDate = new Date();
+    
+    // Créer un tableau pour les 10 derniers jours
+    const last10Days = [];
+    for (let i = 9; i >= 0; i--) {
+      const date = new Date(currentDate);
+      date.setDate(date.getDate() - i);
+      
+      // Formater la date comme "DD/MM"
+      const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+      
+      last10Days.push({
+        date: formattedDate,
+        fullDate: new Date(date.setHours(0, 0, 0, 0)),
+        value: 0 // Valeur initiale
+      });
+    }
+    
+    // Parcourir les commandes et ajouter les montants aux jours correspondants
+    orders.forEach(order => {
+      const orderDate = new Date(order.createdAt || order.date || '');
+      if (isNaN(orderDate.getTime())) return; // Ignorer les dates invalides
+      
+      orderDate.setHours(0, 0, 0, 0); // Ignorer l'heure
+      
+      // Chercher si ce jour est dans notre tableau des 10 derniers jours
+      const dayIndex = last10Days.findIndex(day => 
+        day.fullDate.getTime() === orderDate.getTime()
+      );
+      
+      if (dayIndex !== -1) {
+        // Utiliser totalAmount si disponible, sinon total
+        const amount = order.totalAmount || order.total || 0;
+        last10Days[dayIndex].value += amount;
+      }
+    });
+    
+    // Supprimer la propriété fullDate qui n'est plus nécessaire pour l'affichage
+    return last10Days.map(({ date, value }) => ({
+      date,
+      value: Math.round(value * 100) / 100 // Arrondir à 2 décimales
+    }));
+  };
+
   // Fonction pour charger les données du tableau de bord selon la période
-  const loadDashboardData = () => {
+  const loadDashboardData = async () => {
     console.log(`Chargement des données pour la période: ${periodFilter}`);
-
-    // Simuler un temps de chargement
+    
+    // Activer le loader
     setIsLoading(true);
-
-    setTimeout(() => {
-      // Données simulées pour le tableau de bord
-      const mockData = {
+    
+    try {
+      // Récupérer le token d'authentification
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      
+      if (!token) {
+        console.error("Token d'authentification non trouvé");
+        router.push("/login");
+        return;
+      }
+      
+      // Options pour les requêtes API
+      const requestOptions = {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      };
+      
+      // Récupérer les données des commandes
+      console.log("Récupération des données des commandes...");
+      const ordersResponse = await fetch(`${API_URL}/orders`, requestOptions);
+      
+      if (!ordersResponse.ok) {
+        throw new Error(`Erreur lors de la récupération des commandes: ${ordersResponse.status}`);
+      }
+      
+      const ordersData = await ordersResponse.json();
+      console.log("Données des commandes reçues:", ordersData);
+      
+      // Récupérer les données des clients
+      console.log("Récupération des données des clients...");
+      const customersResponse = await fetch(`${API_URL}/customers`, requestOptions);
+      
+      if (!customersResponse.ok) {
+        throw new Error(`Erreur lors de la récupération des clients: ${customersResponse.status}`);
+      }
+      
+      const customersData = await customersResponse.json();
+      console.log("Données des clients reçues:", customersData);
+      
+      // Filtrer les données en fonction de la période
+      const now = new Date();
+      let daysToFilter;
+      
+      if (periodFilter === 'week') {
+        daysToFilter = 7;
+      } else if (periodFilter === 'month') {
+        daysToFilter = 30;
+      } else { // 'year'
+        daysToFilter = 365;
+      }
+      
+      // Filtrer les clients en fonction de la période
+      const cutoffDate = new Date(now);
+      cutoffDate.setDate(cutoffDate.getDate() - daysToFilter);
+      
+      const filteredCustomers = (customersData.customers || []).filter(customer => {
+        // Si pas de date de création, on exclut le client
+        if (!customer.createdAt) return false;
+        
+        const createDate = new Date(customer.createdAt);
+        return createDate >= cutoffDate;
+      });
+      
+      // Extraire toutes les commandes
+      let allOrders = [];
+      
+      // Structure des commandes dans l'API:
+      // ordersData.orders.enAttente.orders
+      // ordersData.orders.enCoursLivraison.orders
+      // ordersData.orders.livre.orders
+      // ordersData.orders.annule.orders
+      
+      if (ordersData.orders) {
+        if (ordersData.orders.enAttente && ordersData.orders.enAttente.orders) {
+          allOrders = [...allOrders, ...ordersData.orders.enAttente.orders];
+        }
+        if (ordersData.orders.enCoursLivraison && ordersData.orders.enCoursLivraison.orders) {
+          allOrders = [...allOrders, ...ordersData.orders.enCoursLivraison.orders];
+        }
+        if (ordersData.orders.livre && ordersData.orders.livre.orders) {
+          allOrders = [...allOrders, ...ordersData.orders.livre.orders];
+        }
+        if (ordersData.orders.annule && ordersData.orders.annule.orders) {
+          allOrders = [...allOrders, ...ordersData.orders.annule.orders];
+        }
+      }
+      
+      // Filtrer les commandes selon la période
+      const filteredOrders = allOrders.filter(order => {
+        const orderDate = new Date(order.createdAt || order.date || '');
+        if (isNaN(orderDate.getTime())) return false;
+        return orderDate >= cutoffDate;
+      });
+      
+      // Générer les données de tendance des ventes
+      const salesTrend = generateSalesTrendData(filteredOrders);
+      
+      // Obtenir les données de base à partir de l'API
+      const totalOrders = ordersData.orders.total || 0;
+      const averageBasket = ordersData.orders.averageBasket || 0;
+      const totalSales = averageBasket * totalOrders; // Estimation basée sur le panier moyen
+      
+      // Sélectionner les 5 commandes les plus récentes
+      const recentOrders = [...allOrders].sort((a, b) => {
+        const dateA = new Date(a.createdAt || a.date || '');
+        const dateB = new Date(b.createdAt || b.date || '');
+        return dateB.getTime() - dateA.getTime();
+      }).slice(0, 5);
+      
+      // Construire l'objet pour le dashboard
+      const newDashboardData = {
         salesSummary: {
-          totalSales:
-            periodFilter === "week"
-              ? 1245.8
-              : periodFilter === "month"
-              ? 4932.5
-              : 58740.2,
-          ordersCount:
-            periodFilter === "week" ? 18 : periodFilter === "month" ? 72 : 864,
-          averageOrderValue:
-            periodFilter === "week"
-              ? 69.21
-              : periodFilter === "month"
-              ? 68.51
-              : 67.99,
-          conversionRate:
-            periodFilter === "week"
-              ? 3.2
-              : periodFilter === "month"
-              ? 3.5
-              : 3.4,
+          totalSales: totalSales,
+          ordersCount: totalOrders,
+          averageOrderValue: averageBasket,
+          conversionRate: 3.2, // On garde cette valeur fixe pour le moment
         },
-        salesTrend: [
-          // Pour la simplicité, nous simulons juste quelques points de données
-          { date: "01/04", value: periodFilter === "week" ? 180 : 180 },
-          { date: "02/04", value: periodFilter === "week" ? 220 : 190 },
-          { date: "03/04", value: periodFilter === "week" ? 170 : 210 },
-          { date: "04/04", value: periodFilter === "week" ? 250 : 180 },
-          { date: "05/04", value: periodFilter === "week" ? 300 : 220 },
-          { date: "06/04", value: periodFilter === "week" ? 280 : 290 },
-          { date: "07/04", value: periodFilter === "week" ? 220 : 230 },
-          { date: "08/04", value: periodFilter === "month" ? 190 : 190 },
-          { date: "09/04", value: periodFilter === "month" ? 210 : 210 },
-          { date: "10/04", value: periodFilter === "month" ? 250 : 250 },
-        ],
+        salesTrend: salesTrend, // Utilisation des données réelles
         topProducts: [
+          // On conserve les données simulées pour les produits les plus vendus
           {
             id: 1,
             name: "Savon Lavande",
-            sales:
-              periodFilter === "week"
-                ? 24
-                : periodFilter === "month"
-                ? 96
-                : 1152,
-            revenue:
-              periodFilter === "week"
-                ? 214.8
-                : periodFilter === "month"
-                ? 859.2
-                : 10310.4,
+            sales: periodFilter === "week" ? 24 : periodFilter === "month" ? 96 : 1152,
+            revenue: periodFilter === "week" ? 214.8 : periodFilter === "month" ? 859.2 : 10310.4,
           },
           {
             id: 3,
             name: "Savon Menthe",
-            sales:
-              periodFilter === "week"
-                ? 18
-                : periodFilter === "month"
-                ? 72
-                : 864,
-            revenue:
-              periodFilter === "week"
-                ? 161.1
-                : periodFilter === "month"
-                ? 644.4
-                : 7732.8,
+            sales: periodFilter === "week" ? 18 : periodFilter === "month" ? 72 : 864,
+            revenue: periodFilter === "week" ? 161.1 : periodFilter === "month" ? 644.4 : 7732.8,
           },
           {
             id: 8,
             name: "Coffret Découverte",
-            sales:
-              periodFilter === "week"
-                ? 12
-                : periodFilter === "month"
-                ? 48
-                : 576,
-            revenue:
-              periodFilter === "week"
-                ? 359.4
-                : periodFilter === "month"
-                ? 1437.6
-                : 17251.2,
+            sales: periodFilter === "week" ? 12 : periodFilter === "month" ? 48 : 576,
+            revenue: periodFilter === "week" ? 359.4 : periodFilter === "month" ? 1437.6 : 17251.2,
           },
           {
             id: 2,
             name: "Savon Citron",
-            sales:
-              periodFilter === "week"
-                ? 10
-                : periodFilter === "month"
-                ? 40
-                : 480,
-            revenue:
-              periodFilter === "week"
-                ? 79.5
-                : periodFilter === "month"
-                ? 318.0
-                : 3816.0,
+            sales: periodFilter === "week" ? 10 : periodFilter === "month" ? 40 : 480,
+            revenue: periodFilter === "week" ? 79.5 : periodFilter === "month" ? 318.0 : 3816.0,
           },
           {
             id: 7,
             name: "Shampoing solide Coco",
-            sales:
-              periodFilter === "week" ? 8 : periodFilter === "month" ? 32 : 384,
-            revenue:
-              periodFilter === "week"
-                ? 103.6
-                : periodFilter === "month"
-                ? 414.4
-                : 4972.8,
+            sales: periodFilter === "week" ? 8 : periodFilter === "month" ? 32 : 384,
+            revenue: periodFilter === "week" ? 103.6 : periodFilter === "month" ? 414.4 : 4972.8,
           },
         ],
-        recentOrders: [
-          {
-            id: "CMD-001",
-            status: "pending",
-            statusLabel: "En attente",
-            customer: "Marie Lemaire",
-            date: "2025-04-10T14:30:00",
-            total: 44.3,
-          },
-          {
-            id: "CMD-002",
-            status: "processing",
-            statusLabel: "En préparation",
-            customer: "Thomas Dubois",
-            date: "2025-04-09T10:15:00",
-            total: 45.8,
-          },
-          {
-            id: "CMD-003",
-            status: "shipped",
-            statusLabel: "Expédiée",
-            customer: "Sophie Martin",
-            date: "2025-04-08T16:45:00",
-            total: 39.9,
-          },
-          {
-            id: "CMD-004",
-            status: "delivered",
-            statusLabel: "Livrée",
-            customer: "Pierre Durant",
-            date: "2025-04-05T11:20:00",
-            total: 35.75,
-          },
-          {
-            id: "CMD-005",
-            status: "cancelled",
-            statusLabel: "Annulée",
-            customer: "Lucie Moreau",
-            date: "2025-04-03T09:10:00",
-            total: 20.85,
-          },
-        ],
+        recentOrders: recentOrders, // Utilisation des données réelles
         inventorySummary: {
+          // On conserve les données simulées pour l'inventaire
           totalProducts: 14,
           lowStock: 3,
           outOfStock: 1,
         },
         customerSummary: {
-          totalCustomers:
-            periodFilter === "week" ? 15 : periodFilter === "month" ? 58 : 680,
-          newCustomers:
-            periodFilter === "week" ? 5 : periodFilter === "month" ? 22 : 240,
-          returningRate:
-            periodFilter === "week" ? 40 : periodFilter === "month" ? 42 : 45,
+          totalCustomers: customersData.customers?.length || 0,
+          newCustomers: filteredCustomers.length,
+          returningRate: 40, // Valeur fixe pour le moment
         },
       };
-
-      setDashboardData(mockData);
+      
+      console.log("Données du tableau de bord calculées:", newDashboardData);
+      setDashboardData(newDashboardData);
       setIsLoading(false);
-      console.log("Données du tableau de bord chargées avec succès");
-    }, 800); // Simuler un délai de chargement
+      
+    } catch (error) {
+      console.error("Erreur lors du chargement des données:", error);
+      // Si on a une erreur, on initialise quand même avec des données factices
+      // pour éviter que l'interface ne soit vide
+      setDashboardData({
+        salesSummary: {
+          totalSales: 0,
+          ordersCount: 0,
+          averageOrderValue: 0,
+          conversionRate: 0,
+        },
+        salesTrend: [],
+        topProducts: [],
+        recentOrders: [],
+        inventorySummary: {
+          totalProducts: 0,
+          lowStock: 0,
+          outOfStock: 0,
+        },
+        customerSummary: {
+          totalCustomers: 0,
+          newCustomers: 0,
+          returningRate: 0,
+        },
+      });
+      setIsLoading(false);
+    }
   };
 
   // Effet pour recharger les données lorsque le filtre de période change
@@ -420,7 +489,7 @@ export default function AdminDashboard() {
                 </div>
                 <button
                   className={styles.refreshButton}
-                  onClick={() => setIsLoading(true)}
+                  onClick={() => loadDashboardData()}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -500,7 +569,7 @@ export default function AdminDashboard() {
                             Ventes Totales
                           </span>
                           <span className={styles.kpiValue}>
-                            {dashboardData.salesSummary.totalSales.toFixed(2)} €
+                            {dashboardData?.salesSummary.totalSales.toFixed(2)} €
                           </span>
                           <span
                             className={styles.kpiChange}
@@ -544,7 +613,7 @@ export default function AdminDashboard() {
                         <div className={styles.kpiInfo}>
                           <span className={styles.kpiLabel}>Commandes</span>
                           <span className={styles.kpiValue}>
-                            {dashboardData.salesSummary.ordersCount}
+                            {dashboardData?.salesSummary.ordersCount}
                           </span>
                           <span
                             className={styles.kpiChange}
@@ -580,13 +649,13 @@ export default function AdminDashboard() {
                         <div className={styles.kpiInfo}>
                           <span className={styles.kpiLabel}>Clients</span>
                           <span className={styles.kpiValue}>
-                            {dashboardData.customerSummary.totalCustomers}
+                            {dashboardData?.customerSummary.totalCustomers}
                           </span>
                           <span
                             className={styles.kpiChange}
                             style={{ color: "#4caf50" }}
                           >
-                            +{dashboardData.customerSummary.newCustomers}{" "}
+                            +{dashboardData?.customerSummary.newCustomers}{" "}
                             nouveaux
                           </span>
                         </div>
@@ -624,7 +693,7 @@ export default function AdminDashboard() {
                         <div className={styles.kpiInfo}>
                           <span className={styles.kpiLabel}>Panier Moyen</span>
                           <span className={styles.kpiValue}>
-                            {dashboardData.salesSummary.averageOrderValue.toFixed(
+                            {dashboardData?.salesSummary.averageOrderValue.toFixed(
                               2
                             )}{" "}
                             €
@@ -648,33 +717,51 @@ export default function AdminDashboard() {
                           <h2>Évolution des Ventes</h2>
                         </div>
                         <div className={styles.cardBody}>
-                          <div className={styles.salesChart}>
-                            {/* Ici, vous pourriez intégrer un vrai graphique avec Chart.js ou Recharts */}
-                            <div className={styles.mockChart}>
-                              <div className={styles.chartBars}>
-                                {dashboardData.salesTrend.map(
-                                  (point, index) => (
-                                    <div
-                                      key={index}
-                                      className={styles.chartBarContainer}
-                                    >
-                                      <div
-                                        className={styles.chartBar}
-                                        style={{
-                                          height: `${
-                                            (point.value / 300) * 100
-                                          }%`,
-                                        }}
-                                      ></div>
-                                      <span className={styles.chartLabel}>
-                                        {point.date}
-                                      </span>
-                                    </div>
-                                  )
-                                )}
-                              </div>
-                            </div>
-                          </div>
+                        <div className={styles.salesChart}>
+  {/* Affichage du graphique avec les données réelles */}
+  <div className={styles.mockChart}>
+    <div className={styles.chartBars}>
+      {dashboardData?.salesTrend.map(
+        (point, index) => {
+          // Trouver la valeur maximale pour calculer les proportions
+          const maxValue = Math.max(
+            ...dashboardData.salesTrend.map(p => p.value),
+            1 // Pour éviter la division par zéro
+          );
+          
+          // Déterminer si c'est une valeur à 0
+          const isZero = point.value === 0;
+          
+          return (
+            <div
+              key={index}
+              className={styles.chartBarContainer}
+            >
+              <div
+                className={styles.chartBar}
+                style={{
+                  height: isZero ? '20px' : `${(point.value / maxValue) * 100}%`,
+                  backgroundColor: isZero ? '#f44336' : '#4caf50',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontWeight: 'bold',
+                  fontSize: '12px'
+                }}
+              >
+                {isZero ? '0' : point.value.toFixed(2)}
+              </div>
+              <span className={styles.chartLabel}>
+                {point.date}
+              </span>
+            </div>
+          );
+        }
+      )}
+    </div>
+  </div>
+</div>
                         </div>
                       </div>
                     </div>
@@ -694,7 +781,7 @@ export default function AdminDashboard() {
                               </tr>
                             </thead>
                             <tbody>
-                              {dashboardData.topProducts.map((product) => (
+                              {dashboardData?.topProducts.map((product) => (
                                 <tr key={product.id}>
                                   <td>{product.name}</td>
                                   <td>{product.sales}</td>
@@ -730,18 +817,18 @@ export default function AdminDashboard() {
                               </tr>
                             </thead>
                             <tbody>
-                              {dashboardData.recentOrders.map((order) => (
-                                <tr key={order.id}>
+                              {dashboardData?.recentOrders.map((order) => (
+                                <tr key={order.id || order._id}>
                                   <td>
                                     <Link
-                                      href={`/admin/orders?id=${order.id}`}
+                                      href={`/admin/orders?id=${order.id || order._id}`}
                                       className={styles.orderLink}
                                     >
-                                        {order.id}
+                                        {order.id || order._id}
                                     </Link>
                                   </td>
-                                  <td>{formatDate(order.date)}</td>
-                                  <td>{order.customer}</td>
+                                  <td>{formatDate(order.createdAt || order.date || '')}</td>
+                                  <td>{order.customer?.name || 'Client inconnu'}</td>
                                   <td>
                                     <span
                                       className={`${styles.orderStatus} ${
@@ -751,7 +838,7 @@ export default function AdminDashboard() {
                                       {order.statusLabel}
                                     </span>
                                   </td>
-                                  <td>{order.total.toFixed(2)} €</td>
+                                  <td>{(order.totalAmount || order.total || 0).toFixed(2)} €</td>
                                 </tr>
                               ))}
                             </tbody>
@@ -778,9 +865,9 @@ export default function AdminDashboard() {
                                 </span>
                               </div>
                               <span className={styles.stockValue}>
-                                {dashboardData.inventorySummary.totalProducts -
-                                  dashboardData.inventorySummary.lowStock -
-                                  dashboardData.inventorySummary.outOfStock}
+                                {dashboardData?.inventorySummary.totalProducts -
+                                  dashboardData?.inventorySummary.lowStock -
+                                  dashboardData?.inventorySummary.outOfStock}
                               </span>
                             </div>
 
@@ -794,7 +881,7 @@ export default function AdminDashboard() {
                                 </span>
                               </div>
                               <span className={styles.stockValue}>
-                                {dashboardData.inventorySummary.lowStock}
+                                {dashboardData?.inventorySummary.lowStock}
                               </span>
                             </div>
 
@@ -808,7 +895,7 @@ export default function AdminDashboard() {
                                 </span>
                               </div>
                               <span className={styles.stockValue}>
-                                {dashboardData.inventorySummary.outOfStock}
+                                {dashboardData?.inventorySummary.outOfStock}
                               </span>
                             </div>
                           </div>
@@ -831,40 +918,15 @@ export default function AdminDashboard() {
                             </svg>
                             <p>
                               Vous avez{" "}
-                              {dashboardData.inventorySummary.lowStock +
-                                dashboardData.inventorySummary.outOfStock}{" "}
+                              {(dashboardData?.inventorySummary.lowStock || 0) +
+                                (dashboardData?.inventorySummary.outOfStock || 0)}{" "}
                               produits à réapprovisionner
                             </p>
                           </div>
                         </div>
                       </div>
 
-                      <div className={styles.dashboardCard}>
-                        <div className={styles.cardHeader}>
-                          <h2>Activité Clients</h2>
-                        </div>
-                        <div className={styles.cardBody}>
-                          <div className={styles.customerStats}>
-                            <div className={styles.customerStat}>
-                              <span className={styles.statLabel}>
-                                Taux de fidélisation
-                              </span>
-                              <span className={styles.statValue}>
-                                {dashboardData.customerSummary.returningRate}%
-                              </span>
-                            </div>
-
-                            <div className={styles.customerStat}>
-                              <span className={styles.statLabel}>
-                                Taux de conversion
-                              </span>
-                              <span className={styles.statValue}>
-                                {dashboardData.salesSummary.conversionRate}%
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                     
                     </div>
                   </div>
                 </>
@@ -1020,34 +1082,6 @@ export default function AdminDashboard() {
           display: flex;
           flex-direction: column;
           justify-content: flex-end;
-        }
-
-        .chartBars {
-          display: flex;
-          height: 90%;
-          align-items: flex-end;
-          gap: 10px;
-        }
-
-        .chartBarContainer {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          height: 100%;
-        }
-
-        .chartBar {
-          width: 100%;
-          background-color: #4caf50;
-          border-radius: 4px 4px 0 0;
-          transition: height 0.3s ease;
-        }
-
-        .chartLabel {
-          font-size: 12px;
-          color: #546e7a;
-          margin-top: 8px;
         }
 
         .dashboardTable {

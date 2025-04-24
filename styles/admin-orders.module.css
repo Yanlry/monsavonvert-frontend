@@ -1125,6 +1125,34 @@
   background-color: #e0e0e0;
 }
 
+.pageStats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.avgBasketInfo {
+  display: inline-flex;
+  align-items: center;
+  background-color: #f8f9fa;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border-left: 3px solid #0ea5e9;
+  margin-top: 8px;
+}
+
+.avgBasketLabel {
+  font-weight: 500;
+  margin-right: 8px;
+  color: #4b5563;
+}
+
+.avgBasketValue {
+  font-weight: 600;
+  color: #0ea5e9;
+  font-size: 1.05rem;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }

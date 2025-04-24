@@ -29,7 +29,7 @@ export default function AdminCustomers() {
     activeCustomers: 0,
     inactiveCustomers: 0,
     newCustomersThisMonth: 0,
-    averageOrderValue: 0
+    averageBasket: 0 // Initialisation avec 0
   });
   
   // États pour le formulaire
@@ -134,22 +134,59 @@ export default function AdminCustomers() {
       if (data.result && Array.isArray(data.customers)) {
         setCustomers(data.customers);
         
-        // Calculer les statistiques des clients
-        calculateCustomerStats(data.customers);
+        // Récupérer également le panier moyen pour nos statistiques
+        fetchAverageBasket(token, data.customers);
       } else {
         console.error('Format de données inattendu:', data);
         setCustomers([]);
+        setIsLoading(false);
       }
-      
-      setIsLoading(false);
     } catch (error) {
       console.error('Erreur lors de la récupération des clients:', error);
       setIsLoading(false);
     }
   };
 
+  // Nouvelle fonction pour récupérer le panier moyen
+  const fetchAverageBasket = async (token, customersData) => {
+    try {
+      // Récupération des commandes pour obtenir le panier moyen
+      const response = await fetch(`${API_URL}/orders`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Échec de la récupération du panier moyen');
+      }
+
+      const data = await response.json();
+      console.log('Données des commandes récupérées:', data);
+      
+      if (data.result && data.orders) {
+        // Extraire le panier moyen
+        const avgBasket = data.orders.averageBasket || 0;
+        console.log('Panier moyen récupéré:', avgBasket);
+        
+        // Calculer les statistiques avec le panier moyen
+        calculateCustomerStats(customersData, avgBasket);
+      } else {
+        calculateCustomerStats(customersData, 0);
+      }
+      
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Erreur lors de la récupération du panier moyen:', error);
+      calculateCustomerStats(customersData, 0);
+      setIsLoading(false);
+    }
+  };
+
   // Calculer les statistiques à partir des données clients
-  const calculateCustomerStats = (customersData) => {
+  const calculateCustomerStats = (customersData, averageBasket) => {
     // Nous n'avons pas l'info isActive, donc on considère tous les clients comme actifs
     const activeCustomers = customersData.length;
     
@@ -162,15 +199,12 @@ export default function AdminCustomers() {
       customer => new Date(customer.createdAt) >= firstDayOfMonth
     ).length;
     
-    // Pour le moment, pas de données sur les commandes
-    const avgOrderValue = 0;
-    
     setCustomerStats({
       totalCustomers: customersData.length,
       activeCustomers,
       inactiveCustomers: 0, // Pas d'info sur les clients inactifs pour le moment
       newCustomersThisMonth: newThisMonth,
-      averageOrderValue: avgOrderValue
+      averageBasket: averageBasket // Utilisation du panier moyen récupéré de l'API
     });
   };
 
@@ -520,7 +554,7 @@ export default function AdminCustomers() {
                         </svg>
                       </div>
                       <div className={styles.statContent}>
-                        <span className={styles.statValue}>0.00 €</span>
+                        <span className={styles.statValue}>{customerStats.averageBasket.toFixed(2)} €</span>
                         <span className={styles.statLabel}>Panier moyen</span>
                       </div>
                     </div>
@@ -618,27 +652,6 @@ export default function AdminCustomers() {
                                     </svg>
                                   </button>
                                   <div className={styles.orderActionsDropdown}>
-                                    <button className={styles.dropdownToggle}>
-                                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <circle cx="12" cy="12" r="1"></circle>
-                                        <circle cx="12" cy="5" r="1"></circle>
-                                        <circle cx="12" cy="19" r="1"></circle>
-                                      </svg>
-                                    </button>
-                                    <div className={styles.dropdownMenu}>
-                                      <button onClick={(e) => {
-                                        e.stopPropagation();
-                                        openCustomerModal(customer);
-                                      }}>
-                                        Modifier le client
-                                      </button>
-                                      <button onClick={(e) => {
-                                        e.stopPropagation();
-                                        window.open(`mailto:${customer.email}?subject=MonSavonVert - Votre compte client`);
-                                      }}>
-                                        Contacter par email
-                                      </button>
-                                    </div>
                                   </div>
                                 </div>
                               </td>
@@ -694,16 +707,6 @@ export default function AdminCustomers() {
                                     </div>
                                     
                                     <div className={styles.customerDetailActions}>
-                                      <button 
-                                        className={styles.editCustomerButton}
-                                        onClick={() => openCustomerModal(customer)}
-                                      >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                        </svg>
-                                        Modifier le client
-                                      </button>
                                       <button 
                                         className={styles.emailCustomerButton}
                                         onClick={() => window.open(`mailto:${customer.email}?subject=MonSavonVert - Votre compte client`)}

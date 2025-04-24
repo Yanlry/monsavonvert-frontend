@@ -1510,7 +1510,13 @@ useEffect(() => {
         <div className="modalOverlay">
           <div className="confirmationModal">
             <div className="confirmationHeader">
-              <h3>Confirmation</h3>
+              <h3>Confirmation de suppression</h3>
+              <button 
+                className="closeConfirmationModal"
+                onClick={() => setShowConfirmationModal(false)}
+              >
+                ×
+              </button>
             </div>
             <div className="confirmationBody">
               <div className="confirmationIcon">
@@ -1520,17 +1526,18 @@ useEffect(() => {
                   height="48"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="currentColor"
+                  stroke="#e53935"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 >
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <line x1="12" y1="8" x2="12" y2="12"></line>
-                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                  <line x1="12" y1="9" x2="12" y2="13"></line>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
                 </svg>
               </div>
-              <p>{confirmationMessage}</p>
+              <p className="confirmationText">{confirmationMessage}</p>
+              <p className="confirmationSubtext">Cette action est irréversible.</p>
             </div>
             <div className="confirmationActions">
               <button
@@ -1540,7 +1547,22 @@ useEffect(() => {
                 Annuler
               </button>
               <button className="confirmAction" onClick={confirmationAction}>
-                Confirmer
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M3 6h18"></path>
+                  <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                  <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                </svg>
+                Confirmer la suppression
               </button>
             </div>
           </div>
@@ -2047,6 +2069,146 @@ useEffect(() => {
           line-height: 1.6;
         }
 
+        /* Modal de confirmation - NOUVEAU STYLE */
+        .confirmationModal {
+          background-color: white;
+          border-radius: 16px;
+          width: 90%;
+          max-width: 480px;
+          animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+          overflow: hidden;
+          position: relative;
+        }
+
+        .confirmationHeader {
+          background-color: #ffebee;
+          padding: 20px 24px;
+          border-bottom: 1px solid #ffcdd2;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .confirmationHeader h3 {
+          color: #c62828;
+          font-size: 20px;
+          font-weight: 600;
+          margin: 0;
+        }
+
+        .closeConfirmationModal {
+          background: none;
+          border: none;
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #b71c1c;
+          font-size: 24px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .closeConfirmationModal:hover {
+          background-color: rgba(183, 28, 28, 0.1);
+          transform: rotate(90deg);
+        }
+
+        .confirmationBody {
+          padding: 28px 24px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+        }
+
+        .confirmationIcon {
+          margin-bottom: 16px;
+          width: 80px;
+          height: 80px;
+          background-color: #ffebee;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          animation: pulse 1.5s infinite;
+        }
+
+        .confirmationText {
+          color: #333;
+          font-size: 18px;
+          font-weight: 500;
+          margin-bottom: 8px;
+          line-height: 1.5;
+        }
+
+        .confirmationSubtext {
+          color: #888;
+          font-size: 14px;
+          margin-top: 0;
+        }
+
+        .confirmationActions {
+          padding: 20px 24px;
+          display: flex;
+          justify-content: flex-end;
+          gap: 16px;
+          background-color: #fafafa;
+          border-top: 1px solid #eee;
+        }
+
+        .confirmCancel {
+          padding: 10px 20px;
+          border-radius: 8px;
+          font-size: 15px;
+          font-weight: 500;
+          background-color: #f5f5f5;
+          color: #555;
+          border: 1px solid #ddd;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .confirmCancel:hover {
+          background-color: #e0e0e0;
+          color: #333;
+        }
+
+        .confirmAction {
+          padding: 12px 24px;
+          border-radius: 8px;
+          font-size: 15px;
+          font-weight: 500;
+          background-color: #f44336;
+          color: white;
+          border: none;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          box-shadow: 0 4px 12px rgba(244, 67, 54, 0.2);
+        }
+
+        .confirmAction:hover {
+          background-color: #d32f2f;
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba(244, 67, 54, 0.3);
+        }
+
+        .confirmAction:active {
+          transform: translateY(0);
+          box-shadow: 0 2px 8px rgba(244, 67, 54, 0.2);
+        }
+
+        .confirmAction svg {
+          width: 18px;
+          height: 18px;
+        }
+
         /* Animations */
         @keyframes fadeIn {
           from {
@@ -2071,6 +2233,32 @@ useEffect(() => {
         @keyframes spin {
           to {
             transform: rotate(360deg);
+          }
+        }
+
+        @keyframes modalPop {
+          0% {
+            opacity: 0;
+            transform: scale(0.9);
+          }
+          70% {
+            opacity: 1;
+            transform: scale(1.05);
+          }
+          100% {
+            transform: scale(1);
+          }
+        }
+
+        @keyframes pulse {
+          0% {
+            box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.5);
+          }
+          70% {
+            box-shadow: 0 0 0 10px rgba(244, 67, 54, 0);
+          }
+          100% {
+            box-shadow: 0 0 0 0 rgba(244, 67, 54, 0);
           }
         }
 
@@ -2105,6 +2293,19 @@ useEffect(() => {
           
           .submitButton, .cancelButton, .deleteButton {
             width: 100%;
+          }
+
+          .confirmationModal {
+            width: 95%;
+          }
+
+          .confirmationActions {
+            flex-direction: column-reverse;
+          }
+
+          .confirmCancel, .confirmAction {
+            width: 100%;
+            justify-content: center;
           }
         }
       `}</style>

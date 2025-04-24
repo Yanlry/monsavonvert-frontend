@@ -4,9 +4,10 @@ import { UserContext } from "../context/UserContext";
 import styles from "../styles/header.module.css";
 
 export default function Header({ cartCount }) {
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [userRole, setUserRole] = useState(null);
 
   // Effet pour détecter le scroll
   useEffect(() => {
@@ -20,9 +21,56 @@ export default function Header({ cartCount }) {
     };
   }, []);
 
+  // Nouvel effet pour récupérer le rôle depuis localStorage/sessionStorage
+  useEffect(() => {
+    // Récupérer les informations d'authentification
+    const role = localStorage.getItem('role') || sessionStorage.getItem('role');
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+    const firstName = localStorage.getItem('firstName') || sessionStorage.getItem('firstName');
+    const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail');
+    
+    console.log("Header - Rôle détecté:", role);
+    
+    // Stocker le rôle dans l'état local
+    setUserRole(role);
+    
+    // Si l'utilisateur est connecté (token présent) mais le contexte user est vide ou incomplet
+    if (token && (!user || !user.role)) {
+      console.log("Reconstruction de l'objet utilisateur après rafraîchissement");
+      // Reconstruire l'objet utilisateur pour le contexte
+      const reconstructedUser = {
+        _id: userId,
+        userId: userId,
+        firstName: firstName,
+        email: userEmail,
+        role: role,
+        token: token
+      };
+      
+      // Mettre à jour le contexte si setUser est disponible
+      if (setUser) {
+        setUser(reconstructedUser);
+      }
+    }
+  }, [user, setUser]);
+
   // Fonction pour fermer le menu quand on clique sur un lien
   const closeMenu = () => {
     setMenuOpen(false);
+  };
+
+  // Fonction pour déterminer l'URL du profil en fonction du rôle
+  const getProfileUrl = () => {
+    // Utiliser le rôle du contexte OU l'état local (en cas de rafraîchissement)
+    const effectiveRole = (user && user.role) || userRole;
+    
+    // Si l'utilisateur est admin, rediriger vers le dashboard admin
+    if (effectiveRole === "admin") {
+      return "/admin/dashboard";
+    }
+    // Sinon, rediriger vers la page de profil standard
+    return "/profile";
   };
 
   return (
@@ -125,13 +173,19 @@ export default function Header({ cartCount }) {
           </button>
 
           {user ? (
-            <Link href="/profile" className={styles.userAccountConnected} aria-label="Mon compte">
+            <Link href={getProfileUrl()} className={styles.userAccountConnected} aria-label="Mon compte">
               <div className={styles.userAvatar}>
                 {user.firstName ? user.firstName.charAt(0).toUpperCase() : "?"}
               </div>
-              <div className={styles.userInfo}>
-                <span className={styles.welcomeText}>Bonjour,</span>
-                <span className={styles.userName}>{user.firstName}</span>
+              <div className={styles.userInfoWrapper}>
+                <div className={styles.userInfo}>
+                  <span className={styles.welcomeText}>Bonjour,</span>
+                  <span className={styles.userName}>{user.firstName}</span>
+                </div>
+                {/* Badge admin placé à l'extérieur de userInfo mais dans userInfoWrapper */}
+                {((user && user.role === "admin") || userRole === "admin") && (
+                  <span className={styles.adminBadge}>Admin</span>
+                )}
               </div>
             </Link>
           ) : (

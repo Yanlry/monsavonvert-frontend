@@ -410,7 +410,7 @@
     font-size: 14px;
     font-weight: 500;
     padding: 8px 16px;
-    border-radius: var(--border-radius-md);
+    border-radius: 30px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -424,7 +424,7 @@
   
   .activeTab {
     background-color: var(--color-primary-light);
-    color: var(--color-primary-dark);
+    color: white;
     font-weight: 600;
   }
   

@@ -23,6 +23,9 @@ export default function AdminOrders() {
     direction: "desc",
   });
   
+  // Nouvel état pour le panier moyen
+  const [averageBasket, setAverageBasket] = useState(0);
+  
   // Nouveaux états pour la modale de statut
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [statusModalMessage, setStatusModalMessage] = useState("");
@@ -122,6 +125,12 @@ export default function AdminOrders() {
           console.log('Données récupérées depuis l\'API:', data);
           
           if (data.result && data.orders) {
+            // Récupération du panier moyen depuis la réponse API
+            if (data.orders.averageBasket !== undefined) {
+              console.log('Panier moyen récupéré:', data.orders.averageBasket);
+              setAverageBasket(data.orders.averageBasket);
+            }
+            
             // Préparation des statistiques pour les onglets
             const orderStats = {
               all: data.orders.total,
@@ -539,10 +548,17 @@ export default function AdminOrders() {
             <div className={styles.pageHeaderContent}>
               <div className={styles.pageTitle}>
                 <h1>Gestion des Commandes</h1>
-                <p className={styles.pageDescription}>
-                  Suivez et gérez toutes les commandes passées sur votre
-                  boutique
-                </p>
+                <div className={styles.pageStats}>
+                  <p className={styles.pageDescription}>
+                    Suivez et gérez toutes les commandes passées sur votre
+                    boutique
+                  </p>
+                  {/* Nouveau bloc pour afficher le panier moyen */}
+                  <div className={styles.avgBasketInfo}>
+                    <span className={styles.avgBasketLabel}>Panier moyen :</span>
+                    <span className={styles.avgBasketValue}>{averageBasket.toFixed(2)} €</span>
+                  </div>
+                </div>
               </div>
               <div className={styles.pageActions}>
                 <button
@@ -561,6 +577,11 @@ export default function AdminOrders() {
                     }).then(res => res.json())
                     .then(data => {
                       if (data.result && data.orders) {
+                        // Mise à jour du panier moyen lors de l'actualisation
+                        if (data.orders.averageBasket !== undefined) {
+                          setAverageBasket(data.orders.averageBasket);
+                        }
+                        
                         const allOrders = [
                           ...data.orders.enAttente.orders,
                           ...data.orders.enCoursLivraison.orders,
@@ -571,6 +592,7 @@ export default function AdminOrders() {
                         
                         // Log pour vérifier les données actualisées
                         console.log('Commandes actualisées:', allOrders.length);
+                        console.log('Panier moyen actualisé:', data.orders.averageBasket);
                       }
                       setIsLoading(false);
                     })
@@ -597,24 +619,6 @@ export default function AdminOrders() {
                     <path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"></path>
                   </svg>
                   Actualiser
-                </button>
-                <button className={styles.exportButton}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="7 10 12 15 17 10"></polyline>
-                    <line x1="12" y1="15" x2="12" y2="3"></line>
-                  </svg>
-                  Exporter
                 </button>
               </div>
             </div>

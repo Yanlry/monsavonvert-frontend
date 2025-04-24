@@ -349,6 +349,32 @@
   animation: cartPulse 2s infinite;
 }
 
+/* Position relative pour le conteneur parent qui tiendra le badge */
+.userInfoWrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Styles pour userInfo qui sont maintenant dans userInfoWrapper */
+.userInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Style pour le badge admin correctement positionné */
+.adminBadge {
+  font-size: 10px;
+  background-color: #e74c3c;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 10px;
+  position: absolute; /* Position absolue par rapport au wrapper */
+  top: -20px; /* Position vers le haut */
+  right: -15px; /* Position vers la droite */
+  font-weight: bold;
+}
+
 @keyframes cartPulse {
   0% {
     transform: scale(1);
