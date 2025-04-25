@@ -16,7 +16,7 @@ export default function AdminDashboard() {
   const [dashboardData, setDashboardData] = useState(null);
   const [periodFilter, setPeriodFilter] = useState("month");
   const router = useRouter();
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'; // Assurez-vous que cette variable est définie
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"; // Assurez-vous que cette variable est définie
 
   // Effet pour l'initialisation côté client
   useEffect(() => {
@@ -53,35 +53,39 @@ export default function AdminDashboard() {
   // Vérification de l'authentification
   useEffect(() => {
     if (!isClient) return;
-  
+
     try {
       // Récupérer l'email et le rôle de l'utilisateur depuis le stockage local/session
-      const email = localStorage.getItem("userEmail") || sessionStorage.getItem("userEmail");
-      const userRole = localStorage.getItem("role") || sessionStorage.getItem("role");
-      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-  
+      const email =
+        localStorage.getItem("userEmail") ||
+        sessionStorage.getItem("userEmail");
+      const userRole =
+        localStorage.getItem("role") || sessionStorage.getItem("role");
+      const token =
+        localStorage.getItem("token") || sessionStorage.getItem("token");
+
       console.log("Vérification des autorisations pour:", email);
       console.log("Rôle utilisateur:", userRole);
-  
+
       // Vérifier si les informations nécessaires sont disponibles
       if (!email || !userRole || !token) {
         console.log("Informations manquantes - Email ou Rôle non trouvé");
         router.push("/login");
         return;
       }
-  
+
       // Vérifier si l'utilisateur a le rôle admin
       if (userRole !== "admin") {
         console.log("Accès refusé: L'utilisateur n'a pas le rôle admin");
         router.push("/profile");
         return;
       }
-  
+
       // Si l'utilisateur est bien un admin, autoriser l'accès
       console.log("Accès autorisé pour l'administrateur");
       setUserEmail(email);
       setIsAuthorized(true);
-  
+
       // Charger les données du tableau de bord
       loadDashboardData();
     } catch (error) {
@@ -94,136 +98,223 @@ export default function AdminDashboard() {
   const generateSalesTrendData = (orders) => {
     // Date actuelle
     const currentDate = new Date();
-    
+
     // Créer un tableau pour les 10 derniers jours
     const last10Days = [];
     for (let i = 9; i >= 0; i--) {
       const date = new Date(currentDate);
       date.setDate(date.getDate() - i);
-      
+
       // Formater la date comme "DD/MM"
-      const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}`;
-      
+      const formattedDate = `${date.getDate().toString().padStart(2, "0")}/${(
+        date.getMonth() + 1
+      )
+        .toString()
+        .padStart(2, "0")}`;
+
       last10Days.push({
         date: formattedDate,
         fullDate: new Date(date.setHours(0, 0, 0, 0)),
-        value: 0 // Valeur initiale
+        value: 0, // Valeur initiale
       });
     }
-    
+
     // Parcourir les commandes et ajouter les montants aux jours correspondants
-    orders.forEach(order => {
-      const orderDate = new Date(order.createdAt || order.date || '');
+    orders.forEach((order) => {
+      const orderDate = new Date(order.createdAt || order.date || "");
       if (isNaN(orderDate.getTime())) return; // Ignorer les dates invalides
-      
+
       orderDate.setHours(0, 0, 0, 0); // Ignorer l'heure
-      
+
       // Chercher si ce jour est dans notre tableau des 10 derniers jours
-      const dayIndex = last10Days.findIndex(day => 
-        day.fullDate.getTime() === orderDate.getTime()
+      const dayIndex = last10Days.findIndex(
+        (day) => day.fullDate.getTime() === orderDate.getTime()
       );
-      
+
       if (dayIndex !== -1) {
         // Utiliser totalAmount si disponible, sinon total
         const amount = order.totalAmount || order.total || 0;
         last10Days[dayIndex].value += amount;
       }
     });
-    
+
     // Supprimer la propriété fullDate qui n'est plus nécessaire pour l'affichage
     return last10Days.map(({ date, value }) => ({
       date,
-      value: Math.round(value * 100) / 100 // Arrondir à 2 décimales
+      value: Math.round(value * 100) / 100, // Arrondir à 2 décimales
     }));
+  };
+
+  // Fonction pour calculer les produits les plus vendus à partir des commandes
+  const calculateTopProducts = (orders) => {
+    console.log("⚙️ Calcul des produits les plus vendus...");
+
+    // Créer un objet pour stocker les stats de chaque produit
+    const productStats = {};
+
+    // Parcourir toutes les commandes
+    orders.forEach((order) => {
+      // Vérifier si la commande a des items
+      if (order.items && Array.isArray(order.items)) {
+        // Parcourir les items de la commande
+        order.items.forEach((item) => {
+          // Récupérer ou créer les stats pour ce produit
+          const productId = item.productId || item.id || item._id;
+          const productName =
+            item.name || item.productName || "Produit inconnu";
+
+          if (!productStats[productId]) {
+            productStats[productId] = {
+              id: productId,
+              name: productName,
+              sales: 0,
+              revenue: 0,
+            };
+          }
+
+          // Ajouter les ventes et revenus de cet item
+          const quantity = item.quantity || 1;
+          const price = item.price || 0;
+
+          productStats[productId].sales += quantity;
+          productStats[productId].revenue += price * quantity;
+        });
+      }
+    });
+
+    // Convertir l'objet en tableau et trier par nombre de ventes (décroissant)
+    const sortedProducts = Object.values(productStats)
+      .sort((a, b) => b.sales - a.sales)
+      .slice(0, 5); // Prendre les 5 premiers
+
+    console.log(
+      `✅ Top 5 produits calculés: ${sortedProducts.length} produits trouvés`
+    );
+    console.log("📊 Produits les plus vendus:", sortedProducts);
+
+    return sortedProducts;
   };
 
   // Fonction pour charger les données du tableau de bord selon la période
   const loadDashboardData = async () => {
     console.log(`Chargement des données pour la période: ${periodFilter}`);
-    
+
     // Activer le loader
     setIsLoading(true);
-    
+
     try {
       // Récupérer le token d'authentification
-      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      
+      const token =
+        localStorage.getItem("token") || sessionStorage.getItem("token");
+
       if (!token) {
         console.error("Token d'authentification non trouvé");
         router.push("/login");
         return;
       }
-      
+
       // Options pour les requêtes API
       const requestOptions = {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       };
-      
+
       // Récupérer les données des commandes
       console.log("Récupération des données des commandes...");
       const ordersResponse = await fetch(`${API_URL}/orders`, requestOptions);
-      
+
       if (!ordersResponse.ok) {
-        throw new Error(`Erreur lors de la récupération des commandes: ${ordersResponse.status}`);
+        throw new Error(
+          `Erreur lors de la récupération des commandes: ${ordersResponse.status}`
+        );
       }
-      
+
       const ordersData = await ordersResponse.json();
       console.log("Données des commandes reçues:", ordersData);
-      
+
+      // NOUVEAU: Récupérer les données des produits
+      console.log("Récupération des données des produits...");
+      const productsResponse = await fetch(
+        `${API_URL}/products`,
+        requestOptions
+      );
+
+      if (!productsResponse.ok) {
+        throw new Error(
+          `Erreur lors de la récupération des produits: ${productsResponse.status}`
+        );
+      }
+
+      const productsData = await productsResponse.json();
+      console.log("Données des produits reçues:", productsData);
+
       // Récupérer les données des clients
       console.log("Récupération des données des clients...");
-      const customersResponse = await fetch(`${API_URL}/customers`, requestOptions);
-      
+      const customersResponse = await fetch(
+        `${API_URL}/customers`,
+        requestOptions
+      );
+
       if (!customersResponse.ok) {
-        throw new Error(`Erreur lors de la récupération des clients: ${customersResponse.status}`);
+        throw new Error(
+          `Erreur lors de la récupération des clients: ${customersResponse.status}`
+        );
       }
-      
+
       const customersData = await customersResponse.json();
       console.log("Données des clients reçues:", customersData);
-      
+
       // Filtrer les données en fonction de la période
       const now = new Date();
       let daysToFilter;
-      
-      if (periodFilter === 'week') {
+
+      if (periodFilter === "week") {
         daysToFilter = 7;
-      } else if (periodFilter === 'month') {
+      } else if (periodFilter === "month") {
         daysToFilter = 30;
-      } else { // 'year'
+      } else {
+        // 'year'
         daysToFilter = 365;
       }
-      
+
       // Filtrer les clients en fonction de la période
       const cutoffDate = new Date(now);
       cutoffDate.setDate(cutoffDate.getDate() - daysToFilter);
-      
-      const filteredCustomers = (customersData.customers || []).filter(customer => {
-        // Si pas de date de création, on exclut le client
-        if (!customer.createdAt) return false;
-        
-        const createDate = new Date(customer.createdAt);
-        return createDate >= cutoffDate;
-      });
-      
+
+      const filteredCustomers = (customersData.customers || []).filter(
+        (customer) => {
+          // Si pas de date de création, on exclut le client
+          if (!customer.createdAt) return false;
+
+          const createDate = new Date(customer.createdAt);
+          return createDate >= cutoffDate;
+        }
+      );
+
       // Extraire toutes les commandes
       let allOrders = [];
-      
+
       // Structure des commandes dans l'API:
       // ordersData.orders.enAttente.orders
       // ordersData.orders.enCoursLivraison.orders
       // ordersData.orders.livre.orders
       // ordersData.orders.annule.orders
-      
+
       if (ordersData.orders) {
         if (ordersData.orders.enAttente && ordersData.orders.enAttente.orders) {
           allOrders = [...allOrders, ...ordersData.orders.enAttente.orders];
         }
-        if (ordersData.orders.enCoursLivraison && ordersData.orders.enCoursLivraison.orders) {
-          allOrders = [...allOrders, ...ordersData.orders.enCoursLivraison.orders];
+        if (
+          ordersData.orders.enCoursLivraison &&
+          ordersData.orders.enCoursLivraison.orders
+        ) {
+          allOrders = [
+            ...allOrders,
+            ...ordersData.orders.enCoursLivraison.orders,
+          ];
         }
         if (ordersData.orders.livre && ordersData.orders.livre.orders) {
           allOrders = [...allOrders, ...ordersData.orders.livre.orders];
@@ -232,29 +323,78 @@ export default function AdminDashboard() {
           allOrders = [...allOrders, ...ordersData.orders.annule.orders];
         }
       }
-      
+
       // Filtrer les commandes selon la période
-      const filteredOrders = allOrders.filter(order => {
-        const orderDate = new Date(order.createdAt || order.date || '');
+      const filteredOrders = allOrders.filter((order) => {
+        const orderDate = new Date(order.createdAt || order.date || "");
         if (isNaN(orderDate.getTime())) return false;
         return orderDate >= cutoffDate;
       });
-      
+
       // Générer les données de tendance des ventes
       const salesTrend = generateSalesTrendData(filteredOrders);
-      
+
+      // Calculer les produits les plus vendus
+      const topProducts = calculateTopProducts(filteredOrders);
+      console.log("Top produits calculés:", topProducts);
+
+      // NOUVEAU: Analyser l'état des stocks des produits
+      const products = productsData.products || [];
+      console.log(
+        "Analyse de l'état des stocks pour",
+        products.length,
+        "produits"
+      );
+
+      // Compter les produits selon l'état de leur stock
+      const totalProducts = products.length;
+      // Stock faible: entre 1 et 19 inclus
+      const lowStock = products.filter(
+        (product) => product.stock > 0 && product.stock < 20
+      ).length;
+      // Rupture: stock à 0
+      const outOfStock = products.filter(
+        (product) => product.stock === 0
+      ).length;
+
+      // NOUVEAU: Calculer le nombre total d'articles en stock (toutes catégories confondues)
+      const totalItemsInStock = products.reduce(
+        (sum, product) => sum + (product.stock || 0),
+        0
+      );
+      console.log(`Nombre total d'articles en stock: ${totalItemsInStock}`);
+
+      // NOUVEAU: Préparer les données des produits pour l'affichage dans le dashboard
+      // Trier les produits par statut (rupture, faible, ok) puis par nombre de stock
+      const sortedProducts = [...products].sort((a, b) => {
+        // D'abord, trier par statut (rupture, puis faible, puis ok)
+        const statusA = a.stock === 0 ? 0 : a.stock < 20 ? 1 : 2;
+        const statusB = b.stock === 0 ? 0 : b.stock < 20 ? 1 : 2;
+
+        if (statusA !== statusB) return statusA - statusB;
+
+        // Ensuite par quantité en stock (croissant)
+        return a.stock - b.stock;
+      });
+
+      console.log(
+        `État des stocks: Total=${totalProducts}, Faible=${lowStock}, Rupture=${outOfStock}, Articles=${totalItemsInStock}`
+      );
+
       // Obtenir les données de base à partir de l'API
       const totalOrders = ordersData.orders.total || 0;
       const averageBasket = ordersData.orders.averageBasket || 0;
       const totalSales = averageBasket * totalOrders; // Estimation basée sur le panier moyen
-      
+
       // Sélectionner les 5 commandes les plus récentes
-      const recentOrders = [...allOrders].sort((a, b) => {
-        const dateA = new Date(a.createdAt || a.date || '');
-        const dateB = new Date(b.createdAt || b.date || '');
-        return dateB.getTime() - dateA.getTime();
-      }).slice(0, 5);
-      
+      const recentOrders = [...allOrders]
+        .sort((a, b) => {
+          const dateA = new Date(a.createdAt || a.date || "");
+          const dateB = new Date(b.createdAt || b.date || "");
+          return dateB.getTime() - dateA.getTime();
+        })
+        .slice(0, 5);
+
       // Construire l'objet pour le dashboard
       const newDashboardData = {
         salesSummary: {
@@ -264,45 +404,15 @@ export default function AdminDashboard() {
           conversionRate: 3.2, // On garde cette valeur fixe pour le moment
         },
         salesTrend: salesTrend, // Utilisation des données réelles
-        topProducts: [
-          // On conserve les données simulées pour les produits les plus vendus
-          {
-            id: 1,
-            name: "Savon Lavande",
-            sales: periodFilter === "week" ? 24 : periodFilter === "month" ? 96 : 1152,
-            revenue: periodFilter === "week" ? 214.8 : periodFilter === "month" ? 859.2 : 10310.4,
-          },
-          {
-            id: 3,
-            name: "Savon Menthe",
-            sales: periodFilter === "week" ? 18 : periodFilter === "month" ? 72 : 864,
-            revenue: periodFilter === "week" ? 161.1 : periodFilter === "month" ? 644.4 : 7732.8,
-          },
-          {
-            id: 8,
-            name: "Coffret Découverte",
-            sales: periodFilter === "week" ? 12 : periodFilter === "month" ? 48 : 576,
-            revenue: periodFilter === "week" ? 359.4 : periodFilter === "month" ? 1437.6 : 17251.2,
-          },
-          {
-            id: 2,
-            name: "Savon Citron",
-            sales: periodFilter === "week" ? 10 : periodFilter === "month" ? 40 : 480,
-            revenue: periodFilter === "week" ? 79.5 : periodFilter === "month" ? 318.0 : 3816.0,
-          },
-          {
-            id: 7,
-            name: "Shampoing solide Coco",
-            sales: periodFilter === "week" ? 8 : periodFilter === "month" ? 32 : 384,
-            revenue: periodFilter === "week" ? 103.6 : periodFilter === "month" ? 414.4 : 4972.8,
-          },
-        ],
+        topProducts: topProducts, // Utilisation des données réelles
         recentOrders: recentOrders, // Utilisation des données réelles
         inventorySummary: {
-          // On conserve les données simulées pour l'inventaire
-          totalProducts: 14,
-          lowStock: 3,
-          outOfStock: 1,
+          // MODIFIÉ: Utilisation des données réelles pour l'inventaire
+          totalProducts: totalProducts,
+          lowStock: lowStock,
+          outOfStock: outOfStock,
+          totalItemsInStock: totalItemsInStock, // NOUVEAU: Total d'articles en stock
+          productsList: sortedProducts.slice(0, 10), // NOUVEAU: Liste des 10 premiers produits triés
         },
         customerSummary: {
           totalCustomers: customersData.customers?.length || 0,
@@ -310,11 +420,10 @@ export default function AdminDashboard() {
           returningRate: 40, // Valeur fixe pour le moment
         },
       };
-      
+
       console.log("Données du tableau de bord calculées:", newDashboardData);
       setDashboardData(newDashboardData);
       setIsLoading(false);
-      
     } catch (error) {
       console.error("Erreur lors du chargement des données:", error);
       // Si on a une erreur, on initialise quand même avec des données factices
@@ -333,6 +442,8 @@ export default function AdminDashboard() {
           totalProducts: 0,
           lowStock: 0,
           outOfStock: 0,
+          totalItemsInStock: 0, // NOUVEAU
+          productsList: [], // NOUVEAU
         },
         customerSummary: {
           totalCustomers: 0,
@@ -343,7 +454,6 @@ export default function AdminDashboard() {
       setIsLoading(false);
     }
   };
-
   // Effet pour recharger les données lorsque le filtre de période change
   useEffect(() => {
     if (isAuthorized) {
@@ -416,7 +526,7 @@ export default function AdminDashboard() {
           <div className={styles.headerContent}>
             <div className={styles.logoContainer}>
               <Link href="/" className={styles.logoLink}>
-                  <span className={styles.logo}>MonSavonVert</span>
+                <span className={styles.logo}>MonSavonVert</span>
               </Link>
             </div>
 
@@ -424,28 +534,31 @@ export default function AdminDashboard() {
             <nav className={styles.mainNav}>
               <ul className={styles.navList}>
                 <li className={styles.navItem}>
-                  <Link href="/admin/dashboard" className={`${styles.navLink} ${styles.active}`}>
-                      Tableau de bord
+                  <Link
+                    href="/admin/dashboard"
+                    className={`${styles.navLink} ${styles.active}`}
+                  >
+                    Tableau de bord
                   </Link>
                 </li>
                 <li className={styles.navItem}>
                   <Link href="/admin/orders" className={styles.navLink}>
-                   Commandes
+                    Commandes
                   </Link>
                 </li>
                 <li className={styles.navItem}>
                   <Link href="/admin/products" className={styles.navLink}>
-                   Produits
+                    Produits
                   </Link>
                 </li>
                 <li className={styles.navItem}>
                   <Link href="/admin/customers" className={styles.navLink}>
-                   Clients
+                    Clients
                   </Link>
                 </li>
                 <li className={styles.navItem}>
                   <Link href="/admin/settings" className={styles.navLink}>
-                   Paramètres
+                    Paramètres
                   </Link>
                 </li>
               </ul>
@@ -569,7 +682,8 @@ export default function AdminDashboard() {
                             Ventes Totales
                           </span>
                           <span className={styles.kpiValue}>
-                            {dashboardData?.salesSummary.totalSales.toFixed(2)} €
+                            {dashboardData?.salesSummary.totalSales.toFixed(2)}{" "}
+                            €
                           </span>
                           <span
                             className={styles.kpiChange}
@@ -717,51 +831,61 @@ export default function AdminDashboard() {
                           <h2>Évolution des Ventes</h2>
                         </div>
                         <div className={styles.cardBody}>
-                        <div className={styles.salesChart}>
-  {/* Affichage du graphique avec les données réelles */}
-  <div className={styles.mockChart}>
-    <div className={styles.chartBars}>
-      {dashboardData?.salesTrend.map(
-        (point, index) => {
-          // Trouver la valeur maximale pour calculer les proportions
-          const maxValue = Math.max(
-            ...dashboardData.salesTrend.map(p => p.value),
-            1 // Pour éviter la division par zéro
-          );
-          
-          // Déterminer si c'est une valeur à 0
-          const isZero = point.value === 0;
-          
-          return (
-            <div
-              key={index}
-              className={styles.chartBarContainer}
-            >
-              <div
-                className={styles.chartBar}
-                style={{
-                  height: isZero ? '20px' : `${(point.value / maxValue) * 100}%`,
-                  backgroundColor: isZero ? '#f44336' : '#4caf50',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'white',
-                  fontWeight: 'bold',
-                  fontSize: '12px'
-                }}
-              >
-                {isZero ? '0' : point.value.toFixed(2)}
-              </div>
-              <span className={styles.chartLabel}>
-                {point.date}
-              </span>
-            </div>
-          );
-        }
-      )}
-    </div>
-  </div>
-</div>
+                          <div className={styles.salesChart}>
+                            {/* Affichage du graphique avec les données réelles */}
+                            <div className={styles.mockChart}>
+                              <div className={styles.chartBars}>
+                                {dashboardData?.salesTrend.map(
+                                  (point, index) => {
+                                    // Trouver la valeur maximale pour calculer les proportions
+                                    const maxValue = Math.max(
+                                      ...dashboardData.salesTrend.map(
+                                        (p) => p.value
+                                      ),
+                                      1 // Pour éviter la division par zéro
+                                    );
+
+                                    // Déterminer si c'est une valeur à 0
+                                    const isZero = point.value === 0;
+
+                                    return (
+                                      <div
+                                        key={index}
+                                        className={styles.chartBarContainer}
+                                      >
+                                        <div
+                                          className={styles.chartBar}
+                                          style={{
+                                            height: isZero
+                                              ? "20px"
+                                              : `${
+                                                  (point.value / maxValue) * 100
+                                                }%`,
+                                            backgroundColor: isZero
+                                              ? "#f44336"
+                                              : "#4caf50",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            color: "white",
+                                            fontWeight: "bold",
+                                            fontSize: "12px",
+                                          }}
+                                        >
+                                          {isZero
+                                            ? "0"
+                                            : point.value.toFixed(2)}
+                                        </div>
+                                        <span className={styles.chartLabel}>
+                                          {point.date}
+                                        </span>
+                                      </div>
+                                    );
+                                  }
+                                )}
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -781,13 +905,24 @@ export default function AdminDashboard() {
                               </tr>
                             </thead>
                             <tbody>
-                              {dashboardData?.topProducts.map((product) => (
-                                <tr key={product.id}>
-                                  <td>{product.name}</td>
-                                  <td>{product.sales}</td>
-                                  <td>{product.revenue.toFixed(2)} €</td>
+                              {dashboardData?.topProducts.length > 0 ? (
+                                dashboardData.topProducts.map((product) => (
+                                  <tr key={product.id}>
+                                    <td>{product.name}</td>
+                                    <td>{product.sales}</td>
+                                    <td>{product.revenue.toFixed(2)} €</td>
+                                  </tr>
+                                ))
+                              ) : (
+                                <tr>
+                                  <td
+                                    colSpan="3"
+                                    style={{ textAlign: "center" }}
+                                  >
+                                    Aucune donnée disponible
+                                  </td>
                                 </tr>
-                              ))}
+                              )}
                             </tbody>
                           </table>
                         </div>
@@ -801,7 +936,10 @@ export default function AdminDashboard() {
                       <div className={styles.dashboardCard}>
                         <div className={styles.cardHeader}>
                           <h2>Commandes Récentes</h2>
-                          <Link href="/admin/orders" className={styles.viewAllLink}>
+                          <Link
+                            href="/admin/orders"
+                            className={styles.viewAllLink}
+                          >
                             Voir toutes
                           </Link>
                         </div>
@@ -821,14 +959,22 @@ export default function AdminDashboard() {
                                 <tr key={order.id || order._id}>
                                   <td>
                                     <Link
-                                      href={`/admin/orders?id=${order.id || order._id}`}
+                                      href={`/admin/orders?id=${
+                                        order.id || order._id
+                                      }`}
                                       className={styles.orderLink}
                                     >
-                                        {order.id || order._id}
+                                      {order.id || order._id}
                                     </Link>
                                   </td>
-                                  <td>{formatDate(order.createdAt || order.date || '')}</td>
-                                  <td>{order.customer?.name || 'Client inconnu'}</td>
+                                  <td>
+                                    {formatDate(
+                                      order.createdAt || order.date || ""
+                                    )}
+                                  </td>
+                                  <td>
+                                    {order.customer?.name || "Client inconnu"}
+                                  </td>
                                   <td>
                                     <span
                                       className={`${styles.orderStatus} ${
@@ -838,7 +984,14 @@ export default function AdminDashboard() {
                                       {order.statusLabel}
                                     </span>
                                   </td>
-                                  <td>{(order.totalAmount || order.total || 0).toFixed(2)} €</td>
+                                  <td>
+                                    {(
+                                      order.totalAmount ||
+                                      order.total ||
+                                      0
+                                    ).toFixed(2)}{" "}
+                                    €
+                                  </td>
                                 </tr>
                               ))}
                             </tbody>
@@ -851,23 +1004,27 @@ export default function AdminDashboard() {
                       <div className={styles.dashboardCard}>
                         <div className={styles.cardHeader}>
                           <h2>État du Stock</h2>
-                          <Link href="/admin/products" className={styles.viewAllLink}>
-                              Gérer les produits
+                          <Link
+                            href="/admin/products"
+                            className={styles.viewAllLink}
+                          >
+                            Gérer les produits
                           </Link>
                         </div>
                         <div className={styles.cardBody}>
                           <div className={styles.stockSummary}>
-                            <div className={styles.stockItem}>
+                          <div className={styles.stockItem}>
                               <div className={styles.stockStatus}>
-                                <span className={styles.stockIndicator}></span>
+                                <span
+                                  className={`${styles.stockIndicator} ${styles.stockTotal}`}
+                                ></span>
                                 <span className={styles.stockLabel}>
-                                  Produits en stock
+                                  Articles en stock
                                 </span>
                               </div>
                               <span className={styles.stockValue}>
-                                {dashboardData?.inventorySummary.totalProducts -
-                                  dashboardData?.inventorySummary.lowStock -
-                                  dashboardData?.inventorySummary.outOfStock}
+                                {dashboardData?.inventorySummary
+                                  .totalItemsInStock || 0}
                               </span>
                             </div>
 
@@ -919,14 +1076,59 @@ export default function AdminDashboard() {
                             <p>
                               Vous avez{" "}
                               {(dashboardData?.inventorySummary.lowStock || 0) +
-                                (dashboardData?.inventorySummary.outOfStock || 0)}{" "}
+                                (dashboardData?.inventorySummary.outOfStock ||
+                                  0)}{" "}
                               produits à réapprovisionner
                             </p>
                           </div>
+
+                          {/* NOUVEAU: Liste des produits avec leur état de stock */}
+                          <div className={styles.productStockList}>
+                            <h3>Aperçu des stocks</h3>
+                            <table className={styles.stockTable}>
+                              <thead>
+                                <tr>
+                                  <th>Produit</th>
+                                  <th>Stock</th>
+                                  <th>État</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {dashboardData?.inventorySummary.productsList?.map(
+                                  (product) => {
+                                    // Déterminer la classe CSS en fonction de l'état du stock
+                                    let stockStatusClass = styles.stockStatusOk;
+                                    let stockStatusText = "OK";
+
+                                    if (product.stock === 0) {
+                                      stockStatusClass = styles.stockStatusOut;
+                                      stockStatusText = "Rupture";
+                                    } else if (product.stock < 20) {
+                                      stockStatusClass = styles.stockStatusLow;
+                                      stockStatusText = "Faible";
+                                    }
+
+                                    return (
+                                      <tr
+                                        key={product._id}
+                                        className={stockStatusClass}
+                                      >
+                                        <td>{product.title}</td>
+                                        <td className={styles.stockCount}>
+                                          {product.stock}
+                                        </td>
+                                        <td className={styles.stockStatusText}>
+                                          {stockStatusText}
+                                        </td>
+                                      </tr>
+                                    );
+                                  }
+                                )}
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
                       </div>
-
-                     
                     </div>
                   </div>
                 </>
@@ -942,24 +1144,22 @@ export default function AdminDashboard() {
               © 2025 MonSavonVert. Panneau d'administration.
             </p>
             <div className={styles.footerLinks}>
-              <Link href="/admin/help" >
-                Aide
-              </Link>
-              <Link href="/admin/documentation">
-                Documentation
-              </Link>
-              <button onClick={() => {
-  localStorage.removeItem('userEmail');
-  localStorage.removeItem('token');
-  localStorage.removeItem('role'); // Correction ici
-  sessionStorage.removeItem('userEmail');
-  sessionStorage.removeItem('token');
-  sessionStorage.removeItem('role'); // Correction ici
-  console.log('Déconnexion réussie');
-  router.push('/login');
-}}>
-  Se déconnecter
-</button>
+              <Link href="/admin/help">Aide</Link>
+              <Link href="/admin/documentation">Documentation</Link>
+              <button
+                onClick={() => {
+                  localStorage.removeItem("userEmail");
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("role"); // Correction ici
+                  sessionStorage.removeItem("userEmail");
+                  sessionStorage.removeItem("token");
+                  sessionStorage.removeItem("role"); // Correction ici
+                  console.log("Déconnexion réussie");
+                  router.push("/login");
+                }}
+              >
+                Se déconnecter
+              </button>
             </div>
           </div>
         </footer>

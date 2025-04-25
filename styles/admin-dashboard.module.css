@@ -742,6 +742,63 @@
     color: var(--color-primary);
   }
   
+  .productStockList {
+    margin-top: 20px;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 15px;
+  }
+  
+  .productStockList h3 {
+    font-size: 16px;
+    margin-bottom: 15px;
+    color: #2c3e50;
+  }
+  
+  .stockTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  
+  .stockTable th {
+    text-align: left;
+    padding: 8px;
+    border-bottom: 1px solid #e0e0e0;
+    color: #546e7a;
+    font-weight: 600;
+  }
+  
+  .stockTable td {
+    padding: 8px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .stockCount {
+    font-weight: 600;
+    text-align: center;
+  }
+  
+  .stockStatusText {
+    font-weight: 500;
+    text-align: center;
+  }
+  
+  .stockStatusOk {
+    background-color: rgba(76, 175, 80, 0.3);
+  }
+  
+  .stockStatusLow {
+    background-color: rgba(255, 152, 0, 0.3);
+  }
+  
+  .stockStatusOut {
+    background-color: rgba(244, 67, 54, 0.3);
+  }
+  
+  .stockTotal {
+    background-color: #2196f3;
+  }
+
   /* Responsive Styles */
   @media (max-width: 1200px) {
     .kpiCards {
