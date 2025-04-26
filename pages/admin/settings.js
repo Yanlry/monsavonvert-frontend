@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
 import styles from '../../styles/admin-settings.module.css'; // Réutilisation du même fichier CSS
+import HeaderAdmin from '../../components/HeaderAdmin'; // Import du nouveau composant
 
 export default function AdminSettings() {
   // États
@@ -299,57 +300,11 @@ useEffect(() => {
 
       <div className={styles.container}>
         {/* Header avec navigation */}
-        <header className={`${styles.header} ${scrolled ? styles.headerScrolled : ''}`}>
-          <div className={styles.headerContent}>
-            <div className={styles.logoContainer}>
-              <Link href="/" className={styles.logoLink}>
-                  <span className={styles.logo}>MonSavonVert</span>
-              </Link>
-            </div>
+        <HeaderAdmin 
+          userEmail={userEmail} 
+          activePage="settings" // Indique la page active pour le style
+        />
 
-            {/* Navigation principale */}
-            <nav className={styles.mainNav}>
-              <ul className={styles.navList}>
-                <li className={styles.navItem}>
-                  <Link href="/admin/dashboard" className={styles.navLink}>
-                    Tableau de bord
-                  </Link>
-                </li>
-                <li className={styles.navItem}>
-                  <Link href="/admin/orders" className={styles.navLink}>
-                    Commandes
-                  </Link>
-                </li>
-                <li className={styles.navItem}>
-                  <Link href="/admin/products" className={styles.navLink}>
-                    Produits
-                  </Link>
-                </li>
-                <li className={styles.navItem}>
-                  <Link href="/admin/customers" className={styles.navLink}>
-                    Clients
-                  </Link>
-                </li>
-                <li className={styles.navItem}>
-                  <Link href="/admin/settings" className={`${styles.navLink} ${styles.active}`}>
-                    Paramètres
-                  </Link>
-                </li>
-              </ul>
-            </nav>
-
-            {/* Profil administrateur */}
-            <div className={styles.adminProfile}>
-              <div className={styles.adminAvatar}>
-                <span>A</span>
-              </div>
-              <div className={styles.adminInfo}>
-                <span className={styles.adminName}>Admin</span>
-                <span className={styles.adminEmail}>{userEmail}</span>
-              </div>
-            </div>
-          </div>
-        </header>
 
         <main className={styles.mainContent}>
           {/* Page title section */}

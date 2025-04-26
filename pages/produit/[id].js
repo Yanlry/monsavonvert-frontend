@@ -154,36 +154,40 @@ export default function ProductDetail({ product }) {
   // Pour simplifier, on crée des données placeholders si certaines parties du produit ne sont pas définies
   const productDescription =
     product.description || "Description non disponible";
+
+  // MODIFICATION ICI: utiliser les sauts de ligne (\n) comme séparateurs
   const productFeatures = product.characteristics
-    ? product.characteristics.split(",").map((feat) => feat.trim())
+    ? product.characteristics
+        .split("\n")
+        .map((feat) => feat.trim())
+        .filter((feat) => feat !== "")
     : ["Produit naturel", "Fabriqué en France"];
+
   const productOptions = {
     sizes: ["Standard (200g)"],
     packaging: ["Emballage plastique recyclable", "Sans emballage"],
   };
 
-  // Ces données ne sont pas dans la base de données pour l'instant, donc on garde les fausses données
-  const reviewsData = [
-    {
-      name: "Marie L.",
-      date: "15 mars 2024",
-      rating: 5,
-      text: "Ce savon est incroyable ! Ma peau est sensible et réactive, et c'est le premier produit qui ne provoque aucune irritation.",
-    },
-    {
-      name: "Thomas D.",
-      date: "2 février 2024",
-      rating: 4,
-      text: "Très bon savon, hydratant et agréable à utiliser. Le parfum est subtil, ce que j'apprécie.",
-    },
-  ];
-
   // Gestion des images - utilisation du tableau d'images de l'API
   const galleryImages = product.images || [];
 
-  // Log des images pour aider au debug
-  console.log("Images du produit:", galleryImages);
+  // Fonction helper pour obtenir une description pour chaque ingrédient
+  const getIngredientDescription = (ingredient) => {
+    const descriptions = {
+      "Huile d'olive":
+        "Hydratante et nourrissante, apporte douceur et onctuosité au savon",
+      "Huile de baies de laurier":
+        "Propriétés antibactériennes et apaisantes, parfum subtil et naturel",
+      Eau: "Purifiée et de qualité supérieure pour la fabrication de nos savons",
+      "Hydroxyde de sodium":
+        "Agent de saponification, transforme les huiles en savon, entièrement neutralisé dans le produit final",
+    };
 
+    return (
+      descriptions[ingredient] ||
+      "Ingrédient naturel sélectionné pour ses propriétés bénéfiques"
+    );
+  };
   return (
     <>
       <Head>
@@ -203,8 +207,7 @@ export default function ProductDetail({ product }) {
             scrolled ? styles.headerScrolled : ""
           }`}
         >
-                         <Header cartCount={cartCount}/>
-         
+          <Header cartCount={cartCount} />
         </header>
 
         <main className={styles.mainContent}>
@@ -411,9 +414,7 @@ export default function ProductDetail({ product }) {
                   {/* Affichage du stock */}
                   <div className={styles.stockStatus}>
                     {product.stock > 0 ? (
-                      <span className={styles.inStock}>
-                      
-                      </span>
+                      <span className={styles.inStock}></span>
                     ) : (
                       <span className={styles.outOfStock}>
                         <svg
@@ -621,7 +622,6 @@ export default function ProductDetail({ product }) {
                         <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                         <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
                       </svg>
-
                       <a
                         href="#"
                         className={styles.shareLink}
@@ -686,57 +686,319 @@ export default function ProductDetail({ product }) {
               </div>
             </div>
 
+            {/* Onglet Description */}
             <div
               className={`${styles.tabContent} ${
                 activeTab === "description" ? styles.tabContentActive : ""
               }`}
             >
-              <p className={styles.description}>{product.description}</p>
+              <div className={styles.structuredDescription}>
+                <div className={styles.descriptionContent}>
+                  <div className={styles.descriptionSection}>
+                    <div className={styles.descriptionIcon}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                        <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                      </svg>
+                    </div>
+                    <div className={styles.descriptionText}>
+                      <h4>Notre savon authentique</h4>
+                      <p style={{ whiteSpace: "pre-line" }}>
+                        {product.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className={styles.descriptionSection}>
+                    <div className={styles.descriptionIcon}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M9 11l3 3L22 4"></path>
+                        <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
+                      </svg>
+                    </div>
+                    <div className={styles.descriptionText}>
+                      <h4>Bienfaits clés</h4>
+                      <ul className={styles.benefitsList}>
+                        {productFeatures.map((feature, index) => (
+                          <li key={index} className={styles.benefitItem}>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div className={styles.descriptionSection}>
+                    <div className={styles.descriptionIcon}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 8v4l3 3"></path>
+                      </svg>
+                    </div>
+                    <div className={styles.descriptionText}>
+                      <h4>Utilisez régulièrement pour</h4>
+                      <div className={styles.usageBenefits}>
+                        <div className={styles.usageBenefit}>
+                          <span>Nettoyage en profondeur</span>
+                        </div>
+                        <div className={styles.usageBenefit}>
+                          <span>Hydratation naturelle</span>
+                        </div>
+                        <div className={styles.usageBenefit}>
+                          <span>Soin de la peau quotidien</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
+            {/* Onglet Ingredients */}
             <div
               className={`${styles.tabContent} ${
                 activeTab === "ingredients" ? styles.tabContentActive : ""
               }`}
             >
-              <ul className={styles.ingredientList}>
-                {product.ingredients ? (
-                  <li className={styles.ingredient}>
-                    <span className={styles.ingredientName}>
-                      {product.ingredients}
-                    </span>
-                  </li>
-                ) : (
-                  <>
-                    <li className={styles.ingredient}>
-                      <span className={styles.ingredientName}>
-                        Huile d'olive biologique
-                      </span>
-                      <span className={styles.ingredientPurpose}>
-                        Agent nourrissant
-                      </span>
-                    </li>
-                    <li className={styles.ingredient}>
-                      <span className={styles.ingredientName}>
-                        Huile de coco biologique
-                      </span>
-                      <span className={styles.ingredientPurpose}>
-                        Agent moussant
-                      </span>
-                    </li>
-                    <li className={styles.ingredient}>
-                      <span className={styles.ingredientName}>
-                        Beurre de karité biologique
-                      </span>
-                      <span className={styles.ingredientPurpose}>
-                        Agent hydratant
-                      </span>
-                    </li>
-                  </>
-                )}
-              </ul>
+              <div className={styles.structuredIngredients}>
+                <div className={styles.ingredientsContent}>
+                  <div className={styles.ingredientsHeader}>
+                    <div className={styles.descriptionIcon}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+                      </svg>
+                    </div>
+                    <div>
+                      <h4>Composition 100% naturelle</h4>
+                      <p>
+                        Notre savon est fabriqué exclusivement avec des
+                        ingrédients naturels de haute qualité
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className={styles.ingredientsList}>
+                        <div className={styles.ingredientCard}>
+                          <div className={styles.ingredientIcon}>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="20"
+                              height="20"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                          </div>
+                          <div className={styles.ingredientInfo}>
+                            <h5>Huile d'olive</h5>
+                            <p>
+                              Hydratante et nourrissante, apporte douceur et
+                              onctuosité au savon
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className={styles.ingredientCard}>
+                          <div className={styles.ingredientIcon}>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="20"
+                              height="20"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                          </div>
+                          <div className={styles.ingredientInfo}>
+                            <h5>Huile de baies de laurier</h5>
+                            <p>
+                              Propriétés antibactériennes et apaisantes, parfum
+                              subtil et naturel
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className={styles.ingredientCard}>
+                          <div className={styles.ingredientIcon}>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="20"
+                              height="20"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                          </div>
+                          <div className={styles.ingredientInfo}>
+                            <h5>Eau</h5>
+                            <p>
+                              Purifiée et de qualité supérieure pour la
+                              fabrication de nos savons
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className={styles.ingredientCard}>
+                          <div className={styles.ingredientIcon}>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="20"
+                              height="20"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                          </div>
+                          <div className={styles.ingredientInfo}>
+                            <h5>Sodium hydroxyde</h5>
+                            <p>
+                              Agent de saponification, transforme les huiles en
+                              savon, entièrement neutralisé dans le produit
+                              final
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className={styles.ingredientCard}>
+                          <div className={styles.ingredientIcon}>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="20"
+                              height="20"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                          </div>
+                          <div className={styles.ingredientInfo}>
+                            <h5>Sodium chloride</h5>
+                            <p>
+                              Améliore la dureté du savon et agit comme exfoliant
+                              naturel pour une peau douce et lisse
+                            </p>
+                          </div>
+                        </div>
+                  </div>
+
+                  <div className={styles.ingredientsFooter}>
+                    <div className={styles.descriptionIcon}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                      </svg>
+                    </div>
+                    <div>
+                      <h4>Engagement qualité</h4>
+                      <p>
+                        Tous nos ingrédients sont soigneusement sélectionnés
+                        pour leur qualité et leur respect de l'environnement
+                      </p>
+                      <div className={styles.certificationBadges}>
+                        <div className={styles.certificationBadge}>
+                          Sans paraben
+                        </div>
+                        <div className={styles.certificationBadge}>
+                          Sans sulfate
+                        </div>
+                        <div className={styles.certificationBadge}>
+                          Non testé sur les animaux
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
+            {/* Onglet Conseils d'utilisation */}
             <div
               className={`${styles.tabContent} ${
                 activeTab === "usage" ? styles.tabContentActive : ""
@@ -745,60 +1007,55 @@ export default function ProductDetail({ product }) {
               <div className={styles.usageGuide}>
                 <div className={styles.usageSection}>
                   <h3>Comment utiliser votre savon</h3>
-                  {product.usageTips ? (
-                    <p>{product.usageTips}</p>
-                  ) : (
-                    <ol className={styles.usageSteps}>
-                      <li className={styles.usageStep}>
-                        <div className={styles.usageStepNumber}>1</div>
-                        <div className={styles.usageStepContent}>
-                          <h4>Mouiller le savon</h4>
-                          <p>
-                            Humidifiez le savon et vos mains avec de l'eau
-                            tiède.
-                          </p>
-                        </div>
-                      </li>
-                      <li className={styles.usageStep}>
-                        <div className={styles.usageStepNumber}>2</div>
-                        <div className={styles.usageStepContent}>
-                          <h4>Faire mousser</h4>
-                          <p>
-                            Frottez délicatement le savon entre vos mains pour
-                            créer une mousse onctueuse.
-                          </p>
-                        </div>
-                      </li>
-                      <li className={styles.usageStep}>
-                        <div className={styles.usageStepNumber}>3</div>
-                        <div className={styles.usageStepContent}>
-                          <h4>Appliquer</h4>
-                          <p>
-                            Massez la mousse sur votre peau en effectuant des
-                            mouvements circulaires.
-                          </p>
-                        </div>
-                      </li>
-                      <li className={styles.usageStep}>
-                        <div className={styles.usageStepNumber}>4</div>
-                        <div className={styles.usageStepContent}>
-                          <h4>Rincer</h4>
-                          <p>Rincez abondamment à l'eau claire.</p>
-                        </div>
-                      </li>
-                      <li className={styles.usageStep}>
-                        <div className={styles.usageStepNumber}>5</div>
-                        <div className={styles.usageStepContent}>
-                          <h4>Sécher et ranger</h4>
-                          <p>
-                            Après utilisation, placez le savon sur un
-                            porte-savon qui permet à l'eau de s'écouler pour
-                            prolonger sa durée de vie.
-                          </p>
-                        </div>
-                      </li>
-                    </ol>
-                  )}
+                  <ol className={styles.usageSteps}>
+                    <li className={styles.usageStep}>
+                      <div className={styles.usageStepNumber}>1</div>
+                      <div className={styles.usageStepContent}>
+                        <h4>Mouiller le savon</h4>
+                        <p>
+                          Humidifiez le savon et vos mains avec de l'eau tiède.
+                        </p>
+                      </div>
+                    </li>
+                    <li className={styles.usageStep}>
+                      <div className={styles.usageStepNumber}>2</div>
+                      <div className={styles.usageStepContent}>
+                        <h4>Faire mousser</h4>
+                        <p>
+                          Frottez délicatement le savon entre vos mains pour
+                          créer une mousse onctueuse.
+                        </p>
+                      </div>
+                    </li>
+                    <li className={styles.usageStep}>
+                      <div className={styles.usageStepNumber}>3</div>
+                      <div className={styles.usageStepContent}>
+                        <h4>Appliquer</h4>
+                        <p>
+                          Massez la mousse sur votre peau en effectuant des
+                          mouvements circulaires.
+                        </p>
+                      </div>
+                    </li>
+                    <li className={styles.usageStep}>
+                      <div className={styles.usageStepNumber}>4</div>
+                      <div className={styles.usageStepContent}>
+                        <h4>Rincer</h4>
+                        <p>Rincez abondamment à l'eau claire.</p>
+                      </div>
+                    </li>
+                    <li className={styles.usageStep}>
+                      <div className={styles.usageStepNumber}>5</div>
+                      <div className={styles.usageStepContent}>
+                        <h4>Sécher et ranger</h4>
+                        <p>
+                          Après utilisation, placez le savon sur un porte-savon
+                          qui permet à l'eau de s'écouler pour prolonger sa
+                          durée de vie.
+                        </p>
+                      </div>
+                    </li>
+                  </ol>
                 </div>
 
                 <div className={styles.usageSection}>
@@ -889,183 +1146,222 @@ export default function ProductDetail({ product }) {
               </div>
             </div>
 
+            {/* Onglet Avis clients */}
             <div
-  className={`${styles.tabContent} ${
-    activeTab === "reviews" ? styles.tabContentActive : ""
-  }`}
->
-  <div className={styles.reviewsContainer}>
-    <div className={styles.reviewsHeader}>
-      <h2 className={styles.reviewsTitle}>Avis clients</h2>
-      <p className={styles.reviewsSubtitle}>
-        Découvrez ce que nos clients pensent de ce produit
-      </p>
-    </div>
+              className={`${styles.tabContent} ${
+                activeTab === "reviews" ? styles.tabContentActive : ""
+              }`}
+            >
+              <div className={styles.reviewsContainer}>
+                <div className={styles.reviewsHeader}>
+                  <h2 className={styles.reviewsTitle}>Avis clients</h2>
+                  <p className={styles.reviewsSubtitle}>
+                    Découvrez ce que nos clients pensent de ce produit
+                  </p>
+                </div>
 
-    {product.reviews && product.reviews.length > 0 ? (
-      <div className={styles.reviewsList}>
-        {product.reviews.map((review, index) => (
-          <div key={index} className={styles.reviewCard}>
-            <div className={styles.reviewCardHeader}>
-              <div className={styles.reviewerAvatar}>
-                {(review.user || "Anonyme").charAt(0).toUpperCase()}
-              </div>
-              <div className={styles.reviewerInfo}>
-                <div className={styles.reviewerName}>
-                  {review.user || "Utilisateur anonyme"}
+                {product.reviews && product.reviews.length > 0 ? (
+                  <div className={styles.reviewsList}>
+                    {product.reviews.map((review, index) => (
+                      <div key={index} className={styles.reviewCard}>
+                        <div className={styles.reviewCardHeader}>
+                          <div className={styles.reviewerAvatar}>
+                            {(review.user || "Anonyme").charAt(0).toUpperCase()}
+                          </div>
+                          <div className={styles.reviewerInfo}>
+                            <div className={styles.reviewerName}>
+                              {review.user || "Utilisateur anonyme"}
+                            </div>
+                          </div>
+                        </div>
+                        <div className={styles.reviewStars}>
+                          {"★".repeat(review.rating)}
+                          {"☆".repeat(5 - review.rating)}
+                        </div>
+                        <p className={styles.reviewText}>{review.comment}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className={styles.noReviewsContainer}>
+                    <div className={styles.noReviewsIcon}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="48"
+                        height="48"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                      </svg>
+                    </div>
+                    <p className={styles.noReviewsText}>
+                      Aucun avis pour l'instant
+                    </p>
+                    <p className={styles.noReviewsMessage}>
+                      Soyez le premier à partager votre expérience avec ce
+                      produit !
+                    </p>
+                  </div>
+                )}
+
+                {/* Formulaire pour ajouter un avis */}
+                <div className={styles.reviewFormContainer}>
+                  <h3 className={styles.reviewFormTitle}>
+                    Partagez votre expérience
+                  </h3>
+                  <p className={styles.reviewFormSubtitle}>
+                    Votre avis aide d'autres clients à faire le bon choix
+                  </p>
+
+                  <form
+                    className={styles.reviewForm}
+                    onSubmit={async (e) => {
+                      e.preventDefault();
+                      const firstName = e.target.firstName.value.trim();
+                      const lastName = e.target.lastName.value.trim();
+                      const comment = e.target.comment.value.trim();
+                      const rating = parseInt(e.target.rating.value, 10);
+
+                      console.log("Données envoyées :", {
+                        firstName,
+                        lastName,
+                        comment,
+                        rating,
+                      });
+
+                      if (
+                        !firstName ||
+                        !lastName ||
+                        !comment ||
+                        isNaN(rating)
+                      ) {
+                        alert("Veuillez remplir tous les champs obligatoires.");
+                        return;
+                      }
+
+                      try {
+                        const response = await fetch(
+                          `${API_URL}/products/${id}/review`,
+                          {
+                            method: "POST",
+                            headers: {
+                              "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                              firstName,
+                              lastName,
+                              comment,
+                              rating,
+                            }),
+                          }
+                        );
+
+                        const data = await response.json();
+                        console.log("Réponse du backend :", data);
+
+                        if (!response.ok) {
+                          throw new Error(
+                            data.error || "Erreur lors de l'ajout de l'avis"
+                          );
+                        }
+
+                        alert("Avis ajouté avec succès !");
+                        router.reload(); // Recharger la page pour afficher le nouvel avis
+                      } catch (error) {
+                        console.error(
+                          "Erreur lors de l'ajout de l'avis :",
+                          error
+                        );
+                        alert(error.message);
+                      }
+                    }}
+                  >
+                    <div className={styles.reviewFormRow}>
+                      <div className={styles.formGroup}>
+                        <label htmlFor="firstName">Prénom</label>
+                        <input
+                          type="text"
+                          id="firstName"
+                          name="firstName"
+                          placeholder="Votre prénom"
+                          required
+                          className={styles.formInput}
+                        />
+                      </div>
+                      <div className={styles.formGroup}>
+                        <label htmlFor="lastName">Nom</label>
+                        <input
+                          type="text"
+                          id="lastName"
+                          name="lastName"
+                          placeholder="Votre nom"
+                          required
+                          className={styles.formInput}
+                        />
+                      </div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <label htmlFor="rating">Votre note</label>
+                      <div className={styles.ratingSelector}>
+                        <select
+                          id="rating"
+                          name="rating"
+                          required
+                          className={styles.formSelect}
+                        >
+                          <option value="">Choisir une note</option>
+                          <option value="5">★★★★★ Excellent</option>
+                          <option value="4">★★★★☆ Très bien</option>
+                          <option value="3">★★★☆☆ Bien</option>
+                          <option value="2">★★☆☆☆ Moyen</option>
+                          <option value="1">★☆☆☆☆ Déçu</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <label htmlFor="comment">Votre avis</label>
+                      <textarea
+                        id="comment"
+                        name="comment"
+                        rows="5"
+                        placeholder="Partagez votre expérience avec ce produit..."
+                        required
+                        className={styles.formTextarea}
+                      ></textarea>
+                    </div>
+
+                    <div className={styles.formActions}>
+                      <button
+                        type="submit"
+                        className={styles.submitReviewButton}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        Publier mon avis
+                      </button>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>
-            <div className={styles.reviewStars}>
-              {"★".repeat(review.rating)}
-              {"☆".repeat(5 - review.rating)}
-            </div>
-            <p className={styles.reviewText}>{review.comment}</p>
-          </div>
-        ))}
-      </div>
-    ) : (
-      <div className={styles.noReviewsContainer}>
-        <div className={styles.noReviewsIcon}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-          </svg>
-        </div>
-        <p className={styles.noReviewsText}>Aucun avis pour l'instant</p>
-        <p className={styles.noReviewsMessage}>
-          Soyez le premier à partager votre expérience avec ce produit !
-        </p>
-      </div>
-    )}
-
-    {/* Formulaire pour ajouter un avis */}
-    <div className={styles.reviewFormContainer}>
-      <h3 className={styles.reviewFormTitle}>Partagez votre expérience</h3>
-      <p className={styles.reviewFormSubtitle}>
-        Votre avis aide d'autres clients à faire le bon choix
-      </p>
-      
-      <form
-        className={styles.reviewForm}
-        onSubmit={async (e) => {
-          e.preventDefault();
-          const firstName = e.target.firstName.value.trim();
-          const lastName = e.target.lastName.value.trim();
-          const comment = e.target.comment.value.trim();
-          const rating = parseInt(e.target.rating.value, 10);
-
-          console.log("Données envoyées :", {
-            firstName,
-            lastName,
-            comment,
-            rating,
-          });
-
-          if (!firstName || !lastName || !comment || isNaN(rating)) {
-            alert("Veuillez remplir tous les champs obligatoires.");
-            return;
-          }
-
-          try {
-            const response = await fetch(
-             `${API_URL}/products/${id}/review`,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  firstName,
-                  lastName,
-                  comment,
-                  rating,
-                }),
-              }
-            );
-
-            const data = await response.json();
-            console.log("Réponse du backend :", data);
-
-            if (!response.ok) {
-              throw new Error(
-                data.error || "Erreur lors de l'ajout de l'avis"
-              );
-            }
-
-            alert("Avis ajouté avec succès !");
-            router.reload(); // Recharger la page pour afficher le nouvel avis
-          } catch (error) {
-            console.error(
-              "Erreur lors de l'ajout de l'avis :",
-              error
-            );
-            alert(error.message);
-          }
-        }}
-      >
-        <div className={styles.reviewFormRow}>
-          <div className={styles.formGroup}>
-            <label htmlFor="firstName">Prénom</label>
-            <input
-              type="text"
-              id="firstName"
-              name="firstName"
-              placeholder="Votre prénom"
-              required
-              className={styles.formInput}
-            />
-          </div>
-          <div className={styles.formGroup}>
-            <label htmlFor="lastName">Nom</label>
-            <input
-              type="text"
-              id="lastName"
-              name="lastName"
-              placeholder="Votre nom"
-              required
-              className={styles.formInput}
-            />
-          </div>
-        </div>
-        
-        <div className={styles.formGroup}>
-          <label htmlFor="rating">Votre note</label>
-          <div className={styles.ratingSelector}>
-            <select id="rating" name="rating" required className={styles.formSelect}>
-              <option value="">Choisir une note</option>
-              <option value="5">★★★★★ Excellent</option>
-              <option value="4">★★★★☆ Très bien</option>
-              <option value="3">★★★☆☆ Bien</option>
-              <option value="2">★★☆☆☆ Moyen</option>
-              <option value="1">★☆☆☆☆ Déçu</option>
-            </select>
-          </div>
-        </div>
-        
-        <div className={styles.formGroup}>
-          <label htmlFor="comment">Votre avis</label>
-          <textarea
-            id="comment"
-            name="comment"
-            rows="5"
-            placeholder="Partagez votre expérience avec ce produit..."
-            required
-            className={styles.formTextarea}
-          ></textarea>
-        </div>
-        
-        <div className={styles.formActions}>
-          <button type="submit" className={styles.submitReviewButton}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            </svg>
-            Publier mon avis
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
           </section>
 
           {/* CTA d'inscription à la newsletter */}
@@ -1132,7 +1428,7 @@ export default function ProductDetail({ product }) {
                   <div
                     key={index}
                     className={`${styles.zoomModalThumbnail} ${
-                      activeImage === index ? styles.active : ""
+                      activeTab === index ? styles.active : ""
                     }`}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -1209,7 +1505,9 @@ export async function getServerSideProps({ params }) {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
     if (!API_URL) {
-      throw new Error("La variable d'environnement NEXT_PUBLIC_API_URL n'est pas définie.");
+      throw new Error(
+        "La variable d'environnement NEXT_PUBLIC_API_URL n'est pas définie."
+      );
     }
 
     const response = await fetch(`${API_URL}/products/${params.id}`);

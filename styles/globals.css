@@ -8,3 +8,20 @@ body {
 * {
   box-sizing: border-box;
 }
+
+:root {
+  --color-primary: #2e7d32;
+  --color-primary-dark: #1b5e20;
+  --color-primary-light: #4caf50;
+  --color-text: #2c3e50;
+  --color-text-light: #546e7a;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --font-serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+}

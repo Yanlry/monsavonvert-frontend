@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
 import styles from "../../styles/admin-dashboard.module.css"; // Réutilisation du même fichier CSS
+import HeaderAdmin from '../../components/HeaderAdmin'; // Import du nouveau composant
 
 export default function AdminDashboard() {
   // États
@@ -518,64 +519,10 @@ export default function AdminDashboard() {
 
       <div className={styles.container}>
         {/* Header avec navigation */}
-        <header
-          className={`${styles.header} ${
-            scrolled ? styles.headerScrolled : ""
-          }`}
-        >
-          <div className={styles.headerContent}>
-            <div className={styles.logoContainer}>
-              <Link href="/" className={styles.logoLink}>
-                <span className={styles.logo}>MonSavonVert</span>
-              </Link>
-            </div>
-
-            {/* Navigation principale */}
-            <nav className={styles.mainNav}>
-              <ul className={styles.navList}>
-                <li className={styles.navItem}>
-                  <Link
-                    href="/admin/dashboard"
-                    className={`${styles.navLink} ${styles.active}`}
-                  >
-                    Tableau de bord
-                  </Link>
-                </li>
-                <li className={styles.navItem}>
-                  <Link href="/admin/orders" className={styles.navLink}>
-                    Commandes
-                  </Link>
-                </li>
-                <li className={styles.navItem}>
-                  <Link href="/admin/products" className={styles.navLink}>
-                    Produits
-                  </Link>
-                </li>
-                <li className={styles.navItem}>
-                  <Link href="/admin/customers" className={styles.navLink}>
-                    Clients
-                  </Link>
-                </li>
-                <li className={styles.navItem}>
-                  <Link href="/admin/settings" className={styles.navLink}>
-                    Paramètres
-                  </Link>
-                </li>
-              </ul>
-            </nav>
-
-            {/* Profil administrateur */}
-            <div className={styles.adminProfile}>
-              <div className={styles.adminAvatar}>
-                <span>A</span>
-              </div>
-              <div className={styles.adminInfo}>
-                <span className={styles.adminName}>Admin</span>
-                <span className={styles.adminEmail}>{userEmail}</span>
-              </div>
-            </div>
-          </div>
-        </header>
+        <HeaderAdmin 
+          userEmail={userEmail} 
+          activePage="dashboard" // Indique la page active pour le style
+        />
 
         <main className={styles.mainContent}>
           {/* Page title section */}
@@ -893,7 +840,7 @@ export default function AdminDashboard() {
                     <div className={styles.dashboardCol}>
                       <div className={styles.dashboardCard}>
                         <div className={styles.cardHeader}>
-                          <h2>Produits les Plus Vendus</h2>
+                          <h2>Derniéres ventes</h2>
                         </div>
                         <div className={styles.cardBody}>
                           <table className={styles.dashboardTable}>

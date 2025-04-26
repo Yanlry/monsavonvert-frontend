@@ -1,16 +1,18 @@
+// Chemin du fichier: pages/admin/customers.js
+
 'use client';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
-import styles from '../../styles/admin-customers.module.css'; // Réutilisation du même fichier CSS
+import styles from '../../styles/admin-customers.module.css';
+import HeaderAdmin from '../../components/HeaderAdmin'; // Import du nouveau composant
 
 export default function AdminCustomers() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
   // États
   const [isClient, setIsClient] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [userEmail, setUserEmail] = useState('');
   const [customers, setCustomers] = useState([]);
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -55,24 +57,11 @@ export default function AdminCustomers() {
       document.documentElement.classList.add(styles.resetMargins);
     }
     
-    // Détection du scroll pour le header
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 30);
-    };
-    
-    // Gestionnaires d'événements
-    if (typeof window !== 'undefined') {
-      window.addEventListener('scroll', handleScroll);
-    }
-    
     // Nettoyage
     return () => {
       if (typeof document !== 'undefined') {
         document.body.classList.remove(styles.resetMargins);
         document.documentElement.classList.remove(styles.resetMargins);
-      }
-      if (typeof window !== 'undefined') {
-        window.removeEventListener('scroll', handleScroll);
       }
     };
   }, []);
@@ -411,60 +400,11 @@ export default function AdminCustomers() {
       </Head>
 
       <div className={styles.container}>
-        {/* Header avec navigation */}
-        <header className={`${styles.header} ${scrolled ? styles.headerScrolled : ''}`}>
-          <div className={styles.headerContent}>
-            <div className={styles.logoContainer}>
-              <Link href="/" legacyBehavior>
-                <a className={styles.logoLink}>
-                  <span className={styles.logo}>MonSavonVert</span>
-                </a>
-              </Link>
-            </div>
-
-            {/* Navigation principale */}
-            <nav className={styles.mainNav}>
-              <ul className={styles.navList}>
-                <li className={styles.navItem}>
-                  <Link href="/admin/dashboard" legacyBehavior>
-                    <a className={styles.navLink}>Tableau de bord</a>
-                  </Link>
-                </li>
-                <li className={styles.navItem}>
-                  <Link href="/admin/orders" legacyBehavior>
-                    <a className={styles.navLink}>Commandes</a>
-                  </Link>
-                </li>
-                <li className={styles.navItem}>
-                  <Link href="/admin/products" legacyBehavior>
-                    <a className={styles.navLink}>Produits</a>
-                  </Link>
-                </li>
-                <li className={styles.navItem}>
-                  <Link href="/admin/customers" legacyBehavior>
-                    <a className={`${styles.navLink} ${styles.active}`}>Clients</a>
-                  </Link>
-                </li>
-                <li className={styles.navItem}>
-                  <Link href="/admin/settings" legacyBehavior>
-                    <a className={styles.navLink}>Paramètres</a>
-                  </Link>
-                </li>
-              </ul>
-            </nav>
-
-            {/* Profil administrateur */}
-            <div className={styles.adminProfile}>
-              <div className={styles.adminAvatar}>
-                <span>A</span>
-              </div>
-              <div className={styles.adminInfo}>
-                <span className={styles.adminName}>Admin</span>
-                <span className={styles.adminEmail}>{userEmail}</span>
-              </div>
-            </div>
-          </div>
-        </header>
+        {/* Utilisation du composant HeaderAdmin à la place du code du header */}
+        <HeaderAdmin 
+          userEmail={userEmail} 
+          activePage="customers" // Indique la page active pour le style
+        />
 
         <main className={styles.mainContent}>
           {/* Page title section */}

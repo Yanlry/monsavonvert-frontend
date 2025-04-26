@@ -1,0 +1,300 @@
+
+  /* Header et Navigation */
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 15px 0;
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+    transition: all var(--transition-normal);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .headerScrolled {
+    padding: 10px 0;
+    box-shadow: var(--shadow-md);
+    background-color: rgba(255, 255, 255, 0.98);
+  }
+  
+  .headerContent {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-xl);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .logoContainer {
+    position: relative;
+    z-index: 101;
+  }
+  
+  .logoLink {
+    text-decoration: none;
+    display: inline-block;
+  }
+  
+  .logo {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--color-primary);
+    letter-spacing: -0.5px;
+    font-family: var(--font-serif);
+    position: relative;
+    display: inline-block;
+    transition: color var(--transition-fast);
+  }
+  
+  .logo::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--color-primary);
+    transition: width var(--transition-normal);
+  }
+  
+  .logoLink:hover .logo {
+    color: var(--color-primary-dark);
+  }
+  
+  .logoLink:hover .logo::after {
+    width: 100%;
+  }
+  
+  /* Navigation principale */
+  .mainNav {
+    position: relative;
+    z-index: 100;
+  }
+  
+  .navList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: var(--spacing-xl);
+  }
+  
+  .navItem {
+    position: relative;
+  }
+  
+  .navLink {
+    color: var(--color-text);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 16px;
+    padding: var(--spacing-sm) 0;
+    position: relative;
+    transition: color var(--transition-fast);
+    display: inline-block;
+  }
+  
+  .navLink::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--color-primary);
+    transition: width var(--transition-normal);
+  }
+  
+  .navLink:hover,
+  .navLink.active {
+    color: var(--color-primary);
+  }
+  
+  .navLink:hover::after,
+  .navLink.active::after {
+    width: 100%;
+  }
+  
+  /* Profil administrateur */
+  .adminProfile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+  }
+  
+  .adminAvatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+  }
+  
+  .adminInfo {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .adminName {
+    font-weight: 600;
+    font-size: 14px;
+  }
+  
+  .adminEmail {
+    font-size: 12px;
+    color: var(--color-text-light);
+  }
+  
+  /* Menu déroulant administrateur */
+  .adminDropdownMenu {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    width: 220px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    overflow: hidden;
+    padding: 8px 0;
+  }
+  
+  .adminDropdownMenu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .adminDropdownMenu li {
+    display: block;
+  }
+  
+  .adminMenuLink {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    color: #333;
+    text-decoration: none;
+    font-weight: normal;
+    transition: all var(--transition-fast);
+  }
+  
+  /* Effet de surbrillance verte au survol */
+  .adminMenuLink:hover {
+    background-color: rgba(76, 175, 80, 0.1);
+    color: var(--color-primary);
+  }
+  
+  .adminMenuLink svg {
+    margin-right: 10px;
+  }
+  
+  .activeAdminLink {
+    color: var(--color-primary) !important;
+    font-weight: bold !important;
+    background-color: rgba(76, 175, 80, 0.1);
+  }
+  
+  .divider {
+    border-top: 1px solid #eee;
+    margin-top: 5px;
+    padding-top: 5px;
+  }
+  
+  .logoutLink {
+    color: #f44336 !important;
+  }
+  
+  .logoutLink:hover {
+    background-color: rgba(244, 67, 54, 0.1) !important;
+  }
+  
+  /* Menu mobile */
+  .mobileMenuToggle {
+    display: none;
+    background: none;
+    border: none;
+    padding: 0;
+    width: 30px;
+    height: 20px;
+    position: relative;
+    cursor: pointer;
+    z-index: 101;
+  }
+  
+  .mobileMenuToggle span {
+    display: block;
+    height: 2px;
+    background-color: var(--color-text);
+    margin-bottom: 6px;
+    transition: transform 0.3s, opacity 0.3s;
+  }
+  
+  .mobileMenuToggleActive span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+  
+  .mobileMenuToggleActive span:nth-child(2) {
+    opacity: 0;
+  }
+  
+  .mobileMenuToggleActive span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+  
+  .mobileOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 50;
+  }
+  
+  /* Media queries */
+  @media (max-width: 1024px) {
+    .headerContent {
+      padding: 0 var(--spacing-lg);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .headerContent {
+      height: auto;
+      padding: var(--spacing-md);
+      flex-direction: column;
+      gap: var(--spacing-md);
+    }
+    
+    .mainNav {
+      width: 100%;
+      order: 3;
+    }
+    
+    .navList {
+      width: 100%;
+      overflow-x: auto;
+      padding-bottom: var(--spacing-sm);
+    }
+    
+    .adminProfile {
+      margin-left: auto;
+    }
+    
+    .adminInfo {
+      display: none;
+    }
+    
+    .mobileMenuToggle {
+      display: block;
+    }
+  }

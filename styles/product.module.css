@@ -315,6 +315,119 @@
   transition: background-color 0.2s, transform 0.2s;
 }
 
+/* Styles pour la section description structurée */
+.structuredDescription {
+  padding: 20px 0;
+}
+
+.descriptionTitle {
+  font-size: 22px;
+  color: #2e7d32;
+  margin-bottom: 24px;
+  font-weight: 600;
+}
+
+.descriptionContent {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.descriptionSection {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.descriptionIcon {
+  background-color: #e8f5e9;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2e7d32;
+  flex-shrink: 0;
+}
+
+.descriptionText {
+  flex: 1;
+}
+
+.descriptionText h4 {
+  font-size: 18px;
+  color: #2e7d32;
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.descriptionText p {
+  margin: 0;
+  color: #333;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+.benefitsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.benefitItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.benefitItem svg {
+  color: #2e7d32;
+  flex-shrink: 0;
+}
+
+.usageBenefits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.usageBenefit {
+  background-color: #f1f8e9;
+  border-radius: 8px;
+  padding: 8px 16px;
+  color: #33691e;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* Responsive pour les écrans mobiles */
+@media (max-width: 768px) {
+  .descriptionSection {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .descriptionIcon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .usageBenefits {
+    flex-direction: column;
+  }
+}
+
+.description, 
+.ingredient, 
+.usageTips p {
+  white-space: pre-line;
+}
+
 .submitReviewButton:hover {
   background-color: #1b5e20;
   transform: translateY(-2px);
@@ -1553,6 +1666,106 @@
   font-size: 14px;
 }
 
+/* Styles pour la section ingrédients structurée */
+.structuredIngredients {
+  padding: 20px 0;
+}
+
+.ingredientsContent {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.ingredientsHeader, .ingredientsFooter {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background-color: #f8f9fa;
+  padding: 24px;
+  border-radius: 12px;
+}
+
+.ingredientsHeader p, .ingredientsFooter p {
+  margin: 8px 0 0 0;
+  color: #666;
+}
+
+.ingredientsHeader h4, .ingredientsFooter h4 {
+  margin: 0;
+  color: var(--color-primary-dark);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.ingredientsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.ingredientCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background-color: white;
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ingredientCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.ingredientIcon {
+  background-color: #e8f5e9;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.ingredientInfo {
+  flex: 1;
+}
+
+.ingredientInfo h5 {
+  margin: 0 0 6px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.ingredientInfo p {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.certificationBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.certificationBadge {
+  background-color: #e8f5e9;
+  color: var(--color-primary-dark);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
 /* Responsive design */
 @media (max-width: 1200px) {
   .productLayoutContainer {
@@ -1627,6 +1840,14 @@
   
   .newsletterButton {
     border-radius: var(--radius-full);
+  }
+
+  .ingredientsHeader, .ingredientsFooter {
+    flex-direction: column;
+  }
+  
+  .ingredientsList {
+    grid-template-columns: 1fr;
   }
 }
 
