@@ -21,6 +21,7 @@ export default function Login() {
   const [scrolled, setScrolled] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
+  
   // Effet pour l'initialisation côté client
   useEffect(() => {
     // Marquer que nous sommes côté client
@@ -71,12 +72,72 @@ export default function Login() {
     }
   }, []);
 
+  // Fonction pour récupérer les détails complets de l'utilisateur
+  const fetchUserData = async (userId, token) => {
+    try {
+      console.log(`🔍 Récupération des données utilisateur depuis l'API pour l'ID: ${userId}`);
+      const response = await fetch(`${API_URL}/users/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des données utilisateur");
+      }
+
+      const data = await response.json();
+      console.log("✅ Réponse API utilisateur complète:", data);
+
+      if (data.result && data.user) {
+        // Formater l'utilisateur avec toutes les données nécessaires
+        const userData = {
+          _id: data.user._id,
+          userId: data.user._id, // Doublon pour compatibilité
+          token: token,
+          firstName: data.user.firstName || "",
+          lastName: data.user.lastName || "",
+          email: data.user.email || "",
+          role: data.user.role || "user",
+          phone: data.user.phone || "",
+          // Ajouter des champs formatés pour l'adresse
+          address: 
+            data.user.addresses && data.user.addresses.length > 0 
+              ? data.user.addresses[0].street 
+              : "",
+          city: 
+            data.user.addresses && data.user.addresses.length > 0 
+              ? data.user.addresses[0].city 
+              : "",
+          postalCode: 
+            data.user.addresses && data.user.addresses.length > 0 
+              ? data.user.addresses[0].postalCode 
+              : "",
+          country: 
+            data.user.addresses && data.user.addresses.length > 0 
+              ? data.user.addresses[0].country 
+              : "France",
+          // Conserver également le format original des adresses
+          addresses: data.user.addresses || []
+        };
+
+        console.log("✅ Données utilisateur formatées depuis API:", userData);
+        return userData;
+      }
+      return null;
+    } catch (error) {
+      console.error("❌ Erreur lors de la récupération des données utilisateur:", error);
+      return null;
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
+      console.log("🔄 Tentative de connexion avec:", { email });
       const response = await fetch(`${API_URL}/users/signin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -89,47 +150,66 @@ export default function Login() {
         throw new Error(data.error || "Identifiants incorrects.");
       }
 
-      // Création d'un objet utilisateur complet
-      const userObject = {
-        _id: data.userId,
-        userId: data.userId,
-        firstName: data.firstName,
-        lastName: data.lastName || "",
-        email: email,
-        role: data.role || "user", // Stockage du rôle avec une valeur par défaut "user"
-        token: data.token
-      };
+      console.log("✅ Connexion réussie, données initiales:", data);
+
+      // Déterminer où stocker les données (localStorage ou sessionStorage)
+      const rememberMe = document.getElementById("remember").checked;
+      const storage = rememberMe ? localStorage : sessionStorage;
       
-      console.log("✅ Données utilisateur récupérées:", userObject);
-
-      // Stocker les informations utilisateur
-      if (document.getElementById("remember").checked) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("userId", data.userId);
-        localStorage.setItem("firstName", data.firstName);
-        localStorage.setItem("role", data.role || "user");
-        localStorage.setItem("userEmail", email); // Correction ici
+      // Stocker les informations de base d'abord
+      storage.setItem("token", data.token);
+      storage.setItem("userId", data.userId);
+      storage.setItem("firstName", data.firstName);
+      storage.setItem("role", data.role || "user");
+      storage.setItem("userEmail", email);
+      
+      console.log("✅ Informations de base stockées dans", rememberMe ? "localStorage" : "sessionStorage");
+      
+      // Récupérer les informations complètes de l'utilisateur
+      const userData = await fetchUserData(data.userId, data.token);
+      
+      if (userData) {
+        // Stocker l'utilisateur complet (crucial pour le checkout)
+        storage.setItem("user", JSON.stringify(userData));
+        
+        // Mettre à jour le contexte utilisateur
+        setUser(userData);
+        
+        console.log("✅ Profil utilisateur complet stocké");
+        
+        // Redirection conditionnelle selon le rôle
+        if (data.role === "admin") {
+          console.log("🔄 Redirection vers la page admin");
+          router.push("/admin/dashboard");
+        } else {
+          console.log("🔄 Redirection vers la page de profil");
+          router.push("/profile");
+        }
       } else {
-        sessionStorage.setItem("token", data.token);
-        sessionStorage.setItem("userId", data.userId);
-        sessionStorage.setItem("firstName", data.firstName);
-        sessionStorage.setItem("role", data.role || "user");
-        sessionStorage.setItem("userEmail", email); // Correction ici
-      }
-      // Mettre à jour le contexte utilisateur avec le rôle
-      setUser(userObject);
-
-      // Redirection conditionnelle selon le rôle
-      console.log("🔀 Redirection basée sur le rôle:", data.role);
-      if (data.role === "admin") {
-        console.log("🔄 Redirection vers la page admin");
-        router.push("/admin/dashboard");
-      } else if (data.role === "user") {
-        console.log("🔄 Redirection vers la page de profil");
-        router.push("/profile");
-      } else {
-        console.error("❌ Rôle utilisateur inconnu :", data.role);
-        setError("Rôle utilisateur inconnu.");
+        // Même si on n'a pas pu récupérer les données complètes, on peut quand même
+        // créer un objet utilisateur basique avec ce qu'on a
+        const basicUserData = {
+          _id: data.userId,
+          userId: data.userId,
+          token: data.token,
+          firstName: data.firstName,
+          lastName: data.lastName || "",
+          email: email,
+          role: data.role || "user"
+        };
+        
+        // Stocker l'utilisateur de base
+        storage.setItem("user", JSON.stringify(basicUserData));
+        setUser(basicUserData);
+        
+        console.log("⚠️ Profil utilisateur basique stocké (données complètes non disponibles)");
+        
+        // Redirection
+        if (data.role === "admin") {
+          router.push("/admin/dashboard");
+        } else {
+          router.push("/profile");
+        }
       }
     } catch (err) {
       console.error("❌ Erreur de connexion:", err.message);
@@ -138,6 +218,7 @@ export default function Login() {
       setLoading(false);
     }
   };
+  
   // Rendu de base sans contenu dynamique (pour éviter les erreurs d'hydratation)
   if (!isClient) {
     return (
@@ -257,6 +338,7 @@ export default function Login() {
                     <div className={styles.formGroup}>
                       <div className={styles.labelWithLink}>
                         <label htmlFor="password">Mot de passe</label>
+                        
                         <a
                           href="/forgot-password"
                           className={styles.forgotPassword}

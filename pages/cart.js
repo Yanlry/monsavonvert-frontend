@@ -41,27 +41,13 @@ export default function Cart() {
     // Récupérer les articles du panier depuis le localStorage
     try {
       const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-      // MODIFICATION: S'assurer que chaque article a un productId (peut être == id)
-      const cartWithProductIds = storedCart.map(item => {
-        // Si l'article n'a pas déjà un champ productId, lui en attribuer un à partir de son id
-        if (!item.productId) {
-          return { ...item, productId: item.id };
-        }
-        return item;
-      });
-      
-      // Mettre à jour le localStorage si des modifications ont été apportées
-      if (JSON.stringify(storedCart) !== JSON.stringify(cartWithProductIds)) {
-        localStorage.setItem("cart", JSON.stringify(cartWithProductIds));
-      }
-      
-      setCartItems(cartWithProductIds);
-      const totalItems = cartWithProductIds.reduce(
+      setCartItems(storedCart);
+      const totalItems = storedCart.reduce(
         (sum, item) => sum + item.quantity,
         0
       );
       setCartCount(totalItems);
-      console.log("Panier chargé avec succès:", cartWithProductIds);
+      console.log("Panier chargé avec succès:", storedCart);
     } catch (error) {
       console.error("Erreur lors du chargement du panier:", error);
     }
@@ -80,20 +66,12 @@ export default function Cart() {
 
   const updateCartCount = (updatedCart) => {
     try {
-      // MODIFICATION: S'assurer que tous les articles ont un productId
-      const cartWithProductIds = updatedCart.map(item => {
-        if (!item.productId) {
-          return { ...item, productId: item.id };
-        }
-        return item;
-      });
-      
-      const totalItems = cartWithProductIds.reduce(
+      const totalItems = updatedCart.reduce(
         (sum, item) => sum + item.quantity,
         0
       );
-      localStorage.setItem("cart", JSON.stringify(cartWithProductIds));
-      setCartItems(cartWithProductIds);
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+      setCartItems(updatedCart);
       setCartCount(totalItems);
       console.log("Panier mis à jour, nouveau total:", totalItems);
 
@@ -384,7 +362,6 @@ export default function Cart() {
                   passion en France depuis 2018.
                 </p>
                 <div className={styles.footerSocial}>
-                  
                   
                   <a
                     href="https://facebook.com/monsavonvert"

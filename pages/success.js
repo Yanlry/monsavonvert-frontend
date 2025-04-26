@@ -14,6 +14,51 @@ export default function Success() {
   const router = useRouter();
   const { session_id } = router.query;
 
+  // Fonction pour récupérer l'ID utilisateur de différentes sources
+  const getUserId = () => {
+    try {
+      // 1. Essayer d'abord l'objet utilisateur complet dans localStorage ou sessionStorage
+      const userFromLocal = localStorage.getItem("user");
+      const userFromSession = sessionStorage.getItem("user");
+      
+      if (userFromLocal) {
+        const userData = JSON.parse(userFromLocal);
+        if (userData && (userData._id || userData.userId)) {
+          console.log("✅ ID utilisateur trouvé dans localStorage.user:", userData._id || userData.userId);
+          return userData._id || userData.userId;
+        }
+      }
+      
+      if (userFromSession) {
+        const userData = JSON.parse(userFromSession);
+        if (userData && (userData._id || userData.userId)) {
+          console.log("✅ ID utilisateur trouvé dans sessionStorage.user:", userData._id || userData.userId);
+          return userData._id || userData.userId;
+        }
+      }
+      
+      // 2. Essayer ensuite l'ID utilisateur direct
+      const userIdFromLocal = localStorage.getItem("userId");
+      const userIdFromSession = sessionStorage.getItem("userId");
+      
+      if (userIdFromLocal) {
+        console.log("✅ ID utilisateur trouvé dans localStorage.userId:", userIdFromLocal);
+        return userIdFromLocal;
+      }
+      
+      if (userIdFromSession) {
+        console.log("✅ ID utilisateur trouvé dans sessionStorage.userId:", userIdFromSession);
+        return userIdFromSession;
+      }
+      
+      console.error("❌ ID utilisateur non trouvé dans aucun stockage");
+      return null;
+    } catch (error) {
+      console.error("❌ Erreur lors de la récupération de l'ID utilisateur:", error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     setIsClient(true);
   
@@ -23,23 +68,29 @@ export default function Success() {
   
         try {
           // Récupérer les données de commande du localStorage
-          const pendingOrder = JSON.parse(localStorage.getItem("pendingOrder")) || {};
+          const pendingOrder = JSON.parse(localStorage.getItem("pendingOrder") || "{}");
           console.log("Données de commande récupérées:", pendingOrder);
   
-          if (!pendingOrder) {
-            console.error("Données de commande manquantes");
+          if (!pendingOrder || Object.keys(pendingOrder).length === 0) {
+            console.error("Données de commande manquantes ou vides");
             setError("Données de commande manquantes. Contactez notre service client.");
             setLoading(false);
             return;
           }
 
-          // Récupérer l'ID utilisateur du localStorage
-          const userId = localStorage.getItem("userId");
+          // Récupérer l'ID utilisateur avec la fonction robuste
+          const userId = getUserId();
           if (!userId) {
             console.error("ID utilisateur non trouvé");
             setError("ID utilisateur non trouvé. Veuillez vous reconnecter.");
             setLoading(false);
             return;
+          }
+
+          // Récupérer le token de localStorage ou sessionStorage
+          const token = localStorage.getItem("token") || sessionStorage.getItem("token") || '';
+          if (!token) {
+            console.warn("⚠️ Token non trouvé, l'authentification pourrait échouer");
           }
   
           // Appeler l'API pour associer la commande au client
@@ -47,16 +98,16 @@ export default function Success() {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${localStorage.getItem("token") || ''}`
+              "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify({
-              customerId: userId, // Utiliser l'ID utilisateur du localStorage
-              items: pendingOrder.items,
-              totalAmount: pendingOrder.total,
+              customerId: userId,
+              items: pendingOrder.items || [],
+              totalAmount: pendingOrder.total || 0,
               sessionId: session_id,
               shippingMethod: pendingOrder.shipping?.method || 'standard',
               shippingCost: pendingOrder.shipping?.cost || 0,
-              payment: "completed" // Ajouter le statut de paiement
+              payment: "completed"
             }),
           });
   
@@ -77,11 +128,11 @@ export default function Success() {
             ...pendingOrder,
             orderId: data.order?._id || 'unknown',
             status: data.order?.status || "pending",
-            payment: data.order?.payment || "failed", // Inclure le statut de paiement
+            payment: data.order?.payment || "completed",
             paymentDate: new Date().toISOString(),
           };
   
-          const orderHistory = JSON.parse(localStorage.getItem("orderHistory")) || [];
+          const orderHistory = JSON.parse(localStorage.getItem("orderHistory") || "[]");
           orderHistory.push(completedOrder);
           localStorage.setItem("orderHistory", JSON.stringify(orderHistory));
   
@@ -97,10 +148,11 @@ export default function Success() {
           setLoading(false);
         }
       } else {
-        console.log("Aucun ID de session trouvé, redirection...");
+        console.log("Aucun ID de session trouvé, attente...");
         // Ne pas rediriger immédiatement, car les query params pourraient être en cours de chargement
         setTimeout(() => {
           if (!router.query.session_id) {
+            console.log("ID de session toujours non trouvé après délai, redirection...");
             router.push("/");
           }
         }, 3000);
