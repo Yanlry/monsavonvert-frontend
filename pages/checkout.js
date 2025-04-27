@@ -166,99 +166,97 @@ export default function Checkout() {
       }
     };
   }, [router]);
+ 
+// Fonction pour charger les informations utilisateur directement depuis l'API
+const fetchUserData = async (userId, token) => {
+  try {
+    console.log(
+      `Récupération des données utilisateur depuis l'API pour l'ID: ${userId}`
+    );
+    const response = await fetch(`${API_URL}/users/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-  // Nouveau: fonction pour charger les informations utilisateur directement depuis l'API
-  const fetchUserData = async (userId, token) => {
-    try {
-      console.log(
-        `Récupération des données utilisateur depuis l'API pour l'ID: ${userId}`
-      );
-      const response = await fetch(`${API_URL}/users/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(
-          "Erreur lors de la récupération des données utilisateur"
-        );
-      }
-
-      const data = await response.json();
-      console.log("Réponse API utilisateur complète:", data);
-
-      if (data.result && data.user) {
-        // Formater l'utilisateur avec les données d'adresse et de téléphone
-        const userData = {
-          ...data.user,
-          // Ajouter des champs formatés pour l'affichage
-          address:
-            data.user.addresses && data.user.addresses.length > 0
-              ? data.user.addresses[0].street
-              : "",
-          city:
-            data.user.addresses && data.user.addresses.length > 0
-              ? data.user.addresses[0].city
-              : "",
-          postalCode:
-            data.user.addresses && data.user.addresses.length > 0
-              ? data.user.addresses[0].postalCode
-              : "",
-          country:
-            data.user.addresses && data.user.addresses.length > 0
-              ? data.user.addresses[0].country
-              : "France",
-        };
-
-        console.log("Données utilisateur formatées depuis API:", userData);
-
-        // Mettre à jour l'état utilisateur
-        setUser(userData);
-
-        // Mettre à jour le localStorage avec les données fraîches
-        localStorage.setItem("user", JSON.stringify(userData));
-
-        // Préremplir le formulaire
-        setFormData((prevData) => ({
-          ...prevData,
-          firstName: userData.firstName || "",
-          lastName: userData.lastName || "",
-          email: userData.email || "",
-          phone: userData.phone || "",
-          address: userData.address || "",
-          city: userData.city || "",
-          postalCode: userData.postalCode || "",
-          country: userData.country || "France",
-        }));
-
-        // NOUVEAU: Préremplir le formulaire d'adresse et téléphone
-        setAddressPhoneData({
-          phone: userData.phone || "",
-          address: userData.address || "",
-          city: userData.city || "",
-          postalCode: userData.postalCode || "",
-          country: userData.country || "France",
-        });
-
-        console.log("Formulaire prérempli avec les données fraîches:", {
-          firstName: userData.firstName || "",
-          lastName: userData.lastName || "",
-          email: userData.email || "",
-          phone: userData.phone || "",
-          address: userData.address || "",
-          city: userData.city || "",
-          postalCode: userData.postalCode || "",
-          country: userData.country || "France",
-        });
-      }
-    } catch (error) {
-      console.error(
-        "Erreur lors de la récupération des données utilisateur:",
-        error
+    if (!response.ok) {
+      throw new Error(
+        "Erreur lors de la récupération des données utilisateur"
       );
     }
-  };
+
+    const data = await response.json();
+    console.log("Réponse API utilisateur complète:", data);
+
+    if (data.result && data.user) {
+      // Formater l'utilisateur avec les données d'adresse et de téléphone
+      const userData = {
+        ...data.user,
+        // Ajouter des champs formatés pour l'affichage
+        address:
+          data.user.addresses && data.user.addresses.length > 0
+            ? data.user.addresses[0].street
+            : "",
+        city:
+          data.user.addresses && data.user.addresses.length > 0
+            ? data.user.addresses[0].city
+            : "",
+        postalCode:
+          data.user.addresses && data.user.addresses.length > 0
+            ? data.user.addresses[0].postalCode
+            : "",
+        country:
+          data.user.addresses && data.user.addresses.length > 0
+            ? data.user.addresses[0].country
+            : "France",
+      };
+
+      console.log("Données utilisateur formatées depuis API:", userData);
+
+      // Mettre à jour l'état utilisateur
+      setUser(userData);
+
+      // Mettre à jour le localStorage avec les données fraîches
+      localStorage.setItem("user", JSON.stringify(userData));
+
+      // Préremplir le formulaire
+      setFormData((prevData) => ({
+        ...prevData,
+        firstName: userData.firstName || "",
+        lastName: userData.lastName || "",
+        email: userData.email || "",
+        phone: userData.phone || "",
+        address: userData.address || "",
+        city: userData.city || "",
+        postalCode: userData.postalCode || "",
+        country: userData.country || "France",
+      }));
+
+      // NOUVEAU: Préremplir le formulaire d'adresse et téléphone
+      setAddressPhoneData({
+        phone: userData.phone || "",
+        address: userData.address || "",
+        city: userData.city || "",
+        postalCode: userData.postalCode || "",
+        country: userData.country || "France",
+      });
+
+      console.log("Formulaire prérempli avec les données fraîches");
+      
+      // IMPORTANT: RETOURNER les données utilisateur
+      return userData;  // Cette ligne manquait!
+    }
+    // Si nous n'avons pas pu obtenir les données utilisateur, retourner null
+    return null;  // Cette ligne manquait!
+  } catch (error) {
+    console.error(
+      "Erreur lors de la récupération des données utilisateur:",
+      error
+    );
+    // En cas d'erreur, retourner null
+    return null;  // Cette ligne manquait!
+  }
+};
 
   useEffect(() => {
     // Vérifiez si un utilisateur est connecté en récupérant les données du localStorage ou sessionStorage
@@ -649,76 +647,103 @@ export default function Checkout() {
   };
 
   // Fonction pour tenter la connexion avec les identifiants
-  const handleLogin = async () => {
-    // Vérification préliminaire des champs
-    if (!loginData.email || !loginData.password) {
-      setLoginError("Veuillez remplir tous les champs");
-      return;
+ // Fonction pour tenter la connexion avec les identifiants
+const handleLogin = async () => {
+  // Vérification préliminaire des champs
+  if (!loginData.email || !loginData.password) {
+    setLoginError("Veuillez remplir tous les champs");
+    return;
+  }
+
+  // Vérifier le format de l'email
+  if (!EMAIL_REGEX.test(loginData.email)) {
+    setLoginError("Format d'email invalide");
+    return;
+  }
+
+  try {
+    setIsLoading(true);
+    console.log("Tentative de connexion...");
+
+    // Appel à l'API pour la connexion - utilise /users/signin comme dans login.js
+    const response = await fetch(`${API_URL}/users/signin`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: loginData.email,
+        password: loginData.password,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Identifiants incorrects");
     }
 
-    // Vérifier le format de l'email
-    if (!EMAIL_REGEX.test(loginData.email)) {
-      setLoginError("Format d'email invalide");
-      return;
-    }
+    // Connexion réussie
+    console.log("Connexion réussie:", data);
 
-    try {
-      setIsLoading(true);
-      console.log("Tentative de connexion...");
+    // Stocker les infos de base utilisateur
+    const storage = rememberMe ? localStorage : sessionStorage;
+    storage.setItem("token", data.token);
+    storage.setItem("userId", data.userId);
+    storage.setItem("firstName", data.firstName);
 
-      // Appel à l'API pour la connexion - utilise /users/signin comme dans login.js
-      const response = await fetch(`${API_URL}/users/signin`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: loginData.email,
-          password: loginData.password,
-        }),
-      });
+    // Récupérer immédiatement les informations complètes de l'utilisateur
+    console.log("Récupération des données complètes depuis l'API...");
+    const userData = await fetchUserData(data.userId, data.token);
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Identifiants incorrects");
-      }
-
-      // Connexion réussie
-      console.log("Connexion réussie:", data);
-
-      // Stocker les infos utilisateur dans localStorage
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("userId", data.userId);
-      localStorage.setItem("firstName", data.firstName);
-
-      // Récupérer immédiatement les informations complètes de l'utilisateur
-      await fetchUserData(data.userId, data.token);
-
-      // Mettre à jour le contexte utilisateur global
-      setContextUser({
-        token: data.token,
+    if (userData) {
+      // Stocker l'utilisateur complet (crucial pour la navigation)
+      storage.setItem("user", JSON.stringify(userData));
+      
+      // Mettre à jour le contexte utilisateur global avec les données COMPLÈTES
+      setContextUser(userData);
+      
+      // Mettre à jour également l'état local user
+      setUser(userData);
+      
+      console.log("Profil utilisateur complet stocké:", userData);
+    } else {
+      // Même si on n'a pas pu récupérer les données complètes, on utilise un objet de base
+      const basicUserData = {
+        _id: data.userId,
         userId: data.userId,
+        token: data.token,
         firstName: data.firstName,
-      });
-
-      // Afficher un message de succès
-      setModalTitle("Connexion réussie");
-      setModalMessage(
-        "Vous êtes maintenant connecté. Vous pouvez continuer votre commande."
-      );
-      setShowModal(true);
-
-      // Passer à l'étape suivante
-      setCurrentStep(currentStep + 1);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    } catch (error) {
-      console.error("Erreur de connexion:", error);
-      setLoginError(error.message || "Identifiants incorrects");
-    } finally {
-      setIsLoading(false);
+        lastName: data.lastName || "",
+        email: loginData.email,
+        role: data.role || "user"
+      };
+      
+      // Stocker l'utilisateur de base
+      storage.setItem("user", JSON.stringify(basicUserData));
+      setContextUser(basicUserData);
+      setUser(basicUserData);
+      
+      console.log("Profil utilisateur basique stocké (données complètes non disponibles)");
     }
-  };
+
+    // Afficher un message de succès
+    setModalTitle("Connexion réussie");
+    setModalMessage(
+      "Vous êtes maintenant connecté. Vous pouvez continuer votre commande."
+    );
+    setShowModal(true);
+
+    // Passer à l'étape suivante
+    setCurrentStep(currentStep + 1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } catch (error) {
+    console.error("Erreur de connexion:", error);
+    setLoginError(error.message || "Identifiants incorrects");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   // Récupération du prix total du panier
   const getTotalPrice = () => {
@@ -748,69 +773,92 @@ export default function Checkout() {
     return (parseFloat(getTotalPrice()) + getShippingCost()).toFixed(2);
   };
 
-  // CORRIGÉ: Fonction pour créer/enregistrer un compte - Ajout d'adresse dans le format approprié
-  const handleSignup = async () => {
-    if (!isFormValid) {
-      // Utilisation du modal pour afficher les erreurs
-      setModalTitle("Informations incomplètes");
+
+// CORRIGÉ: Fonction pour créer/enregistrer un compte avec récupération des données complètes
+const handleSignup = async () => {
+  if (!isFormValid) {
+    // Utilisation du modal pour afficher les erreurs
+    setModalTitle("Informations incomplètes");
+    setModalMessage(
+      "Veuillez remplir correctement tous les champs du formulaire et accepter les termes et conditions avant de continuer."
+    );
+    setShowModal(true);
+    return false;
+  }
+
+  try {
+    setIsLoading(true);
+    console.log("Tentative d'inscription...");
+
+    // Préparation des données d'inscription avec l'adresse formatée correctement
+    const signupData = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      password: formData.password,
+      phone: formData.phone,
+      termsAccepted: formData.termsAccepted,
+      // Ajouter l'adresse dans le format attendu par l'API
+      addresses: [
+        {
+          street: formData.address,
+          city: formData.city,
+          postalCode: formData.postalCode,
+          country: formData.country,
+          isDefault: true,
+        },
+      ],
+    };
+
+    console.log("Données d'inscription à envoyer:", signupData);
+
+    // Appel à l'API pour l'inscription
+    const response = await fetch(`${API_URL}/users/signup`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(signupData),
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      // Utilisation du modal au lieu de alert
+      setModalTitle("Erreur");
       setModalMessage(
-        "Veuillez remplir correctement tous les champs du formulaire et accepter les termes et conditions avant de continuer."
+        data.error || "Erreur lors de la gestion des informations client."
       );
       setShowModal(true);
       return false;
     }
 
-    try {
-      setIsLoading(true);
-      console.log("Tentative d'inscription...");
+    console.log("Réponse de l'API (inscription):", data);
 
-      // Préparation des données d'inscription avec l'adresse formatée correctement
-      const signupData = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        password: formData.password,
-        phone: formData.phone,
-        termsAccepted: formData.termsAccepted,
-        // Ajouter l'adresse dans le format attendu par l'API
-        addresses: [
-          {
-            street: formData.address,
-            city: formData.city,
-            postalCode: formData.postalCode,
-            country: formData.country,
-            isDefault: true,
-          },
-        ],
-      };
+    // Sauvegarder le token et userId dans localStorage
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("userId", data.userId);
+    localStorage.setItem("firstName", formData.firstName);
 
-      console.log("Données d'inscription à envoyer:", signupData);
-
-      // Appel à l'API pour l'inscription
-      const response = await fetch(`${API_URL}/users/signup`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(signupData),
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        // Utilisation du modal au lieu de alert
-        setModalTitle("Erreur");
-        setModalMessage(
-          data.error || "Erreur lors de la gestion des informations client."
-        );
-        setShowModal(true);
-        return false;
-      }
-
-      console.log("Réponse de l'API (inscription):", data);
-
-      // Format de l'utilisateur adapté à la réponse de ton API
-      const userData = {
+    // IMPORTANT: Récupérer les données complètes de l'utilisateur comme dans login.js
+    console.log("Récupération des données complètes de l'utilisateur...");
+    const userData = await fetchUserData(data.userId, data.token);
+    
+    if (userData) {
+      // Stocker l'utilisateur complet dans localStorage (crucial pour la navigation)
+      localStorage.setItem("user", JSON.stringify(userData));
+      
+      // Mettre à jour le contexte utilisateur global avec les données complètes
+      setContextUser(userData);
+      
+      // Mettre à jour l'état user pour refléter la connexion immédiatement
+      setUser(userData);
+      
+      console.log("Utilisateur inscrit avec succès, données complètes:", userData);
+    } else {
+      // En cas d'échec de fetchUserData, créer un objet utilisateur de base
+      const basicUserData = {
         _id: data.userId,
+        userId: data.userId,
         token: data.token,
         firstName: formData.firstName,
         lastName: formData.lastName,
@@ -825,49 +873,39 @@ export default function Checkout() {
             isDefault: true,
           },
         ],
-        // Ajouter aussi les versions simples pour l'affichage
+        // Pour la compatibilité avec le reste de l'application
         address: formData.address,
         city: formData.city,
         postalCode: formData.postalCode,
         country: formData.country,
       };
-
-      // Sauvegarder dans localStorage
-      localStorage.setItem("user", JSON.stringify(userData));
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("userId", data.userId);
-      localStorage.setItem("firstName", formData.firstName);
-
-      // Mettre à jour le contexte utilisateur global
-      setContextUser({
-        token: data.token,
-        userId: data.userId,
-        firstName: formData.firstName,
-      });
-
-      // Mettre à jour l'état user pour refléter la connexion immédiatement
-      setUser(userData);
-
-      console.log("Utilisateur inscrit avec succès:", userData);
-
-      // Afficher un message de succès
-      setModalTitle("Compte créé");
-      setModalMessage(
-        "Votre compte a été créé avec succès. Vous êtes maintenant connecté."
-      );
-      setShowModal(true);
-
-      return true;
-    } catch (error) {
-      console.error("Erreur lors de l'inscription:", error);
-      setModalTitle("Erreur");
-      setModalMessage("Une erreur est survenue. Veuillez réessayer.");
-      setShowModal(true);
-      return false;
-    } finally {
-      setIsLoading(false);
+      
+      // Stocker l'utilisateur de base
+      localStorage.setItem("user", JSON.stringify(basicUserData));
+      setContextUser(basicUserData);
+      setUser(basicUserData);
+      
+      console.log("Utilisateur inscrit avec des données de base:", basicUserData);
     }
-  };
+
+    // Afficher un message de succès
+    setModalTitle("Compte créé");
+    setModalMessage(
+      "Votre compte a été créé avec succès. Vous êtes maintenant connecté."
+    );
+    setShowModal(true);
+
+    return true;
+  } catch (error) {
+    console.error("Erreur lors de l'inscription:", error);
+    setModalTitle("Erreur");
+    setModalMessage("Une erreur est survenue. Veuillez réessayer.");
+    setShowModal(true);
+    return false;
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   // MODIFIÉ: Fonction pour passer à l'étape suivante
   const goToNextStep = async () => {

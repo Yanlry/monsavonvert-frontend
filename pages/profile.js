@@ -58,6 +58,10 @@ export default function Profile() {
     isDefault: false,
   });
 
+  // NOUVEAU: États pour le modal de détails de commande
+  const [showOrderModal, setShowOrderModal] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+
   // Effet pour récupérer les données du panier
   useEffect(() => {
     const fetchCartData = () => {
@@ -135,6 +139,12 @@ export default function Profile() {
     setAddressMode("edit");
     setCurrentAddressIndex(index);
     setShowAddressModal(true);
+  };
+
+  // NOUVEAU: Fonction pour ouvrir le modal de détails de commande
+  const handleViewOrderDetails = (order) => {
+    setSelectedOrder(order);
+    setShowOrderModal(true);
   };
 
   // Fonction pour sauvegarder une adresse (ajout ou modification)
@@ -743,6 +753,134 @@ const fetchUserOrders = async (userId) => {
         </div>
       )}
 
+      {/* NOUVEAU: Modal pour les détails de la commande */}
+      {showOrderModal && selectedOrder && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.orderModal}>
+            <div className={styles.orderModalHeader}>
+              <h3>Détails de la commande #{selectedOrder.id}</h3>
+              <button
+                className={styles.closeModalButton}
+                onClick={() => setShowOrderModal(false)}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+
+            <div className={styles.orderModalContent}>
+              <div className={styles.orderModalInfo}>
+                <div className={styles.orderModalInfoItem}>
+                  <span className={styles.orderModalLabel}>Date :</span>
+                  <span className={styles.orderModalValue}>{selectedOrder.date}</span>
+                </div>
+                <div className={styles.orderModalInfoItem}>
+                  <span className={styles.orderModalLabel}>Statut :</span>
+                  <span className={`${styles.orderModalStatus} ${getStatusClass(selectedOrder.status)}`}>
+                    {selectedOrder.statusLabel}
+                  </span>
+                </div>
+                <div className={styles.orderModalInfoItem}>
+                  <span className={styles.orderModalLabel}>Total :</span>
+                  <span className={styles.orderModalValue}>{selectedOrder.total.toFixed(2)} €</span>
+                </div>
+              </div>
+
+              <div className={styles.orderModalDivider}></div>
+
+              <div className={styles.orderModalItems}>
+                <h4>Articles commandés</h4>
+                {selectedOrder.items && selectedOrder.items.length > 0 ? (
+                  <div className={styles.orderModalItemsList}>
+                    {selectedOrder.items.map((item, index) => (
+                      <div key={index} className={styles.orderModalItem}>
+                        <div className={styles.orderModalItemImage}>
+                          {item.image ? (
+                            <img src={item.image} alt={item.name} />
+                          ) : (
+                            <div className={styles.orderModalItemPlaceholder}>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                              </svg>
+                            </div>
+                          )}
+                        </div>
+                        <div className={styles.orderModalItemDetails}>
+                          <h5 className={styles.orderModalItemName}>{item.name}</h5>
+                          <div className={styles.orderModalItemSpecs}>
+                            <span className={styles.orderModalItemQuantity}>Quantité: {item.quantity}</span>
+                            <span className={styles.orderModalItemPrice}>
+                              {item.price ? `${item.price.toFixed(2)} €` : "Prix non disponible"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className={styles.orderModalEmptyMessage}>Aucun article trouvé pour cette commande.</p>
+                )}
+              </div>
+
+              <div className={styles.orderModalDivider}></div>
+
+              <div className={styles.orderModalSummary}>
+                <div className={styles.orderModalSummaryItem}>
+                  <span>Sous-total</span>
+                  <span>{(selectedOrder.total - (selectedOrder.shippingCost || 0)).toFixed(2)} €</span>
+                </div>
+                <div className={styles.orderModalSummaryItem}>
+                  <span>Frais de livraison</span>
+                  <span>{selectedOrder.shippingCost ? `${selectedOrder.shippingCost.toFixed(2)} €` : "Gratuit"}</span>
+                </div>
+                <div className={styles.orderModalSummaryTotal}>
+                  <span>Total</span>
+                  <span>{selectedOrder.total.toFixed(2)} €</span>
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.orderModalFooter}>
+              <button
+                className={styles.modalCancelButton}
+                onClick={() => setShowOrderModal(false)}
+              >
+                Fermer
+              </button>
+              {selectedOrder.status === "pending" && (
+                <button className={styles.modalActionButton}>
+                  Suivre ma commande
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className={styles.container}>
         {/* Header avec navigation */}
         <header
@@ -1155,12 +1293,13 @@ const fetchUserOrders = async (userId) => {
                                 {order.total.toFixed(2)} €
                               </div>
                               <div className={styles.orderActionColumn}>
-                                <Link
-                                  href={`/profile/orders/${order.id}`}
+                                {/* MODIFIÉ: Bouton qui ouvre le modal au lieu de rediriger */}
+                                <button
+                                  onClick={() => handleViewOrderDetails(order)}
                                   className={styles.viewOrderButton}
                                 >
-                                 Voir
-                                </Link>
+                                  Voir
+                                </button>
                               </div>
                             </div>
                           ))}
@@ -1221,12 +1360,13 @@ const fetchUserOrders = async (userId) => {
                               {order.total.toFixed(2)} €
                             </div>
                             <div className={styles.orderActionColumn}>
-                              <Link
-                                href={`/profile/orders/${order.id}`}
+                              {/* MODIFIÉ: Bouton qui ouvre le modal au lieu de rediriger */}
+                              <button
+                                onClick={() => handleViewOrderDetails(order)}
                                 className={styles.viewOrderButton}
                               >
                                 Voir
-                              </Link>
+                              </button>
                             </div>
                           </div>
                         ))}
@@ -1713,8 +1853,8 @@ const fetchUserOrders = async (userId) => {
                 </p>
                 <div className={styles.footerSocial}>
                   
-                  
                   <a
+                  
                     href="https://facebook.com/monsavonvert"
                     className={styles.socialLink}
                     target="_blank"
@@ -1741,7 +1881,6 @@ const fetchUserOrders = async (userId) => {
                     rel="noopener noreferrer"
                     aria-label="Instagram"
                   >
-                  </a>
                     <svg
                       viewBox="0 0 24 24"
                       width="20"
@@ -1762,14 +1901,15 @@ const fetchUserOrders = async (userId) => {
                       ></rect>
                       <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                       </svg>
-                  <a
+
+                  </a>
+                      <a
                     href="https://pinterest.com/monsavonvert"
                     className={styles.socialLink}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Pinterest"
                   >
-                  </a>
                     <svg
                       viewBox="0 0 24 24"
                       width="20"
@@ -1784,6 +1924,8 @@ const fetchUserOrders = async (userId) => {
                       <path d="M9 18l3-3 3 3"></path>
                       <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"></path>
                     </svg>
+
+                  </a>
                 </div>
               </div>
 

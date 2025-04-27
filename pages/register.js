@@ -4,8 +4,9 @@ import { useState, useEffect, useContext } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import styles from '../styles/login.module.css'; // Réutilisation du même fichier CSS
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router'; // Changé de next/navigation à next/router
 import { UserContext } from "../context/UserContext"; // Import du contexte utilisateur
+import Header from "../components/Header"; // Importation du composant Header
 
 /**
  * Composant de page d'inscription pour MonSavonVert
@@ -94,6 +95,65 @@ export default function Register() {
     }
   }, []);
 
+  // Fonction pour récupérer les détails complets de l'utilisateur (ajouté comme dans login.js)
+  const fetchUserData = async (userId, token) => {
+    try {
+      console.log(`🔍 Récupération des données utilisateur depuis l'API pour l'ID: ${userId}`);
+      const response = await fetch(`${API_URL}/users/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des données utilisateur");
+      }
+
+      const data = await response.json();
+      console.log("✅ Réponse API utilisateur complète:", data);
+
+      if (data.result && data.user) {
+        // Formater l'utilisateur avec toutes les données nécessaires
+        const userData = {
+          _id: data.user._id,
+          userId: data.user._id, // Doublon pour compatibilité
+          token: token,
+          firstName: data.user.firstName || "",
+          lastName: data.user.lastName || "",
+          email: data.user.email || "",
+          role: data.user.role || "user",
+          phone: data.user.phone || "",
+          // Ajouter des champs formatés pour l'adresse
+          address: 
+            data.user.addresses && data.user.addresses.length > 0 
+              ? data.user.addresses[0].street 
+              : "",
+          city: 
+            data.user.addresses && data.user.addresses.length > 0 
+              ? data.user.addresses[0].city 
+              : "",
+          postalCode: 
+            data.user.addresses && data.user.addresses.length > 0 
+              ? data.user.addresses[0].postalCode 
+              : "",
+          country: 
+            data.user.addresses && data.user.addresses.length > 0 
+              ? data.user.addresses[0].country 
+              : "France",
+          // Conserver également le format original des adresses
+          addresses: data.user.addresses || []
+        };
+
+        console.log("✅ Données utilisateur formatées depuis API:", userData);
+        return userData;
+      }
+      return null;
+    } catch (error) {
+      console.error("❌ Erreur lors de la récupération des données utilisateur:", error);
+      return null;
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -143,19 +203,44 @@ export default function Register() {
         throw new Error(data.error || 'Erreur lors de l\'inscription');
       }
   
-      // Stockage des données utilisateur
+      // Stockage dans localStorage (comme dans login.js)
       localStorage.setItem('token', data.token);
       localStorage.setItem('userId', data.userId);
       localStorage.setItem('firstName', formattedFirstName);
       localStorage.setItem('lastName', formattedLastName);
-  
-      setUser({
-        userId: data.userId,
-        firstName: formattedFirstName,
-        lastName: formattedLastName,
-        email,
-        token: data.token,
-      });
+      localStorage.setItem('userEmail', email);
+      localStorage.setItem('role', data.role || 'user');
+      
+      // Récupérer les informations complètes de l'utilisateur
+      const userData = await fetchUserData(data.userId, data.token);
+      
+      if (userData) {
+        // Stocker l'utilisateur complet (crucial pour le checkout)
+        localStorage.setItem("user", JSON.stringify(userData));
+        
+        // Mettre à jour le contexte utilisateur
+        setUser(userData);
+        
+        console.log("✅ Profil utilisateur complet stocké");
+      } else {
+        // Même si on n'a pas pu récupérer les données complètes, on peut quand même
+        // créer un objet utilisateur basique avec ce qu'on a
+        const basicUserData = {
+          _id: data.userId,
+          userId: data.userId,
+          token: data.token,
+          firstName: formattedFirstName,
+          lastName: formattedLastName,
+          email: email,
+          role: data.role || "user"
+        };
+        
+        // Stocker l'utilisateur de base
+        localStorage.setItem("user", JSON.stringify(basicUserData));
+        setUser(basicUserData);
+        
+        console.log("⚠️ Profil utilisateur basique stocké (données complètes non disponibles)");
+      }
   
       router.push('/profile');
     } catch (err) {
@@ -193,87 +278,7 @@ export default function Register() {
       <div className={styles.container}>
         {/* Header avec navigation */}
         <header className={`${styles.header} ${scrolled ? styles.headerScrolled : ''}`}>
-          <div className={styles.headerContent}>
-            <div className={styles.logoContainer}>
-              <Link href="/" className={styles.logoLink}>
-                <span className={styles.logo}>MonSavonVert</span>
-              </Link>
-            </div>
-
-            {/* Navigation principale */}
-            <nav className={styles.mainNav}>
-              <ul className={styles.navList}>
-                <li className={styles.navItem}>
-                  <Link href="/" className={styles.navLink}>Accueil</Link>
-                </li>
-                {/* Fix pour le menu Boutique - éviter les liens imbriqués */}
-                <li className={styles.navItem}>
-                  <div className={styles.navLink}>
-                    Boutique
-                    <div className={styles.megaMenu}>
-                      <div className={styles.megaMenuGrid}>
-                        <div className={styles.megaMenuCategory}>
-                          <h3>Catégories</h3>
-                          <Link href="/boutique/visage">Soins visage</Link>
-                          <Link href="/boutique/corps">Soins corps</Link>
-                          <Link href="/boutique/cheveux">Cheveux</Link>
-                          <Link href="/boutique/accessoires">Accessoires</Link>
-                        </div>
-                        <div className={styles.megaMenuCategory}>
-                          <h3>Collections</h3>
-                          <Link href="/boutique/aromatherapie">Aromathérapie</Link>
-                          <Link href="/boutique/peaux-sensibles">Peaux sensibles</Link>
-                          <Link href="/boutique/hydratation">Hydratation intense</Link>
-                        </div>
-                        <div className={styles.megaMenuImage}>
-                          <p>Nouveau</p>
-                          <img src="/images/2.JPEG" alt="Nouvelle collection" />
-                          <Link href="/boutique/nouveautes" className={styles.megaMenuButton}>Découvrir</Link>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-                <li className={styles.navItem}>
-                  <Link href="/virtues" className={styles.navLink}>Vertu & bienfaits</Link>
-                </li>
-                <li className={styles.navItem}>
-                  <Link href="/info" className={styles.navLink}>Notre Histoire</Link>
-                </li>
-                <li className={styles.navItem}>
-                  <Link href="/contact" className={styles.navLink}>Contact</Link>
-                </li>
-              </ul>
-            </nav>
-
-            {/* Barre d'outils utilisateur */}
-            <div className={styles.userTools}>
-              <button className={styles.searchToggle} aria-label="Rechercher">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-              </button>
-              <Link href="/login" className={styles.userAccount} aria-label="Mon compte">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-              </Link>
-              <Link href="/cart" className={styles.cartLink} aria-label="Panier">
-                <div className={styles.cartIcon} id="cartIcon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="9" cy="21" r="1"></circle>
-                    <circle cx="20" cy="21" r="1"></circle>
-                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                  </svg>
-                  {cartCount > 0 && (
-                    <span className={styles.cartCount}>{cartCount}</span>
-                  )}
-                </div>
-              </Link>
-            </div>
-          </div>
+          <Header cartCount={cartCount} /> {/* Utilisation du composant Header comme dans login.js */}
         </header>
 
         <main className={styles.mainContent}>
