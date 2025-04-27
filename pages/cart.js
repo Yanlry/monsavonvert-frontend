@@ -145,7 +145,7 @@ export default function Cart() {
         <title>Mon Panier | MonSavonVert</title>
         <meta
           name="description"
-          content="Votre panier d'achats chez MonSavonVert - Savons artisanaux écologiques"
+          content="Votre panier d'achats chez MonSavonVert - Savons artisanaux"
         />
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
