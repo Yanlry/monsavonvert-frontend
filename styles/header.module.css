@@ -375,6 +375,104 @@
   font-weight: bold;
 }
 
+/* Profil administrateur */
+.adminProfile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.adminAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.adminInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.adminName {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.adminEmail {
+  font-size: 12px;
+  color: var(--color-text-light);
+}
+
+/* Menu déroulant administrateur */
+.adminDropdownMenu {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 220px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  overflow: hidden;
+  padding: 8px 0;
+}
+
+.adminDropdownMenu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.adminDropdownMenu li {
+  display: block;
+}
+
+.adminMenuLink {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  color: #333;
+  text-decoration: none;
+  font-weight: normal;
+  transition: all var(--transition-fast);
+}
+
+/* Effet de surbrillance verte au survol */
+.adminMenuLink:hover {
+  background-color: rgba(76, 175, 80, 0.1);
+  color: var(--color-primary);
+}
+
+.adminMenuLink svg {
+  margin-right: 10px;
+}
+
+.activeAdminLink {
+  color: var(--color-primary) !important;
+  font-weight: bold !important;
+  background-color: rgba(76, 175, 80, 0.1);
+}
+
+.divider {
+  border-top: 1px solid #eee;
+  margin-top: 5px;
+  padding-top: 5px;
+}
+
+.logoutLink {
+  color: #f44336 !important;
+}
+
+.logoutLink:hover {
+  background-color: rgba(244, 67, 54, 0.1) !important;
+}
 @keyframes cartPulse {
   0% {
     transform: scale(1);

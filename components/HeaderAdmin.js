@@ -4,7 +4,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import styles from '../styles/header-admin.module.css'; // Changé pour utiliser le nouveau module CSS
+import styles from '../styles/header-admin.module.css'; // On garde cette référence
 
 /**
  * Composant Header pour le tableau de bord administrateur
@@ -120,17 +120,19 @@ const HeaderAdmin = ({ userEmail, activePage }) => {
           </ul>
         </nav>
 
-        {/* Profil administrateur avec menu déroulant */}
+        {/* Profil administrateur avec menu déroulant - MODIFIÉ POUR RESSEMBLER AU HEADER PRINCIPAL */}
         <div className="profileDropdownArea" style={{ position: 'relative' }}>
-          <div className={styles.adminProfile} onClick={toggleProfileMenu}>
-            <div className={styles.adminAvatar}>
+          <a href="#" className={styles.userAccountConnected} onClick={toggleProfileMenu} aria-label="Menu admin">
+            <div className={styles.userAvatar}>
               <span>A</span>
             </div>
-            <div className={styles.adminInfo}>
-              <span className={styles.adminName}>Admin</span>
-              <span className={styles.adminEmail}>{userEmail}</span>
+            <div className={styles.userInfoWrapper}>
+              <div className={styles.userInfo}>
+                <span className={styles.welcomeText}>Admin</span>
+                <span className={styles.userName}>{userEmail}</span>
+              </div>
             </div>
-          </div>
+          </a>
           
           {/* Menu déroulant qui s'affiche au clic sur le profil */}
           {profileMenuOpen && (

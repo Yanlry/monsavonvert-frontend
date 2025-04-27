@@ -165,7 +165,7 @@ export default function Home() {
       icon: "🌸", // Vous pouvez remplacer par une icône SVG
       description: "Savon d'Alep doux pour peaux sensibles et usage quotidien",
       suitableFor: "Visage, peaux sensibles, enfants",
-      link: "/products/savon-alep-5",
+      link: "/produit/680bd95433437078ee079529",
     },
     {
       id: 2,
@@ -175,7 +175,7 @@ export default function Home() {
       description:
         "Savon d'Alep équilibrant pour peaux mixtes et imperfections",
       suitableFor: "Peaux mixtes, acné légère, cuir chevelu gras",
-      link: "/products/savon-alep-20",
+      link: "/produit/680a5ac9841615e1719b023b",
     },
     {
       id: 3,
@@ -185,7 +185,7 @@ export default function Home() {
       description:
         "Savon d'Alep thérapeutique pour problèmes cutanés spécifiques",
       suitableFor: "Eczéma, psoriasis, acné sévère",
-      link: "/products/savon-alep-30",
+      link: "/produit/67fe455e3de677d3ffa1cf89",
     },
   ];
 
@@ -236,7 +236,7 @@ export default function Home() {
             scrolled ? styles.headerScrolled : ""
           }`}
         >
-          <Header cartCount={cartCount}/>
+          <Header cartCount={cartCount} />
         </header>
 
         <main className={styles.mainContent}>
@@ -260,10 +260,16 @@ export default function Home() {
                     <h1 className={styles.slideTitle}>{slide.title}</h1>
                     <p className={styles.slideSubtitle}>{slide.subtitle}</p>
                     <div className={styles.slideButtons}>
-                      <Link href="/store" className={`${styles.button} ${styles.primaryButton}`}>
+                      <Link
+                        href="/store"
+                        className={`${styles.button} ${styles.primaryButton}`}
+                      >
                         Découvrir nos produits
                       </Link>
-                      <Link href="/info" className={`${styles.button} ${styles.ghostButton}`}>
+                      <Link
+                        href="/info"
+                        className={`${styles.button} ${styles.ghostButton}`}
+                      >
                         Notre philosophie
                       </Link>
                     </div>
@@ -326,8 +332,8 @@ export default function Home() {
             </div>
           </section>
 
-        {/* Catégories de produits */}
-        <section className={styles.categoriesSection}>
+          {/* Catégories de produits */}
+          <section className={styles.categoriesSection}>
             <div className={styles.sectionHeader}>
               <h2 className={styles.sectionTitle}>Nos catégories</h2>
               <p className={styles.sectionSubtitle}>
@@ -338,7 +344,11 @@ export default function Home() {
 
             <div className={styles.categoriesGrid}>
               {productCategories.map((category) => (
-                <Link key={category.id} href="/store" className={styles.categoryCard}>
+                <Link
+                  key={category.id}
+                  href={category.link}
+                  className={styles.categoryCard}
+                >
                   <div className={styles.categoryImageContainer}>
                     <div className={styles.categoryImageOverlay}></div>
                     <img
@@ -368,7 +378,10 @@ export default function Home() {
               <p className={styles.shippingText}>
                 Pour toute commande à partir de 29€
               </p>
-              <Link href="/store" className={`${styles.button} ${styles.whiteButton}`}>
+              <Link
+                href="/store"
+                className={`${styles.button} ${styles.whiteButton}`}
+              >
                 En profiter maintenant
               </Link>
             </div>
@@ -418,7 +431,10 @@ export default function Home() {
                     <span>Vegan</span>
                   </div>
                 </div>
-                <Link href="/notre-histoire" className={`${styles.button} ${styles.outlineButton}`}>
+                <Link
+                  href="/notre-histoire"
+                  className={`${styles.button} ${styles.outlineButton}`}
+                >
                   En savoir plus
                 </Link>
               </div>
@@ -502,7 +518,10 @@ export default function Home() {
                 </div>
               </div>
 
-              <Link href="/virtues" className={`${styles.button} ${styles.greenButton}`}>
+              <Link
+                href="/virtues"
+                className={`${styles.button} ${styles.greenButton}`}
+              >
                 Découvrir nos actions
               </Link>
             </div>
@@ -595,7 +614,10 @@ export default function Home() {
             </div>
 
             <div className={styles.testimonialsCta}>
-              <Link href="/avis-clients" className={`${styles.button} ${styles.textButton}`}>
+              <Link
+                href="/avis-clients"
+                className={`${styles.button} ${styles.textButton}`}
+              >
                 Voir tous les avis <span className={styles.arrowIcon}>→</span>
               </Link>
             </div>
@@ -678,7 +700,9 @@ export default function Home() {
                   <input type="checkbox" required />
                   <span>
                     J'accepte de recevoir des emails et je confirme avoir lu la{" "}
-                    <Link href="/politique-de-confidentialite">politique de confidentialité</Link>
+                    <Link href="/politique-de-confidentialite">
+                      politique de confidentialité
+                    </Link>
                     .
                   </span>
                 </label>
@@ -776,8 +800,14 @@ export default function Home() {
                   </span>
                   <div className={styles.paymentIcons}>
                     <img src="/images/payments/visa.png" alt="Visa" />
-                    <img src="/images/payments/mastercard.png" alt="Mastercard" />
-                    <img src="/images/payments/americanexpress.png" alt="American Express" />
+                    <img
+                      src="/images/payments/mastercard.png"
+                      alt="Mastercard"
+                    />
+                    <img
+                      src="/images/payments/americanexpress.png"
+                      alt="American Express"
+                    />
                     <img src="/images/payments/applepay.png" alt="Apple Pay" />
                   </div>
                 </div>
@@ -800,7 +830,10 @@ export default function Home() {
                 <Link href="/boutique/coffrets" className={styles.footerLink}>
                   Coffrets cadeaux
                 </Link>
-                <Link href="/boutique/accessoires" className={styles.footerLink}>
+                <Link
+                  href="/boutique/accessoires"
+                  className={styles.footerLink}
+                >
                   Accessoires
                 </Link>
               </div>
@@ -918,10 +951,16 @@ export default function Home() {
                 <Link href="/cgv" className={styles.footerSmallLink}>
                   CGV
                 </Link>
-                <Link href="/politique-de-confidentialite" className={styles.footerSmallLink}>
+                <Link
+                  href="/politique-de-confidentialite"
+                  className={styles.footerSmallLink}
+                >
                   Politique de confidentialité
                 </Link>
-                <Link href="/mentions-legales" className={styles.footerSmallLink}>
+                <Link
+                  href="/mentions-legales"
+                  className={styles.footerSmallLink}
+                >
                   Mentions légales
                 </Link>
                 <Link href="/cookies" className={styles.footerSmallLink}>

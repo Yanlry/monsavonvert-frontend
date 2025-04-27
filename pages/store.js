@@ -363,6 +363,45 @@ export default function Boutique() {
             </div>
           </div>
           
+                 {/* Section des avantages */}
+                 <div className={styles.benefitsSection}>
+  <div className={styles.benefitCard}>
+    <div className={styles.benefitIcon}>
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"></path>
+        <path d="M12 6v6l4 2"></path>
+      </svg>
+    </div>
+    <h3>Origine Syrienne Garantie</h3>
+    <p>Notre savon d'Alep est fabriqué artisanalement en Syrie, dans la ville historique d'Alep, berceau de cette tradition millénaire.</p>
+  </div>
+
+  <div className={styles.benefitCard}>
+    <div className={styles.benefitIcon}>
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20 6L9 17l-5-5"></path>
+      </svg>
+    </div>
+    <h3>Pureté Naturelle</h3>
+    <p>Composé exclusivement d'huile d'olive et d'huile de baies de laurier, notre savon respecte votre peau sans compromis.</p>
+  </div>
+
+  <div className={styles.benefitCard}>
+    <div className={styles.benefitIcon}>
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M14.31 8l5.74 9.94"></path>
+        <path d="M9.69 8h11.48"></path>
+        <path d="M7.38 12l5.74-9.94"></path>
+        <path d="M9.69 16l5.74-9.94"></path>
+      </svg>
+    </div>
+    <h3>Efficacité Reconnu</h3>
+    <p>Utilisé depuis l'Antiquité pour ses vertus apaisantes et purifiantes, il convient parfaitement aux peaux sensibles et exigeantes.</p>
+  </div>
+</div>
+
+
           {/* Affichage des produits ou message de chargement/erreur */}
           {loading ? (
             <div className={styles.loadingState}>
@@ -438,8 +477,60 @@ export default function Boutique() {
                         </div>
                         <div className={styles.productPrice}>{product.price ? `${product.price.toFixed(2)} €` : 'Prix indisponible'}</div>
                         <p className={styles.productDescription}>
-                          {product.description || 'Aucune description disponible'}
-                        </p>
+  {(product.description || 'Aucune description disponible').length > 180 
+    ? (product.description || 'Aucune description disponible').substring(0, 180) + '...' 
+    : (product.description || 'Aucune description disponible')}
+</p>
+                        <div className={styles.productInfoSections}>
+  {/* Section "À qui est destiné ce savon" */}
+  <div className={styles.usageTipsContainer}>
+    <div className={styles.usageTipsHeader}>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.usageTipsIcon}>
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+      </svg>
+      <span>À qui est destiné ce savon</span>
+    </div>
+    <div className={styles.usageTipsContent}>
+      {product.usageTips ? (
+        <ul className={styles.benefitsList}>
+          {product.usageTips.split('\n').map((item, index) => (
+            // Transformer chaque ligne du texte en élément de liste
+            item.trim() && <li key={index}>{item.trim()}</li>
+          ))}
+        </ul>
+      ) : (
+        'Aucune information disponible'
+      )}
+    </div>
+  </div>
+  
+  {/* Section "À qui est déconseillé ce savon" */}
+  <div className={styles.notRecommendedContainer}>
+    <div className={styles.notRecommendedHeader}>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.notRecommendedIcon}>
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+        <line x1="12" y1="9" x2="12" y2="13"></line>
+        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+      </svg>
+      <span>À qui est-il déconseillé</span>
+    </div>
+    <div className={styles.notRecommendedContent}>
+      {product.ingredients ? (
+        <ul className={styles.warningsList}>
+          {product.ingredients.split('\n').map((item, index) => (
+            // Transformer chaque ligne du texte en élément de liste
+            item.trim() && <li key={index}>{item.trim()}</li>
+          ))}
+        </ul>
+      ) : (
+        'Aucune information disponible'
+      )}
+    </div>
+  </div>
+</div>
                         <div className={styles.productActions}>
                           <button 
                             className={styles.addToCartButtonLarge}
@@ -493,41 +584,7 @@ export default function Boutique() {
             </>
           )}
           
-          {/* Section des avantages */}
-          <div className={styles.benefitsSection}>
-            <div className={styles.benefitCard}>
-              <div className={styles.benefitIcon}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                </svg>
-              </div>
-              <h3>100% Naturel</h3>
-              <p>Des ingrédients biologiques sélectionnés avec soin pour leur qualité exceptionnelle.</p>
-            </div>
-            
-            <div className={styles.benefitCard}>
-              <div className={styles.benefitIcon}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                  <circle cx="12" cy="10" r="3"></circle>
-                </svg>
-              </div>
-              <h3>Fabrication Française</h3>
-              <p>Tous nos produits sont fabriqués à la main en France dans notre atelier local.</p>
-            </div>
-            
-            <div className={styles.benefitCard}>
-              <div className={styles.benefitIcon}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
-                  <line x1="4" y1="22" x2="4" y2="15"></line>
-                </svg>
-              </div>
-              <h3>Écologique</h3>
-              <p>Zéro déchet, emballages biodégradables et processus de fabrication respectueux de l'environnement.</p>
-            </div>
-          </div>
+   
           
           {/* Section de témoignages */}
           <div className={styles.testimonialsSection}>

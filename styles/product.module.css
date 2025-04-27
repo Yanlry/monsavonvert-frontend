@@ -1194,7 +1194,7 @@
 /* Ancien style pour les onglets */
 .tabsSection {
   max-width: 1200px;
-  margin: var(--spacing-3xl) auto;
+  margin: var(--spacing-xs) auto;
   padding: 0 var(--spacing-xl);
 }
 
@@ -1233,6 +1233,140 @@
   animation: fadeIn 0.5s ease;
 }
 
+/* Style pour le titre "Destiné pour" avec icône */
+.destineTitleContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.destineTitleContainer h4 {
+  margin: 0;
+  font-weight: 500;
+  color: #2e7d32;
+}
+
+/* Style pour l'icône Destiné pour */
+.destineIcon {
+  color: #2e7d32; /* Couleur verte */
+}
+
+/* Style pour l'icône Déconseillé pour */
+.deconseilIcon {
+  color: #D14836; /* Couleur rouge */
+}
+
+/* Style pour les carrés verts */
+.benefitItem {
+  background-color: rgba(85, 113, 83, 0.1);
+  border: 1px solid rgba(85, 113, 83, 0.3);
+  color: #557153;
+}
+
+/* Style pour les carrés rouges */
+.warningItem {
+  background-color: rgba(209, 72, 54, 0.1);
+  border: 1px solid rgba(209, 72, 54, 0.3);
+  color: #D14836;
+}
+
+/* Style pour l'icône destiné pour (cercle vert) */
+.descriptionIconGreen {
+  background-color: #e8f5e9;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2e7d32;
+  flex-shrink: 0;
+}
+
+/* Style pour l'icône déconseillé pour (cercle rouge) */
+.descriptionIconRed {
+  background-color: #fdeded;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #D14836;
+  flex-shrink: 0;
+}
+
+/* H4 vert pour "Destiné pour" */
+.descriptionTextGreen h4 {
+  color: #2e7d32;
+}
+
+/* H4 rouge pour "Déconseillé pour" */
+.descriptionTextRed h4 {
+  color: #D14836;
+}
+
+/* Style pour l'icône verte (check) */
+.destineIcon {
+  color: #2e7d32;
+}
+
+/* Style pour l'icône rouge (X) */
+.deconseilIcon {
+  color: #D14836;
+}
+
+/* Style pour les carrés verts */
+.benefitItem {
+  background-color: rgba(85, 113, 83, 0.1);
+  border: 1px solid rgba(85, 113, 83, 0.3);
+  color: #557153;
+}
+
+/* Style pour les carrés rouges */
+.warningItem {
+  background-color: rgba(209, 72, 54, 0.1);
+  border: 1px solid rgba(209, 72, 54, 0.3);
+  color: #D14836;
+}
+/* Styles pour les bénéfices */
+.usageBenefits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.usageBenefit {
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+}
+/* Style pour le titre "Déconseillé pour" avec icône */
+.deconseilTitleContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.deconseilTitleContainer h4 {
+  margin: 0;
+  font-weight: 500;
+  color: #D14836;
+}
+
+.deconseilIcon {
+  color: #D14836;
+}
+
+/* Enlever le surlignement vert pour les bienfaits clés */
+.benefitsList li {
+  background-color: transparent !important;
+  border: none !important;
+}
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }

@@ -260,6 +260,63 @@
     z-index: 50;
   }
   
+  /* Ajoute ces styles à ton fichier header-admin.module.css */
+
+/* Style amélioré pour l'utilisateur connecté */
+.userAccountConnected {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1rem 0.4rem 0.4rem;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #4CAF50, #8BC34A);
+  color: white;
+  text-decoration: none;
+  box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+  transition: all 0.3s ease;
+}
+
+.userAccountConnected:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(76, 175, 80, 0.4);
+}
+
+.userAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+.userInfoWrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.welcomeText {
+  font-size: 10px;
+  opacity: 0.9;
+}
+
+.userName {
+  font-weight: bold;
+  font-size: 14px;
+}
+
   /* Media queries */
   @media (max-width: 1024px) {
     .headerContent {

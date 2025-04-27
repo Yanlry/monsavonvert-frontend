@@ -486,164 +486,69 @@ export default function ProductDetail({ product }) {
 
                   {/* Livraison et garanties */}
                   <div className={styles.productExtraInfo}>
-                    <div className={styles.infoItem}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <rect x="1" y="3" width="15" height="13"></rect>
-                        <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
-                        <circle cx="5.5" cy="18.5" r="2.5"></circle>
-                        <circle cx="18.5" cy="18.5" r="2.5"></circle>
-                      </svg>
-                      <div>
-                        <h4>Livraison offerte</h4>
-                        <p>À partir de 29€ d'achats</p>
-                      </div>
-                    </div>
-                    <div className={styles.infoItem}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="8.5" cy="7" r="4"></circle>
-                        <line x1="20" y1="8" x2="20" y2="14"></line>
-                        <line x1="23" y1="11" x2="17" y2="11"></line>
-                      </svg>
-                      <div>
-                        <h4>Fabriqué en France</h4>
-                        <p>Dans notre atelier artisanal</p>
-                      </div>
-                    </div>
-                    <div className={styles.infoItem}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                      </svg>
-                      <div>
-                        <h4>Garantie satisfait</h4>
-                        <p>30 jours pour changer d'avis</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Partage */}
-                  <div className={styles.productShare}>
-                    <span>Partager :</span>
-                    <div className={styles.shareLinks}>
-                      <a
-                        href="#"
-                        className={styles.shareLink}
-                        aria-label="Partager sur Facebook"
-                      >
-                        <svg
-                          viewBox="0 0 24 24"
-                          width="20"
-                          height="20"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          fill="none"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-                        </svg>
-                      </a>
-                      <a
-                        href="#"
-                        className={styles.shareLink}
-                        aria-label="Partager sur Instagram"
-                      >
-                        <svg
-                          viewBox="0 0 24 24"
-                          width="20"
-                          height="20"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          fill="none"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <rect
-                            x="2"
-                            y="2"
-                            width="20"
-                            height="20"
-                            rx="5"
-                            ry="5"
-                          ></rect>
-                          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                        </svg>
-                      </a>
-
-                      <svg
-                        viewBox="0 0 24 24"
-                        width="20"
-                        height="20"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        fill="none"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <rect
-                          x="2"
-                          y="2"
-                          width="20"
-                          height="20"
-                          rx="5"
-                          ry="5"
-                        ></rect>
-                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                      </svg>
-                      <a
-                        href="#"
-                        className={styles.shareLink}
-                        aria-label="Partager sur Pinterest"
-                      >
-                        <svg
-                          viewBox="0 0 24 24"
-                          width="20"
-                          height="20"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          fill="none"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M8 12a4 4 0 1 1 8 0 4 4 0 0 1-8 0zm2-6h4"></path>
-                          <path d="M9 18l3-3 3 3"></path>
-                          <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"></path>
-                        </svg>
-                      </a>
-                    </div>
-                  </div>
+  <div className={styles.infoItem}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="1" y="3" width="15" height="13"></rect>
+      <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+      <circle cx="5.5" cy="18.5" r="2.5"></circle>
+      <circle cx="18.5" cy="18.5" r="2.5"></circle>
+    </svg>
+    <div>
+      <h4>Livraison offerte</h4>
+      <p>À partir de 29€ d'achats</p>
+    </div>
+  </div>
+  <div className={styles.infoItem}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+    </svg>
+    <div>
+      <h4>Fabriqué en Syrie</h4>
+      <p>Selon la tradition ancestrale</p>
+    </div>
+  </div>
+  <div className={styles.infoItem}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+      <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+      <line x1="12" y1="22.08" x2="12" y2="12"></line>
+    </svg>
+    <div>
+      <h4>Saponification à froid</h4>
+      <p>Préserve les propriétés</p>
+    </div>
+  </div>
+</div>
                 </div>
               </div>
             </div>
@@ -761,38 +666,89 @@ export default function ProductDetail({ product }) {
                     </div>
                   </div>
 
-                  <div className={styles.descriptionSection}>
-                    <div className={styles.descriptionIcon}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <path d="M12 8v4l3 3"></path>
-                      </svg>
-                    </div>
-                    <div className={styles.descriptionText}>
-                      <h4>Utilisez régulièrement pour</h4>
-                      <div className={styles.usageBenefits}>
-                        <div className={styles.usageBenefit}>
-                          <span>Nettoyage en profondeur</span>
-                        </div>
-                        <div className={styles.usageBenefit}>
-                          <span>Hydratation naturelle</span>
-                        </div>
-                        <div className={styles.usageBenefit}>
-                          <span>Soin de la peau quotidien</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+            {/* Section "Destiné pour" avec l'icône de check */}
+{/* Section "Destiné pour" avec l'icône de check */}
+<div className={styles.descriptionSection}>
+  <div className={styles.descriptionIconGreen}>
+    {/* Icône de check verte */}
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={styles.destineIcon}
+    >
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+    </svg>
+  </div>
+  <div className={`${styles.descriptionText} ${styles.descriptionTextGreen}`}>
+    <h4>Destiné pour</h4>
+    <div className={styles.usageBenefits}>
+      {product.usageTips ? (
+        // Split le texte à chaque retour à la ligne et crée un carré pour chaque ligne
+        product.usageTips.split('\n').map((item, index) => (
+          item.trim() && (
+            <div key={index} className={`${styles.usageBenefit} ${styles.benefitItem}`}>
+              <span>{item.trim()}</span>
+            </div>
+          )
+        ))
+      ) : (
+        <div className={`${styles.usageBenefit} ${styles.benefitItem}`}>
+          <span>Aucune information disponible</span>
+        </div>
+      )}
+    </div>
+  </div>
+</div>
+
+{/* Section "Déconseillé pour" avec l'icône X */}
+<div className={styles.descriptionSection}>
+  <div className={styles.descriptionIconRed}>
+    {/* Icône de croix rouge */}
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={styles.deconseilIcon}
+    >
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="15" y1="9" x2="9" y2="15"></line>
+      <line x1="9" y1="9" x2="15" y2="15"></line>
+    </svg>
+  </div>
+  <div className={`${styles.descriptionText} ${styles.descriptionTextRed}`}>
+    <h4>Déconseillé pour</h4>
+    <div className={styles.usageBenefits}>
+      {product.ingredients ? (
+        // Split le texte à chaque retour à la ligne et crée un carré pour chaque ligne
+        product.ingredients.split('\n').map((item, index) => (
+          item.trim() && (
+            <div key={index} className={`${styles.usageBenefit} ${styles.warningItem}`}>
+              <span>{item.trim()}</span>
+            </div>
+          )
+        ))
+      ) : (
+        <div className={`${styles.usageBenefit} ${styles.warningItem}`}>
+          <span>Aucune information disponible</span>
+        </div>
+      )}
+    </div>
+  </div>
+</div>
                 </div>
               </div>
             </div>
@@ -831,131 +787,130 @@ export default function ProductDetail({ product }) {
                   </div>
 
                   <div className={styles.ingredientsList}>
-                        <div className={styles.ingredientCard}>
-                          <div className={styles.ingredientIcon}>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="20"
-                              height="20"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                            </svg>
-                          </div>
-                          <div className={styles.ingredientInfo}>
-                            <h5>Huile d'olive</h5>
-                            <p>
-                              Hydratante et nourrissante, apporte douceur et
-                              onctuosité au savon
-                            </p>
-                          </div>
-                        </div>
+                    <div className={styles.ingredientCard}>
+                      <div className={styles.ingredientIcon}>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                      </div>
+                      <div className={styles.ingredientInfo}>
+                        <h5>Huile d'olive</h5>
+                        <p>
+                          Hydratante et nourrissante, apporte douceur et
+                          onctuosité au savon
+                        </p>
+                      </div>
+                    </div>
 
-                        <div className={styles.ingredientCard}>
-                          <div className={styles.ingredientIcon}>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="20"
-                              height="20"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                            </svg>
-                          </div>
-                          <div className={styles.ingredientInfo}>
-                            <h5>Huile de baies de laurier</h5>
-                            <p>
-                              Propriétés antibactériennes et apaisantes, parfum
-                              subtil et naturel
-                            </p>
-                          </div>
-                        </div>
+                    <div className={styles.ingredientCard}>
+                      <div className={styles.ingredientIcon}>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                      </div>
+                      <div className={styles.ingredientInfo}>
+                        <h5>Huile de baies de laurier</h5>
+                        <p>
+                          Propriétés antibactériennes et apaisantes, parfum
+                          subtil et naturel
+                        </p>
+                      </div>
+                    </div>
 
-                        <div className={styles.ingredientCard}>
-                          <div className={styles.ingredientIcon}>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="20"
-                              height="20"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                            </svg>
-                          </div>
-                          <div className={styles.ingredientInfo}>
-                            <h5>Eau</h5>
-                            <p>
-                              Purifiée et de qualité supérieure pour la
-                              fabrication de nos savons
-                            </p>
-                          </div>
-                        </div>
+                    <div className={styles.ingredientCard}>
+                      <div className={styles.ingredientIcon}>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                      </div>
+                      <div className={styles.ingredientInfo}>
+                        <h5>Eau</h5>
+                        <p>
+                          Purifiée et de qualité supérieure pour la fabrication
+                          de nos savons
+                        </p>
+                      </div>
+                    </div>
 
-                        <div className={styles.ingredientCard}>
-                          <div className={styles.ingredientIcon}>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="20"
-                              height="20"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                            </svg>
-                          </div>
-                          <div className={styles.ingredientInfo}>
-                            <h5>Sodium hydroxyde</h5>
-                            <p>
-                              Agent de saponification, transforme les huiles en
-                              savon, entièrement neutralisé dans le produit
-                              final
-                            </p>
-                          </div>
-                        </div>
+                    <div className={styles.ingredientCard}>
+                      <div className={styles.ingredientIcon}>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                      </div>
+                      <div className={styles.ingredientInfo}>
+                        <h5>Sodium hydroxyde</h5>
+                        <p>
+                          Agent de saponification, transforme les huiles en
+                          savon, entièrement neutralisé dans le produit final
+                        </p>
+                      </div>
+                    </div>
 
-                        <div className={styles.ingredientCard}>
-                          <div className={styles.ingredientIcon}>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="20"
-                              height="20"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                            </svg>
-                          </div>
-                          <div className={styles.ingredientInfo}>
-                            <h5>Sodium chloride</h5>
-                            <p>
-                              Améliore la dureté du savon et agit comme exfoliant
-                              naturel pour une peau douce et lisse
-                            </p>
-                          </div>
-                        </div>
+                    <div className={styles.ingredientCard}>
+                      <div className={styles.ingredientIcon}>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                      </div>
+                      <div className={styles.ingredientInfo}>
+                        <h5>Sodium chloride</h5>
+                        <p>
+                          Améliore la dureté du savon et agit comme exfoliant
+                          naturel pour une peau douce et lisse
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
                   <div className={styles.ingredientsFooter}>
