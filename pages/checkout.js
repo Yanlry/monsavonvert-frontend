@@ -1226,116 +1226,110 @@ const handleCheckout = async () => {
 
                       {/* Si l'utilisateur est déjà connecté, afficher ses informations */}
                       {user ? (
-                        <div className={styles.userConnected}>
-                          <div className={styles.userInfoBox}>
-                            <div className={styles.userInfoHeader}>
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="12" cy="7" r="4"></circle>
-                              </svg>
-                              <h3>Vous êtes connecté</h3>
-                            </div>
-                            <div className={styles.userInfoContent}>
-                              <p>
-                                <strong>Nom :</strong> {user.firstName || ""}{" "}
-                                {user.lastName || ""}
-                              </p>
-                              <p>
-                                <strong>Email :</strong> {user.email || ""}
-                              </p>
-                              <p>
-                                <strong>Adresse :</strong>{" "}
-                                {user.address
-                                  ? `${user.address}, ${
-                                      user.postalCode || ""
-                                    } ${user.city || ""}`
-                                  : user.addresses && user.addresses.length > 0
-                                  ? `${user.addresses[0].street}, ${user.addresses[0].postalCode} ${user.addresses[0].city}`
-                                  : "Non renseignée"}
-                              </p>
-                              <p>
-                                <strong>Téléphone :</strong>{" "}
-                                {user.phone || "Non renseigné"}
-                              </p>
-                              {console.log(
-                                "Données affichées dans le bloc utilisateur:",
-                                user
-                              )}
-                            </div>
-                            {/* MISE À JOUR: Nouveau style pour le bouton de déconnexion */}
-                            <button
-                              className={styles.logoutButton}
-                              onClick={handleLogout}
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="18"
-                                height="18"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                                <polyline points="16 17 21 12 16 7"></polyline>
-                                <line x1="21" y1="12" x2="9" y2="12"></line>
-                              </svg>
-                              Se déconnecter
-                            </button>
-                          </div>
-
-                          <div className={styles.formActions}>
-                            <Link href="/cart" className={styles.backButton}>
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <line x1="19" y1="12" x2="5" y2="12"></line>
-                                <polyline points="12 19 5 12 12 5"></polyline>
-                              </svg>
-                              Retour au panier
-                            </Link>
-                            <button
-                              onClick={goToNextStep}
-                              className={`${styles.button} ${styles.primaryButton}`}
-                            >
-                              Continuer
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                                <polyline points="12 5 19 12 12 19"></polyline>
-                              </svg>
-                            </button>
-                          </div>
-                        </div>
+  <div className={styles.userCard}>
+    {/* En-tête avec avatar et statut */}
+    <div className={styles.userCardHeader}>
+      <div className={styles.userAvatar}>
+        {/* Utilisation des initiales de l'utilisateur comme avatar */}
+        {user.firstName && user.lastName 
+          ? `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`
+          : "👤"}
+      </div>
+      <div className={styles.userStatus}>
+        <span className={styles.statusDot}></span>
+        Connecté
+      </div>
+    </div>
+    
+    {/* Nom de l'utilisateur en grand */}
+    <h2 className={styles.userName}>
+      {user.firstName || ""} {user.lastName || ""}
+    </h2>
+    
+    {/* Liste des informations utilisateur */}
+    <div className={styles.userInfoList}>
+      <div className={styles.infoItem}>
+        <div className={styles.infoIcon}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5C2 7 4 5 6.5 5H18c2.2 0 4 1.8 4 4v8Z"></path>
+            <polyline points="15,9 18,9 18,11"></polyline>
+            <path d="M2 9.5V9a3 3 0 0 1 3-3h1.5"></path>
+            <path d="M18 5V3"></path>
+            <path d="M2 13h20"></path>
+          </svg>
+        </div>
+        <div className={styles.infoContent}>
+          <span className={styles.infoLabel}>Email</span>
+          <span className={styles.infoValue}>{user.email || "Non renseigné"}</span>
+        </div>
+      </div>
+      
+      <div className={styles.infoItem}>
+        <div className={styles.infoIcon}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+        </div>
+        <div className={styles.infoContent}>
+          <span className={styles.infoLabel}>Adresse</span>
+          <span className={styles.infoValue}>
+            {user.address
+              ? `${user.address}, ${user.postalCode || ""} ${user.city || ""}`
+              : user.addresses && user.addresses.length > 0
+              ? `${user.addresses[0].street}, ${user.addresses[0].postalCode} ${user.addresses[0].city}`
+              : "Non renseignée"}
+          </span>
+        </div>
+      </div>
+      
+      <div className={styles.infoItem}>
+        <div className={styles.infoIcon}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+          </svg>
+        </div>
+        <div className={styles.infoContent}>
+          <span className={styles.infoLabel}>Téléphone</span>
+          <span className={styles.infoValue}>{user.phone || "Non renseigné"}</span>
+        </div>
+      </div>
+    </div>
+    
+    {/* Barre d'actions */}
+    <div className={styles.userActions}>
+      <button className={styles.logoutButton} onClick={handleLogout}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        Déconnexion
+      </button>
+    </div>
+    
+    {/* Boutons de navigation */}
+    <div className={styles.navigationButtons}>
+      <Link href="/cart" className={styles.backButton}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Retour au panier
+      </Link>
+      
+      <button onClick={goToNextStep} className={styles.continueButton}>
+        Continuer
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </button>
+    </div>
+    
+    {/* Log pour débogage - à enlever en production */}
+    {console.log("Données affichées dans le bloc utilisateur:", user)}
+  </div>
                       ) : (
                         <>
                           {/* Onglets pour choisir entre inscription et connexion */}

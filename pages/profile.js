@@ -191,56 +191,57 @@ export default function Profile() {
     setShowAddressModal(false);
   };
 
-// NOUVELLE FONCTION: Récupérer les commandes de l'utilisateur
-const fetchUserOrders = async (userId) => {
-  try {
-    console.log("🔍 Récupération des commandes pour l'utilisateur:", userId);
-    
-    // Obtenir le token d'authentification
-    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-    
-    if (!token) {
-      console.error("Token d'authentification non trouvé");
-      return;
-    }
-    
-    // Appel à l'API pour récupérer les commandes
-    const response = await fetch(`${API_URL}/orders/user/${userId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
+  // NOUVELLE FONCTION: Récupérer les commandes de l'utilisateur
+  const fetchUserOrders = async (userId) => {
+    try {
+      console.log("🔍 Récupération des commandes pour l'utilisateur:", userId);
+
+      // Obtenir le token d'authentification
+      const token =
+        localStorage.getItem("token") || sessionStorage.getItem("token");
+
+      if (!token) {
+        console.error("Token d'authentification non trouvé");
+        return;
       }
-    });
-    
-    console.log("Statut de la réponse:", response.status);
-    
-    if (!response.ok) {
-      throw new Error(`Erreur HTTP: ${response.status}`);
+
+      // Appel à l'API pour récupérer les commandes
+      const response = await fetch(`${API_URL}/orders/user/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log("Statut de la réponse:", response.status);
+
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Données reçues:", data);
+
+      if (data.result) {
+        console.log("✅ Commandes récupérées:", data.orders);
+
+        // Formater les commandes pour l'affichage
+        const formattedOrders = data.orders.map((order) => ({
+          id: order._id,
+          date: new Date(order.createdAt).toLocaleDateString("fr-FR"),
+          status: order.status,
+          statusLabel: getStatusLabel(order.status),
+          total: order.totalAmount,
+          items: order.items,
+        }));
+
+        setUserOrders(formattedOrders);
+      } else {
+        console.error("❌ Erreur API:", data.error);
+      }
+    } catch (error) {
+      console.error("❌ Erreur lors de la récupération des commandes:", error);
     }
-    
-    const data = await response.json();
-    console.log("Données reçues:", data);
-    
-    if (data.result) {
-      console.log("✅ Commandes récupérées:", data.orders);
-      
-      // Formater les commandes pour l'affichage
-      const formattedOrders = data.orders.map(order => ({
-        id: order._id,
-        date: new Date(order.createdAt).toLocaleDateString('fr-FR'),
-        status: order.status,
-        statusLabel: getStatusLabel(order.status),
-        total: order.totalAmount,
-        items: order.items
-      }));
-      
-      setUserOrders(formattedOrders);
-    } else {
-      console.error("❌ Erreur API:", data.error);
-    }
-  } catch (error) {
-    console.error("❌ Erreur lors de la récupération des commandes:", error);
-  }
-};
+  };
 
   // Fonction pour convertir le statut en libellé
   const getStatusLabel = (status) => {
@@ -250,9 +251,9 @@ const fetchUserOrders = async (userId) => {
       shipped: "Expédié",
       delivered: "Livré",
       completed: "Terminé",
-      cancelled: "Annulé"
+      cancelled: "Annulé",
     };
-    
+
     return statusMap[status] || "Inconnu";
   };
 
@@ -319,7 +320,7 @@ const fetchUserOrders = async (userId) => {
             setIsSubscribedToNewsletter(
               data.user.isSubscribedToNewsletter || false
             );
-            
+
             // Récupérer les commandes de l'utilisateur
             await fetchUserOrders(storedUser._id);
           } else {
@@ -784,17 +785,25 @@ const fetchUserOrders = async (userId) => {
               <div className={styles.orderModalInfo}>
                 <div className={styles.orderModalInfoItem}>
                   <span className={styles.orderModalLabel}>Date :</span>
-                  <span className={styles.orderModalValue}>{selectedOrder.date}</span>
+                  <span className={styles.orderModalValue}>
+                    {selectedOrder.date}
+                  </span>
                 </div>
                 <div className={styles.orderModalInfoItem}>
                   <span className={styles.orderModalLabel}>Statut :</span>
-                  <span className={`${styles.orderModalStatus} ${getStatusClass(selectedOrder.status)}`}>
+                  <span
+                    className={`${styles.orderModalStatus} ${getStatusClass(
+                      selectedOrder.status
+                    )}`}
+                  >
                     {selectedOrder.statusLabel}
                   </span>
                 </div>
                 <div className={styles.orderModalInfoItem}>
                   <span className={styles.orderModalLabel}>Total :</span>
-                  <span className={styles.orderModalValue}>{selectedOrder.total.toFixed(2)} €</span>
+                  <span className={styles.orderModalValue}>
+                    {selectedOrder.total.toFixed(2)} €
+                  </span>
                 </div>
               </div>
 
@@ -822,7 +831,14 @@ const fetchUserOrders = async (userId) => {
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                               >
-                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <rect
+                                  x="3"
+                                  y="3"
+                                  width="18"
+                                  height="18"
+                                  rx="2"
+                                  ry="2"
+                                ></rect>
                                 <circle cx="8.5" cy="8.5" r="1.5"></circle>
                                 <polyline points="21 15 16 10 5 21"></polyline>
                               </svg>
@@ -830,11 +846,17 @@ const fetchUserOrders = async (userId) => {
                           )}
                         </div>
                         <div className={styles.orderModalItemDetails}>
-                          <h5 className={styles.orderModalItemName}>{item.name}</h5>
+                          <h5 className={styles.orderModalItemName}>
+                            {item.name}
+                          </h5>
                           <div className={styles.orderModalItemSpecs}>
-                            <span className={styles.orderModalItemQuantity}>Quantité: {item.quantity}</span>
+                            <span className={styles.orderModalItemQuantity}>
+                              Quantité: {item.quantity}
+                            </span>
                             <span className={styles.orderModalItemPrice}>
-                              {item.price ? `${item.price.toFixed(2)} €` : "Prix non disponible"}
+                              {item.price
+                                ? `${item.price.toFixed(2)} €`
+                                : "Prix non disponible"}
                             </span>
                           </div>
                         </div>
@@ -842,7 +864,9 @@ const fetchUserOrders = async (userId) => {
                     ))}
                   </div>
                 ) : (
-                  <p className={styles.orderModalEmptyMessage}>Aucun article trouvé pour cette commande.</p>
+                  <p className={styles.orderModalEmptyMessage}>
+                    Aucun article trouvé pour cette commande.
+                  </p>
                 )}
               </div>
 
@@ -851,11 +875,20 @@ const fetchUserOrders = async (userId) => {
               <div className={styles.orderModalSummary}>
                 <div className={styles.orderModalSummaryItem}>
                   <span>Sous-total</span>
-                  <span>{(selectedOrder.total - (selectedOrder.shippingCost || 0)).toFixed(2)} €</span>
+                  <span>
+                    {(
+                      selectedOrder.total - (selectedOrder.shippingCost || 0)
+                    ).toFixed(2)}{" "}
+                    €
+                  </span>
                 </div>
                 <div className={styles.orderModalSummaryItem}>
                   <span>Frais de livraison</span>
-                  <span>{selectedOrder.shippingCost ? `${selectedOrder.shippingCost.toFixed(2)} €` : "Gratuit"}</span>
+                  <span>
+                    {selectedOrder.shippingCost
+                      ? `${selectedOrder.shippingCost.toFixed(2)} €`
+                      : "Gratuit"}
+                  </span>
                 </div>
                 <div className={styles.orderModalSummaryTotal}>
                   <span>Total</span>
@@ -977,29 +1010,7 @@ const fetchUserOrders = async (userId) => {
                         <span>Mes commandes</span>
                       </button>
                     </li>
-                    <li>
-                      <button
-                        className={`${styles.profileNavLink} ${
-                          activeTab === "wishlist" ? styles.active : ""
-                        }`}
-                        onClick={() => setActiveTab("wishlist")}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="18"
-                          height="18"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                        </svg>
-                        <span>Ma liste d'envies</span>
-                      </button>
-                    </li>
+                    <li></li>
                     <li>
                       <button
                         className={`${styles.profileNavLink} ${
@@ -1172,33 +1183,6 @@ const fetchUserOrders = async (userId) => {
                           Voir mes commandes
                         </button>
                       </div>
-
-                      <div className={styles.dashboardCard}>
-                        <div className={styles.cardIcon}>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                          </svg>
-                        </div>
-                        <h3>Liste d'envies</h3>
-                        <p>{wishlist.length} produits favoris</p>
-                        <button
-                          className={styles.cardButton}
-                          onClick={() => setActiveTab("wishlist")}
-                        >
-                          Voir ma liste d'envies
-                        </button>
-                      </div>
-
                       <div className={styles.dashboardCard}>
                         <div className={styles.cardIcon}>
                           <svg
@@ -1225,33 +1209,33 @@ const fetchUserOrders = async (userId) => {
                           Gérer mes adresses
                         </button>
                       </div>
+                    </div>
 
-                      <div className={styles.dashboardCard}>
-                        <div className={styles.cardIcon}>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <circle cx="12" cy="12" r="3"></circle>
-                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                          </svg>
-                        </div>
-                        <h3>Paramètres</h3>
-                        <p>Gérer vos informations personnelles</p>
-                        <button
-                          className={styles.cardButton}
-                          onClick={() => setActiveTab("settings")}
+                    <div className={styles.dashboardCard}>
+                      <div className={styles.cardIcon}>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         >
-                          Modifier mes paramètres
-                        </button>
+                          <circle cx="12" cy="12" r="3"></circle>
+                          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        </svg>
                       </div>
+                      <h3>Paramètres</h3>
+                      <p>Gérer vos informations personnelles</p>
+                      <button
+                        className={styles.cardButton}
+                        onClick={() => setActiveTab("settings")}
+                      >
+                        Modifier mes paramètres
+                      </button>
                     </div>
 
                     <div className={styles.recentOrdersSection}>
@@ -1342,7 +1326,9 @@ const fetchUserOrders = async (userId) => {
                         {userOrders.map((order) => (
                           <div key={order.id} className={styles.orderTableRow}>
                             <div className={styles.orderIdColumn}>
-                              {order.id}
+                              {order.id.length > 4
+                                ? `${order.id.substring(0, 4)} ..`
+                                : order.id}
                             </div>
                             <div className={styles.orderDateColumn}>
                               {order.date}
@@ -1393,92 +1379,7 @@ const fetchUserOrders = async (userId) => {
                         <h3>Aucune commande</h3>
                         <p>Vous n'avez pas encore passé de commande.</p>
                         <Link href="/store" className={styles.emptyStateButton}>
-                            Découvrir nos produits
-                        </Link>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {activeTab === "wishlist" && (
-                  <div className={styles.wishlistTab}>
-                    <div className={styles.tabHeader}>
-                      <h2>Ma liste d'envies</h2>
-                      <p>Retrouvez tous vos produits favoris</p>
-                    </div>
-
-                    {wishlist.length > 0 ? (
-                      <div className={styles.wishlistGrid}>
-                        {wishlist.map((product) => (
-                          <div key={product.id} className={styles.wishlistItem}>
-                            <button className={styles.removeFromWishlist}>
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <line x1="18" y1="6" x2="6" y2="18"></line>
-                                <line x1="6" y1="6" x2="18" y2="18"></line>
-                              </svg>
-                            </button>
-                            <div className={styles.wishlistImageContainer}>
-                              <img
-                                src={product.image}
-                                alt={product.name}
-                                className={styles.wishlistImage}
-                              />
-                            </div>
-                            <div className={styles.wishlistContent}>
-                              <h3 className={styles.wishlistProductName}>
-                                {product.name}
-                              </h3>
-                              <p className={styles.wishlistProductPrice}>
-                                {product.price.toFixed(2)} €
-                              </p>
-                              <div className={styles.wishlistActions}>
-                                <button
-                                  className={styles.addToCartButton}
-                                  disabled={!product.stock}
-                                >
-                                  {product.stock
-                                    ? "Ajouter au panier"
-                                    : "Indisponible"}
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className={styles.emptyState}>
-                        <div className={styles.emptyStateIcon}>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="48"
-                            height="48"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="1"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                          </svg>
-                        </div>
-                        <h3>Liste d'envies vide</h3>
-                        <p>
-                          Vous n'avez pas encore ajouté de produits à votre
-                          liste d'envies.
-                        </p>
-                        <Link href="/store" className={styles.emptyStateButton}>
-                            Découvrir nos produits
+                          Découvrir nos produits
                         </Link>
                       </div>
                     )}
@@ -1852,9 +1753,7 @@ const fetchUserOrders = async (userId) => {
                   passion en France depuis 2018.
                 </p>
                 <div className={styles.footerSocial}>
-                  
                   <a
-                  
                     href="https://facebook.com/monsavonvert"
                     className={styles.socialLink}
                     target="_blank"
@@ -1900,10 +1799,9 @@ const fetchUserOrders = async (userId) => {
                         ry="5"
                       ></rect>
                       <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                      </svg>
-
+                    </svg>
                   </a>
-                      <a
+                  <a
                     href="https://pinterest.com/monsavonvert"
                     className={styles.socialLink}
                     target="_blank"
@@ -1924,7 +1822,6 @@ const fetchUserOrders = async (userId) => {
                       <path d="M9 18l3-3 3 3"></path>
                       <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"></path>
                     </svg>
-
                   </a>
                 </div>
               </div>
