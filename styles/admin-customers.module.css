@@ -1155,7 +1155,6 @@
     color: var(--color-primary);
   }
   
-  /* Responsive */
   @media (max-width: 1200px) {
     .customerStatsCards {
       grid-template-columns: repeat(2, 1fr);
