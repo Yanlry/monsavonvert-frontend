@@ -809,7 +809,7 @@ export default function VertusBienfaits() {
                 <div className={styles.footerLogo}>MonSavonVert</div>
                 <p className={styles.footerAbout}>
                   Savons artisanaux, naturels et écologiques fabriqués avec
-                  passion en France depuis 2018.
+                  passion en Syrie dans l'antique ville d'Alep.
                 </p>
                 <div className={styles.footerSocial}>
                   <a

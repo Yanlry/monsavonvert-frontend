@@ -267,7 +267,7 @@ export default function AboutPage() {
               <div className={styles.footerColumn}>
                 <div className={styles.footerLogo}>MonSavonVert</div>
                 <p className={styles.footerAbout}>
-                  Savons artisanaux, naturels et écologiques fabriqués avec passion en France depuis 2018.
+                  Savons artisanaux, naturels et écologiques fabriqués avec passion en Syrie dans l'antique ville d'Alep.
                 </p>
                 <div className={styles.footerSocial}>
                   <a href="https://facebook.com/monsavonvert" className={styles.socialLink} target="_blank" rel="noopener noreferrer" aria-label="Facebook">
