@@ -325,40 +325,41 @@ export default function Home() {
 
           {/* Bannière de confiance */}
           <section className={styles.trustBanner}>
-            <div className={styles.trustWrapper}>
-              <div className={styles.trustItem}>
-                <div className={styles.trustIcon}>🇸🇾</div>
-                <div className={styles.trustText}>
-                  <span className={styles.trustTitle}>Fabrication</span>
-                  <span className={styles.trustDesc}>Syrienne</span>
-                </div>
-              </div>
-              <div className={styles.trustDivider}></div>
-              <div className={styles.trustItem}>
-                <div className={styles.trustIcon}>🌱</div>
-                <div className={styles.trustText}>
-                  <span className={styles.trustTitle}>Ingrédients</span>
-                  <span className={styles.trustDesc}>naturels</span>
-                </div>
-              </div>
-              <div className={styles.trustDivider}></div>
-              <div className={styles.trustItem}>
-                <div className={styles.trustIcon}>♻️</div>
-                <div className={styles.trustText}>
-                  <span className={styles.trustTitle}>Emballages</span>
-                  <span className={styles.trustDesc}>réduits</span>
-                </div>
-              </div>
-              <div className={styles.trustDivider}></div>
-              <div className={styles.trustItem}>
-                <div className={styles.trustIcon}>📦</div>
-                <div className={styles.trustText}>
-                  <span className={styles.trustTitle}>Livraison offerte</span>
-                  <span className={styles.trustDesc}>dès 29€</span>
-                </div>
-              </div>
-            </div>
-          </section>
+      <div className={styles.trustWrapper}>
+        <div className={styles.trustItem}>
+          <div className={styles.trustIcon}>🇸🇾</div>
+          <div className={styles.trustText}>
+            <span className={styles.trustTitle}>Fabrication</span>
+            <span className={styles.trustDesc}>Syrienne</span>
+          </div>
+        </div>
+        
+        <div className={styles.trustItem}>
+          <div className={styles.trustIcon}>🌱</div>
+          <div className={styles.trustText}>
+            <span className={styles.trustTitle}>Ingrédients</span>
+            <span className={styles.trustDesc}>naturels</span>
+          </div>
+        </div>
+        
+        <div className={styles.trustItem}>
+          <div className={styles.trustIcon}>♻️</div>
+          <div className={styles.trustText}>
+            <span className={styles.trustTitle}>Emballages</span>
+            <span className={styles.trustDesc}>réduits</span>
+          </div>
+        </div>
+        
+        <div className={styles.trustItem}>
+          <div className={styles.trustIcon}>📦</div>
+          <div className={styles.trustText}>
+            <span className={styles.trustTitle}>Livraison offerte</span>
+            <span className={styles.trustDesc}>dès 29€</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
 
           {/* Catégories de produits */}
           <section ref={categoriesRef} className={styles.categoriesSection}>
