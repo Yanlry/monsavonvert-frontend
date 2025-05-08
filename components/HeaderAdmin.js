@@ -1,5 +1,3 @@
-// Chemin du fichier: components/admin/HeaderAdmin.js
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -121,7 +119,7 @@ const HeaderAdmin = ({ userEmail, activePage }) => {
         </nav>
 
         {/* Profil administrateur avec menu déroulant - MODIFIÉ POUR RESSEMBLER AU HEADER PRINCIPAL */}
-        <div className="profileDropdownArea" style={{ position: 'relative' }}>
+        <div className={`profileDropdownArea ${styles.profileDropdownArea}`} style={{ position: 'relative' }}>
           <a href="#" className={styles.userAccountConnected} onClick={toggleProfileMenu} aria-label="Menu admin">
             <div className={styles.userAvatar}>
               <span>A</span>
