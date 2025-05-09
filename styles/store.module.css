@@ -1597,11 +1597,30 @@
   
   /* Ajuste la section des bénéfices pour qu'elle soit plus compacte */
   .benefitsSection {
-    grid-template-columns: repeat(3, 1fr); /* Garde 3 colonnes */
+    display: flex; /* Utilise flex pour le scroll horizontal */
+    overflow-x: auto; /* Permet le défilement horizontal */
     gap: 10px; /* Réduit l'espace entre les éléments */
+    padding-bottom: 10px; /* Espace pour la barre de défilement */
+    /* Indicateur de défilement - petite ombre à droite */
+    background-image: linear-gradient(
+      to right,
+      transparent 0%,
+      transparent 90%,
+      rgba(0, 0, 0, 0.05) 100%
+    );
+    -webkit-overflow-scrolling: touch; /* Pour un défilement fluide sur iOS */
+    scrollbar-width: none; /* Masque la scrollbar sur Firefox */
+  }
+  
+  /* Masque la scrollbar sur Chrome et Safari */
+  .benefitsSection::-webkit-scrollbar {
+    display: none;
   }
   
   .benefitCard {
+    flex: 0 0 auto; /* Ne grandit pas, ne rétrécit pas */
+    width: 150px; /* Largeur fixe */
+    min-width: 120px; /* Largeur minimale */
     padding: var(--spacing-md); /* Réduit le padding */
   }
   
@@ -1733,14 +1752,21 @@
     margin-top: var(--spacing-sm);
   }
   
-  /* Garde les 3 bénéfices sur une ligne mais très compacts */
+  /* Section des bénéfices scrollable horizontalement */
   .benefitsSection {
     display: flex;
-    gap: 5px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 10px;
+    padding-bottom: 10px;
     margin-bottom: 15px;
+    /* Supprime la grille pour permettre le scroll horizontal */
+    grid-template-columns: unset;
   }
   
   .benefitCard {
+    min-width: 140px; /* Largeur minimale pour chaque carte */
+    flex: 0 0 auto; /* Empêche le rétrécissement */
     padding: 10px;
     text-align: center;
   }
@@ -1759,8 +1785,15 @@
     text-overflow: ellipsis;
   }
   
+  /* Affiche un petit paragraphe au lieu de le masquer complètement */
   .benefitCard p {
-    display: none; /* Cache les paragraphes sur très petits écrans */
+    font-size: 10px;
+    line-height: 1.2;
+    max-height: 36px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
   }
   
   /* Grille de produits plus compacte */
@@ -1819,6 +1852,7 @@
     font-size: 12px;
     max-height: 40px;
     overflow: hidden;
+    -webkit-line-clamp: 2;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     margin-bottom: 5px;
@@ -1943,5 +1977,28 @@
   
   .quantityControl {
     transform: scale(0.9);
+  }
+}
+
+/* Indicateur de défilement pour la section des bénéfices */
+.scroll-indicator {
+  display: none; /* Caché par défaut */
+}
+
+@media (max-width: 576px) {
+  .scroll-indicator {
+    display: block;
+    text-align: center;
+    margin-top: 5px;
+    font-size: 10px;
+    color: var(--color-text-light);
+  }
+  
+  /* Petites icônes de flèche pour indiquer qu'on peut scroller */
+  .scroll-indicator::before,
+  .scroll-indicator::after {
+    content: "▸";
+    margin: 0 3px;
+    font-size: 10px;
   }
 }
