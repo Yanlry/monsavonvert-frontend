@@ -1629,9 +1629,9 @@
     margin-bottom: var(--spacing-sm); /* Marge plus petite */
   }
   
+  /* Cache les paragraphes sur mobile */
   .benefitCard p {
-    font-size: 12px; /* Texte plus petit */
-    line-height: 1.4;
+    display: none; /* Cache complètement le paragraphe */
   }
   
   .benefitIcon {
@@ -1785,15 +1785,9 @@
     text-overflow: ellipsis;
   }
   
-  /* Affiche un petit paragraphe au lieu de le masquer complètement */
+  /* Cache explicitement les paragraphes dans les cartes de bénéfices sur mobile */
   .benefitCard p {
-    font-size: 10px;
-    line-height: 1.2;
-    max-height: 36px;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
+    display: none;
   }
   
   /* Grille de produits plus compacte */
@@ -1852,7 +1846,6 @@
     font-size: 12px;
     max-height: 40px;
     overflow: hidden;
-    -webkit-line-clamp: 2;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     margin-bottom: 5px;
