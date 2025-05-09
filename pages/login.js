@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import styles from "../styles/login.module.css";
@@ -266,7 +266,7 @@ export default function Login() {
             <div className={styles.pageHeroContent}>
               <h1 className={styles.pageTitle}>Connexion</h1>
               <div className={styles.pageBreadcrumb}>
-                <Link href="/" >
+                <Link href="/">
                   Accueil
                 </Link>
                 <span className={styles.breadcrumbSeparator}>/</span>
@@ -404,13 +404,13 @@ export default function Login() {
 
                   <div className={styles.loginBoxFooter}>
                     <p>Vous n'avez pas encore de compte ?</p>
-                    <Link href="/register" className={styles.createAccountLink} >
+                    <Link href="/register" className={styles.createAccountLink}>
                         Créer un compte
                     </Link>
                   </div>
                 </div>
 
-                <div className={styles.loginInfo}>
+                <div className={styles.loginInfo} id="login-advantages">
                   <div className={styles.loginInfoContent}>
                     <h2>Avantages de la connexion</h2>
                     <ul className={styles.advantagesList}>
@@ -518,7 +518,7 @@ export default function Login() {
                   passion en Syrie dans l'antique ville d'Alep.
                 </p>
                 <div className={styles.footerSocial}>
-                  <a
+                <a
                     href="https://facebook.com/monsavonvert"
                     className={styles.socialLink}
                     target="_blank"
@@ -716,6 +716,32 @@ export default function Login() {
           </div>
         </footer>
       </div>
+
+      {/* Styles pour masquer la section des avantages sur mobile */}
+      <style jsx global>{`
+        /* Styles pour masquer la section des avantages sur mobile */
+        @media (max-width: 768px) {
+          /* Sélecteur simplifié pour cibler la classe spécifique */
+          #login-advantages {
+            display: none !important;
+          }
+          
+          /* Ces classes sont générées par CSS modules */
+          [class*="loginInfo"] {
+            display: none !important;
+          }
+          
+          /* Ajustements pour le formulaire de connexion */
+          [class*="loginContent"] {
+            grid-template-columns: 1fr !important;
+            max-width: 100%;
+          }
+          
+          [class*="loginBox"] {
+            width: 100%;
+          }
+        }
+      `}</style>
     </>
   );
 }

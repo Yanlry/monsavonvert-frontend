@@ -1192,77 +1192,70 @@
     }
   }
   
-  @media (max-width: 768px) {
-    .headerContent {
-      height: auto;
-      padding: var(--spacing-md);
-      flex-direction: column;
-      gap: var(--spacing-md);
-    }
-    
-    .mainNav {
-      width: 100%;
-      order: 3;
-    }
-    
-    .navList {
-      width: 100%;
-      overflow-x: auto;
-      padding-bottom: var(--spacing-sm);
-    }
-    
-    .pageHeaderContent {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: var(--spacing-md);
-    }
-    
-    .pageActions {
-      width: 100%;
-    }
-    
-    .exportButton {
-      width: 100%;
-      justify-content: center;
-    }
-    
-    .customerStatsCards {
-      grid-template-columns: 1fr;
-    }
-    
-    .detailsGrid {
-      grid-template-columns: 1fr;
-    }
-    
-    .customerDetailActions {
-      flex-direction: column;
-    }
-    
-    .editCustomerButton,
-    .emailCustomerButton,
-    .statusToggleButton,
-    .closeDetailsButton {
-      width: 100%;
-      justify-content: center;
-    }
-    
-    .adminProfile {
-      margin-left: auto;
-    }
-    
-    .adminInfo {
-      display: none;
-    }
-    
-    .formActions {
-      flex-direction: column;
-    }
-    
-    .cancelButton,
-    .submitButton {
-      width: 100%;
-    }
+/* Styles responsives pour les tableaux admin */
+@media (max-width: 768px) {
+  /* On transforme le tableau en affichage vertical */
+  .ordersTable {
+    display: block;
+    box-shadow: none;
+    border: none;
   }
+  
+  .ordersTable thead {
+    display: none;
+  }
+  
+  .ordersTable tbody {
+    display: block;
+  }
+  
+  .ordersTable tbody tr {
+    display: block;
+    margin-bottom: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    background-color: white;
+  }
+  
+  .ordersTable tbody td {
+    display: flex;
+    padding: 10px 15px;
+    text-align: right;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .ordersTable tbody td:last-child {
+    border-bottom: none;
+  }
+  
+  .ordersTable tbody td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    float: left;
+    text-align: left;
+    color: var(--color-text-light);
+  }
+  
+  .ordersTable tbody td:last-of-type {
+    border-bottom: 0;
+  }
+  
+  .orderActions {
+    justify-content: flex-end;
+  }
+  
+  /* Style pour les lignes de détails */
+  .customerDetailsRow td {
+    padding: 0;
+  }
+  
+  .customerDetailsRow td::before {
+    display: none;
+  }
+}
   
   @media (max-width: 480px) {
     .navLink {

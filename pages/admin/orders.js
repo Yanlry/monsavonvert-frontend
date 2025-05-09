@@ -737,13 +737,13 @@ export default function AdminOrders() {
                                 )
                               }
                             >
-                              <td>
+                              <td data-label="Commande">
                                 <span className={styles.orderId}>
                                   {order.id || order._id || 'ID non disponible'}
                                 </span>
                               </td>
-                              <td>{formatDate(order.date || order.createdAt)}</td>
-                              <td>
+                              <td data-label="Date">{formatDate(order.date || order.createdAt)}</td>
+                              <td data-label="Client">
                                 <div className={styles.customerInfo}>
                                   <span className={styles.customerName}>
                                     {order.customer?.name || 'Client non renseigné'}
@@ -753,7 +753,7 @@ export default function AdminOrders() {
                                   </span>
                                 </div>
                               </td>
-                              <td>
+                              <td data-label="Statut">
                                 <span
                                   className={`${styles.orderStatus} ${
                                     styles[order.status] || ""
@@ -762,8 +762,8 @@ export default function AdminOrders() {
                                   {order.statusLabel || 'Statut inconnu'}
                                 </span>
                               </td>
-                              <td>{(order.total || 0).toFixed(2)} €</td>
-                              <td>
+                              <td data-label="Total">{(order.total || 0).toFixed(2)} €</td>
+                              <td data-label="Actions">
                                 <div className={styles.orderActions}>
                                   <button
                                     className={styles.viewOrderButton}
@@ -975,10 +975,10 @@ export default function AdminOrders() {
                                           {order.items && order.items.length > 0 ? (
                                             order.items.map((item, index) => (
                                               <tr key={item.id || index}>
-                                                <td>{item.name || 'Produit inconnu'}</td>
-                                                <td>{(item.price || 0).toFixed(2)} €</td>
-                                                <td>{item.quantity || 0}</td>
-                                                <td>
+                                                <td data-label="Produit">{item.name || 'Produit inconnu'}</td>
+                                                <td data-label="Prix unitaire">{(item.price || 0).toFixed(2)} €</td>
+                                                <td data-label="Quantité">{item.quantity || 0}</td>
+                                                <td data-label="Total">
                                                   {(
                                                     (item.price || 0) * (item.quantity || 0)
                                                   ).toFixed(2)}{" "}

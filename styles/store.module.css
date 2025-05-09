@@ -1520,12 +1520,9 @@
 }
 
 /* Responsive */
-@media (max-width: 480px) {
-  .cartBanner {
-    width: 100%;
-  }
-}
-/* Responsive Design */
+/* Ajoute ces styles à la fin de ton fichier CSS existant */
+
+/* Media queries améliorées pour mobile */
 @media (max-width: 1024px) {
   .headerContent,
   .mainContent {
@@ -1548,25 +1545,31 @@
 
 @media (max-width: 900px) {
   .mainContent {
-    padding-top: 120px;
+    padding-top: 100px; /* Réduit le padding-top */
   }
   
   .storeTitle {
-    font-size: 40px;
+    font-size: 36px; /* Titre plus petit */
+  }
+  
+  .storeSubtitle {
+    font-size: 16px;
+    margin-top: var(--spacing-md);
   }
   
   .enhancedProductGrid {
     grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .benefitsSection,
-  .testimonialCards {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    gap: 15px; /* Réduit l'espace entre les produits */
   }
 }
 
 @media (max-width: 768px) {
+  .mainContent {
+    padding-top: 80px; /* Encore réduit */
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+  }
+  
   .headerContent {
     flex-wrap: wrap;
     padding: var(--spacing-sm) var(--spacing-lg);
@@ -1583,26 +1586,128 @@
     gap: var(--spacing-md);
   }
   
+  .storeHero {
+    padding: var(--spacing-lg) 0;
+    margin-bottom: var(--spacing-lg);
+  }
+  
   .storeTitle {
-    font-size: 32px;
+    font-size: 28px;
   }
   
-  .storeSubtitle {
-    font-size: 16px;
+  /* Ajuste la section des bénéfices pour qu'elle soit plus compacte */
+  .benefitsSection {
+    grid-template-columns: repeat(3, 1fr); /* Garde 3 colonnes */
+    gap: 10px; /* Réduit l'espace entre les éléments */
   }
   
-  .footerBottomContent {
-    flex-direction: column;
-    gap: var(--spacing-lg);
-    text-align: center;
+  .benefitCard {
+    padding: var(--spacing-md); /* Réduit le padding */
   }
   
-  .footerLinks {
-    justify-content: center;
+  .benefitCard h3 {
+    font-size: 16px; /* Titre plus petit */
+    margin-bottom: var(--spacing-sm); /* Marge plus petite */
+  }
+  
+  .benefitCard p {
+    font-size: 12px; /* Texte plus petit */
+    line-height: 1.4;
+  }
+  
+  .benefitIcon {
+    width: 40px; /* Icône plus petite */
+    height: 40px;
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  /* Réduit la taille des cartes de produits */
+  .enhancedProductCard {
+    box-shadow: var(--shadow-sm); /* Ombre plus légère */
+  }
+  
+  .productInfo {
+    padding: var(--spacing-md); /* Réduit le padding */
+  }
+  
+  .productName {
+    font-size: 18px; /* Nom du produit plus petit */
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  .productRating {
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .productPrice {
+    font-size: 20px;
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .productDescription {
+    font-size: 14px;
+    line-height: 1.4;
+    /* Limite la hauteur pour ne pas prendre trop de place */
+    max-height: 60px;
+    overflow: hidden;
+  }
+  
+  /* Réduit l'espace des sections d'info produit */
+  .productInfoSections {
+    gap: 10px;
+  }
+  
+  .usageTipsContainer, 
+  .notRecommendedContainer {
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+  
+  .usageTipsHeader,
+  .notRecommendedHeader {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  
+  .usageTipsContent, 
+  .notRecommendedContent {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  
+  /* Réduit la taille des boutons d'action */
+  .productActions {
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
+  }
+  
+  .addToCartButtonLarge,
+  .viewDetailsButton {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+  
+  /* Ajuste les témoignages */
+  .testimonialCards {
+    display: flex;
+    overflow-x: auto; /* Permet de faire défiler horizontalement */
+    gap: 15px;
+    padding-bottom: 15px; /* Espace pour la barre de défilement */
+  }
+  
+  .testimonialCard {
+    min-width: 250px; /* Largeur minimale */
+    flex: 0 0 80%; /* Ne grandit pas, ne rétrécit pas, occupe 80% de la largeur */
   }
 }
 
 @media (max-width: 576px) {
+  .mainContent {
+    padding-top: 70px;
+    padding-left: var(--spacing-sm);
+    padding-right: var(--spacing-sm);
+  }
+  
   .navList {
     overflow-x: auto;
     gap: var(--spacing-sm);
@@ -1614,12 +1719,163 @@
     white-space: nowrap;
   }
   
-  .enhancedProductGrid,
-  .benefitsSection,
-  .testimonialCards {
-    grid-template-columns: 1fr;
+  /* Configuration optimisée pour mobile */
+  .storeHero {
+    padding: var(--spacing-md) 0;
   }
   
+  .storeTitle {
+    font-size: 24px;
+  }
+  
+  .storeSubtitle {
+    font-size: 14px;
+    margin-top: var(--spacing-sm);
+  }
+  
+  /* Garde les 3 bénéfices sur une ligne mais très compacts */
+  .benefitsSection {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 15px;
+  }
+  
+  .benefitCard {
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .benefitIcon {
+    width: 30px;
+    height: 30px;
+    margin-bottom: 5px;
+  }
+  
+  .benefitCard h3 {
+    font-size: 12px;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .benefitCard p {
+    display: none; /* Cache les paragraphes sur très petits écrans */
+  }
+  
+  /* Grille de produits plus compacte */
+  .enhancedProductGrid {
+    display: grid;
+    grid-template-columns: 1fr; /* Une colonne mais avec des ajustements */
+    gap: 15px;
+  }
+  
+  .enhancedProductCard {
+    display: grid;
+    grid-template-columns: 120px 1fr; /* Image à gauche, infos à droite */
+    height: auto;
+    border-radius: var(--radius-md);
+  }
+  
+  .productImageContainer {
+    grid-row: span 1;
+    aspect-ratio: 1 / 1;
+    border-radius: var(--radius-md) 0 0 var(--radius-md);
+  }
+  
+  .productOverlay {
+    display: none; /* Cache l'overlay sur mobile */
+  }
+  
+  .productInfo {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .productName {
+    font-size: 16px;
+    margin-bottom: 5px;
+  }
+  
+  .productPrice {
+    font-size: 18px;
+    margin-bottom: 5px;
+  }
+  
+  .productRating {
+    margin-bottom: 5px;
+  }
+  
+  .stars {
+    font-size: 12px;
+  }
+  
+  .reviewCount {
+    font-size: 12px;
+  }
+  
+  .productDescription {
+    font-size: 12px;
+    max-height: 40px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    margin-bottom: 5px;
+  }
+  
+  /* Masque complètement ces sections sur mobile pour gagner de la place */
+  .productInfoSections {
+    display: none;
+  }
+  
+  .productActions {
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 5px;
+  }
+  
+  .addToCartButtonLarge,
+  .viewDetailsButton {
+    padding: 8px;
+    font-size: 12px;
+    width: 100%;
+  }
+  
+  /* Ajuste les autres sections */
+  .sectionTitle {
+    font-size: 22px;
+  }
+  
+  .testimonialsSection {
+    margin: 30px 0;
+  }
+  
+  .testimonialCard {
+    min-width: 220px;
+    padding: var(--spacing-md);
+  }
+  
+  .enhancedPromoSection {
+    padding: var(--spacing-lg);
+    margin: var(--spacing-xl) 0;
+  }
+  
+  .promoTitle {
+    font-size: 24px;
+  }
+  
+  .promoText {
+    font-size: 16px;
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .promoButton {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: 14px;
+  }
+  
+  /* Ajuste le footer */
   .footerContent {
     flex-direction: column;
     gap: var(--spacing-xl);
@@ -1629,5 +1885,63 @@
     flex-direction: column;
     align-items: center;
     gap: var(--spacing-md);
+  }
+}
+
+/* Style pour le bouton "retour en haut" - utile sur mobile */
+.scrollToTop {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  z-index: 99;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+}
+
+.scrollToTop.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Amélioration du panier sur mobile */
+@media (max-width: 480px) {
+  .cartBanner {
+    width: 100%;
+  }
+  
+  .cartHeader h2 {
+    font-size: 18px;
+  }
+  
+  .cartItem {
+    padding: 15px 0;
+  }
+  
+  .cartItemImage {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .cartItemName {
+    font-size: 14px;
+  }
+  
+  .cartItemPrice {
+    font-size: 14px;
+  }
+  
+  .quantityControl {
+    transform: scale(0.9);
   }
 }

@@ -1,7 +1,7 @@
 // Chemin du fichier: pages/admin/customers.js
 
 'use client';
-
+import React from 'react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
@@ -547,24 +547,23 @@ export default function AdminCustomers() {
                       </thead>
                       <tbody>
                         {getFilteredCustomers().map(customer => (
-                          <>
+                          <React.Fragment key={customer._id}>
                             <tr 
-                              key={customer._id} 
                               className={styles.customerRow}
                               onClick={() => setExpandedCustomer(expandedCustomer === customer._id ? null : customer._id)}
                             >
                               {/* La cellule ID a été supprimée */}
-                              <td>{customer.firstName || 'Non renseigné'}</td>
-                              <td>{customer.lastName || 'Non renseigné'}</td>
-                              <td>
+                              <td data-label="Prénom">{customer.firstName || 'Non renseigné'}</td>
+                              <td data-label="Nom">{customer.lastName || 'Non renseigné'}</td>
+                              <td data-label="Email">
                                 <a href={`mailto:${customer.email}`} onClick={(e) => e.stopPropagation()} className={styles.customerEmail}>
                                   {customer.email || 'Non renseigné'}
                                 </a>
                               </td>
-                              <td>{customer.phone || 'Non renseigné'}</td>
-                              <td>{customer.city || 'Non renseigné'}</td>
-                              <td>{customer.createdAt ? formatDate(customer.createdAt) : 'Non disponible'}</td>
-                              <td>
+                              <td data-label="Téléphone">{customer.phone || 'Non renseigné'}</td>
+                              <td data-label="Ville">{customer.city || 'Non renseigné'}</td>
+                              <td data-label="Inscription">{customer.createdAt ? formatDate(customer.createdAt) : 'Non disponible'}</td>
+                              <td data-label="Actions">
                                 <div className={styles.orderActions}>
                                   <button 
                                     className={styles.viewOrderButton}
@@ -657,7 +656,7 @@ export default function AdminCustomers() {
                                 </td>
                               </tr>
                             )}
-                          </>
+                          </React.Fragment>
                         ))}
                       </tbody>
                     </table>
@@ -1073,6 +1072,68 @@ export default function AdminCustomers() {
           .statusToggleButton {
             width: 100%;
             justify-content: center;
+          }
+          
+          /* Styles responsives pour le tableau */
+          .ordersTable {
+            display: block;
+            box-shadow: none;
+            border: none;
+          }
+          
+          .ordersTable thead {
+            display: none;
+          }
+          
+          .ordersTable tbody {
+            display: block;
+          }
+          
+          .ordersTable tbody tr {
+            display: block;
+            margin-bottom: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            background-color: white;
+          }
+          
+          .ordersTable tbody td {
+            display: flex;
+            padding: 10px 15px;
+            text-align: right;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f0f0f0;
+          }
+          
+          .ordersTable tbody td:last-child {
+            border-bottom: none;
+          }
+          
+          .ordersTable tbody td::before {
+            content: attr(data-label);
+            font-weight: 600;
+            float: left;
+            text-align: left;
+            color: var(--color-text-light);
+          }
+          
+          .ordersTable tbody td:last-of-type {
+            border-bottom: 0;
+          }
+          
+          .orderActions {
+            justify-content: flex-end;
+          }
+          
+          /* Style pour les lignes de détails */
+          .customerDetailsRow td {
+            padding: 0;
+          }
+          
+          .customerDetailsRow td::before {
+            display: none;
           }
         }
       `}</style>
