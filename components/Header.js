@@ -133,9 +133,6 @@ export default function Header({ cartCount }) {
         <div className={styles.logoContainer}>
           <Link href="/" className={styles.logoLink}>
             <div className={styles.logoWrapper}>
-              <div className={styles.logoIconWrapper}>
-                <span className={styles.logoIcon}>🧼</span>
-              </div>
               <div className={styles.logoTextWrapper}>
                 <span className={styles.logo}>MonSavonVert</span>
                 <span className={styles.logoTagline}>Naturel & Artisanal</span>
