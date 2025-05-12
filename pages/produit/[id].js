@@ -579,7 +579,7 @@ export default function ProductDetail({ product }) {
                 }`}
                 onClick={() => setActiveTab("usage")}
               >
-                Conseils d'utilisation
+                Conseils
               </div>
               <div
                 className={`${styles.tab} ${
