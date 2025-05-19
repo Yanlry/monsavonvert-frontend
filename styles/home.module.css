@@ -1776,9 +1776,7 @@ a:hover .buttonIcon {
   height: 60px;
   object-fit: contain;
   padding: 10px;
-  background-color: var(--bg-light);
   border-radius: 50%;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
 }
 
 .certBadge span {
@@ -1843,7 +1841,6 @@ a:hover .buttonIcon {
     flex-direction: column;
   }
   
-  /* Modifier l'ordre des éléments - image d'abord sur mobile */
   .aboutImageCol {
     order: 1;
   }
