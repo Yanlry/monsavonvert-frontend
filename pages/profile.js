@@ -23,7 +23,6 @@ export default function Profile() {
   const [isSubscribedToNewsletter, setIsSubscribedToNewsletter] =
     useState(false);
 
-  // États pour les mots de passe
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
