@@ -19,9 +19,12 @@ const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const PHONE_REGEX = /^(\+\d{1,3}[- ]?)?\d{9,15}$/; // Format international flexible
 const POSTAL_CODE_REGEX = /^\d{5}$/; // Pour la France (5 chiffres)
 const ADDRESS_REGEX = /^\d+\s+\S+/; // Commence par un numéro suivi d'un espace et du nom de rue
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"; // Assurez-vous que cette variable est définie
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8888";
+
 
 export default function Checkout() {
+  console.log("🔗 URL utilisée pour l'API:", API_URL);
+console.log("🌐 URL complète appelée:", `${API_URL}/api/create-checkout`);
   // État pour le contexte utilisateur global
   const { setUser: setContextUser } = useContext(UserContext);
 
@@ -1003,6 +1006,7 @@ const handleSignup = async () => {
 
   // Fonction pour rediriger vers Stripe Checkout - MODIFIÉE POUR CORRESPONDRE À L'API ACTUELLE
 // Fonction pour rediriger vers Stripe Checkout
+// Fonction pour rediriger vers Stripe Checkout
 const handleCheckout = async () => {
   try {
     // Vérifiez si l'utilisateur est connecté
@@ -1017,6 +1021,10 @@ const handleCheckout = async () => {
 
     setIsLoading(true); // Activer l'indicateur de chargement
     console.log("Préparation de la session Stripe...");
+    
+    // ✅ AJOUT: Log pour voir quelle URL est utilisée
+    console.log("🔗 URL de l'API utilisée:", API_URL);
+    console.log("🌐 URL complète de l'appel:", `${API_URL}/api/create-checkout`);
 
     // Préparer les données pour l'API
     const customerInfo = {
@@ -1031,12 +1039,14 @@ const handleCheckout = async () => {
 
     console.log("Informations client pour Stripe:", customerInfo);
 
-    // MODIFIÉ ICI: Port 8888 au lieu de 3000
+    // ✅ CORRECTION: Appel vers votre backend (local port 8888 ou Vercel)
     const response = await fetch(`${API_URL}/api/create-checkout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      // ✅ AJOUT: credentials pour les cookies si votre backend en utilise
+      credentials: 'include',
       body: JSON.stringify({
         items: cartItems,
         shippingCost: getShippingCost(),
@@ -1049,12 +1059,15 @@ const handleCheckout = async () => {
     // Journaliser la réponse pour le débogage
     console.log("Statut de la réponse Stripe:", response.status);
     
+    // ✅ AMÉLIORATION: Vérifier si la réponse est valide avant de parser le JSON
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("❌ Erreur de réponse du serveur:", response.status, errorText);
+      throw new Error(`Erreur serveur ${response.status}: ${errorText}`);
+    }
+
     const data = await response.json();
     console.log("Réponse de l'API Stripe:", data);
-
-    if (!response.ok) {
-      throw new Error(data.error || "Erreur lors de la création de la session de paiement");
-    }
 
     console.log("Session Stripe créée avec succès, ID:", data.sessionId);
 
@@ -1090,10 +1103,10 @@ const handleCheckout = async () => {
       setShowModal(true);
     }
   } catch (error) {
-    console.error("Erreur lors du processus de paiement:", error);
+    console.error("❌ Erreur lors du processus de paiement:", error);
     setModalTitle("Erreur de paiement");
     setModalMessage(
-      "Une erreur est survenue lors de la préparation du paiement. Veuillez réessayer."
+      `Une erreur est survenue lors de la préparation du paiement: ${error.message}`
     );
     setShowModal(true);
   } finally {
