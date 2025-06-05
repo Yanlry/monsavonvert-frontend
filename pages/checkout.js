@@ -19,7 +19,7 @@ const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const PHONE_REGEX = /^(\+\d{1,3}[- ]?)?\d{9,15}$/; // Format international flexible
 const POSTAL_CODE_REGEX = /^\d{5}$/; // Pour la France (5 chiffres)
 const ADDRESS_REGEX = /^\d+\s+\S+/; // Commence par un numéro suivi d'un espace et du nom de rue
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"; // Assurez-vous que cette variable est définie
 
 export default function Checkout() {
   // État pour le contexte utilisateur global
@@ -1032,7 +1032,7 @@ const handleCheckout = async () => {
     console.log("Informations client pour Stripe:", customerInfo);
 
     // MODIFIÉ ICI: Port 8888 au lieu de 3000
-    const response = await fetch("http://localhost:8888/api/create-checkout", {
+    const response = await fetch(`${API_URL}/api/create-checkout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -94,7 +94,7 @@ export default function Success() {
           }
   
           // Appeler l'API pour associer la commande au client
-          const response = await fetch(`http://localhost:8888/api/confirm-order`, {
+          const response = await fetch(`${API_URL}/api/confirm-order`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
