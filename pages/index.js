@@ -104,13 +104,13 @@ export default function Home() {
   // Slides du hero
   const heroSlides = [
     {
-      image: "/images/5.JPEG",
+      image: "/images/6.JPEG",
       title: "Savons artisanaux, naturels et écologiques",
       subtitle:
         "Découvrez notre collection de soins faits à la main avec des ingrédients biologiques",
     },
     {
-      image: "/images/6.JPEG",
+      image: "/images/5.JPEG",
       title: "Prendre soin de votre peau et de la planète",
       subtitle:
         "Des formules douces et respectueuses pour un bien-être quotidien",
@@ -325,41 +325,40 @@ export default function Home() {
 
           {/* Bannière de confiance */}
           <section className={styles.trustBanner}>
-      <div className={styles.trustWrapper}>
-        <div className={styles.trustItem}>
-          <div className={styles.trustIcon}>🇸🇾</div>
-          <div className={styles.trustText}>
-            <span className={styles.trustTitle}>Fabrication</span>
-            <span className={styles.trustDesc}>Syrienne</span>
-          </div>
-        </div>
-        
-        <div className={styles.trustItem}>
-          <div className={styles.trustIcon}>🌱</div>
-          <div className={styles.trustText}>
-            <span className={styles.trustTitle}>Ingrédients</span>
-            <span className={styles.trustDesc}>naturels</span>
-          </div>
-        </div>
-        
-        <div className={styles.trustItem}>
-          <div className={styles.trustIcon}>♻️</div>
-          <div className={styles.trustText}>
-            <span className={styles.trustTitle}>Emballages</span>
-            <span className={styles.trustDesc}>réduits</span>
-          </div>
-        </div>
-        
-        <div className={styles.trustItem}>
-          <div className={styles.trustIcon}>📦</div>
-          <div className={styles.trustText}>
-            <span className={styles.trustTitle}>Livraison offerte</span>
-            <span className={styles.trustDesc}>dès 29€</span>
-          </div>
-        </div>
-      </div>
-    </section>
+            <div className={styles.trustWrapper}>
+              <div className={styles.trustItem}>
+                <div className={styles.trustIcon}>🇸🇾</div>
+                <div className={styles.trustText}>
+                  <span className={styles.trustTitle}>Fabrication</span>
+                  <span className={styles.trustDesc}>Syrienne</span>
+                </div>
+              </div>
 
+              <div className={styles.trustItem}>
+                <div className={styles.trustIcon}>🌱</div>
+                <div className={styles.trustText}>
+                  <span className={styles.trustTitle}>Ingrédients</span>
+                  <span className={styles.trustDesc}>naturels</span>
+                </div>
+              </div>
+
+              <div className={styles.trustItem}>
+                <div className={styles.trustIcon}>♻️</div>
+                <div className={styles.trustText}>
+                  <span className={styles.trustTitle}>Emballages</span>
+                  <span className={styles.trustDesc}>réduits</span>
+                </div>
+              </div>
+
+              <div className={styles.trustItem}>
+                <div className={styles.trustIcon}>📦</div>
+                <div className={styles.trustText}>
+                  <span className={styles.trustTitle}>Livraison offerte</span>
+                  <span className={styles.trustDesc}>dès 29€</span>
+                </div>
+              </div>
+            </div>
+          </section>
 
           {/* Catégories de produits */}
           <section ref={categoriesRef} className={styles.categoriesSection}>
@@ -563,6 +562,7 @@ export default function Home() {
             <div className={styles.shippingDecorRight}></div>
           </section>
 
+          {/* Histoire de la marque */}
           <section ref={aboutRef} className={styles.aboutSection}>
             <div className={styles.aboutContainer}>
               {/* En-tête centré */}
@@ -645,122 +645,8 @@ export default function Home() {
             </div>
           </section>
 
-          {/* Caractéristiques de la marque */}
-          <section ref={featuresRef} className={styles.featuresSection}>
-            <div className={styles.featuresBgEffect}></div>
-            <div className={styles.featuresContainer}>
-              <div className={styles.featuresHeaderWrap}>
-                <div className={styles.featuresHeader}>
-                  <div className={styles.headerDecorLine}></div>
-                  <span className={styles.environmentTag}>Nos valeurs</span>
-                  <h2 className={styles.featuresHeading}>
-                    Pourquoi choisir{" "}
-                    <span className={styles.headingEmphasis}>MonSavonVert</span>{" "}
-                    ?
-                  </h2>
-                  <p className={styles.featuresSubheading}>
-                    Des produits cosmétiques respectueux de votre peau et de
-                    l'environnement, élaborés avec passion et expertise.
-                  </p>
-                </div>
-              </div>
-
-              <div className={styles.featuresMainContent}>
-                <div className={styles.featuresVisual}>
-                  <div className={styles.featuresCenterpiece}>
-                    <div className={styles.centerpieceInner}>
-                      <img
-                        src="/images/5.JPEG"
-                        alt="Nos valeurs"
-                        className={styles.featuresMainImage}
-                      />
-                      <div className={styles.imageOverlay}></div>
-                    </div>
-                    <div className={styles.centerpieceBorder}></div>
-                    <div className={styles.centerpieceGlow}></div>
-                  </div>
-                </div>
-
-                <div className={styles.featuresCardGrid}>
-                  {brandFeatures.map((feature, index) => (
-                    <div
-                      key={feature.id}
-                      className={`${styles.featureCardNew} ${
-                        styles[`featureCard${index + 1}`]
-                      }`}
-                      style={{ "--delay": `${index * 0.1}s` }}
-                    >
-                      <div className={styles.featureCardGlow}></div>
-                      <div className={styles.featureCardContent}>
-                        <div className={styles.featureIconContainer}>
-                          <div className={styles.featureIconOuter}>
-                            <div className={styles.featureIconInner}>
-                              {feature.icon}
-                            </div>
-                          </div>
-                        </div>
-                        <div className={styles.featureTextContent}>
-                          <h3 className={styles.featureCardHeading}>
-                            {feature.title}
-                          </h3>
-                          <p className={styles.featureCardDescription}>
-                            {feature.description}
-                          </p>
-                        </div>
-                        <div className={styles.featureCardArrow}>
-                          <svg
-                            width="20"
-                            height="20"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M5 12H19"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                            <path
-                              d="M12 5L19 12L12 19"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className={styles.featuresExtraBanner}>
-                <div className={styles.bannerContent}>
-                  <div className={styles.bannerIconWrap}>
-                    <div className={styles.bannerIcon}>✨</div>
-                  </div>
-                  <h3 className={styles.bannerTitle}>
-                    Des savons qui respectent votre peau et la planète
-                  </h3>
-                  <p className={styles.bannerText}>
-                    Nos formules exclusives sont le fruit de recherches
-                    approfondies et d'un savoir-faire traditionnel.
-                  </p>
-                </div>
-                <div className={styles.bannerEffect}></div>
-              </div>
-            </div>
-
-            <div className={styles.featuresAccentShape1}></div>
-            <div className={styles.featuresAccentShape2}></div>
-            <div className={styles.featuresPatternGrid}></div>
-          </section>
-
-          {/* Section Engagement Environnemental */}
-          <section className={styles.environmentSection}>
+             {/* Section Engagement Environnemental */}
+             <section className={styles.environmentSection}>
             <div className={styles.environmentBg}></div>
             <div className={styles.environmentContainer}>
               <div className={styles.environmentHeader}>
@@ -910,6 +796,120 @@ export default function Home() {
 
             <div className={styles.environmentAccentShape1}></div>
             <div className={styles.environmentAccentShape2}></div>
+          </section>
+
+          {/* Caractéristiques de la marque */}
+          <section ref={featuresRef} className={styles.featuresSection}>
+            <div className={styles.featuresBgEffect}></div>
+            <div className={styles.featuresContainer}>
+              <div className={styles.featuresHeaderWrap}>
+                <div className={styles.featuresHeader}>
+                  <div className={styles.headerDecorLine}></div>
+                  <span className={styles.environmentTag}>Nos valeurs</span>
+                  <h2 className={styles.featuresHeading}>
+                    Pourquoi choisir{" "}
+                    <span className={styles.headingEmphasis}>MonSavonVert</span>{" "}
+                    ?
+                  </h2>
+                  <p className={styles.featuresSubheading}>
+                    Des produits cosmétiques respectueux de votre peau et de
+                    l'environnement, élaborés avec passion et expertise.
+                  </p>
+                </div>
+              </div>
+
+              <div className={styles.featuresMainContent}>
+                <div className={styles.featuresVisual}>
+                  <div className={styles.featuresCenterpiece}>
+                    <div className={styles.centerpieceInner}>
+                      <img
+                        src="/images/5.JPEG"
+                        alt="Nos valeurs"
+                        className={styles.featuresMainImage}
+                      />
+                      <div className={styles.imageOverlay}></div>
+                    </div>
+                    <div className={styles.centerpieceBorder}></div>
+                    <div className={styles.centerpieceGlow}></div>
+                  </div>
+                </div>
+
+                <div className={styles.featuresCardGrid}>
+                  {brandFeatures.map((feature, index) => (
+                    <div
+                      key={feature.id}
+                      className={`${styles.featureCardNew} ${
+                        styles[`featureCard${index + 1}`]
+                      }`}
+                      style={{ "--delay": `${index * 0.1}s` }}
+                    >
+                      <div className={styles.featureCardGlow}></div>
+                      <div className={styles.featureCardContent}>
+                        <div className={styles.featureIconContainer}>
+                          <div className={styles.featureIconOuter}>
+                            <div className={styles.featureIconInner}>
+                              {feature.icon}
+                            </div>
+                          </div>
+                        </div>
+                        <div className={styles.featureTextContent}>
+                          <h3 className={styles.featureCardHeading}>
+                            {feature.title}
+                          </h3>
+                          <p className={styles.featureCardDescription}>
+                            {feature.description}
+                          </p>
+                        </div>
+                        <div className={styles.featureCardArrow}>
+                          <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M5 12H19"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                            <path
+                              d="M12 5L19 12L12 19"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className={styles.featuresExtraBanner}>
+                <div className={styles.bannerContent}>
+                  <div className={styles.bannerIconWrap}>
+                    <div className={styles.bannerIcon}>✨</div>
+                  </div>
+                  <h3 className={styles.bannerTitle}>
+                    Des savons qui respectent votre peau et la planète
+                  </h3>
+                  <p className={styles.bannerText}>
+                    Nos formules exclusives sont le fruit de recherches
+                    approfondies et d'un savoir-faire traditionnel.
+                  </p>
+                </div>
+                <div className={styles.bannerEffect}></div>
+              </div>
+            </div>
+
+            <div className={styles.featuresAccentShape1}></div>
+            <div className={styles.featuresAccentShape2}></div>
+            <div className={styles.featuresPatternGrid}></div>
           </section>
 
           {/* Témoignages clients */}

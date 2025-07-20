@@ -993,6 +993,7 @@ useEffect(() => {
           </div>
         </div>
       )}
+
       {/* Modal d'édition de produit */}
       {showEditModal && selectedProduct && (
         <div className="modalOverlay">
@@ -1408,6 +1409,7 @@ useEffect(() => {
           </div>
         </div>
       )}
+
       {/* Modal de notification */}
       {showNotificationModal && (
         <div className="notificationModal">
@@ -1456,6 +1458,7 @@ useEffect(() => {
           </div>
         </div>
       )}
+
       {/* Modal de confirmation */}
       {showConfirmationModal && (
         <div className="modalOverlay">
@@ -1519,6 +1522,7 @@ useEffect(() => {
           </div>
         </div>
       )}
+      
       {/* Styles pour le modal et l'état vide */}
       <style jsx>{`
         /* Style général pour le modal */

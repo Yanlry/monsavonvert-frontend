@@ -221,6 +221,52 @@
   width: 100%;
 }
 
+/* Bouton Acheter maintenant pour la boutique */
+.buyNowButtonLarge {
+  width: 100%;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: var(--color-secondary); /* Couleur jaune/orange comme sur la page produit */
+  color: var(--color-text);
+  border: none;
+  border-radius: var(--radius-xl);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 8px; /* Espacement avec le bouton suivant */
+}
+
+.buyNowButtonLarge:hover {
+  background-color: #e6a000; /* Version plus foncée */
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.buyNowButtonLarge:active {
+  transform: translateY(0);
+}
+
+.buyNowButtonLarge:disabled {
+  background-color: var(--color-muted);
+  color: var(--color-text-light);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Modifier le conteneur des actions pour bien organiser les boutons */
+.productActions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+
 /* Outils utilisateur (recherche, compte, panier) */
 .userTools {
   display: flex;
@@ -1569,7 +1615,10 @@
     padding-left: var(--spacing-md);
     padding-right: var(--spacing-md);
   }
-  
+  .buyNowButtonLarge {
+    font-size: 13px;
+    padding: 10px 16px;
+  }
   .headerContent {
     flex-wrap: wrap;
     padding: var(--spacing-sm) var(--spacing-lg);

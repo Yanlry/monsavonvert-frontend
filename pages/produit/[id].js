@@ -78,6 +78,60 @@ export default function ProductDetail({ product }) {
     }
   };
 
+// Fonction pour acheter directement
+const buyNow = () => {
+  console.log("🛒 Début de l'achat direct");
+  console.log("📦 Produit actuel :", product);
+  console.log("🔢 Quantité sélectionnée :", quantity);
+  
+  // Vérifier la quantité maximum
+  const maxQuantity = Math.min(20, product.stock);
+  if (quantity > maxQuantity) {
+    console.error("❌ Quantité trop élevée :", quantity, "max:", maxQuantity);
+    alert(`Vous ne pouvez acheter que ${maxQuantity} article(s) pour ce produit.`);
+    return;
+  }
+
+  // Créer un panier temporaire avec juste ce produit
+  const directPurchaseItem = {
+    id: product._id,
+    name: product.title,
+    price: product.price,
+    image: product.images[0],
+    quantity: quantity,
+    size: selectedSize, // Si tu utilises les tailles
+  };
+
+  console.log("📦 Produit pour achat direct :", directPurchaseItem);
+
+  // Sauvegarder dans le localStorage pour la page checkout
+  try {
+    // IMPORTANT : Sauvegarder d'abord le type d'achat
+    localStorage.setItem("purchaseType", "direct");
+    console.log("✅ Type d'achat sauvegardé : direct");
+    
+    // Ensuite sauvegarder les données produit
+    localStorage.setItem("directPurchase", JSON.stringify([directPurchaseItem]));
+    console.log("✅ Produit sauvegardé pour achat direct");
+    
+    // Vérifier que ça a bien été sauvegardé
+    const verification1 = localStorage.getItem("purchaseType");
+    const verification2 = localStorage.getItem("directPurchase");
+    console.log("🔍 Vérification purchaseType :", verification1);
+    console.log("🔍 Vérification directPurchase :", verification2);
+    
+    // Attendre un petit délai pour être sûr que localStorage est écrit
+    setTimeout(() => {
+      console.log("🚀 Redirection vers checkout...");
+      router.push("/checkout");
+    }, 100); // 100ms de délai
+    
+  } catch (error) {
+    console.error("❌ Erreur lors de la sauvegarde :", error);
+    alert("Une erreur est survenue. Veuillez réessayer.");
+  }
+};
+
   // Toggle wishlist
   const toggleWishlist = () => {
     setIsWishlisted(!isWishlisted);
@@ -437,52 +491,83 @@ export default function ProductDetail({ product }) {
                   </div>
 
                   {/* Actions */}
-                  <div className={styles.productActions}>
-                    <button
-                      className={styles.addToCartBtn}
-                      onClick={addToCart}
-                      disabled={product.stock <= 0}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <circle cx="9" cy="21" r="1"></circle>
-                        <circle cx="20" cy="21" r="1"></circle>
-                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                      </svg>
-                      {product.stock > 0
-                        ? "Ajouter au panier"
-                        : "Rupture de stock"}
-                    </button>
-                    <button
-                      className={`${styles.wishlistBtn} ${
-                        isWishlisted ? styles.wishlistBtnActive : ""
-                      }`}
-                      onClick={toggleWishlist}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill={isWishlisted ? "currentColor" : "none"}
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                      </svg>
-                    </button>
-                  </div>
+               {/* Actions */}
+<div className={styles.productActions}>
+  {/* Bouton Ajouter au panier (existant) */}
+  <button
+    className={styles.addToCartBtn}
+    onClick={addToCart}
+    disabled={product.stock <= 0}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="9" cy="21" r="1"></circle>
+      <circle cx="20" cy="21" r="1"></circle>
+      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+    </svg>
+    {product.stock > 0
+      ? "Ajouter au panier"
+      : "Rupture de stock"}
+  </button>
+
+  {/* NOUVEAU : Bouton Acheter maintenant */}
+  <button
+    className={styles.buyNowBtn}
+    onClick={buyNow}
+    disabled={product.stock <= 0}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="1" y="3" width="15" height="13"></rect>
+      <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+      <circle cx="5.5" cy="18.5" r="2.5"></circle>
+      <circle cx="18.5" cy="18.5" r="2.5"></circle>
+    </svg>
+    {product.stock > 0
+      ? "Acheter maintenant"
+      : "Rupture de stock"}
+  </button>
+
+  {/* Bouton wishlist (existant) */}
+  <button
+    className={`${styles.wishlistBtn} ${
+      isWishlisted ? styles.wishlistBtnActive : ""
+    }`}
+    onClick={toggleWishlist}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill={isWishlisted ? "currentColor" : "none"}
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+    </svg>
+  </button>
+</div>
 
                   {/* Livraison et garanties */}
                   <div className={styles.productExtraInfo}>

@@ -104,6 +104,58 @@ export default function Boutique() {
     }
   };
 
+  // Fonction pour acheter directement depuis la boutique
+  const buyNow = (product) => {
+    console.log("🛒 Achat direct depuis la boutique");
+    console.log("📦 Produit sélectionné :", product);
+    
+    // Vérifier que le produit est en stock
+    if (product.stock <= 0) {
+      console.error("❌ Produit en rupture de stock");
+      alert("Ce produit n'est plus disponible");
+      return;
+    }
+
+    // Créer un article pour achat direct (quantité 1 par défaut)
+    const directPurchaseItem = {
+      id: product._id,
+      name: product.title,
+      price: product.price,
+      image: product.images && product.images.length > 0 ? product.images[0] : '/images/default-product.png',
+      quantity: 1, // Quantité fixe à 1 depuis la boutique
+      size: 0, // Taille par défaut
+    };
+
+    console.log("📦 Article pour achat direct :", directPurchaseItem);
+
+    // Sauvegarder dans le localStorage pour la page checkout
+    try {
+      // Marquer le type d'achat
+      localStorage.setItem("purchaseType", "direct");
+      console.log("✅ Type d'achat sauvegardé : direct");
+      
+      // Sauvegarder les données produit
+      localStorage.setItem("directPurchase", JSON.stringify([directPurchaseItem]));
+      console.log("✅ Produit sauvegardé pour achat direct");
+      
+      // Vérifier que ça a bien été sauvegardé
+      const verification1 = localStorage.getItem("purchaseType");
+      const verification2 = localStorage.getItem("directPurchase");
+      console.log("🔍 Vérification purchaseType :", verification1);
+      console.log("🔍 Vérification directPurchase :", verification2);
+      
+      // Redirection vers checkout avec un petit délai
+      setTimeout(() => {
+        console.log("🚀 Redirection vers checkout depuis la boutique...");
+        window.location.href = "/checkout"; // Utiliser window.location au lieu de router
+      }, 100);
+      
+    } catch (error) {
+      console.error("❌ Erreur lors de la sauvegarde :", error);
+      alert("Une erreur est survenue. Veuillez réessayer.");
+    }
+  };
+
   useEffect(() => {
     // Marquer que nous sommes côté client
     setIsClient(true);
@@ -531,18 +583,44 @@ export default function Boutique() {
     </div>
   </div>
 </div>
-                        <div className={styles.productActions}>
-                          <button 
-                            className={styles.addToCartButtonLarge}
-                            onClick={() => addToCart(product)}
-                            disabled={product.stock <= 0}
-                          >
-                            {product.stock > 0 ? 'Ajouter au panier' : 'Rupture de stock'}
-                          </button>
-                          <Link href={`/produit/${product._id}`} className={styles.viewDetailsButton}>
-                              Voir les détails
-                          </Link>
-                        </div>
+<div className={styles.productActions}>
+  <button 
+    className={styles.addToCartButtonLarge}
+    onClick={() => addToCart(product)}
+    disabled={product.stock <= 0}
+  >
+    {product.stock > 0 ? 'Ajouter au panier' : 'Rupture de stock'}
+  </button>
+  
+  {/* ⭐ NOUVEAU : Bouton Acheter maintenant */}
+  <button 
+    className={styles.buyNowButtonLarge}
+    onClick={() => buyNow(product)}
+    disabled={product.stock <= 0}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="1" y="3" width="15" height="13"></rect>
+      <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+      <circle cx="5.5" cy="18.5" r="2.5"></circle>
+      <circle cx="18.5" cy="18.5" r="2.5"></circle>
+    </svg>
+    {product.stock > 0 ? 'Acheter maintenant' : 'Rupture de stock'}
+  </button>
+  
+  <Link href={`/produit/${product._id}`} className={styles.viewDetailsButton}>
+    Voir les détails
+  </Link>
+</div>
                       </div>
                     </div>
                   );

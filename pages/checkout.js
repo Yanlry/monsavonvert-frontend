@@ -82,7 +82,7 @@ console.log("🌐 URL complète appelée:", `${API_URL}/api/create-checkout`);
   // État pour les articles du panier
   const [cartItems, setCartItems] = useState([]);
   const [cartCount, setCartCount] = useState(0);
-
+  const [dataLoaded, setDataLoaded] = useState(false);
   // État pour la méthode de livraison
   const [shippingMethod, setShippingMethod] = useState("standard");
 
@@ -117,58 +117,137 @@ console.log("🌐 URL complète appelée:", `${API_URL}/api/create-checkout`);
   // Router pour la navigation
   const router = useRouter();
 
-  // Effets au chargement
-  useEffect(() => {
-    // Marquer que nous sommes côté client
-    setIsClient(true);
+// Effets au chargement
+useEffect(() => {
+  console.log("🏪 === DÉBUT CHARGEMENT CHECKOUT ===");
+  
+  // Marquer que nous sommes côté client
+  setIsClient(true);
 
-    // Réinitialisation des marges
-    if (typeof document !== "undefined") {
-      document.body.classList.add(styles.resetMargins);
-      document.documentElement.classList.add(styles.resetMargins);
-    }
+  // Réinitialisation des marges
+  if (typeof document !== "undefined") {
+    document.body.classList.add(styles.resetMargins);
+    document.documentElement.classList.add(styles.resetMargins);
+  }
 
-    // Détection du scroll pour le header
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 30);
-    };
+  // Détection du scroll pour le header
+  const handleScroll = () => {
+    setScrolled(window.scrollY > 30);
+  };
 
-    // Gestionnaires d'événements
-    if (typeof window !== "undefined") {
-      window.addEventListener("scroll", handleScroll);
-    }
+  // Gestionnaires d'événements
+  if (typeof window !== "undefined") {
+    window.addEventListener("scroll", handleScroll);
+  }
 
-    // Récupérer les articles du panier depuis le localStorage
+  // ⭐ NOUVELLE APPROCHE ROBUSTE
+  const loadCheckoutData = () => {
     try {
-      const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-      setCartItems(storedCart);
-      const totalItems = storedCart.reduce(
-        (sum, item) => sum + item.quantity,
-        0
-      );
-      setCartCount(totalItems);
-      console.log("Panier chargé avec succès:", storedCart);
-
-      // Rediriger vers la page panier si le panier est vide
-      if (storedCart.length === 0) {
-        console.log("Panier vide, redirection vers la page panier");
-        router.push("/cart");
+      // 1. D'ABORD vérifier si on a déjà des articles en mémoire
+      console.log("🔍 Articles actuels en state :", cartItems);
+      if (cartItems && cartItems.length > 0) {
+        console.log("✅ Articles déjà présents dans le state, pas de rechargement");
+        return;
       }
+
+      // 2. Vérifier les données d'achat direct
+      console.log("🔍 Inspection localStorage :");
+      const purchaseType = localStorage.getItem("purchaseType");
+      const directPurchaseData = localStorage.getItem("directPurchase");
+      const cartData = localStorage.getItem("cart");
+      
+      console.log("- purchaseType :", purchaseType);
+      console.log("- directPurchase :", directPurchaseData);
+      console.log("- cart :", cartData);
+      
+      if (purchaseType === "direct" && directPurchaseData) {
+        console.log("🚀 === MODE ACHAT DIRECT DÉTECTÉ ===");
+        
+        const items = JSON.parse(directPurchaseData);
+        console.log("✅ Articles d'achat direct à charger :", items);
+        
+        // Charger les articles dans le state
+        setCartItems(items);
+        const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+        setCartCount(totalItems);
+        
+        console.log(`✅ ${totalItems} article(s) chargé(s) pour achat direct`);
+        
+        // ⭐ CRUCIAL : Nettoyer immédiatement mais garder une copie de secours
+        const backupKey = `checkoutBackup_${Date.now()}`;
+        sessionStorage.setItem(backupKey, JSON.stringify(items));
+        
+        localStorage.removeItem("directPurchase");
+        localStorage.removeItem("purchaseType");
+        console.log("🧹 localStorage nettoyé + backup créé");
+        
+        // ⭐ Nettoyer le backup après 30 secondes
+        setTimeout(() => {
+          sessionStorage.removeItem(backupKey);
+          console.log("🧹 Backup nettoyé");
+        }, 30000);
+        
+        return;
+      }
+      
+      // 3. Vérifier les backups en cas de problème
+      const sessionKeys = Object.keys(sessionStorage);
+      const backupKey = sessionKeys.find(key => key.startsWith('checkoutBackup_'));
+      
+      if (backupKey) {
+        console.log("🔄 Backup trouvé, restauration des données");
+        const backupData = JSON.parse(sessionStorage.getItem(backupKey));
+        setCartItems(backupData);
+        const totalItems = backupData.reduce((sum, item) => sum + item.quantity, 0);
+        setCartCount(totalItems);
+        console.log(`✅ ${totalItems} article(s) restauré(s) depuis backup`);
+        return;
+      }
+      
+      // 4. Mode panier normal
+      console.log("🛒 === MODE PANIER NORMAL ===");
+      
+      const storedCart = cartData ? JSON.parse(cartData) : [];
+      console.log("📦 Panier récupéré :", storedCart);
+      
+      if (storedCart.length > 0) {
+        setCartItems(storedCart);
+        const totalItems = storedCart.reduce((sum, item) => sum + item.quantity, 0);
+        setCartCount(totalItems);
+        console.log(`✅ ${totalItems} article(s) chargé(s) depuis le panier`);
+      } else {
+        console.log("⚠️ Aucun article trouvé - redirection vers /cart");
+        // ⭐ Délai plus long pour éviter la redirection prématurée
+        setTimeout(() => {
+          if (cartItems.length === 0) { // Double vérification
+            router.push("/cart");
+          }
+        }, 2000); // 2 secondes
+      }
+      
     } catch (error) {
-      console.error("Erreur lors du chargement du panier:", error);
+      console.error("❌ Erreur lors du chargement :", error);
+      setTimeout(() => router.push("/store"), 1000);
     }
+  };
 
-    // Nettoyage
-    return () => {
-      if (typeof document !== "undefined") {
-        document.body.classList.remove(styles.resetMargins);
-        document.documentElement.classList.remove(styles.resetMargins);
-      }
-      if (typeof window !== "undefined") {
-        window.removeEventListener("scroll", handleScroll);
-      }
-    };
-  }, [router]);
+  // ⭐ Délai avant le chargement pour éviter les doubles appels
+  const timeoutId = setTimeout(() => {
+    loadCheckoutData();
+  }, 100);
+
+  // Nettoyage
+  return () => {
+    clearTimeout(timeoutId);
+    if (typeof document !== "undefined") {
+      document.body.classList.remove(styles.resetMargins);
+      document.documentElement.classList.remove(styles.resetMargins);
+    }
+    if (typeof window !== "undefined") {
+      window.removeEventListener("scroll", handleScroll);
+    }
+  };
+}, []); // ⭐ Aucune dépendance pour éviter les re-exécutions
  
 // Fonction pour charger les informations utilisateur directement depuis l'API
 const fetchUserData = async (userId, token) => {
