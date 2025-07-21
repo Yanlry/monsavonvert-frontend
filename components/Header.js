@@ -180,6 +180,21 @@ export default function Header({ cartCount }) {
                 <span className={styles.navLinkText}>Vertus & bienfaits</span>
               </Link>
             </li>
+
+            {/* NOUVEAU LIEN - Comment choisir ? */}
+            <li 
+              className={styles.navItem}
+              onMouseEnter={() => handleCategoryHover('howto')}
+              onMouseLeave={handleCategoryLeave}
+            >
+              <Link 
+                href="/how-to-choose" 
+                className={`${styles.navLink} ${activeCategory === 'howto' ? styles.navLinkActive : ''}`} 
+                onClick={closeMenu}
+              >
+                <span className={styles.navLinkText}>Bien choisir</span>
+              </Link>
+            </li>
             
             <li 
               className={styles.navItem}
@@ -191,7 +206,7 @@ export default function Header({ cartCount }) {
                 className={`${styles.navLink} ${activeCategory === 'story' ? styles.navLinkActive : ''}`} 
                 onClick={closeMenu}
               >
-                <span className={styles.navLinkText}>Notre Histoire</span>
+                <span className={styles.navLinkText}>A propos</span>
               </Link>
             </li>
             

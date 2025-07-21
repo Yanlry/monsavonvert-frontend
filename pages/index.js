@@ -107,19 +107,19 @@ export default function Home() {
       image: "/images/6.JPEG",
       title: "Savons artisanaux, naturels et écologiques",
       subtitle:
-        "Découvrez notre collection de soins faits à la main avec des ingrédients biologiques",
+        "Découvrez notre collection de soins faits à la main avec des ingrédients naturels",
+    },
+    {
+      image: "/images/4.JPEG",
+      title: "Fabrication Syriénne, ingrédients locaux",
+      subtitle:
+        "Tradition et savoir-faire syrien pour des produits authentiques et de qualité",
     },
     {
       image: "/images/5.JPEG",
       title: "Prendre soin de votre peau et de la planète",
       subtitle:
         "Des formules douces et respectueuses pour un bien-être quotidien",
-    },
-    {
-      image: "/images/4.JPEG",
-      title: "Fabrication française, ingrédients locaux",
-      subtitle:
-        "Nous privilégions les circuits courts et l'artisanat de qualité",
     },
   ];
 

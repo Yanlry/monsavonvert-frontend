@@ -493,164 +493,6 @@ export default function VertusBienfaits() {
             </div>
           </section>
 
-          {/* Guide de choix */}
-          <section className={styles.guideSection}>
-            <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>
-                Comment choisir votre savon d'Alep ?
-              </h2>
-              <p className={styles.sectionSubtitle}>
-                Guide simple pour sélectionner la concentration parfaite selon
-                votre type de peau
-              </p>
-            </div>
-
-            <div className={styles.guideContent}>
-              <div className={styles.guideTable}>
-                <div className={styles.guideTableHeader}>
-                  <div className={styles.guideTableCell}>
-                    Type de peau/Besoin
-                  </div>
-                  <div className={styles.guideTableCell}>
-                    Concentration recommandée
-                  </div>
-                  <div className={styles.guideTableCell}>Pourquoi</div>
-                </div>
-
-                <div className={styles.guideTableRow}>
-                  <div className={styles.guideTableCell}>
-                    <strong>Peau normale à sèche</strong>
-                  </div>
-                  <div className={styles.guideTableCell}>
-                    <span className={styles.concentrationTag}>5%</span>
-                  </div>
-                  <div className={styles.guideTableCell}>
-                    Hydratation légère, nettoyage doux quotidien
-                  </div>
-                </div>
-
-                <div className={styles.guideTableRow}>
-                  <div className={styles.guideTableCell}>
-                    <strong>Peau sensible/Enfants</strong>
-                  </div>
-                  <div className={styles.guideTableCell}>
-                    <span className={styles.concentrationTag}>5%</span>
-                  </div>
-                  <div className={styles.guideTableCell}>
-                    Formule douce, apaisante, non irritante
-                  </div>
-                </div>
-
-                <div className={styles.guideTableRow}>
-                  <div className={styles.guideTableCell}>
-                    <strong>Peau mixte</strong>
-                  </div>
-                  <div className={styles.guideTableCell}>
-                    <span className={styles.concentrationTag}>5-20%</span>
-                  </div>
-                  <div className={styles.guideTableCell}>
-                    Équilibre entre hydratation et régulation du sébum
-                  </div>
-                </div>
-
-                <div className={styles.guideTableRow}>
-                  <div className={styles.guideTableCell}>
-                    <strong>Peau grasse/Acné légère</strong>
-                  </div>
-                  <div className={styles.guideTableCell}>
-                    <span className={styles.concentrationTag}>20%</span>
-                  </div>
-                  <div className={styles.guideTableCell}>
-                    Propriétés séborégulatrices et antibactériennes
-                  </div>
-                </div>
-
-                <div className={styles.guideTableRow}>
-                  <div className={styles.guideTableCell}>
-                    <strong>Acné modérée à sévère</strong>
-                  </div>
-                  <div className={styles.guideTableCell}>
-                    <span className={styles.concentrationTag}>20-30%</span>
-                  </div>
-                  <div className={styles.guideTableCell}>
-                    Action antiseptique puissante, diminue l'inflammation
-                  </div>
-                </div>
-
-                <div className={styles.guideTableRow}>
-                  <div className={styles.guideTableCell}>
-                    <strong>Eczéma/Psoriasis</strong>
-                  </div>
-                  <div className={styles.guideTableCell}>
-                    <span className={styles.concentrationTag}>30%</span>
-                  </div>
-                  <div className={styles.guideTableCell}>
-                    Effet apaisant intense, propriétés anti-inflammatoires et
-                    cicatrisantes
-                  </div>
-                </div>
-
-                <div className={styles.guideTableRow}>
-                  <div className={styles.guideTableCell}>
-                    <strong>Cheveux gras</strong>
-                  </div>
-                  <div className={styles.guideTableCell}>
-                    <span className={styles.concentrationTag}>20%</span>
-                  </div>
-                  <div className={styles.guideTableCell}>
-                    Régule l'excès de sébum, purifie le cuir chevelu
-                  </div>
-                </div>
-
-                <div className={styles.guideTableRow}>
-                  <div className={styles.guideTableCell}>
-                    <strong>Pellicules/Démangeaisons</strong>
-                  </div>
-                  <div className={styles.guideTableCell}>
-                    <span className={styles.concentrationTag}>30%</span>
-                  </div>
-                  <div className={styles.guideTableCell}>
-                    Propriétés antifongiques, apaise le cuir chevelu
-                  </div>
-                </div>
-              </div>
-
-              <div className={styles.guideNote}>
-                <div className={styles.guideNoteIcon}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                  </svg>
-                </div>
-                <div className={styles.guideNoteContent}>
-                  <h4>Conseil d'utilisation</h4>
-                  <p>
-                    Si vous utilisez le savon d'Alep pour la première fois, nous
-                    recommandons de commencer par la concentration à 5%,
-                    particulièrement si vous avez la peau sensible. Vous pourrez
-                    ensuite augmenter progressivement la concentration selon les
-                    besoins de votre peau.
-                  </p>
-                  <p>
-                    Pour les problèmes cutanés spécifiques, consultez un
-                    dermatologue avant d'utiliser la concentration à 30%.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
-
           {/* Section utilisation optimale */}
           <section className={styles.usageSection}>
             <div className={styles.sectionHeader}>
@@ -785,18 +627,22 @@ export default function VertusBienfaits() {
             </div>
           </section>
 
-          {/* CTA final */}
+          {/* CTA vers Comment choisir */}
           <section className={styles.ctaSection}>
             <div className={styles.ctaContent}>
-              <h2>Prêt à découvrir les bienfaits du savon d'Alep ?</h2>
+              <h2>Vous ne savez pas quelle concentration choisir ?</h2>
               <p>
-                Choisissez la concentration adaptée à votre peau et profitez de
-                tous les bienfaits de ce trésor ancestral de la cosmétique
-                naturelle.
+                Découvrez notre guide personnalisé pour trouver le savon d'Alep 
+                parfaitement adapté à votre type de peau et à vos besoins spécifiques.
               </p>
-              <Link href="/store" className={styles.ctaButton}>
-                Découvrir notre gamme de savons d'Alep
-              </Link>
+              <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                <Link href="/how-to-choose" className={styles.ctaButton}>
+                  Comment choisir ?
+                </Link>
+                <Link href="/store" className={styles.ctaButton} style={{ backgroundColor: 'transparent', border: '2px solid white', color: 'white' }}>
+                  Découvrir nos savons
+                </Link>
+              </div>
             </div>
           </section>
         </main>
@@ -915,6 +761,9 @@ export default function VertusBienfaits() {
                 </Link>
                 <Link href="/virtues" className={styles.footerLink}>
                  Vertu & bienfaits
+                </Link>
+                <Link href="/how-to-choose" className={styles.footerLink}>
+                 Comment choisir ?
                 </Link>
                 <Link href="/blog" className={styles.footerLink}>
                  Journal
