@@ -1293,7 +1293,7 @@ const buyNow = () => {
               </div>
 
               <div className={styles.footerColumn}>
-                <h3 className={styles.footerTitle}>Liens rapides</h3>
+                <h3 className={styles.footerTitle}>Navigation rapides</h3>
                 <Link href="/" className={styles.footerLink}>
                   Accueil
                 </Link>
