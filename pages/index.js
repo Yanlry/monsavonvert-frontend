@@ -1,563 +1,1465 @@
-// components/ReviewSystem.js
-// Composant pour gérer les avis avec authentification et suppression
-import React, { useState, useEffect, useContext, useCallback } from 'react';
-import { UserContext } from '../context/UserContext';
-import styles from '../styles/reviewSystem.module.css';
+"use client";
 
-// ========================
-// HELPER FUNCTIONS
-// ========================
+import Head from "next/head";
+import Link from "next/link";
+import Image from "next/image";
+import { useState, useEffect, useRef } from "react";
+import Header from "../components/Header";
+import styles from "../styles/home.module.css";
 
-/**
- * Crée un objet Review à partir de la réponse API
- * Gère différents formats de réponse possible
- * @param {Object} data - Réponse de l'API
- * @param {Object} user - Utilisateur authentifié
- * @param {Object} formData - Données du formulaire (rating, comment)
- * @returns {Object} Nouvel avis formaté
- */
-const createReviewFromResponse = (data, user, formData) => {
-  // Cas 1: La réponse contient data.review (format attendu)
-  if (data.review && data.review._id) {
-    return {
-      _id: data.review._id,
-      user: `${user.firstName} ${user.lastName}`,
-      userId: user._id || user.userId || '',
-      firstName: user.firstName,
-      lastName: user.lastName,
-      rating: data.review.rating,
-      comment: data.review.comment,
-      createdAt: data.review.createdAt || new Date().toISOString()
-    };
-  }
-  
-  // Cas 2: La réponse contient directement les propriétés de l'avis
-  if (data._id) {
-    return {
-      _id: data._id,
-      user: `${user.firstName} ${user.lastName}`,
-      userId: user._id || user.userId || '',
-      firstName: user.firstName,
-      lastName: user.lastName,
-      rating: data.rating || parseInt(formData.rating, 10),
-      comment: data.comment || formData.comment.trim(),
-      createdAt: data.createdAt || new Date().toISOString()
-    };
-  }
-  
-  // Cas 3: Fallback - créer l'avis avec un ID temporaire
-  // (à utiliser seulement si aucune des structures précédentes ne fonctionne)
-  console.warn('⚠️ Structure de réponse non reconnue, création d\'un avis avec ID temporaire');
-  return {
-    _id: `temp_${Date.now()}`, // ID temporaire
-    user: `${user.firstName} ${user.lastName}`,
-    userId: user._id || user.userId || '',
-    firstName: user.firstName,
-    lastName: user.lastName,
-    rating: parseInt(formData.rating, 10),
-    comment: formData.comment.trim(),
-    createdAt: new Date().toISOString()
-  };
-};
+export default function Home() {
+  // État pour détecter si nous sommes côté client
+  const [isClient, setIsClient] = useState(false);
 
-/**
- * Vérifie si un utilisateur peut supprimer un avis
- * @param {Object|null} user - Utilisateur authentifié
- * @param {string} reviewUserId - ID de l'utilisateur qui a créé l'avis
- * @returns {boolean} True si l'utilisateur peut supprimer l'avis
- */
-const canUserDeleteReview = (user, reviewUserId) => {
-  if (!user) return false;
-  return (
-    user.role === 'admin' || 
-    reviewUserId === user._id || 
-    reviewUserId === user.userId
-  );
-};
+  // État pour gérer le slider du hero
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const totalSlides = 3;
 
-// ========================
-// MAIN COMPONENT
-// ========================
+  // État pour l'animation du header au scroll
+  const [scrolled, setScrolled] = useState(false);
 
-/**
- * ReviewSystem: Composant pour gérer les avis produits
- * - Authentification requise pour commenter
- * - Suppression pour l'auteur et les admins
- * - Interface utilisateur intuitive
- * - Gestion robuste des erreurs
- * 
- * @param {Object} props - Props du composant
- * @param {string} props.productId - ID du produit
- * @param {Array} props.initialReviews - Avis initiaux (optionnel)
- */
-const ReviewSystem = ({ productId, initialReviews = [] }) => {
-  const { user } = useContext(UserContext);
-  
-  // ========================
-  // STATE MANAGEMENT
-  // ========================
-  
-  const [reviews, setReviews] = useState(initialReviews);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  
-  const [reviewForm, setReviewForm] = useState({
-    rating: '',
-    comment: ''
-  });
+  // État pour le panier (simulé)
+  const [cartCount, setCartCount] = useState(0);
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+  // Références pour les animations
+  const heroRef = useRef(null);
+  const featuredRef = useRef(null);
+  const categoriesRef = useRef(null);
+  const aboutRef = useRef(null);
+  const featuresRef = useRef(null);
+  const testimonialRef = useRef(null);
 
-  // ========================
-  // DEBUG LOGGING
-  // ========================
-  
-  console.log('🔍 ReviewSystem - État utilisateur:', user);
-  console.log('📝 ReviewSystem - Avis actuels:', reviews);
+  // Animation au scroll
+  const handleScrollAnimation = () => {
+    const elements = [
+      heroRef,
+      featuredRef,
+      categoriesRef,
+      aboutRef,
+      featuresRef,
+      testimonialRef,
+    ];
 
-  // ========================
-  // EVENT HANDLERS
-  // ========================
+    elements.forEach((ref) => {
+      if (!ref.current) return;
 
-  /**
-   * Soumission d'un nouvel avis
-   * Nécessite une authentification et gère différents formats de réponse
-   * 
-   * DEBUGGING: Si vous obtenez "Champs obligatoires manquants":
-   * 1. Regardez les logs de la console pour voir la structure exacte envoyée
-   * 2. Comparez avec ce que votre API backend attend
-   * 3. Modifiez les noms des champs dans 'requestBody' selon votre API
-   * 4. Exemple: si votre API attend 'review_rating' au lieu de 'rating',
-   *    changez 'rating: parseInt(rating, 10)' en 'review_rating: parseInt(rating, 10)'
-   * 
-   * @param {Event} e - Événement de soumission du formulaire
-   */
-  const handleSubmitReview = useCallback(async (e) => {
-    e.preventDefault();
-    console.log('📝 Tentative de soumission d\'avis');
+      const rect = ref.current.getBoundingClientRect();
+      const isVisible = rect.top < window.innerHeight - 100;
 
-    // Vérification de l'authentification
-    if (!user || !user.token) {
-      console.error('❌ Utilisateur non connecté');
-      setError('Vous devez être connecté pour laisser un avis.');
-      return;
-    }
-
-    // Validation des données du formulaire
-    const { rating, comment } = reviewForm;
-    if (!rating || !comment.trim()) {
-      console.error('❌ Données du formulaire manquantes');
-      setError('Veuillez remplir tous les champs obligatoires.');
-      return;
-    }
-
-    // Validation des données utilisateur (ajout)
-    if (!user.firstName || !user.lastName) {
-      console.error('❌ Données utilisateur incomplètes:', {
-        firstName: user.firstName,
-        lastName: user.lastName,
-        userId: user._id || user.userId
-      });
-      setError('Informations utilisateur incomplètes. Veuillez vous reconnecter.');
-      return;
-    }
-
-    if (!user._id && !user.userId) {
-      console.error('❌ ID utilisateur manquant');
-      setError('ID utilisateur manquant. Veuillez vous reconnecter.');
-      return;
-    }
-
-    setLoading(true);
-    setError('');
-    setSuccess('');
-
-    try {
-      console.log('🚀 Envoi de l\'avis au serveur...');
-      
-      // Debugging complet des données utilisateur
-      console.log('🔍 DEBUG - User object complet:', JSON.stringify(user, null, 2));
-      console.log('🔍 DEBUG - Form data:', { rating, comment });
-      console.log('🔍 DEBUG - Product ID:', productId);
-
-      const requestBody = {
-        // Format principal
-        rating: parseInt(rating, 10),
-        comment: comment.trim(),
-        firstName: user.firstName,
-        lastName: user.lastName,
-        userId: user._id || user.userId,
-        
-        // Formats alternatifs que l'API pourrait attendre
-        user: `${user.firstName} ${user.lastName}`, // Nom complet
-        authorId: user._id || user.userId, // Alternative userId
-        author: user._id || user.userId, // Autre alternative
-        user_id: user._id || user.userId, // Format snake_case
-        productId: productId, // Au cas où le serveur l'attend dans le body
-        product_id: productId, // Format snake_case
-        
-        // Données utilisateur complètes (au cas où l'API en a besoin)
-        userInfo: {
-          id: user._id || user.userId,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          fullName: `${user.firstName} ${user.lastName}`
-        }
-      };
-      
-      console.log('📤 Corps de la requête COMPLET:', JSON.stringify(requestBody, null, 2));
-      console.log('📤 URL de la requête:', `${API_URL}/products/${productId}/review`);
-      console.log('📤 Headers:', {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${user.token.substring(0, 20)}...` // Log partiel du token pour sécurité
-      });
-
-      const response = await fetch(`${API_URL}/products/${productId}/review`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${user.token}`
-        },
-        body: JSON.stringify(requestBody),
-      });
-
-      console.log('📨 Status de la réponse:', response.status);
-      console.log('📨 Status text:', response.statusText);
-      
-      const data = await response.json();
-      console.log('📦 Réponse du serveur (structure complète):', JSON.stringify(data, null, 2));
-
-      if (!response.ok) {
-        // Debugging détaillé de l'erreur
-        console.error('❌ Erreur serveur détaillée:');
-        console.error('   - Status:', response.status);
-        console.error('   - Status Text:', response.statusText);
-        console.error('   - Response data:', JSON.stringify(data, null, 2));
-        
-        // Messages d'erreur plus spécifiques selon le problème
-        let errorMessage = data.error || 'Erreur lors de l\'ajout de l\'avis';
-        
-        if (data.error && data.error.includes('obligatoires')) {
-          errorMessage += `
-
-🔧 DEBUGGING: Il semble que le serveur attend des champs différents.
-Vérifiez les logs de la console pour voir ce qui est envoyé vs ce qui est attendu.
-
-Champs envoyés: rating, comment, firstName, lastName, userId, user, authorId, productId
-Si votre API attend d'autres noms de champs, modifiez le requestBody dans le code.`;
-        }
-        
-        throw new Error(errorMessage);
+      if (isVisible) {
+        ref.current.classList.add(styles.animateIn);
       }
-
-      // Créer le nouvel avis en gérant différents formats de réponse
-      const newReview = createReviewFromResponse(data, user, reviewForm);
-      console.log('✅ Nouvel avis créé:', newReview);
-
-      // Ajouter le nouvel avis à la liste
-      setReviews(prevReviews => [newReview, ...prevReviews]);
-      
-      // Réinitialiser le formulaire
-      setReviewForm({ rating: '', comment: '' });
-      setSuccess('Votre avis a été ajouté avec succès !');
-
-    } catch (err) {
-      console.error('❌ Erreur lors de l\'ajout de l\'avis:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Une erreur inattendue s\'est produite';
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  }, [user, reviewForm, productId, API_URL]);
-
-  /**
-   * Suppression d'un avis
-   * Autorisée pour l'auteur et les admins
-   * @param {string} reviewId - ID de l'avis à supprimer
-   * @param {string} reviewUserId - ID de l'utilisateur qui a créé l'avis
-   */
-  const handleDeleteReview = useCallback(async (reviewId, reviewUserId) => {
-    console.log('🗑️ Tentative de suppression d\'avis');
-    console.log('🔍 Review ID:', reviewId);
-    console.log('🔍 Review User ID:', reviewUserId);
-    console.log('🔍 Current User:', user);
-
-    // Vérification de l'authentification
-    if (!user || !user.token) {
-      console.error('❌ Utilisateur non connecté');
-      setError('Vous devez être connecté pour effectuer cette action.');
-      return;
-    }
-
-    // Vérification des droits de suppression
-    const canDelete = canUserDeleteReview(user, reviewUserId);
-    
-    console.log('🔐 Droits de suppression:', {
-      isAdmin: user.role === 'admin',
-      isAuthor: reviewUserId === user._id || reviewUserId === user.userId,
-      canDelete
     });
+  };
 
-    if (!canDelete) {
-      console.error('❌ Droits insuffisants');
-      setError('Vous n\'avez pas les droits pour supprimer cet avis.');
-      return;
-    }
+  // Effets au chargement
+  useEffect(() => {
+    // Marquer que nous sommes côté client
+    setIsClient(true);
 
-    // Confirmation de suppression
-    if (!confirm('Êtes-vous sûr de vouloir supprimer cet avis ?')) {
-      console.log('❌ Suppression annulée par l\'utilisateur');
-      return;
-    }
+    // Réinitialisation des marges
+    document.body.classList.add(styles.resetMargins);
+    document.documentElement.classList.add(styles.resetMargins);
 
-    setLoading(true);
-    setError('');
-    setSuccess('');
+    // Détection du scroll pour le header
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 30);
+      handleScrollAnimation();
+    };
 
-    try {
-      console.log('🚀 Envoi de la demande de suppression...');
-      const response = await fetch(`${API_URL}/products/${productId}/review/${reviewId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${user.token}`
-        }
-      });
+    // Animation du slider automatique
+    const sliderTimer = setInterval(() => {
+      setCurrentSlide((prev) => (prev === totalSlides - 1 ? 0 : prev + 1));
+    }, 6000);
 
-      const data = await response.json();
-      console.log('📦 Réponse de suppression:', data);
+    // Gestionnaires d'événements
+    window.addEventListener("scroll", handleScroll);
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Erreur lors de la suppression de l\'avis');
-      }
+    // Déclencher l'animation initiale
+    setTimeout(handleScrollAnimation, 500);
 
-      // Retirer l'avis de la liste
-      setReviews(prevReviews => prevReviews.filter(review => review._id !== reviewId));
-      setSuccess('Avis supprimé avec succès !');
-      console.log('✅ Avis supprimé localement');
+    // Nettoyage
+    return () => {
+      document.body.classList.remove(styles.resetMargins);
+      document.documentElement.classList.remove(styles.resetMargins);
+      window.removeEventListener("scroll", handleScroll);
+      clearInterval(sliderTimer);
+    };
+  }, [totalSlides]);
 
-    } catch (err) {
-      console.error('❌ Erreur lors de la suppression:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Une erreur inattendue s\'est produite';
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  }, [user, productId, API_URL]);
+  useEffect(() => {
+    // Synchroniser le nombre d'articles dans le panier avec le localStorage
+    const storedCart = localStorage.getItem("cart")
+      ? JSON.parse(localStorage.getItem("cart"))
+      : [];
+    const totalItems = Array.isArray(storedCart)
+      ? storedCart.reduce((sum, item) => sum + (item.quantity || 0), 0)
+      : 0;
+    setCartCount(totalItems);
 
-  /**
-   * Gestionnaire de changement pour le formulaire
-   * @param {string} field - Nom du champ
-   * @param {string} value - Nouvelle valeur
-   */
-  const handleFormChange = useCallback((field, value) => {
-    setReviewForm(prev => ({ ...prev, [field]: value }));
+    // Log pour diagnostic
+    console.log("Cart data loaded:", { storedCart, totalItems });
   }, []);
 
-  // ========================
-  // SIDE EFFECTS
-  // ========================
+  // Slides du hero
+  const heroSlides = [
+    {
+      image: "/images/6.JPEG",
+      title: "Savons artisanaux, naturels et écologiques",
+      subtitle:
+        "Découvrez notre collection de soins faits à la main avec des ingrédients naturels",
+    },
+    {
+      image: "/images/4.JPEG",
+      title: "Fabrication Syrienne, ingrédients locaux",
+      subtitle:
+        "Tradition et savoir-faire syrien pour des produits authentiques et de qualité",
+    },
+    {
+      image: "/images/5.JPEG",
+      title: "Prendre soin de votre peau et de la planète",
+      subtitle:
+        "Des formules douces et respectueuses pour un bien-être quotidien",
+    },
+  ];
 
-  /**
-   * Effacer les messages après 5 secondes
-   */
-  useEffect(() => {
-    if (success || error) {
-      const timer = setTimeout(() => {
-        setSuccess('');
-        setError('');
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [success, error]);
+  // Fonctionnalités/avantages de la marque
+  const brandFeatures = [
+    {
+      id: 1,
+      icon: (
+        <svg viewBox="0 0 24 24" width="36" height="36" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 2a3 3 0 0 0-3 3c0 1.5 1 3 1 3s1-1.5 1-3a3 3 0 0 0-3-3z"/>
+          <path d="M7.64 6.64a7 7 0 1 0 8.72 0"/>
+          <path d="M12 10v4"/>
+          <path d="M8 18c2-2 4-2 4-2s2 0 4 2"/>
+        </svg>
+      ),
+      title: "100% Naturel",
+      description:
+        "Ingrédients certifiés biologiques, sans produits chimiques ni conservateurs artificiels",
+    },
+    {
+      id: 2,
+      icon: (
+        <svg viewBox="0 0 24 24" width="36" height="36" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/>
+          <line x1="16" y1="8" x2="2" y2="22"/>
+          <line x1="17.5" y1="15" x2="9" y2="15"/>
+        </svg>
+      ),
+      title: "Fabrication Artisanale",
+      description:
+        "Chaque savon est fabriqué à la main dans notre atelier selon des méthodes traditionnelles",
+    },
+    {
+      id: 3,
+      icon: (
+        <svg viewBox="0 0 24 24" width="36" height="36" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      ),
+      title: "Écoresponsable",
+      description:
+        "Emballages biodégradables et minimisés pour réduire notre impact environnemental",
+    },
+    {
+      id: 4,
+      icon: (
+        <svg viewBox="0 0 24 24" width="36" height="36" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+        </svg>
+      ),
+      title: "Qualité Premium",
+      description:
+        "Des produits de haute qualité conçus pour nourrir et respecter votre peau",
+    },
+  ];
 
-  // ========================
-  // RENDER
-  // ========================
+  // Catégories produits
+  const productCategories = [
+    {
+      id: 1,
+      name: "Douceur Quotidienne",
+      percentage: "5%",
+      icon: (
+        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 2L2 7v10c0 5.55 3.84 10 9 10s9-4.45 9-10V7l-10-5z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+      ),
+      description: "Savon d'Alep doux pour peaux sensibles et usage quotidien",
+      suitableFor: "Visage, peaux sensibles, enfants",
+      link: "/produit/680bd95433437078ee079529",
+      image: "/images/1.JPEG",
+    },
+    {
+      id: 2,
+      name: "Équilibre & Purification",
+      percentage: "20%",
+      icon: (
+        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 2a3 3 0 0 0-3 3c0 1.5 1 3 1 3s1-1.5 1-3a3 3 0 0 0-3-3z"/>
+          <path d="M7.64 6.64a7 7 0 1 0 8.72 0"/>
+          <path d="M12 10v4"/>
+        </svg>
+      ),
+      description:
+        "Savon d'Alep équilibrant pour peaux mixtes et imperfections",
+      suitableFor: "Peaux mixtes, acné légère, cuir chevelu gras",
+      link: "/produit/680a5ac9841615e1719b023b",
+      image: "/images/2.JPEG",
+    },
+    {
+      id: 3,
+      name: "Soin Intensif",
+      percentage: "30%",
+      icon: (
+        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+      ),
+      description:
+        "Savon d'Alep thérapeutique pour problèmes cutanés spécifiques",
+      suitableFor: "Eczéma, psoriasis, acné sévère",
+      link: "/produit/67fe455e3de677d3ffa1cf89",
+      image: "/images/3.JPEG",
+    },
+  ];
+
+  // Rendu de base sans contenu dynamique (pour éviter les erreurs d'hydratation)
+  if (!isClient) {
+    return (
+      <>
+        <Head>
+          <title>MonSavonVert | Savonnerie Artisanale Bio & Écologique</title>
+          <meta
+            name="description"
+            content="Savons artisanaux et cosmétiques naturels fabriqués à la main en France. Ingrédients 100% bio et emballages écologiques."
+          />
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
+        <div className={styles.loadingWrapper}>
+          <div className={styles.loadingLogo}>
+            <span className={styles.loadingText}>MonSavonVert</span>
+            <div className={styles.spinner}></div>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
-    <div className={styles.reviewSystem}>
-      {/* Messages d'état */}
-      {error && (
-        <div className={styles.errorMessage}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="15" y1="9" x2="9" y2="15"></line>
-            <line x1="9" y1="9" x2="15" y2="15"></line>
-          </svg>
-          {error}
-        </div>
-      )}
+    <>
+      <Head>
+        <title>MonSavonVert | Savonnerie Artisanale Bio & Écologique</title>
+        <meta
+          name="description"
+          content="Savons artisanaux et cosmétiques naturels fabriqués à la main en France. Ingrédients 100% bio et emballages écologiques."
+        />
+        <link rel="icon" href="/favicon.ico" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+          property="og:title"
+          content="MonSavonVert | Savonnerie Artisanale Bio"
+        />
+        <meta
+          property="og:description"
+          content="Découvrez nos savons artisanaux et produits de soins naturels, faits à la main avec des ingrédients biologiques."
+        />
+        <meta property="og:image" content="/images/og-image.jpg" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;700&display=swap"
+          rel="stylesheet"
+        />
+      </Head>
 
-      {success && (
-        <div className={styles.successMessage}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-          </svg>
-          {success}
-        </div>
-      )}
+      <div className={styles.siteContainer}>
+        {/* Header avec navigation */}
+        <header
+          className={`${styles.header} ${
+            scrolled ? styles.headerScrolled : ""
+          }`}
+        >
+          <Header cartCount={cartCount} />
+        </header>
 
-      {/* Formulaire d'avis - Seulement si connecté */}
-      {user && user.token ? (
-        <div className={styles.reviewFormContainer}>
-          <h3 className={styles.reviewFormTitle}>Partagez votre expérience</h3>
-          <p className={styles.reviewFormSubtitle}>
-            Connecté en tant que <strong>{user.firstName} {user.lastName}</strong>
-          </p>
-
-          <form onSubmit={handleSubmitReview} className={styles.reviewForm}>
-            {/* Sélection de la note */}
-            <div className={styles.formGroup}>
-              <label htmlFor="rating">Votre note</label>
-              <select
-                id="rating"
-                value={reviewForm.rating}
-                onChange={(e) => handleFormChange('rating', e.target.value)}
-                required
-                className={styles.formSelect}
-                disabled={loading}
-              >
-                <option value="">Choisir une note</option>
-                <option value="5">★★★★★ Excellent</option>
-                <option value="4">★★★★☆ Très bien</option>
-                <option value="3">★★★☆☆ Bien</option>
-                <option value="2">★★☆☆☆ Moyen</option>
-                <option value="1">★☆☆☆☆ Déçu</option>
-              </select>
-            </div>
-
-            {/* Commentaire */}
-            <div className={styles.formGroup}>
-              <label htmlFor="comment">Votre avis</label>
-              <textarea
-                id="comment"
-                value={reviewForm.comment}
-                onChange={(e) => handleFormChange('comment', e.target.value)}
-                rows={5}
-                placeholder="Partagez votre expérience avec ce produit..."
-                required
-                className={styles.formTextarea}
-                disabled={loading}
-                maxLength={1000}
-              />
-              <small className={styles.charCount}>
-                {reviewForm.comment.length}/1000 caractères
-              </small>
-            </div>
-
-            {/* Bouton de soumission */}
-            <div className={styles.formActions}>
-              <button
-                type="submit"
-                className={styles.submitReviewButton}
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <span className={styles.spinner}></span>
-                    Publication en cours...
-                  </>
-                ) : (
-                  <>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                    </svg>
-                    Publier mon avis
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
-        </div>
-      ) : (
-        /* Message pour utilisateurs non connectés */
-        <div className={styles.loginPrompt}>
-          <div className={styles.loginPromptIcon}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-              <polyline points="10 17 15 12 10 7"></polyline>
-              <line x1="15" y1="12" x2="3" y2="12"></line>
-            </svg>
-          </div>
-          <h3>Connexion requise</h3>
-          <p>Vous devez être connecté pour laisser un avis sur ce produit.</p>
-          <div className={styles.loginPromptActions}>
-            <a href="/login" className={styles.loginButton}>Se connecter</a>
-            <a href="/register" className={styles.registerButton}>Créer un compte</a>
-          </div>
-        </div>
-      )}
-
-      {/* Liste des avis */}
-      <div className={styles.reviewsList}>
-        <h3 className={styles.reviewsTitle}>
-          Avis clients ({reviews.length})
-        </h3>
-
-        {reviews.length > 0 ? (
-          <div className={styles.reviewsGrid}>
-            {reviews.map((review) => (
-              <div key={review._id} className={styles.reviewCard}>
-                {/* En-tête de l'avis */}
-                <div className={styles.reviewCardHeader}>
-                  <div className={styles.reviewerInfo}>
-                    <div className={styles.reviewerAvatar}>
-                      {(review.firstName || review.user || 'A').charAt(0).toUpperCase()}
+        <main className={styles.mainContent}>
+          {/* Hero Section avec Slider */}
+          <section ref={heroRef} className={styles.heroSection}>
+            <div className={styles.heroOverlay}></div>
+            <div
+              className={styles.heroSlidesContainer}
+              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+            >
+              {heroSlides.map((slide, index) => (
+                <div
+                  key={index}
+                  className={`${styles.heroSlide} ${
+                    index === currentSlide ? styles.activeSlide : ""
+                  }`}
+                >
+                  <div
+                    className={styles.heroBackground}
+                    style={{
+                      backgroundImage: `url(${slide.image})`,
+                    }}
+                  ></div>
+                  <div className={styles.heroContent}>
+                    <h1 className={styles.heroTitle}>
+                      {slide.title.split(" ").map((word, i) => (
+                        <span
+                          key={i}
+                          className={styles.heroWord}
+                          style={{
+                            animationDelay: `${i * 0.1}s`,
+                            marginRight: "0.3em", // Ajout d'une marge à droite
+                          }}
+                        >
+                          {word}
+                        </span>
+                      ))}
+                    </h1>
+                    <p className={styles.heroSubtitle}>{slide.subtitle}</p>
+                    <div className={styles.heroButtons}>
+                      <Link href="/store" className={styles.primaryButton}>
+                        <span>Découvrir nos produits</span>
+                        <span className={styles.buttonIcon}>→</span>
+                      </Link>
+                      <Link href="/info" className={styles.secondaryButton}>
+                        <span>Notre philosophie</span>
+                      </Link>
                     </div>
-                    <div className={styles.reviewerDetails}>
-                      <div className={styles.reviewerName}>
-                        {review.firstName && review.lastName 
-                          ? `${review.firstName} ${review.lastName}`
-                          : review.user || 'Utilisateur anonyme'
-                        }
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Indicateurs de slide */}
+            <div className={styles.heroIndicators}>
+              {Array.from({ length: totalSlides }).map((_, index) => (
+                <button
+                  key={index}
+                  className={`${styles.heroIndicator} ${
+                    index === currentSlide ? styles.activeIndicator : ""
+                  }`}
+                  onClick={() => setCurrentSlide(index)}
+                  aria-label={`Slide ${index + 1}`}
+                >
+                  <span className={styles.indicatorInner}></span>
+                </button>
+              ))}
+            </div>
+
+            <div className={styles.scrollIndicator}>
+              <div className={styles.scrollIcon}>
+                <div className={styles.scrollDot}></div>
+              </div>
+              <span>Découvrir</span>
+            </div>
+          </section>
+
+          {/* Bannière de confiance */}
+          <section className={styles.trustBanner}>
+            <div className={styles.trustWrapper}>
+              <div className={styles.trustItem}>
+                <div className={styles.trustIcon}>
+                  <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2L2 7v10c0 5.55 3.84 10 9 10s9-4.45 9-10V7l-10-5z"/>
+                    <path d="M12 7v5l3 3"/>
+                  </svg>
+                </div>
+                <div className={styles.trustText}>
+                  <span className={styles.trustTitle}>Fabrication</span>
+                  <span className={styles.trustDesc}>Syrienne</span>
+                </div>
+              </div>
+
+              <div className={styles.trustItem}>
+                <div className={styles.trustIcon}>
+                  <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2a3 3 0 0 0-3 3c0 1.5 1 3 1 3s1-1.5 1-3a3 3 0 0 0-3-3z"/>
+                    <path d="M7.64 6.64a7 7 0 1 0 8.72 0"/>
+                    <path d="M12 10v4"/>
+                  </svg>
+                </div>
+                <div className={styles.trustText}>
+                  <span className={styles.trustTitle}>Ingrédients</span>
+                  <span className={styles.trustDesc}>naturels</span>
+                </div>
+              </div>
+
+              <div className={styles.trustItem}>
+                <div className={styles.trustIcon}>
+                  <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                </div>
+                <div className={styles.trustText}>
+                  <span className={styles.trustTitle}>Emballages</span>
+                  <span className={styles.trustDesc}>réduits</span>
+                </div>
+              </div>
+
+              <div className={styles.trustItem}>
+                <div className={styles.trustIcon}>
+                  <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M16 16l2-2 4 4"/>
+                    <circle cx="10" cy="10" r="8"/>
+                    <path d="M2.21 13.79L10 6l7.79 7.79L10 21.79z"/>
+                  </svg>
+                </div>
+                <div className={styles.trustText}>
+                  <span className={styles.trustTitle}>Livraison offerte</span>
+                  <span className={styles.trustDesc}>dès 29€</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Catégories de produits */}
+          <section ref={categoriesRef} className={styles.categoriesSection}>
+            <div className={styles.categoriesBgPattern}></div>
+            <div className={styles.categoriesContainer}>
+              <div className={styles.categoriesHeaderContainer}>
+                <div className={styles.categoriesHeader}>
+                  <div className={styles.headerDecorLine}></div>
+
+                  <span className={styles.environmentTag}>Nos catégories</span>
+                  <h2 className={styles.categoriesHeading}>
+                    Trouvez votre{" "}
+                    <span className={styles.categoryHighlight}>
+                      savon parfait
+                    </span>
+                  </h2>
+                  <p className={styles.categoriesSubheading}>
+                    Explorez notre gamme complète de produits naturels et
+                    écologiques adaptés à chaque type de peau.
+                  </p>
+                </div>
+              </div>
+
+              <div className={styles.categoryShowcase}>
+                <div className={styles.categoryCardsRow}>
+                  {productCategories.map((category, index) => (
+                    <Link
+                      key={category.id}
+                      href={category.link}
+                      className={`${styles.categoryCardNew} ${
+                        styles[`categoryColor${index + 1}`]
+                      }`}
+                    >
+                      <div className={styles.categoryGradientBg}></div>
+                      <div className={styles.categoryMediaStack}>
+                        <div className={styles.categoryImageFrame}>
+                          <div
+                            className={styles.categoryImageWrapper}
+                            style={{
+                              backgroundImage: `url(${category.image})`,
+                            }}
+                          >
+                            <div className={styles.categoryImageFilter}></div>
+                          </div>
+                        </div>
+                        <div className={styles.categoryBadge}>
+                          <div className={styles.badgeContent}>
+                            <span className={styles.badgeValue}>
+                              {category.percentage}
+                            </span>
+                            <span className={styles.badgeType}>
+                              Huile de
+                              <br />
+                              baie de laurier
+                            </span>
+                          </div>
+                        </div>
+                        <div className={styles.categoryIconCircle}>
+                          <div className={styles.categoryIconWrapper}>
+                            <span className={styles.categoryIconSymbol}>
+                              {category.icon}
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                      <div className={styles.reviewDate}>
-                        {review.createdAt ? new Date(review.createdAt).toLocaleDateString('fr-FR') : 'Date inconnue'}
+
+                      <div className={styles.categoryDetailsContainer}>
+                        <div className={styles.categoryHeader}>
+                          <h3 className={styles.categoryTitle}>
+                            {category.name}
+                          </h3>
+                          <div className={styles.categoryIndicator}>
+                            <div className={styles.categoryIndicatorDot}></div>
+                          </div>
+                        </div>
+
+                        <p className={styles.categoryText}>
+                          {category.description}
+                        </p>
+
+                        <div className={styles.categoryFooter}>
+                          <div className={styles.categorySpecifics}>
+                            <span className={styles.categorySpecTitle}>
+                              Idéal pour:
+                            </span>
+                            <span className={styles.categorySpecValue}>
+                              {category.suitableFor}
+                            </span>
+                          </div>
+
+                          <div className={styles.categoryAction}>
+                            <span className={styles.categoryActionText}>
+                              Découvrir
+                            </span>
+                            <span className={styles.categoryActionIcon}>
+                              <svg
+                                width="18"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M5 12H19"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                                <path
+                                  d="M12 5L19 12L12 19"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              <div className={styles.categoryExploreMore}>
+                <Link href="/store" className={styles.exploreButton}>
+                  <span className={styles.exploreText}>
+                    Voir toutes nos gammes
+                  </span>
+                  <span className={styles.exploreIcon}>
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      />
+                      <path
+                        d="M12 8L16 12L12 16"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M8 12H16"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </span>
+                </Link>
+              </div>
+            </div>
+
+            <div className={styles.categoryAccentShape1}></div>
+            <div className={styles.categoryAccentShape2}></div>
+          </section>
+
+          {/* Bannière Livraison */}
+          <section className={styles.shippingBannerNew}>
+            <div className={styles.shippingContainer}>
+              <div className={styles.shippingCard}>
+                <div className={styles.shippingCardGlass}></div>
+                <div className={styles.shippingDots}></div>
+
+                <div className={styles.shippingInfo}>
+                  <div className={styles.shippingTitleGroup}>
+                    <h3 className={styles.shippingTitleNew}>
+                      Livraison gratuite
+                    </h3>
+                    <div className={styles.shippingBadge}>Économisez</div>
+                  </div>
+                  <p className={styles.shippingDescription}>
+                    Pour toute commande à partir de{" "}
+                    <span className={styles.shippingHighlight}>29€</span>
+                  </p>
+                </div>
+
+                <div className={styles.shippingAction}>
+                  <Link href="/store" className={styles.shippingButtonNew}>
+                    <span className={styles.buttonTextNew}>En profiter</span>
+                    <span className={styles.buttonArrowNew}>→</span>
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.shippingDecorLeft}></div>
+            <div className={styles.shippingDecorRight}></div>
+          </section>
+
+          {/* Histoire de la marque */}
+          <section ref={aboutRef} className={styles.aboutSection}>
+            <div className={styles.aboutContainer}>
+              {/* En-tête centré */}
+              <div className={styles.aboutHeaderWrap}>
+                <div className={styles.aboutHeader}>
+                  <div className={styles.headerDecorLine}></div>
+                  <span className={styles.environmentTag}>Notre Histoire</span>
+                  <h2 className={styles.aboutHeading}>
+                    Des savons{" "}
+                    <span className={styles.headingEmphasis}>
+                      100% artisanaux
+                    </span>
+                  </h2>
+                  <p className={styles.aboutSubheading}>
+                    Une passion pour les produits naturels et un engagement
+                    envers la durabilité environnementale.
+                  </p>
+                </div>
+              </div>
+
+              {/* Contenu principal */}
+              <div className={styles.aboutRow}>
+                {/* Colonne image */}
+                <div className={styles.aboutImageCol}>
+                  <div className={styles.aboutImageFrame}>
+                    <img
+                      src="/images/9.JPEG"
+                      alt="Fabrication artisanale de savons"
+                      className={styles.aboutImage}
+                    />
+                    <div className={styles.aboutImageBadge}>
+                      <span>Depuis 2018</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Colonne texte */}
+                <div className={styles.aboutTextCol}>
+                  <div className={styles.aboutContent}>
+                    <p className={styles.aboutText}>
+                      MonSavonVert est né d'une passion pour les produits
+                      naturels et d'un engagement envers la durabilité
+                      environnementale. Tout a commencé en 2018, dans une petite
+                      cuisine où nous expérimentions des recettes de savons
+                      naturels pour notre propre utilisation.
+                    </p>
+                    <p className={styles.aboutText}>
+                      Aujourd'hui, chaque savon est toujours fabriqué à la main
+                      dans notre atelier avec des ingrédients biologiques
+                      soigneusement sélectionnés pour leurs bienfaits. Nous
+                      contrôlons chaque étape du processus, de la sélection des
+                      matières premières jusqu'à l'emballage final.
+                    </p>
+
+                    <div className={styles.certifications}>
+                      <div className={styles.certBadge}>
+                        <img src="/images/bio.png" alt="Certification Bio" />
+                        <span>Bio</span>
+                      </div>
+                      <div className={styles.certBadge}>
+                        <img
+                          src="/images/cruelty-free.png"
+                          alt="Cruelty Free"
+                        />
+                        <span>Sans cruauté</span>
+                      </div>
+                      <div className={styles.certBadge}>
+                        <img src="/images/vegan.png" alt="Vegan" />
+                        <span>Vegan</span>
+                      </div>
+                    </div>
+
+                    <Link href="/notre-histoire" className={styles.aboutButton}>
+                      <span>En savoir plus</span>
+                      <span className={styles.buttonIcon}>→</span>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+             {/* Section Engagement Environnemental */}
+             <section className={styles.environmentSection}>
+            <div className={styles.environmentBg}></div>
+            <div className={styles.environmentContainer}>
+              <div className={styles.environmentHeader}>
+                <div className={styles.headerDecorLine}></div>
+
+                <span className={styles.environmentTag}>Notre Engagement</span>
+                <h2 className={styles.environmentTitle}>
+                  Un impact positif{" "}
+                  <span className={styles.titleHighlight}>pour la planète</span>
+                </h2>
+                <div className={styles.environmentIntro}>
+                  <p className={styles.environmentText}>
+                    Chez MonSavonVert, nous croyons qu'il est possible de
+                    prendre soin de soi tout en prenant soin de la planète.
+                    Notre engagement environnemental va bien au-delà de nos
+                    produits.
+                  </p>
+                </div>
+              </div>
+
+              <div className={styles.environmentMain}>
+                <div className={styles.environmentImagePanel}>
+                  <div className={styles.environmentMediaWrapper}>
+                    <div className={styles.environmentImageContainer}>
+                      <img
+                        src="/images/6.JPEG"
+                        alt="Engagement environnemental"
+                        className={styles.environmentImage}
+                      />
+                      <div className={styles.environmentImageOverlay}></div>
+                    </div>
+                    <div className={styles.environmentAccentBorder}></div>
+                    <div className={styles.environmentAccentDots}></div>
+                    <div className={styles.environmentBadge}>
+                      <div className={styles.environmentBadgeInner}>
+                        <span className={styles.badgeIcon}>
+                          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                          </svg>
+                        </span>
+                        <span className={styles.badgeText}>
+                          ECO
+                          <br />
+                          FRIENDLY
+                        </span>
                       </div>
                     </div>
                   </div>
-
-                  {/* Bouton de suppression */}
-                  {canUserDeleteReview(user, review.userId) && (
-                    <button
-                      onClick={() => handleDeleteReview(review._id, review.userId)}
-                      className={styles.deleteButton}
-                      disabled={loading}
-                      title={user?.role === 'admin' ? 'Supprimer (Admin)' : 'Supprimer mon avis'}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="3 6 5 6 21 6"></polyline>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                      </svg>
-                    </button>
-                  )}
                 </div>
 
-                {/* Note et commentaire */}
-                <div className={styles.reviewStars}>
-                  {"★".repeat(review.rating)}
-                  {"☆".repeat(5 - review.rating)}
+                <div className={styles.environmentContentPanel}>
+                  <div className={styles.environmentCardsContainer}>
+                    {[
+                      {
+                        icon: (
+                          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                          </svg>
+                        ),
+                        title: "Zéro Déchet",
+                        description:
+                          "Nos emballages sont biodégradables ou recyclables, et nous utilisons du papier ensemencé qui peut être planté après utilisation.",
+                        color: "green",
+                      },
+                      {
+                        icon: (
+                          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M12 2a3 3 0 0 0-3 3c0 1.5 1 3 1 3s1-1.5 1-3a3 3 0 0 0-3-3z"/>
+                            <path d="M7.64 6.64a7 7 0 1 0 8.72 0"/>
+                            <path d="M12 10v4"/>
+                          </svg>
+                        ),
+                        title: "Circuit Court",
+                        description:
+                          "Nous privilégions les fournisseurs locaux pour réduire l'empreinte carbone et soutenir l'économie locale.",
+                        color: "teal",
+                      },
+                      {
+                        icon: (
+                          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                          </svg>
+                        ),
+                        title: "Énergie Verte",
+                        description:
+                          "Notre atelier fonctionne à l'énergie verte et nous optimisons notre consommation d'eau dans tous nos processus.",
+                        color: "blue",
+                      },
+                      {
+                        icon: (
+                          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="12" cy="12" r="1"/>
+                            <path d="M12 1v6m0 6v6"/>
+                            <path d="M3 12h6m6 0h6"/>
+                            <path d="M5.6 5.6l4.2 4.2m4.2 4.2l4.2 4.2M18.4 5.6l-4.2 4.2m-4.2 4.2l-4.2 4.2"/>
+                          </svg>
+                        ),
+                        title: "Vegan et sans cruauté",
+                        description:
+                          "Nos savons sont formulés sans aucun ingrédient d'origine animale et ne sont jamais testés sur les animaux.",
+                        color: "purple",
+                      },
+                    ].map((item, index) => (
+                      <div
+                        key={index}
+                        className={`${styles.environmentCard} ${
+                          styles[`environmentCard${item.color}`]
+                        }`}
+                      >
+                        <div className={styles.environmentCardContent}>
+                          <div className={styles.environmentCardIconWrap}>
+                            <div className={styles.environmentCardIcon}>
+                              {item.icon}
+                            </div>
+                          </div>
+                          <h3 className={styles.environmentCardTitle}>
+                            {item.title}
+                          </h3>
+                          <p className={styles.environmentCardText}>
+                            {item.description}
+                          </p>
+                        </div>
+                        <div className={styles.cardGlow}></div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className={styles.environmentAction}>
+                    <Link href="/virtues" className={styles.environmentButton}>
+                      <span className={styles.buttonText}>
+                        Découvrir nos actions
+                      </span>
+                      <span className={styles.buttonIcon}>
+                        <svg
+                          viewBox="0 0 24 24"
+                          width="24"
+                          height="24"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                          <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                      </span>
+                    </Link>
+                  </div>
                 </div>
-                <p className={styles.reviewText}>{review.comment}</p>
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className={styles.noReviews}>
-            <div className={styles.noReviewsIcon}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
-              </svg>
-            </div>
-            <p>Aucun avis pour l'instant</p>
-            <p>Soyez le premier à partager votre expérience !</p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
 
-export default ReviewSystem;
+              <div className={styles.environmentStats}>
+                <div className={styles.environmentStatItem}>
+                  <div className={styles.environmentStatValue}>85%</div>
+                  <div className={styles.environmentStatLabel}>
+                    Moins d'emballage
+                  </div>
+                </div>
+                <div className={styles.environmentStatItem}>
+                  <div className={styles.environmentStatValue}>100%</div>
+                  <div className={styles.environmentStatLabel}>
+                    Biodégradable
+                  </div>
+                </div>
+                <div className={styles.environmentStatItem}>
+                  <div className={styles.environmentStatValue}>0</div>
+                  <div className={styles.environmentStatLabel}>Test animal</div>
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.environmentAccentShape1}></div>
+            <div className={styles.environmentAccentShape2}></div>
+          </section>
+
+          {/* Caractéristiques de la marque */}
+          <section ref={featuresRef} className={styles.featuresSection}>
+            <div className={styles.featuresBgEffect}></div>
+            <div className={styles.featuresContainer}>
+              <div className={styles.featuresHeaderWrap}>
+                <div className={styles.featuresHeader}>
+                  <div className={styles.headerDecorLine}></div>
+                  <span className={styles.environmentTag}>Nos valeurs</span>
+                  <h2 className={styles.featuresHeading}>
+                    Pourquoi choisir{" "}
+                    <span className={styles.headingEmphasis}>MonSavonVert</span>{" "}
+                    ?
+                  </h2>
+                  <p className={styles.featuresSubheading}>
+                    Des produits cosmétiques respectueux de votre peau et de
+                    l'environnement, élaborés avec passion et expertise.
+                  </p>
+                </div>
+              </div>
+
+              <div className={styles.featuresMainContent}>
+                <div className={styles.featuresVisual}>
+                  <div className={styles.featuresCenterpiece}>
+                    <div className={styles.centerpieceInner}>
+                      <img
+                        src="/images/5.JPEG"
+                        alt="Nos valeurs"
+                        className={styles.featuresMainImage}
+                      />
+                      <div className={styles.imageOverlay}></div>
+                    </div>
+                    <div className={styles.centerpieceBorder}></div>
+                    <div className={styles.centerpieceGlow}></div>
+                  </div>
+                </div>
+
+                <div className={styles.featuresCardGrid}>
+                  {brandFeatures.map((feature, index) => (
+                    <div
+                      key={feature.id}
+                      className={`${styles.featureCardNew} ${
+                        styles[`featureCard${index + 1}`]
+                      }`}
+                      style={{ "--delay": `${index * 0.1}s` }}
+                    >
+                      <div className={styles.featureCardGlow}></div>
+                      <div className={styles.featureCardContent}>
+                        <div className={styles.featureIconContainer}>
+                          <div className={styles.featureIconOuter}>
+                            <div className={styles.featureIconInner}>
+                              {feature.icon}
+                            </div>
+                          </div>
+                        </div>
+                        <div className={styles.featureTextContent}>
+                          <h3 className={styles.featureCardHeading}>
+                            {feature.title}
+                          </h3>
+                          <p className={styles.featureCardDescription}>
+                            {feature.description}
+                          </p>
+                        </div>
+                        <div className={styles.featureCardArrow}>
+                          <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M5 12H19"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                            <path
+                              d="M12 5L19 12L12 19"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className={styles.featuresExtraBanner}>
+                <div className={styles.bannerContent}>
+                  <div className={styles.bannerIconWrap}>
+                    <div className={styles.bannerIcon}>
+                      <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                        <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+                      </svg>
+                    </div>
+                  </div>
+                  <h3 className={styles.bannerTitle}>
+                    Des savons qui respectent votre peau et la planète
+                  </h3>
+                  <p className={styles.bannerText}>
+                    Nos formules exclusives sont le fruit de recherches
+                    approfondies et d'un savoir-faire traditionnel.
+                  </p>
+                </div>
+                <div className={styles.bannerEffect}></div>
+              </div>
+            </div>
+
+            <div className={styles.featuresAccentShape1}></div>
+            <div className={styles.featuresAccentShape2}></div>
+            <div className={styles.featuresPatternGrid}></div>
+          </section>
+
+          {/* Témoignages clients */}
+          <section ref={testimonialRef} className={styles.testimonialsSimple}>
+            <div className={styles.testimonialsContainer}>
+              {/* En-tête */}
+              <div className={styles.testimonialsHeader}>
+                <div className={styles.headerDecorLine}></div>
+
+                <span className={styles.testimonialsTag}>Témoignages</span>
+                <h2 className={styles.testimonialsTitle}>
+                  Ce que disent nos clients
+                </h2>
+                <div className={styles.ratingBox}>
+                  <div className={styles.ratingStars}>★★★★★</div>
+                  <div className={styles.ratingScore}>
+                    4.9/5 basé sur 256 avis vérifiés
+                  </div>
+                </div>
+              </div>
+
+              {/* Cartes de témoignages */}
+              <div className={styles.testimonialsGrid}>
+                {/* Carte 1 */}
+                <div className={styles.testimonialCard}>
+                  <div className={styles.testimonialTop}>
+                    <div className={styles.testimonialUser}>
+                      <div className={styles.testimonialAvatar}>ML</div>
+                      <div className={styles.testimonialInfo}>
+                        <p className={styles.testimonialName}>Marie L.</p>
+                        <p className={styles.testimonialLocation}>
+                          Lyon, France
+                        </p>
+                      </div>
+                    </div>
+                    <div className={styles.testimonialBadge}>✓</div>
+                  </div>
+
+                  <div className={styles.testimonialContent}>
+                    <div className={styles.testimonialStars}>★★★★★</div>
+                    <p className={styles.testimonialText}>
+                      J'ai découvert ces savons il y a 6 mois et ma peau s'est
+                      transformée. Plus de problèmes de sécheresse et l'odeur
+                      est divine ! Je recommande particulièrement le savon à
+                      l'avoine pour les peaux sensibles.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Carte 2 */}
+                <div className={styles.testimonialCard}>
+                  <div className={styles.testimonialTop}>
+                    <div className={styles.testimonialUser}>
+                      <div className={styles.testimonialAvatar}>TP</div>
+                      <div className={styles.testimonialInfo}>
+                        <p className={styles.testimonialName}>Thomas P.</p>
+                        <p className={styles.testimonialLocation}>
+                          Paris, France
+                        </p>
+                      </div>
+                    </div>
+                    <div className={styles.testimonialBadge}>✓</div>
+                  </div>
+
+                  <div className={styles.testimonialContent}>
+                    <div className={styles.testimonialStars}>★★★★★</div>
+                    <p className={styles.testimonialText}>
+                      En tant qu'homme barbu, j'utilise leur savon pour le
+                      visage et la barbe. Ma peau est apaisée et ma barbe plus
+                      douce que jamais. Le service client est également
+                      excellent, très réactif.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Carte 3 */}
+                <div className={styles.testimonialCard}>
+                  <div className={styles.testimonialTop}>
+                    <div className={styles.testimonialUser}>
+                      <div className={styles.testimonialAvatar}>SM</div>
+                      <div className={styles.testimonialInfo}>
+                        <p className={styles.testimonialName}>Sophie M.</p>
+                        <p className={styles.testimonialLocation}>
+                          Marseille, France
+                        </p>
+                      </div>
+                    </div>
+                    <div className={styles.testimonialBadge}>✓</div>
+                  </div>
+
+                  <div className={styles.testimonialContent}>
+                    <div className={styles.testimonialStars}>★★★★★</div>
+                    <p className={styles.testimonialText}>
+                      J'apprécie particulièrement leur engagement écologique.
+                      Les emballages sont magnifiques et peuvent être plantés
+                      dans le jardin ! Un vrai plus par rapport aux autres
+                      marques.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bouton */}
+              <div className={styles.testimonialAction}>
+                <Link href="/avis-clients" className={styles.testimonialButton}>
+                  <span>Voir tous les avis</span>
+                  <span className={styles.buttonArrow}>→</span>
+                </Link>
+              </div>
+            </div>
+          </section>
+
+          {/* Section Newsletter */}
+          <section className={styles.newsletterSection}>
+            <div className={styles.newsletterWrapper}>
+              <div className={styles.newsletterContent}>
+                <div className={styles.newsletterDecor}></div>
+                <h2 className={styles.newsletterTitle}>
+                  Rejoignez notre communauté
+                </h2>
+                <p className={styles.newsletterText}>
+                  Inscrivez-vous à notre newsletter pour recevoir des conseils
+                  beauté, nos nouveautés et des offres exclusives.
+                </p>
+                <form className={styles.newsletterForm}>
+                  <div className={styles.inputGroup}>
+                    <input
+                      type="email"
+                      placeholder="Votre adresse email"
+                      className={styles.newsletterInput}
+                      required
+                    />
+                    <button type="submit" className={styles.newsletterButton}>
+                      <span>S'abonner</span>
+                      <span className={styles.buttonArrow}>→</span>
+                    </button>
+                  </div>
+                  <label className={styles.consentLabel}>
+                    <input
+                      type="checkbox"
+                      required
+                      className={styles.consentCheckbox}
+                    />
+                    <div className={styles.checkmark}></div>
+                    <span>
+                      J'accepte de recevoir des emails et je confirme avoir lu
+                      la{" "}
+                      <Link
+                        href="/politique-de-confidentialite"
+                        className={styles.policyLink}
+                      >
+                        politique de confidentialité
+                      </Link>
+                      .
+                    </span>
+                  </label>
+                </form>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        {/* Footer */}
+        <footer className={styles.footer}>
+          <div className={styles.footerTop}>
+            <div className={styles.footerWrapper}>
+              <div className={styles.footerColumn}>
+                <div className={styles.footerLogo}>MonSavonVert</div>
+                <p className={styles.footerAbout}>
+                  Savons artisanaux, naturels et écologiques fabriqués avec
+                  passion en Syrie dans l'antique ville d'Alep.
+                </p>
+                <div className={styles.footerSocial}>
+                  <a
+                    href="https://facebook.com/monsavonvert"
+                    className={styles.socialLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Facebook"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="20"
+                      height="20"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                    </svg>
+                  </a>
+                  <a
+                    href="https://instagram.com/monsavonvert"
+                    className={styles.socialLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Instagram"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="20"
+                      height="20"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <rect
+                        x="2"
+                        y="2"
+                        width="20"
+                        height="20"
+                        rx="5"
+                        ry="5"
+                      ></rect>
+                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                    </svg>
+                  </a>
+                  <a
+                    href="https://pinterest.com/monsavonvert"
+                    className={styles.socialLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Pinterest"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="20"
+                      height="20"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M8 12a4 4 0 1 1 8 0 4 4 0 0 1-8 0zm2-6h4"></path>
+                      <path d="M9 18l3-3 3 3"></path>
+                      <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"></path>
+                    </svg>
+                  </a>
+                </div>
+                <div className={styles.paymentMethods}>
+                  <span className={styles.paymentTitle}>
+                    Moyens de paiement
+                  </span>
+                  <div className={styles.paymentIcons}>
+                    <img src="/images/payments/visa.png" alt="Visa" />
+                    <img
+                      src="/images/payments/mastercard.png"
+                      alt="Mastercard"
+                    />
+                    <img
+                      src="/images/payments/americanexpress.png"
+                      alt="American Express"
+                    />
+                    <img src="/images/payments/applepay.png" alt="Apple Pay" />
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.footerNavColumns}>
+                <div className={styles.footerColumn}>
+                  <h3 className={styles.footerTitle}>Boutique</h3>
+                  <div className={styles.footerLinks}>
+                    <Link
+                      href="/boutique/nouveautes"
+                      className={styles.footerLink}
+                    >
+                      Nouveautés
+                    </Link>
+                    <Link href="/boutique/visage" className={styles.footerLink}>
+                      Soins visage
+                    </Link>
+                    <Link href="/boutique/corps" className={styles.footerLink}>
+                      Soins corps
+                    </Link>
+                    <Link
+                      href="/boutique/cheveux"
+                      className={styles.footerLink}
+                    >
+                      Cheveux
+                    </Link>
+                    <Link
+                      href="/boutique/coffrets"
+                      className={styles.footerLink}
+                    >
+                      Coffrets cadeaux
+                    </Link>
+                    <Link
+                      href="/boutique/accessoires"
+                      className={styles.footerLink}
+                    >
+                      Accessoires
+                    </Link>
+                  </div>
+                </div>
+
+                <div className={styles.footerColumn}>
+                  <h3 className={styles.footerTitle}>Informations</h3>
+                  <div className={styles.footerLinks}>
+                    <Link href="/a-propos" className={styles.footerLink}>
+                      Notre histoire
+                    </Link>
+                    <Link href="/virtues" className={styles.footerLink}>
+                      Vertu & bienfaits
+                    </Link>
+                    <Link href="/blog" className={styles.footerLink}>
+                      Journal
+                    </Link>
+                    <Link href="/faq" className={styles.footerLink}>
+                      FAQ
+                    </Link>
+                    <Link href="/contact" className={styles.footerLink}>
+                      Contact
+                    </Link>
+                    <Link
+                      href="/programme-fidelite"
+                      className={styles.footerLink}
+                    >
+                      Programme fidélité
+                    </Link>
+                  </div>
+                </div>
+
+                <div className={styles.footerColumn}>
+                  <h3 className={styles.footerTitle}>Contact</h3>
+                  <div className={styles.contactInfo}>
+                    <div className={styles.contactItem}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className={styles.contactIcon}
+                      >
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                      </svg>
+                      <a href="tel:+33612345678" className={styles.contactLink}>
+                        +33 6 12 34 56 78
+                      </a>
+                    </div>
+
+                    <div className={styles.contactItem}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className={styles.contactIcon}
+                      >
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                      </svg>
+                      <a
+                        href="mailto:info@monsavonvert.fr"
+                        className={styles.contactLink}
+                      >
+                        info@monsavonvert.fr
+                      </a>
+                    </div>
+
+                    <div className={styles.contactItem}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className={styles.contactIcon}
+                      >
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                      </svg>
+                      <span className={styles.contactText}>
+                        15 rue des Artisans
+                        <br />
+                        69001 Lyon, France
+                      </span>
+                    </div>
+
+                    <div className={styles.contactItem}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className={styles.contactIcon}
+                      >
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                      </svg>
+                      <span className={styles.contactText}>
+                        Lun-Ven: 9h-18h
+                        <br />
+                        Sam: 10h-17h
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.footerBottom}>
+            <div className={styles.footerBottomContent}>
+              <p className={styles.copyright}>
+                © 2025 MonSavonVert. Tous droits réservés.
+              </p>
+              <div className={styles.footerLegalLinks}>
+                <Link href="/cgv" className={styles.footerSmallLink}>
+                  CGV
+                </Link>
+                <span className={styles.footerDivider}>•</span>
+                <Link
+                  href="/politique-de-confidentialite"
+                  className={styles.footerSmallLink}
+                >
+                  Politique de confidentialité
+                </Link>
+                <span className={styles.footerDivider}>•</span>
+                <Link
+                  href="/mentions-legales"
+                  className={styles.footerSmallLink}
+                >
+                  Mentions légales
+                </Link>
+                <span className={styles.footerDivider}>•</span>
+                <Link href="/cookies" className={styles.footerSmallLink}>
+                  Gestion des cookies
+                </Link>
+              </div>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </>
+  );
+}
