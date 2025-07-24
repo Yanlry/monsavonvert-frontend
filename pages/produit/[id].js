@@ -4,6 +4,8 @@ import Head from "next/head";
 import Link from "next/link";
 import styles from "../../styles/product.module.css";
 import Header from "../../components/Header";
+// AJOUT : Import du nouveau composant ReviewSystem
+import ReviewSystem from "../../components/ReviewSystem";
 
 export default function ProductDetail({ product }) {
   const router = useRouter();
@@ -1186,221 +1188,17 @@ const buyNow = () => {
               </div>
             </div>
 
-            {/* Onglet Avis clients */}
+            {/* MODIFICATION MAJEURE : Onglet Avis clients */}
             <div
               className={`${styles.tabContent} ${
                 activeTab === "reviews" ? styles.tabContentActive : ""
               }`}
             >
-              <div className={styles.reviewsContainer}>
-                <div className={styles.reviewsHeader}>
-                  <h2 className={styles.reviewsTitle}>Avis clients</h2>
-                  <p className={styles.reviewsSubtitle}>
-                    Découvrez ce que nos clients pensent de ce produit
-                  </p>
-                </div>
-
-                {product.reviews && product.reviews.length > 0 ? (
-                  <div className={styles.reviewsList}>
-                    {product.reviews.map((review, index) => (
-                      <div key={index} className={styles.reviewCard}>
-                        <div className={styles.reviewCardHeader}>
-                          <div className={styles.reviewerAvatar}>
-                            {(review.user || "Anonyme").charAt(0).toUpperCase()}
-                          </div>
-                          <div className={styles.reviewerInfo}>
-                            <div className={styles.reviewerName}>
-                              {review.user || "Utilisateur anonyme"}
-                            </div>
-                          </div>
-                        </div>
-                        <div className={styles.reviewStars}>
-                          {"★".repeat(review.rating)}
-                          {"☆".repeat(5 - review.rating)}
-                        </div>
-                        <p className={styles.reviewText}>{review.comment}</p>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className={styles.noReviewsContainer}>
-                    <div className={styles.noReviewsIcon}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="48"
-                        height="48"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-                      </svg>
-                    </div>
-                    <p className={styles.noReviewsText}>
-                      Aucun avis pour l'instant
-                    </p>
-                    <p className={styles.noReviewsMessage}>
-                      Soyez le premier à partager votre expérience avec ce
-                      produit !
-                    </p>
-                  </div>
-                )}
-
-                {/* Formulaire pour ajouter un avis */}
-                <div className={styles.reviewFormContainer}>
-                  <h3 className={styles.reviewFormTitle}>
-                    Partagez votre expérience
-                  </h3>
-                  <p className={styles.reviewFormSubtitle}>
-                    Votre avis aide d'autres clients à faire le bon choix
-                  </p>
-
-                  <form
-                    className={styles.reviewForm}
-                    onSubmit={async (e) => {
-                      e.preventDefault();
-                      const firstName = e.target.firstName.value.trim();
-                      const lastName = e.target.lastName.value.trim();
-                      const comment = e.target.comment.value.trim();
-                      const rating = parseInt(e.target.rating.value, 10);
-
-                      console.log("Données envoyées :", {
-                        firstName,
-                        lastName,
-                        comment,
-                        rating,
-                      });
-
-                      if (
-                        !firstName ||
-                        !lastName ||
-                        !comment ||
-                        isNaN(rating)
-                      ) {
-                        alert("Veuillez remplir tous les champs obligatoires.");
-                        return;
-                      }
-
-                      try {
-                        const response = await fetch(
-                          `${API_URL}/products/${id}/review`,
-                          {
-                            method: "POST",
-                            headers: {
-                              "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({
-                              firstName,
-                              lastName,
-                              comment,
-                              rating,
-                            }),
-                          }
-                        );
-
-                        const data = await response.json();
-                        console.log("Réponse du backend :", data);
-
-                        if (!response.ok) {
-                          throw new Error(
-                            data.error || "Erreur lors de l'ajout de l'avis"
-                          );
-                        }
-
-                        alert("Avis ajouté avec succès !");
-                        router.reload(); // Recharger la page pour afficher le nouvel avis
-                      } catch (error) {
-                        console.error(
-                          "Erreur lors de l'ajout de l'avis :",
-                          error
-                        );
-                        alert(error.message);
-                      }
-                    }}
-                  >
-                    <div className={styles.reviewFormRow}>
-                      <div className={styles.formGroup}>
-                        <label htmlFor="firstName">Prénom</label>
-                        <input
-                          type="text"
-                          id="firstName"
-                          name="firstName"
-                          placeholder="Votre prénom"
-                          required
-                          className={styles.formInput}
-                        />
-                      </div>
-                      <div className={styles.formGroup}>
-                        <label htmlFor="lastName">Nom</label>
-                        <input
-                          type="text"
-                          id="lastName"
-                          name="lastName"
-                          placeholder="Votre nom"
-                          required
-                          className={styles.formInput}
-                        />
-                      </div>
-                    </div>
-
-                    <div className={styles.formGroup}>
-                      <label htmlFor="rating">Votre note</label>
-                      <div className={styles.ratingSelector}>
-                        <select
-                          id="rating"
-                          name="rating"
-                          required
-                          className={styles.formSelect}
-                        >
-                          <option value="">Choisir une note</option>
-                          <option value="5">★★★★★ Excellent</option>
-                          <option value="4">★★★★☆ Très bien</option>
-                          <option value="3">★★★☆☆ Bien</option>
-                          <option value="2">★★☆☆☆ Moyen</option>
-                          <option value="1">★☆☆☆☆ Déçu</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className={styles.formGroup}>
-                      <label htmlFor="comment">Votre avis</label>
-                      <textarea
-                        id="comment"
-                        name="comment"
-                        rows="5"
-                        placeholder="Partagez votre expérience avec ce produit..."
-                        required
-                        className={styles.formTextarea}
-                      ></textarea>
-                    </div>
-
-                    <div className={styles.formActions}>
-                      <button
-                        type="submit"
-                        className={styles.submitReviewButton}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                        </svg>
-                        Publier mon avis
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
+              {/* REMPLACEMENT : Ancien système d'avis par le nouveau composant */}
+              <ReviewSystem 
+                productId={id} 
+                initialReviews={product.reviews || []} 
+              />
             </div>
           </section>
 

@@ -776,7 +776,7 @@ useEffect(() => {
                     <div className="formColumn">
                       <div className="formGroup">
                         <label htmlFor="characteristics">
-                          Caractéristiques
+                          Bienfaits
                         </label>
                         <textarea
                           id="characteristics"
@@ -784,25 +784,25 @@ useEffect(() => {
                           value={formData.characteristics}
                           onChange={handleFormChange}
                           rows="3"
-                          placeholder="Caractéristiques principales du produit"
+                          placeholder="Bienfaits principales du produit"
                         ></textarea>
                       </div>
 
                       <div className="formGroup">
-                        <label htmlFor="ingredients">Ingrédients</label>
+                        <label htmlFor="ingredients">À qui est-il déconseillé ?</label>
                         <textarea
                           id="ingredients"
                           name="ingredients"
                           value={formData.ingredients}
                           onChange={handleFormChange}
                           rows="3"
-                          placeholder="Liste des ingrédients"
+                          placeholder="Lister les contreindications ou allergies"
                         ></textarea>
                       </div>
 
                       <div className="formGroup">
                         <label htmlFor="usageTips">
-                          Conseils d'utilisation
+                        À qui est destiné ce savon
                         </label>
                         <textarea
                           id="usageTips"
@@ -810,7 +810,7 @@ useEffect(() => {
                           value={formData.usageTips}
                           onChange={handleFormChange}
                           rows="3"
-                          placeholder="Comment utiliser ce produit"
+                          placeholder="À qui est destiné ce produit"
                         ></textarea>
                       </div>
                     </div>
@@ -1107,7 +1107,7 @@ useEffect(() => {
                     <div className="formColumn">
                       <div className="formGroup">
                         <label htmlFor="edit-characteristics">
-                          Caractéristiques
+                        Bienfaits
                         </label>
                         <textarea
                           id="edit-characteristics"
@@ -1120,12 +1120,12 @@ useEffect(() => {
                             })
                           }
                           rows="3"
-                          placeholder="Caractéristiques principales du produit"
+                          placeholder="Bienfaits principales du produit"
                         ></textarea>
                       </div>
 
                       <div className="formGroup">
-                        <label htmlFor="edit-ingredients">Ingrédients</label>
+                        <label htmlFor="edit-ingredients">À qui est-il déconseillé</label>
                         <textarea
                           id="edit-ingredients"
                           name="ingredients"
@@ -1137,13 +1137,13 @@ useEffect(() => {
                             })
                           }
                           rows="3"
-                          placeholder="Liste des ingrédients"
+                          placeholder="Lister les contreindications ou allergies"
                         ></textarea>
                       </div>
 
                       <div className="formGroup">
                         <label htmlFor="edit-usageTips">
-                          Conseils d'utilisation
+                        À qui est destiné ce savon  ?
                         </label>
                         <textarea
                           id="edit-usageTips"
@@ -1156,7 +1156,7 @@ useEffect(() => {
                             })
                           }
                           rows="3"
-                          placeholder="Comment utiliser ce produit"
+                          placeholder="À qui est destiné ce produit"
                         ></textarea>
                       </div>
                     </div>

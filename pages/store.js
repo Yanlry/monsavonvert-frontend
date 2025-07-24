@@ -605,16 +605,6 @@ export default function Boutique() {
                         />
                         <div className={styles.productOverlay}>
                           <button
-                            className={styles.addToCartButton}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              addToCart(product);
-                            }}
-                            aria-label="Ajouter au panier"
-                          >
-                            Ajouter au panier
-                          </button>
-                          <button
                             className={styles.quickViewButton}
                             aria-label="Aperçu rapide"
                           >
@@ -778,12 +768,7 @@ export default function Boutique() {
                               : "Rupture de stock"}
                           </button>
 
-                          <Link
-                            href={`/produit/${product._id}`}
-                            className={styles.viewDetailsButton}
-                          >
-                            Voir les détails
-                          </Link>
+        
                         </div>
                       </div>
                     </div>

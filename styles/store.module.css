@@ -700,22 +700,7 @@
   opacity: 1;
 }
 
-.addToCartButton {
-  flex: 1;
-  background-color: var(--color-primary);
-  color: white;
-  border: none;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-full);
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color var(--transition-fast);
-}
 
-.addToCartButton:hover {
-  background-color: var(--color-primary-dark);
-}
 
 .quickViewButton,
 .wishlistButton {

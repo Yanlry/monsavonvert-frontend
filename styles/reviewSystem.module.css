@@ -1,0 +1,375 @@
+/* styles/reviewSystem.module.css */
+/* Styles pour le composant ReviewSystem */
+
+.reviewSystem {
+    margin-top: 2rem;
+  }
+  
+  /* Messages d'état */
+  .errorMessage,
+  .successMessage {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .errorMessage {
+    background-color: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+  }
+  
+  .successMessage {
+    background-color: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+  }
+  
+  /* Formulaire d'avis */
+  .reviewFormContainer {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .reviewFormTitle {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+  }
+  
+  .reviewFormSubtitle {
+    color: #64748b;
+    margin-bottom: 1.5rem;
+  }
+  
+  .reviewForm {
+    display: grid;
+    gap: 1.5rem;
+  }
+  
+  .formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .formGroup label {
+    font-weight: 500;
+    color: #374151;
+    font-size: 0.9rem;
+  }
+  
+  .formSelect,
+  .formTextarea {
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  
+  .formSelect:focus,
+  .formTextarea:focus {
+    outline: none;
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  }
+  
+  .formSelect:disabled,
+  .formTextarea:disabled {
+    background-color: #f3f4f6;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  
+  .formTextarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+  
+  .charCount {
+    align-self: flex-end;
+    color: #6b7280;
+    font-size: 0.8rem;
+  }
+  
+  .formActions {
+    margin-top: 1rem;
+  }
+  
+  .submitReviewButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .submitReviewButton:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  }
+  
+  .submitReviewButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  /* Spinner pour le loading */
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* Prompt de connexion */
+  .loginPrompt {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+  }
+  
+  .loginPromptIcon {
+    margin-bottom: 1rem;
+    color: #64748b;
+  }
+  
+  .loginPrompt h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+  }
+  
+  .loginPrompt p {
+    color: #64748b;
+    margin-bottom: 1.5rem;
+  }
+  
+  .loginPromptActions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .loginButton,
+  .registerButton {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  
+  .loginButton {
+    background: #10b981;
+    color: white;
+  }
+  
+  .loginButton:hover {
+    background: #059669;
+    transform: translateY(-1px);
+  }
+  
+  .registerButton {
+    background: transparent;
+    color: #10b981;
+    border: 1px solid #10b981;
+  }
+  
+  .registerButton:hover {
+    background: #10b981;
+    color: white;
+    transform: translateY(-1px);
+  }
+  
+  /* Liste des avis */
+  .reviewsList {
+    margin-top: 2rem;
+  }
+  
+  .reviewsTitle {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 1.5rem;
+  }
+  
+  .reviewsGrid {
+    display: grid;
+    gap: 1.5rem;
+  }
+  
+  .reviewCard {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: box-shadow 0.2s;
+  }
+  
+  .reviewCard:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+  
+  .reviewCardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+  
+  .reviewerInfo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  .reviewerAvatar {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+  
+  .reviewerDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .reviewerName {
+    font-weight: 600;
+    color: #1e293b;
+  }
+  
+  .reviewDate {
+    font-size: 0.8rem;
+    color: #6b7280;
+  }
+  
+  .deleteButton {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+    padding: 0.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .deleteButton:hover:not(:disabled) {
+    background: #fee2e2;
+    border-color: #fca5a5;
+    transform: translateY(-1px);
+  }
+  
+  .deleteButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .reviewStars {
+    font-size: 1.1rem;
+    color: #fbbf24;
+    margin-bottom: 0.75rem;
+  }
+  
+  .reviewText {
+    color: #374151;
+    line-height: 1.6;
+    margin: 0;
+  }
+  
+  /* État vide */
+  .noReviews {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #6b7280;
+  }
+  
+  .noReviewsIcon {
+    margin-bottom: 1rem;
+  }
+  
+  .noReviews p:first-of-type {
+    font-weight: 500;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .noReviews p:last-of-type {
+    font-size: 0.9rem;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .reviewFormContainer {
+      padding: 1.5rem;
+    }
+    
+    .loginPrompt {
+      padding: 2rem 1.5rem;
+    }
+    
+    .loginPromptActions {
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .loginButton,
+    .registerButton {
+      width: 200px;
+      text-align: center;
+    }
+    
+    .reviewCard {
+      padding: 1rem;
+    }
+    
+    .reviewCardHeader {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    
+    .deleteButton {
+      align-self: flex-end;
+    }
+  }
