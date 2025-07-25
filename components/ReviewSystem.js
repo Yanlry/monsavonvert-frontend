@@ -116,8 +116,9 @@ const canUserDeleteReview = (user, reviewUserId, review = {}) => {
  * - Suppression sécurisée pour l'auteur et les admins
  * - Interface utilisateur intuitive avec états de chargement
  * - Gestion robuste des erreurs avec retry automatique
+ * - NOUVEAU: Communication avec la page produit via callback
  */
-const ReviewSystem = ({ productId, initialReviews = [] }) => {
+const ReviewSystem = ({ productId, initialReviews = [], onReviewsUpdate }) => {
   // Utilisation du UserContext amélioré
   const { user, isAuthenticated, authenticatedFetch, authLoading } = useContext(UserContext);
   
@@ -138,6 +139,21 @@ const ReviewSystem = ({ productId, initialReviews = [] }) => {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   // ========================
+  // NOUVELLE FONCTION : Notifier la page parent des changements
+  // ========================
+  
+  const notifyParentOfUpdate = useCallback((newReviews) => {
+    console.log('📤 Notification de la page parent avec', newReviews.length, 'avis');
+    
+    if (onReviewsUpdate && typeof onReviewsUpdate === 'function') {
+      onReviewsUpdate(newReviews);
+      console.log('✅ Page parent notifiée avec succès');
+    } else {
+      console.log('⚠️ Pas de callback onReviewsUpdate fourni');
+    }
+  }, [onReviewsUpdate]);
+
+  // ========================
   // DEBUG LOGGING (VERSION NETTOYÉE)
   // ========================
   
@@ -145,6 +161,24 @@ const ReviewSystem = ({ productId, initialReviews = [] }) => {
     console.log('🔍 ReviewSystem - Utilisateur:', isAuthenticated ? 'connecté' : 'non connecté');
     console.log('📝 ReviewSystem - Avis actuels:', reviews.length, 'avis');
   }, [user, isAuthenticated, reviews]);
+
+  // ========================
+  // NOUVEAU : Effet pour synchroniser les avis avec la page parent
+  // ========================
+  
+  useEffect(() => {
+    console.log('🔄 Synchronisation des avis avec la page parent');
+    setReviews(initialReviews);
+  }, [initialReviews]);
+
+  // ========================
+  // NOUVEAU : Notifier la page parent quand les avis changent
+  // ========================
+  
+  useEffect(() => {
+    console.log('📣 Les avis ont changé, notification de la page parent');
+    notifyParentOfUpdate(reviews);
+  }, [reviews, notifyParentOfUpdate]);
 
   // ========================
   // EVENT HANDLERS
@@ -235,12 +269,15 @@ const ReviewSystem = ({ productId, initialReviews = [] }) => {
       const newReview = createReviewFromResponse(data, user, reviewForm);
       console.log('✅ Nouvel avis créé:', newReview);
 
-      // Ajouter le nouvel avis à la liste
-      setReviews(prevReviews => [newReview, ...prevReviews]);
+      // Ajouter le nouvel avis à la liste (MODIFICATION : mettre à jour directement l'état)
+      const updatedReviews = [newReview, ...reviews];
+      setReviews(updatedReviews);
       
       // Réinitialiser le formulaire
       setReviewForm({ rating: '', comment: '' });
       setSuccess('Votre avis a été ajouté avec succès !');
+
+      console.log('🎉 Avis ajouté avec succès, page parent sera notifiée automatiquement');
 
     } catch (err) {
       console.error('❌ Erreur lors de l\'ajout de l\'avis:', err);
@@ -253,7 +290,7 @@ const ReviewSystem = ({ productId, initialReviews = [] }) => {
     } finally {
       setLoading(false);
     }
-  }, [user, isAuthenticated, reviewForm, productId, API_URL, authenticatedFetch]);
+  }, [user, isAuthenticated, reviewForm, productId, API_URL, authenticatedFetch, reviews]);
 
   /**
    * Suppression d'un avis avec gestion robuste d'authentification
@@ -314,10 +351,11 @@ const ReviewSystem = ({ productId, initialReviews = [] }) => {
         throw new Error(data.error || 'Erreur lors de la suppression de l\'avis');
       }
 
-      // Retirer l'avis de la liste
-      setReviews(prevReviews => prevReviews.filter(review => review._id !== reviewId));
+      // Retirer l'avis de la liste (MODIFICATION : mettre à jour directement l'état)
+      const updatedReviews = reviews.filter(review => review._id !== reviewId);
+      setReviews(updatedReviews);
       setSuccess('Avis supprimé avec succès !');
-      console.log('✅ Avis supprimé localement');
+      console.log('✅ Avis supprimé localement, page parent sera notifiée automatiquement');
 
     } catch (err) {
       console.error('❌ Erreur lors de la suppression:', err);

@@ -7,6 +7,7 @@ import styles from "../styles/store.module.css";
 import Header from "../components/Header";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export default function Boutique() {
   // État pour détecter si nous sommes côté client
   const [isClient, setIsClient] = useState(false);
@@ -34,6 +35,78 @@ export default function Boutique() {
   const [cartCount, setCartCount] = useState(0);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState([]);
+
+  // ========================
+  // NOUVELLES FONCTIONS pour la gestion des étoiles (même que dans la page produit)
+  // ========================
+
+  /**
+   * Calculer la moyenne des avis pour un produit donné
+   * @param {Array} reviews - Tableau des avis du produit
+   * @returns {Object} - {average: number, total: number}
+   */
+  const calculateAverageRating = (reviews) => {
+    console.log("📊 Calcul de la moyenne des avis pour un produit...");
+    console.log("📝 Nombre d'avis reçus:", reviews?.length || 0);
+    
+    if (!reviews || reviews.length === 0) {
+      console.log("❌ Aucun avis trouvé, moyenne = 0");
+      return { average: 0, total: 0 };
+    }
+
+    // Calculer la somme des notes
+    const totalRating = reviews.reduce((sum, review) => {
+      const rating = Number(review.rating);
+      console.log(`⭐ Avis: ${rating} étoiles`);
+      return sum + (isNaN(rating) ? 0 : rating);
+    }, 0);
+
+    const average = totalRating / reviews.length;
+    console.log(`✅ Moyenne calculée: ${average.toFixed(2)} (${totalRating}/${reviews.length})`);
+    
+    return {
+      average: Math.round(average * 10) / 10, // Arrondir à 1 décimale
+      total: reviews.length
+    };
+  };
+
+  /**
+   * Rendu des étoiles avec moyenne pour un produit
+   * @param {number} rating - Note moyenne (0-5)
+   * @param {boolean} showNumber - Afficher le nombre à côté des étoiles
+   * @returns {JSX.Element}
+   */
+  const renderStars = (rating, showNumber = false) => {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+    return (
+      <div className={styles.ratingDisplay}>
+        <div className={styles.ratingStars}>
+          {/* Étoiles pleines */}
+          {"★".repeat(fullStars)}
+          {/* Demi-étoile si nécessaire */}
+          {hasHalfStar && "⭐"}
+          {/* Étoiles vides */}
+          {"☆".repeat(emptyStars)}
+        </div>
+      </div>
+    );
+  };
+
+  /**
+   * Obtenir les informations de note pour un produit donné
+   * @param {Object} product - Objet produit avec ses avis
+   * @returns {Object} - {averageRating: number, totalReviews: number}
+   */
+  const getProductRatingInfo = (product) => {
+    const { average, total } = calculateAverageRating(product.reviews || []);
+    return {
+      averageRating: average,
+      totalReviews: total
+    };
+  };
 
   // Effet pour charger les produits depuis l'API
   useEffect(() => {
@@ -582,6 +655,9 @@ export default function Boutique() {
                     new Date(product.createdAt) >
                     new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
+                  // NOUVEAU : Calculer les informations de notation pour ce produit
+                  const { averageRating, totalReviews } = getProductRatingInfo(product);
+
                   return (
                     <div
                       key={product._id}
@@ -627,14 +703,16 @@ export default function Boutique() {
                       </Link>
                       <div className={styles.productInfo}>
                         <h3 className={styles.productName}>{product.title}</h3>
+                        
+                        {/* MODIFICATION MAJEURE : Affichage des étoiles avec moyenne réelle */}
                         <div className={styles.productRating}>
-                          <div className={styles.stars}>
-                            {"★".repeat(5)} {/* On met 5 étoiles par défaut */}
-                          </div>
+                          {/* Affichage des étoiles basé sur la moyenne calculée */}
+                          {renderStars(averageRating, false)}
                           <div className={styles.reviewCount}>
-                            ({product.reviews ? product.reviews.length : 0})
+                            ({totalReviews} avis)
                           </div>
                         </div>
+
                         <div className={styles.productPrice}>
                           {product.price
                             ? `${product.price.toFixed(2)} €`

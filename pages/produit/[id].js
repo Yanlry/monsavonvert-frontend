@@ -29,6 +29,84 @@ export default function ProductDetail({ product }) {
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
   const [selectedSize, setSelectedSize] = useState(0);
 
+  // NOUVEAUX ÉTATS pour la gestion des avis et de la moyenne
+  const [currentReviews, setCurrentReviews] = useState(product.reviews || []);
+  const [averageRating, setAverageRating] = useState(0);
+  const [totalReviews, setTotalReviews] = useState(0);
+
+  // NOUVELLE FONCTION : Calculer la moyenne des avis
+  const calculateAverageRating = (reviews) => {
+    console.log("📊 Calcul de la moyenne des avis...");
+    console.log("📝 Nombre d'avis reçus:", reviews.length);
+    
+    if (!reviews || reviews.length === 0) {
+      console.log("❌ Aucun avis trouvé, moyenne = 0");
+      return { average: 0, total: 0 };
+    }
+
+    // Calculer la somme des notes
+    const totalRating = reviews.reduce((sum, review) => {
+      const rating = Number(review.rating);
+      console.log(`⭐ Avis: ${rating} étoiles`);
+      return sum + (isNaN(rating) ? 0 : rating);
+    }, 0);
+
+    const average = totalRating / reviews.length;
+    console.log(`✅ Moyenne calculée: ${average.toFixed(2)} (${totalRating}/${reviews.length})`);
+    
+    return {
+      average: Math.round(average * 10) / 10, // Arrondir à 1 décimale
+      total: reviews.length
+    };
+  };
+
+  // NOUVELLE FONCTION : Rendu des étoiles avec moyenne
+  const renderStars = (rating, showNumber = false) => {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+    return (
+      <div className={styles.ratingDisplay}>
+        <div className={styles.ratingStars}>
+          {/* Étoiles pleines */}
+          {"★".repeat(fullStars)}
+          {/* Demi-étoile si nécessaire */}
+          {hasHalfStar && "⭐"}
+          {/* Étoiles vides */}
+          {"☆".repeat(emptyStars)}
+        </div>
+      </div>
+    );
+  };
+
+  // EFFET pour mettre à jour la moyenne quand les avis changent
+  useEffect(() => {
+    console.log("🔄 Mise à jour de la moyenne des avis");
+    const { average, total } = calculateAverageRating(currentReviews);
+    setAverageRating(average);
+    setTotalReviews(total);
+    
+    console.log(`📊 Nouvelle moyenne: ${average} sur ${total} avis`);
+  }, [currentReviews]);
+
+  // EFFET initial pour charger les avis du produit
+  useEffect(() => {
+    console.log("🔄 Initialisation des avis du produit");
+    console.log("📦 Avis du produit:", product.reviews?.length || 0);
+    
+    if (product.reviews) {
+      setCurrentReviews(product.reviews);
+    }
+  }, [product]);
+
+  // NOUVELLE FONCTION : Callback pour mettre à jour les avis depuis ReviewSystem
+  const handleReviewsUpdate = (newReviews) => {
+    console.log("🔄 Mise à jour des avis depuis ReviewSystem");
+    console.log("📝 Nouveaux avis:", newReviews.length);
+    setCurrentReviews(newReviews);
+  };
+
   // Simulation d'ajout au panier avec notification
   const addToCart = () => {
     const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -364,14 +442,12 @@ const buyNow = () => {
                 <div className={styles.productInfo}>
                   <h1 className={styles.productTitle}>{product.title}</h1>
 
-                  {/* Note et avis */}
+                  {/* MODIFICATION : Note et avis avec moyenne calculée */}
                   <div className={styles.productRating}>
-                    <div className={styles.ratingStars}>
-                      {"★".repeat(4)}
-                      {"☆".repeat(1)}
-                    </div>
+                    {/* Affichage des étoiles basé sur la moyenne */}
+                    {renderStars(averageRating, true)}
                     <span className={styles.ratingCount}>
-                      ({product.reviews ? product.reviews.length : 0} avis)
+                      ({totalReviews} avis)
                     </span>
                   </div>
 
@@ -1080,7 +1156,7 @@ const buyNow = () => {
                       </div>
                     </li>
                     <li className={styles.usageStep}>
-                      <div className={styles.usageStepNumber}>4</div>
+                      <div className={styles.usageSteppNumber}>4</div>
                       <div className={styles.usageStepContent}>
                         <h4>Rincer</h4>
                         <p>Rincez abondamment à l'eau claire.</p>
@@ -1188,16 +1264,17 @@ const buyNow = () => {
               </div>
             </div>
 
-            {/* MODIFICATION MAJEURE : Onglet Avis clients */}
+            {/* MODIFICATION MAJEURE : Onglet Avis clients avec callback */}
             <div
               className={`${styles.tabContent} ${
                 activeTab === "reviews" ? styles.tabContentActive : ""
               }`}
             >
-              {/* REMPLACEMENT : Ancien système d'avis par le nouveau composant */}
+              {/* REMPLACEMENT : Ancien système d'avis par le nouveau composant avec callback */}
               <ReviewSystem 
                 productId={id} 
-                initialReviews={product.reviews || []} 
+                initialReviews={currentReviews}
+                onReviewsUpdate={handleReviewsUpdate}
               />
             </div>
           </section>
