@@ -128,11 +128,20 @@ export default function Home() {
     {
       id: 1,
       icon: (
-        <svg viewBox="0 0 24 24" width="36" height="36" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 2a3 3 0 0 0-3 3c0 1.5 1 3 1 3s1-1.5 1-3a3 3 0 0 0-3-3z"/>
-          <path d="M7.64 6.64a7 7 0 1 0 8.72 0"/>
-          <path d="M12 10v4"/>
-          <path d="M8 18c2-2 4-2 4-2s2 0 4 2"/>
+        <svg
+          viewBox="0 0 24 24"
+          width="36"
+          height="36"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M12 2a3 3 0 0 0-3 3c0 1.5 1 3 1 3s1-1.5 1-3a3 3 0 0 0-3-3z" />
+          <path d="M7.64 6.64a7 7 0 1 0 8.72 0" />
+          <path d="M12 10v4" />
+          <path d="M8 18c2-2 4-2 4-2s2 0 4 2" />
         </svg>
       ),
       title: "100% Naturel",
@@ -142,10 +151,19 @@ export default function Home() {
     {
       id: 2,
       icon: (
-        <svg viewBox="0 0 24 24" width="36" height="36" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/>
-          <line x1="16" y1="8" x2="2" y2="22"/>
-          <line x1="17.5" y1="15" x2="9" y2="15"/>
+        <svg
+          viewBox="0 0 24 24"
+          width="36"
+          height="36"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z" />
+          <line x1="16" y1="8" x2="2" y2="22" />
+          <line x1="17.5" y1="15" x2="9" y2="15" />
         </svg>
       ),
       title: "Fabrication Artisanale",
@@ -155,10 +173,19 @@ export default function Home() {
     {
       id: 3,
       icon: (
-        <svg viewBox="0 0 24 24" width="36" height="36" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        <svg
+          viewBox="0 0 24 24"
+          width="36"
+          height="36"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+          <line x1="12" y1="17" x2="12.01" y2="17" />
         </svg>
       ),
       title: "Écoresponsable",
@@ -168,8 +195,17 @@ export default function Home() {
     {
       id: 4,
       icon: (
-        <svg viewBox="0 0 24 24" width="36" height="36" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-          <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+        <svg
+          viewBox="0 0 24 24"
+          width="36"
+          height="36"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
         </svg>
       ),
       title: "Qualité Premium",
@@ -185,9 +221,18 @@ export default function Home() {
       name: "Douceur Quotidienne",
       percentage: "5%",
       icon: (
-        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 2L2 7v10c0 5.55 3.84 10 9 10s9-4.45 9-10V7l-10-5z"/>
-          <circle cx="12" cy="12" r="3"/>
+        <svg
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M12 2L2 7v10c0 5.55 3.84 10 9 10s9-4.45 9-10V7l-10-5z" />
+          <circle cx="12" cy="12" r="3" />
         </svg>
       ),
       description: "Savon d'Alep doux pour peaux sensibles et usage quotidien",
@@ -200,10 +245,19 @@ export default function Home() {
       name: "Équilibre & Purification",
       percentage: "20%",
       icon: (
-        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 2a3 3 0 0 0-3 3c0 1.5 1 3 1 3s1-1.5 1-3a3 3 0 0 0-3-3z"/>
-          <path d="M7.64 6.64a7 7 0 1 0 8.72 0"/>
-          <path d="M12 10v4"/>
+        <svg
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M12 2a3 3 0 0 0-3 3c0 1.5 1 3 1 3s1-1.5 1-3a3 3 0 0 0-3-3z" />
+          <path d="M7.64 6.64a7 7 0 1 0 8.72 0" />
+          <path d="M12 10v4" />
         </svg>
       ),
       description:
@@ -217,8 +271,17 @@ export default function Home() {
       name: "Soin Intensif",
       percentage: "30%",
       icon: (
-        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        <svg
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
         </svg>
       ),
       description:
@@ -364,11 +427,22 @@ export default function Home() {
           {/* Bannière de confiance */}
           <section className={styles.trustBanner}>
             <div className={styles.trustWrapper}>
+              {/* Fabrication Syrienne - Icône maison/atelier */}
               <div className={styles.trustItem}>
                 <div className={styles.trustIcon}>
-                  <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 2L2 7v10c0 5.55 3.84 10 9 10s9-4.45 9-10V7l-10-5z"/>
-                    <path d="M12 7v5l3 3"/>
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="24"
+                    height="24"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    {/* Icône maison simple et claire */}
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9,22 9,12 15,12 15,22" />
                   </svg>
                 </div>
                 <div className={styles.trustText}>
@@ -377,12 +451,22 @@ export default function Home() {
                 </div>
               </div>
 
+              {/* Ingrédients naturels - Icône feuille simple */}
               <div className={styles.trustItem}>
                 <div className={styles.trustIcon}>
-                  <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 2a3 3 0 0 0-3 3c0 1.5 1 3 1 3s1-1.5 1-3a3 3 0 0 0-3-3z"/>
-                    <path d="M7.64 6.64a7 7 0 1 0 8.72 0"/>
-                    <path d="M12 10v4"/>
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="24"
+                    height="24"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    {/* Icône feuille élégante et simple */}
+                    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+                    <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
                   </svg>
                 </div>
                 <div className={styles.trustText}>
@@ -391,11 +475,23 @@ export default function Home() {
                 </div>
               </div>
 
+              {/* Emballages réduits - Icône globe terrestre */}
               <div className={styles.trustItem}>
                 <div className={styles.trustIcon}>
-                  <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                    <circle cx="12" cy="12" r="3"/>
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="24"
+                    height="24"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    {/* Icône globe simple et reconnaissable */}
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M2 12h20" />
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
                   </svg>
                 </div>
                 <div className={styles.trustText}>
@@ -404,12 +500,24 @@ export default function Home() {
                 </div>
               </div>
 
+              {/* Livraison offerte - Icône camion simple */}
               <div className={styles.trustItem}>
                 <div className={styles.trustIcon}>
-                  <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M16 16l2-2 4 4"/>
-                    <circle cx="10" cy="10" r="8"/>
-                    <path d="M2.21 13.79L10 6l7.79 7.79L10 21.79z"/>
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="24"
+                    height="24"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    {/* Icône camion épurée et claire */}
+                    <rect x="1" y="3" width="15" height="13" />
+                    <polygon points="16,8 20,8 23,11 23,16 16,16 16,8" />
+                    <circle cx="5.5" cy="18.5" r="2.5" />
+                    <circle cx="18.5" cy="18.5" r="2.5" />
                   </svg>
                 </div>
                 <div className={styles.trustText}>
@@ -444,104 +552,179 @@ export default function Home() {
 
               <div className={styles.categoryShowcase}>
                 <div className={styles.categoryCardsRow}>
-                  {productCategories.map((category, index) => (
-                    <Link
-                      key={category.id}
-                      href={category.link}
-                      className={`${styles.categoryCardNew} ${
-                        styles[`categoryColor${index + 1}`]
-                      }`}
-                    >
-                      <div className={styles.categoryGradientBg}></div>
-                      <div className={styles.categoryMediaStack}>
-                        <div className={styles.categoryImageFrame}>
-                          <div
-                            className={styles.categoryImageWrapper}
-                            style={{
-                              backgroundImage: `url(${category.image})`,
-                            }}
-                          >
-                            <div className={styles.categoryImageFilter}></div>
-                          </div>
-                        </div>
-                        <div className={styles.categoryBadge}>
-                          <div className={styles.badgeContent}>
-                            <span className={styles.badgeValue}>
-                              {category.percentage}
-                            </span>
-                            <span className={styles.badgeType}>
-                              Huile de
-                              <br />
-                              baie de laurier
-                            </span>
-                          </div>
-                        </div>
-                        <div className={styles.categoryIconCircle}>
-                          <div className={styles.categoryIconWrapper}>
-                            <span className={styles.categoryIconSymbol}>
-                              {category.icon}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
+                  {productCategories.map((category, index) => {
+                    // Définir les icônes simples pour chaque catégorie
+                    const getSimpleIcon = (index) => {
+                      switch (index) {
+                        case 0: // Douceur Quotidienne
+                          return (
+                            <svg
+                              viewBox="0 0 24 24"
+                              width="24"
+                              height="24"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                              fill="none"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              {/* Icône coeur simple pour douceur */}
+                              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                            </svg>
+                          );
+                        case 1: // Équilibre & Purification
+                          return (
+                            <svg
+                              viewBox="0 0 24 24"
+                              width="24"
+                              height="24"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                              fill="none"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              {/* Belle fleur comme dans la trust banner */}
+                              <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+                              <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+                            </svg>
+                          );
+                        case 2: // Soin Intensif
+                          return (
+                            <svg
+                              viewBox="0 0 24 24"
+                              width="24"
+                              height="24"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                              fill="none"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              {/* Icône bouclier pour protection/soin intensif */}
+                              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                              <path d="M9 12l2 2 4-4" />
+                            </svg>
+                          );
+                        default:
+                          return (
+                            <svg
+                              viewBox="0 0 24 24"
+                              width="24"
+                              height="24"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                              fill="none"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <circle cx="12" cy="12" r="10" />
+                            </svg>
+                          );
+                      }
+                    };
 
-                      <div className={styles.categoryDetailsContainer}>
-                        <div className={styles.categoryHeader}>
-                          <h3 className={styles.categoryTitle}>
-                            {category.name}
-                          </h3>
-                          <div className={styles.categoryIndicator}>
-                            <div className={styles.categoryIndicatorDot}></div>
+                    return (
+                      <Link
+                        key={category.id}
+                        href={category.link}
+                        className={`${styles.categoryCardNew} ${
+                          styles[`categoryColor${index + 1}`]
+                        }`}
+                      >
+                        <div className={styles.categoryGradientBg}></div>
+                        <div className={styles.categoryMediaStack}>
+                          <div className={styles.categoryImageFrame}>
+                            <div
+                              className={styles.categoryImageWrapper}
+                              style={{
+                                backgroundImage: `url(${category.image})`,
+                              }}
+                            >
+                              <div className={styles.categoryImageFilter}></div>
+                            </div>
+                          </div>
+                          <div className={styles.categoryBadge}>
+                            <div className={styles.badgeContent}>
+                              <span className={styles.badgeValue}>
+                                {category.percentage}
+                              </span>
+                              <span className={styles.badgeType}>
+                                Huile de
+                                <br />
+                                baie de laurier
+                              </span>
+                            </div>
+                          </div>
+                          <div className={styles.categoryIconCircle}>
+                            <div className={styles.categoryIconWrapper}>
+                              <span className={styles.categoryIconSymbol}>
+                                {getSimpleIcon(index)}
+                              </span>
+                            </div>
                           </div>
                         </div>
 
-                        <p className={styles.categoryText}>
-                          {category.description}
-                        </p>
-
-                        <div className={styles.categoryFooter}>
-                          <div className={styles.categorySpecifics}>
-                            <span className={styles.categorySpecTitle}>
-                              Idéal pour:
-                            </span>
-                            <span className={styles.categorySpecValue}>
-                              {category.suitableFor}
-                            </span>
+                        <div className={styles.categoryDetailsContainer}>
+                          <div className={styles.categoryHeader}>
+                            <h3 className={styles.categoryTitle}>
+                              {category.name}
+                            </h3>
+                            <div className={styles.categoryIndicator}>
+                              <div
+                                className={styles.categoryIndicatorDot}
+                              ></div>
+                            </div>
                           </div>
 
-                          <div className={styles.categoryAction}>
-                            <span className={styles.categoryActionText}>
-                              Découvrir
-                            </span>
-                            <span className={styles.categoryActionIcon}>
-                              <svg
-                                width="18"
-                                height="18"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  d="M5 12H19"
-                                  stroke="currentColor"
-                                  strokeWidth="2"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
-                                <path
-                                  d="M12 5L19 12L12 19"
-                                  stroke="currentColor"
-                                  strokeWidth="2"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
-                              </svg>
-                            </span>
+                          <p className={styles.categoryText}>
+                            {category.description}
+                          </p>
+
+                          <div className={styles.categoryFooter}>
+                            <div className={styles.categorySpecifics}>
+                              <span className={styles.categorySpecTitle}>
+                                Idéal pour:
+                              </span>
+                              <span className={styles.categorySpecValue}>
+                                {category.suitableFor}
+                              </span>
+                            </div>
+
+                            <div className={styles.categoryAction}>
+                              <span className={styles.categoryActionText}>
+                                Découvrir
+                              </span>
+                              <span className={styles.categoryActionIcon}>
+                                <svg
+                                  width="18"
+                                  height="18"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M5 12H19"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                  />
+                                  <path
+                                    d="M12 5L19 12L12 19"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                  />
+                                </svg>
+                              </span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </Link>
-                  ))}
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -705,8 +888,8 @@ export default function Home() {
             </div>
           </section>
 
-             {/* Section Engagement Environnemental */}
-             <section className={styles.environmentSection}>
+          {/* Section Engagement Environnemental */}
+          <section className={styles.environmentSection}>
             <div className={styles.environmentBg}></div>
             <div className={styles.environmentContainer}>
               <div className={styles.environmentHeader}>
@@ -743,9 +926,19 @@ export default function Home() {
                     <div className={styles.environmentBadge}>
                       <div className={styles.environmentBadgeInner}>
                         <span className={styles.badgeIcon}>
-                          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                            <circle cx="12" cy="12" r="3"/>
+                          {/* Icône feuille simple pour ECO FRIENDLY */}
+                          <svg
+                            viewBox="0 0 24 24"
+                            width="20"
+                            height="20"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            fill="none"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+                            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
                           </svg>
                         </span>
                         <span className={styles.badgeText}>
@@ -763,9 +956,19 @@ export default function Home() {
                     {[
                       {
                         icon: (
-                          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                            <circle cx="12" cy="12" r="3"/>
+                          <svg
+                            viewBox="0 0 24 24"
+                            width="24"
+                            height="24"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            fill="none"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            {/* Icône poubelle simple pour zéro déchet */}
+                            <polyline points="3 6 5 6 21 6" />
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                           </svg>
                         ),
                         title: "Zéro Déchet",
@@ -775,10 +978,19 @@ export default function Home() {
                       },
                       {
                         icon: (
-                          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M12 2a3 3 0 0 0-3 3c0 1.5 1 3 1 3s1-1.5 1-3a3 3 0 0 0-3-3z"/>
-                            <path d="M7.64 6.64a7 7 0 1 0 8.72 0"/>
-                            <path d="M12 10v4"/>
+                          <svg
+                            viewBox="0 0 24 24"
+                            width="24"
+                            height="24"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            fill="none"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            {/* Icône pin/localisation pour circuit court */}
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                            <circle cx="12" cy="10" r="3" />
                           </svg>
                         ),
                         title: "Circuit Court",
@@ -788,8 +1000,18 @@ export default function Home() {
                       },
                       {
                         icon: (
-                          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                          <svg
+                            viewBox="0 0 24 24"
+                            width="24"
+                            height="24"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            fill="none"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            {/* Icône éclair simple pour énergie */}
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
                           </svg>
                         ),
                         title: "Énergie Verte",
@@ -799,11 +1021,18 @@ export default function Home() {
                       },
                       {
                         icon: (
-                          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="12" cy="12" r="1"/>
-                            <path d="M12 1v6m0 6v6"/>
-                            <path d="M3 12h6m6 0h6"/>
-                            <path d="M5.6 5.6l4.2 4.2m4.2 4.2l4.2 4.2M18.4 5.6l-4.2 4.2m-4.2 4.2l-4.2 4.2"/>
+                          <svg
+                            viewBox="0 0 24 24"
+                            width="24"
+                            height="24"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            fill="none"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            {/* Icône cœur simple pour vegan et sans cruauté */}
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                           </svg>
                         ),
                         title: "Vegan et sans cruauté",
@@ -922,7 +1151,95 @@ export default function Home() {
                 </div>
 
                 <div className={styles.featuresCardGrid}>
-                  {brandFeatures.map((feature, index) => (
+                  {[
+                    {
+                      id: 1,
+                      icon: (
+                        <svg
+                          viewBox="0 0 24 24"
+                          width="36"
+                          height="36"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          {/* Icône feuille pour 100% Naturel */}
+                          <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+                          <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+                        </svg>
+                      ),
+                      title: "100% Naturel",
+                      description:
+                        "Ingrédients certifiés biologiques, sans produits chimiques ni conservateurs artificiels",
+                    },
+                    {
+                      id: 2,
+                      icon: (
+                        <svg
+                          viewBox="0 0 24 24"
+                          width="36"
+                          height="36"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          {/* Icône marteau pour Fabrication Artisanale */}
+                          <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+                        </svg>
+                      ),
+                      title: "Fabrication Artisanale",
+                      description:
+                        "Chaque savon est fabriqué à la main dans notre atelier selon des méthodes traditionnelles",
+                    },
+                    {
+                      id: 3,
+                      icon: (
+                        <svg
+                          viewBox="0 0 24 24"
+                          width="36"
+                          height="36"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          {/* Icône globe pour Écoresponsable */}
+                          <circle cx="12" cy="12" r="10" />
+                          <path d="M2 12h20" />
+                          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                        </svg>
+                      ),
+                      title: "Écoresponsable",
+                      description:
+                        "Emballages biodégradables et minimisés pour réduire notre impact environnemental",
+                    },
+                    {
+                      id: 4,
+                      icon: (
+                        <svg
+                          viewBox="0 0 24 24"
+                          width="36"
+                          height="36"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          {/* Icône étoile pour Qualité Premium */}
+                          <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+                        </svg>
+                      ),
+                      title: "Qualité Premium",
+                      description:
+                        "Des produits de haute qualité conçus pour nourrir et respecter votre peau",
+                    },
+                  ].map((feature, index) => (
                     <div
                       key={feature.id}
                       className={`${styles.featureCardNew} ${
@@ -981,8 +1298,18 @@ export default function Home() {
                 <div className={styles.bannerContent}>
                   <div className={styles.bannerIconWrap}>
                     <div className={styles.bannerIcon}>
-                      <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                        <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+                      <svg
+                        viewBox="0 0 24 24"
+                        width="24"
+                        height="24"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        {/* Icône étoile simple pour la bannière */}
+                        <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
                       </svg>
                     </div>
                   </div>
@@ -1002,7 +1329,6 @@ export default function Home() {
             <div className={styles.featuresAccentShape2}></div>
             <div className={styles.featuresPatternGrid}></div>
           </section>
-
           {/* Témoignages clients */}
           <section ref={testimonialRef} className={styles.testimonialsSimple}>
             <div className={styles.testimonialsContainer}>
