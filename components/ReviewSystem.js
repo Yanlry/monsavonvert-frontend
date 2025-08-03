@@ -116,7 +116,6 @@ const canUserDeleteReview = (user, reviewUserId, review = {}) => {
  * - Suppression sécurisée pour l'auteur et les admins
  * - Interface utilisateur intuitive avec états de chargement
  * - Gestion robuste des erreurs avec retry automatique
- * - NOUVEAU: Communication avec la page produit via callback
  */
 const ReviewSystem = ({ productId, initialReviews = [], onReviewsUpdate }) => {
   // Utilisation du UserContext amélioré
