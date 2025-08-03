@@ -4,7 +4,6 @@ import { UserContext } from "../context/UserContext";
 import styles from "../styles/header.module.css";
 
 export default function Header({ cartCount }) {
-  // États pour gérer les interactions utilisateur
   const { user, setUser } = useContext(UserContext);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -12,7 +11,6 @@ export default function Header({ cartCount }) {
   const [adminMenuOpen, setAdminMenuOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState(null);
 
-  // Effet pour la détection du scroll avec une transition douce
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
