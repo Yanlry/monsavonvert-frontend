@@ -68,49 +68,41 @@ export default function HowToChoose() {
       skinType: "Peau normale à sèche",
       concentration: "5%",
       reason: "Hydratation légère, nettoyage doux quotidien",
-      icon: "🌸"
     },
     {
       skinType: "Peau sensible/Enfants",
       concentration: "5%",
-      reason: "Formule douce, apaisante, non irritante",
-      icon: "👶"
+      reason: "Formule douce, apaisante, non irritante"
     },
     {
       skinType: "Peau mixte",
       concentration: "5-20%",
       reason: "Équilibre entre hydratation et régulation du sébum",
-      icon: "⚖️"
     },
     {
       skinType: "Peau grasse/Acné légère",
       concentration: "20%",
       reason: "Propriétés séborégulatrices et antibactériennes",
-      icon: "🌿"
     },
     {
         skinType: "Cheveux gras",
         concentration: "20%",
         reason: "Régule l'excès de sébum, purifie le cuir chevelu",
-        icon: "💆‍♀️"
       },
     {
       skinType: "Acné modérée à sévère",
       concentration: "20-30%",
       reason: "Action antiseptique puissante, diminue l'inflammation",
-      icon: "💚"
     },
     {
       skinType: "Eczéma/Psoriasis",
       concentration: "30%",
       reason: "Effet apaisant intense, propriétés anti-inflammatoires et cicatrisantes",
-      icon: "🍃"
     },
     {
       skinType: "Pellicules/Démangeaisons",
       concentration: "30%",
       reason: "Propriétés antifongiques, apaise le cuir chevelu",
-      icon: "✨"
     }
   ];
 
@@ -266,7 +258,6 @@ export default function HowToChoose() {
                 {skinGuideData.map((item, index) => (
                   <div key={index} className={styles.guideTableRow}>
                     <div className={styles.guideTableCell}>
-                      <span style={{ marginRight: '8px', fontSize: '20px' }}>{item.icon}</span>
                       <strong>{item.skinType}</strong>
                     </div>
                     <div className={styles.guideTableCell}>
