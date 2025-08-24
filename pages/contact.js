@@ -158,11 +158,6 @@ export default function Contact() {
           <section className={styles.pageHero}>
             <div className={styles.pageHeroContent}>
               <h1 className={styles.pageTitle}>Contactez-nous</h1>
-              <div className={styles.pageBreadcrumb}>
-                <Link href="/">Accueil</Link>
-                <span className={styles.breadcrumbSeparator}>/</span>
-                <span className={styles.breadcrumbCurrent}>Contact</span>
-              </div>
             </div>
           </section>
 

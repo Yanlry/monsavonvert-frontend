@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import Link from "next/link";
-import styles from "../styles/virtues.module.css";
+import styles from "../styles/how-to-choose.module.css";
 import Header from "../components/Header";
 
 export default function HowToChoose() {
@@ -91,17 +91,17 @@ export default function HowToChoose() {
       },
     {
       skinType: "Acné modérée à sévère",
-      concentration: "20-30%",
+      concentration: "20-35%",
       reason: "Action antiseptique puissante, diminue l'inflammation",
     },
     {
       skinType: "Eczéma/Psoriasis",
-      concentration: "30%",
+      concentration: "35%",
       reason: "Effet apaisant intense, propriétés anti-inflammatoires et cicatrisantes",
     },
     {
       skinType: "Pellicules/Démangeaisons",
-      concentration: "30%",
+      concentration: "35%",
       reason: "Propriétés antifongiques, apaise le cuir chevelu",
     }
   ];
@@ -125,7 +125,7 @@ export default function HowToChoose() {
       color: "#4caf50"
     },
     {
-      percentage: "30%",
+      percentage: "35%",
       title: "Savon Intense",
       description: "Pour les problèmes cutanés spécifiques",
       benefits: ["Action thérapeutique", "Anti-inflammatoire", "Cicatrisant"],
@@ -180,13 +180,6 @@ export default function HowToChoose() {
           <section className={styles.pageHero}>
             <div className={styles.pageHeroContent}>
               <h1 className={styles.pageTitle}>Comment Choisir ?</h1>
-              <div className={styles.pageBreadcrumb}>
-                <Link href="/">Accueil</Link>
-                <span className={styles.breadcrumbSeparator}>/</span>
-                <span className={styles.breadcrumbCurrent}>
-                  Comment choisir
-                </span>
-              </div>
             </div>
           </section>
           {/* Section aperçu des concentrations */}
@@ -299,7 +292,7 @@ export default function HowToChoose() {
                   </p>
                   <p>
                     Pour les problèmes cutanés spécifiques, consultez un
-                    dermatologue avant d'utiliser la concentration à 30%.
+                    dermatologue avant d'utiliser la concentration à 35%.
                   </p>
                 </div>
               </div>
@@ -324,7 +317,7 @@ export default function HowToChoose() {
                   <h3>Test de tolérance</h3>
                   <p>
                     Effectuez toujours un test sur une petite zone de peau avant la première 
-                    utilisation, surtout avec les concentrations élevées (20% et 30%).
+                    utilisation, surtout avec les concentrations élevées (20% et 35%).
                   </p>
                 </div>
               </div>

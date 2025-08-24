@@ -187,11 +187,6 @@ export default function AboutPage() {
           <section className={styles.pageHero}>
             <div className={styles.pageHeroContent}>
               <h1 className={styles.pageTitle}>L'Histoire Millénaire du Savon d'Alep</h1>
-              <div className={styles.pageBreadcrumb}>
-                <Link href="/">Accueil</Link>
-                <span className={styles.breadcrumbSeparator}>/</span>
-                <span className={styles.breadcrumbCurrent}>Notre Histoire</span>
-              </div>
             </div>
           </section>
 

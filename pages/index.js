@@ -269,7 +269,7 @@ export default function Home() {
     {
       id: 3,
       name: "Soin Intensif",
-      percentage: "30%",
+      percentage: "35%",
       icon: (
         <svg
           viewBox="0 0 24 24"

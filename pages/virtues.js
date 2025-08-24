@@ -123,7 +123,7 @@ export default function VertusBienfaits() {
     },
     {
       id: 3,
-      percentage: "30%",
+      percentage: "35%",
       title: "Savon d'Alep Intense",
       image: "/images/3.JPEG",
       suitableFor: "Problèmes cutanés, peaux très grasses, usage thérapeutique",
@@ -135,7 +135,7 @@ export default function VertusBienfaits() {
         "Effet assainissant pour les cuirs chevelus à problèmes",
       ],
       description:
-        "Avec 30% d'huile de baie de laurier, ce savon représente la concentration la plus élevée et la plus efficace. Sa formule puissante est recommandée pour les problèmes cutanés spécifiques. Traditionnellement utilisé pour ses vertus thérapeutiques, il offre un soulagement aux peaux souffrant d'eczéma, de psoriasis ou d'acné sévère grâce à ses exceptionnelles propriétés antiseptiques et cicatrisantes.",
+        "Avec 35% d'huile de baie de laurier, ce savon représente la concentration la plus élevée et la plus efficace. Sa formule puissante est recommandée pour les problèmes cutanés spécifiques. Traditionnellement utilisé pour ses vertus thérapeutiques, il offre un soulagement aux peaux souffrant d'eczéma, de psoriasis ou d'acné sévère grâce à ses exceptionnelles propriétés antiseptiques et cicatrisantes.",
     },
   ];
 
@@ -185,13 +185,6 @@ export default function VertusBienfaits() {
           <section className={styles.pageHero}>
             <div className={styles.pageHeroContent}>
               <h1 className={styles.pageTitle}>Vertus & Bienfaits</h1>
-              <div className={styles.pageBreadcrumb}>
-                <Link href="/">Accueil</Link>
-                <span className={styles.breadcrumbSeparator}>/</span>
-                <span className={styles.breadcrumbCurrent}>
-                  Vertu & bienfaits
-                </span>
-              </div>
             </div>
           </section>
 
@@ -433,14 +426,6 @@ export default function VertusBienfaits() {
                   }`}
                 >
                   <div className={styles.concentrationImageWrapper}>
-                    <div className={styles.concentrationPercentage}>
-                      <span>{concentration.percentage}</span>
-                      <p>
-                        Huile de
-                        <br />
-                        baie de laurier
-                      </p>
-                    </div>
                     <img
                       src={concentration.image}
                       alt={`Savon d'Alep ${concentration.percentage} huile de baie de laurier`}
