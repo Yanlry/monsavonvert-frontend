@@ -1,4 +1,4 @@
-/* styles/how-to-choose.module.css - Version Optimisée et Ergonomique */
+/* styles/how-to-choose.module.css - Version Premium avec UX améliorée */
 
 /* Variables globales et réinitialisation */
 .container {
@@ -71,7 +71,7 @@
   position: relative;
 }
 
-/* Pattern de fond animé */
+/* Pattern de fond animé avec feuilles flottantes */
 .container::before {
   content: '';
   position: fixed;
@@ -86,6 +86,30 @@
   pointer-events: none;
   z-index: 0;
   animation: floatingPattern 20s ease-in-out infinite;
+}
+
+/* Nouvelles feuilles flottantes pour l'ambiance */
+.container::after {
+  content: '🍃';
+  position: fixed;
+  font-size: 20px;
+  opacity: 0.1;
+  animation: leafFall 15s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes leafFall {
+  0% {
+    top: -10%;
+    left: 10%;
+    transform: rotate(0deg);
+  }
+  100% {
+    top: 110%;
+    left: 15%;
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes floatingPattern {
@@ -107,7 +131,7 @@
   z-index: 1;
 }
 
-/* Header et Navigation avec effet glassmorphism */
+/* Header et Navigation avec effet glassmorphism amélioré */
 .header {
   position: fixed;
   top: 0;
@@ -139,6 +163,7 @@
   flex-wrap: wrap;
 }
 
+/* Logo avec effet de morphing amélioré */
 .logoContainer {
   position: relative;
   z-index: 101;
@@ -203,7 +228,7 @@
   width: 100%;
 }
 
-/* Navigation principale avec effets avancés */
+/* Navigation principale avec indicateur de page active */
 .mainNav {
   position: relative;
   z-index: 100;
@@ -232,6 +257,7 @@
   display: inline-block;
 }
 
+/* Effet de survol amélioré avec particules */
 .navLink::before {
   content: '';
   position: absolute;
@@ -274,205 +300,23 @@
   width: 100%;
 }
 
-/* Mega Menu avec animation moderne */
-.megaMenu {
+/* Nouveau: Indicateur de page active avec animation */
+.navLink.active {
+  position: relative;
+}
+
+.navLink.active::before {
+  content: '•';
   position: absolute;
-  top: 100%;
+  bottom: -10px;
   left: 50%;
-  transform: translateX(-50%) translateY(20px) scale(0.95);
-  width: 600px;
-  background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(20px);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-  padding: var(--spacing-lg);
-  opacity: 0;
-  visibility: hidden;
-  transition: all var(--transition-normal);
-  pointer-events: none;
-  z-index: 101;
-  border: 1px solid rgba(46, 125, 50, 0.1);
-}
-
-.navLink:hover .megaMenu {
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(-50%) translateY(10px) scale(1);
-  pointer-events: auto;
-}
-
-.megaMenuGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-xl);
-}
-
-.megaMenuCategory h3 {
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0 0 var(--spacing-md);
-  background: var(--color-gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.megaMenuCategory a {
-  display: block;
-  color: var(--color-text);
-  text-decoration: none;
-  margin-bottom: var(--spacing-sm);
-  font-size: 14px;
-  transition: all var(--transition-fast);
-  padding-left: 0;
-  position: relative;
-}
-
-.megaMenuCategory a::before {
-  content: '→';
-  position: absolute;
-  left: -20px;
-  opacity: 0;
-  transition: all var(--transition-fast);
-}
-
-.megaMenuCategory a:hover {
+  transform: translateX(-50%);
   color: var(--color-primary);
-  transform: translateX(8px);
-  padding-left: 12px;
-}
-
-.megaMenuCategory a:hover::before {
-  opacity: 1;
-  left: -8px;
-}
-
-/* Outils utilisateur avec animations */
-.userTools {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-lg);
-}
-
-.searchToggle,
-.userAccount,
-.cartLink {
-  background: none;
-  border: none;
-  padding: var(--spacing-xs);
-  color: var(--color-text);
-  cursor: pointer;
-  transition: all var(--transition-normal);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-
-.searchToggle::after,
-.userAccount::after,
-.cartLink::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: 50%;
-  transform: translateX(-50%) scaleX(0);
-  width: 30px;
-  height: 3px;
-  background: var(--color-gradient-primary);
-  border-radius: 3px;
-  transition: transform var(--transition-normal);
-}
-
-.searchToggle:hover,
-.userAccount:hover,
-.cartLink:hover {
-  color: var(--color-primary);
-  transform: translateY(-3px) scale(1.1);
-}
-
-.searchToggle:hover::after,
-.userAccount:hover::after,
-.cartLink:hover::after {
-  transform: translateX(-50%) scaleX(1);
-}
-
-.cartIcon {
-  position: relative;
-}
-
-.cartCount {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: var(--color-gradient-primary);
-  color: white;
-  border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  font-size: 10px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-size: 8px;
   animation: pulse 2s infinite;
-  box-shadow: 0 2px 8px rgba(46, 125, 50, 0.4);
 }
 
-.cartBump {
-  animation: cartBump 0.4s var(--transition-bounce);
-}
-
-/* Écran de chargement amélioré */
-.loadingWrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: var(--color-gradient-primary);
-  position: relative;
-  overflow: hidden;
-}
-
-.loadingWrapper::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: repeating-linear-gradient(
-    45deg,
-    transparent,
-    transparent 10px,
-    rgba(255, 255, 255, 0.05) 10px,
-    rgba(255, 255, 255, 0.05) 20px
-  );
-  animation: slide 20s linear infinite;
-}
-
-@keyframes slide {
-  0% { transform: translate(0, 0); }
-  100% { transform: translate(50px, 50px); }
-}
-
-.loadingLogo {
-  font-size: 36px;
-  font-weight: 700;
-  color: white;
-  font-family: var(--font-serif);
-  animation: breathe 2s infinite ease-in-out;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  z-index: 1;
-  position: relative;
-}
-
-@keyframes breathe {
-  0%, 100% { transform: scale(1); opacity: 0.8; }
-  50% { transform: scale(1.05); opacity: 1; }
-}
-
-/* Hero de la page avec parallaxe - OPTIMISÉ */
+/* Hero de la page avec effet de profondeur amélioré */
 .pageHero {
   padding: 120px 0 60px;
   text-align: center;
@@ -481,6 +325,7 @@
   overflow: hidden;
 }
 
+/* Nouveau: Motif de feuilles en background */
 .pageHero::before {
   content: '';
   position: absolute;
@@ -492,6 +337,11 @@
     radial-gradient(circle at 35% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
     radial-gradient(circle at 70% 70%, rgba(129, 199, 132, 0.1) 0%, transparent 50%);
   animation: floatingHero 15s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 0.8; }
 }
 
 @keyframes floatingHero {
@@ -532,55 +382,7 @@
   }
 }
 
-.pageBreadcrumb {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 14px;
-  animation: fadeIn 1s ease-out 0.3s both;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.pageBreadcrumb a {
-  color: rgba(255, 255, 255, 0.9);
-  text-decoration: none;
-  transition: all var(--transition-fast);
-  position: relative;
-}
-
-.pageBreadcrumb a::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: white;
-  transform: scaleX(0);
-  transition: transform var(--transition-fast);
-}
-
-.pageBreadcrumb a:hover {
-  color: white;
-}
-
-.pageBreadcrumb a:hover::after {
-  transform: scaleX(1);
-}
-
-.breadcrumbSeparator {
-  margin: 0 var(--spacing-sm);
-  opacity: 0.5;
-}
-
-.breadcrumbCurrent {
-  color: white;
-  font-weight: 500;
-}
-
-/* Section des concentrations avec cartes 3D - OPTIMISÉ */
+/* Section des concentrations avec cartes optimisées */
 .concentrationsSection {
   padding: var(--spacing-3xl) 0;
   background: linear-gradient(180deg, var(--color-background-light) 0%, var(--color-background) 100%);
@@ -610,6 +412,7 @@
   letter-spacing: -0.5px;
 }
 
+/* Nouveau: Animation de soulignement progressif */
 .sectionTitle::after {
   content: '';
   position: absolute;
@@ -620,7 +423,12 @@
   height: 4px;
   background: var(--color-gradient-primary);
   border-radius: 4px;
-  animation: pulse 2s infinite;
+  animation: expandWidth 2s ease-out;
+}
+
+@keyframes expandWidth {
+  from { width: 0; }
+  to { width: 80px; }
 }
 
 .sectionSubtitle {
@@ -631,81 +439,89 @@
   line-height: 1.6;
 }
 
+/* CARTES DE CATÉGORIES OPTIMISÉES - Plus petites et lisibles */
 .featuresGrid {
-  display: flex;
-  justify-content: center;
-  gap: var(--spacing-xl);
-  flex-wrap: wrap;
-  perspective: 1000px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--spacing-lg);
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
 }
 
 .featureCard {
-  background: linear-gradient(135deg, var(--color-background-light) 0%, var(--color-background) 100%);
-  padding: var(--spacing-xl);
+  background: white;
+  padding: var(--spacing-lg);
   border-radius: var(--radius-lg);
   text-align: center;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   transition: all var(--transition-normal);
-  flex: 0 0 calc(33.333% - var(--spacing-xl));
-  min-width: 280px;
   position: relative;
   transform-style: preserve-3d;
-  backdrop-filter: blur(10px);
   border: 1px solid rgba(46, 125, 50, 0.1);
   overflow: hidden;
+  cursor: pointer;
 }
 
-.featureCard::before {
+/* Nouveau: Badge de popularité */
+.featureCard[data-popular="true"]::before {
+  content: 'Populaire';
+  position: absolute;
+  top: 10px;
+  right: -25px;
+  background: var(--color-secondary);
+  color: white;
+  padding: 2px 30px;
+  font-size: 10px;
+  font-weight: 600;
+  transform: rotate(45deg);
+  box-shadow: 0 2px 10px rgba(248, 180, 0, 0.3);
+  z-index: 2;
+}
+
+/* Nouveau: Indicateur de progression au survol */
+.featureCard::after {
   content: '';
   position: absolute;
-  top: 0;
+  bottom: 0;
   left: 0;
   right: 0;
-  height: 4px;
+  height: 3px;
   background: var(--color-gradient-primary);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform var(--transition-normal);
 }
 
-.featureCard:hover::before {
+.featureCard:hover::after {
   transform: scaleX(1);
 }
 
-.featureCard::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(46, 125, 50, 0.05) 0%, transparent 70%);
-  opacity: 0;
-  transition: opacity var(--transition-normal);
-  pointer-events: none;
-}
-
 .featureCard:hover {
-  transform: translateY(-15px) rotateX(5deg);
-  box-shadow: 0 20px 60px rgba(46, 125, 50, 0.15);
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(46, 125, 50, 0.12);
 }
 
-.featureCard:hover::after {
-  opacity: 1;
-}
-
+/* Concentration percentage badge compact */
 .concentrationPercentage {
   background: var(--color-gradient-primary);
   color: white;
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
   border-radius: var(--radius-md);
   text-align: center;
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(46, 125, 50, 0.3);
+  box-shadow: 0 3px 12px rgba(46, 125, 50, 0.25);
+  transform: scale(0.95);
+  transition: transform var(--transition-fast);
 }
 
+.featureCard:hover .concentrationPercentage {
+  transform: scale(1);
+}
+
+/* Nouveau: Animation de brillance */
 .concentrationPercentage::before {
   content: '';
   position: absolute;
@@ -713,26 +529,26 @@
   left: -50%;
   width: 200%;
   height: 200%;
-  background: linear-gradient(45deg, transparent 35%, rgba(255, 255, 255, 0.2) 50%, transparent 70%);
-  animation: shimmer 3s infinite;
+  background: linear-gradient(45deg, transparent 35%, rgba(255, 255, 255, 0.3) 50%, transparent 65%);
+  animation: shine 3s infinite;
 }
 
-@keyframes shimmer {
+@keyframes shine {
   0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
   100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
 }
 
 .concentrationPercentage span {
-  font-size: 30px;
+  font-size: 24px;
   font-weight: 700;
   display: block;
   position: relative;
   z-index: 1;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .concentrationPercentage p {
-  font-size: 11px;
+  font-size: 10px;
   margin: 0;
   font-weight: 500;
   opacity: 0.9;
@@ -741,9 +557,9 @@
 }
 
 .featureTitle {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
   background: var(--color-gradient-dark);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -752,8 +568,9 @@
 
 .featureDescription {
   color: var(--color-text-light);
-  line-height: 1.6;
-  margin-bottom: var(--spacing-lg);
+  line-height: 1.5;
+  margin-bottom: var(--spacing-md);
+  font-size: 14px;
 }
 
 .benefitsList {
@@ -766,33 +583,35 @@
 .benefitsList li {
   display: flex;
   align-items: center;
-  margin-bottom: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
   gap: var(--spacing-sm);
   transition: transform var(--transition-fast);
+  font-size: 13px;
+  color: var(--color-text);
 }
 
 .benefitsList li:hover {
-  transform: translateX(5px);
+  transform: translateX(3px);
 }
 
 .benefitsList li svg {
   color: var(--color-primary);
   flex-shrink: 0;
-  animation: checkIn 0.5s ease-out;
+  width: 14px;
+  height: 14px;
 }
 
-@keyframes checkIn {
-  from {
-    transform: scale(0) rotate(-180deg);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1) rotate(0);
-    opacity: 1;
-  }
+/* Nouveau: Icône animée au survol de la carte */
+.featureCard:hover .benefitsList li svg {
+  animation: checkBounce 0.5s ease-out;
 }
 
-/* Section guide avec tableau moderne - OPTIMISÉ */
+@keyframes checkBounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* Section guide avec tableau interactif amélioré */
 .guideSection {
   padding: var(--spacing-3xl) 0;
   background: linear-gradient(180deg, var(--color-background) 0%, var(--color-background-light) 100%);
@@ -809,18 +628,19 @@
 .guideTable {
   border-radius: var(--radius-xl);
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
   background: white;
   position: relative;
 }
 
+/* Nouveau: Indicateur de tableau interactif */
 .guideTable::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 4px;
+  height: 3px;
   background: var(--color-gradient-primary);
 }
 
@@ -833,6 +653,7 @@
   overflow: hidden;
 }
 
+/* Nouveau: Effet de vague sur le header */
 .guideTableHeader::after {
   content: '';
   position: absolute;
@@ -840,11 +661,11 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  animation: slideAcross 8s infinite;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  animation: wave 8s infinite;
 }
 
-@keyframes slideAcross {
+@keyframes wave {
   0% { left: -100%; }
   100% { left: 100%; }
 }
@@ -852,34 +673,41 @@
 .guideTableRow {
   display: grid;
   grid-template-columns: 1.5fr 1fr 2fr;
-  border-bottom: 1px solid rgba(224, 224, 224, 0.5);
+  border-bottom: 1px solid rgba(224, 224, 224, 0.3);
   transition: all var(--transition-fast);
   position: relative;
+  cursor: pointer;
 }
 
+/* Nouveau: Surlignage progressif au survol */
 .guideTableRow::before {
   content: '';
   position: absolute;
   left: 0;
   top: 0;
   bottom: 0;
-  width: 3px;
-  background: var(--color-gradient-primary);
-  transform: scaleY(0);
-  transition: transform var(--transition-normal);
-}
-
-.guideTableRow:hover {
-  background: linear-gradient(90deg, rgba(46, 125, 50, 0.05) 0%, transparent 100%);
-  transform: translateX(5px);
+  width: 0;
+  background: linear-gradient(90deg, rgba(46, 125, 50, 0.1) 0%, transparent 100%);
+  transition: width var(--transition-normal);
 }
 
 .guideTableRow:hover::before {
-  transform: scaleY(1);
+  width: 100%;
 }
 
-.guideTableRow:nth-child(odd) {
-  background-color: rgba(249, 251, 247, 0.5);
+.guideTableRow:hover {
+  transform: translateX(3px);
+  background: rgba(46, 125, 50, 0.02);
+}
+
+/* Nouveau: Indicateur visuel de ligne sélectionnée */
+.guideTableRow.selected {
+  background: rgba(46, 125, 50, 0.05);
+  border-left: 3px solid var(--color-primary);
+}
+
+.guideTableRow:nth-child(even) {
+  background-color: rgba(249, 251, 247, 0.3);
 }
 
 .guideTableRow:last-child {
@@ -893,27 +721,50 @@
   position: relative;
 }
 
+/* Tag de concentration avec micro-animation */
 .concentrationTag {
   display: inline-block;
   background: var(--color-gradient-accent);
   color: white;
-  padding: var(--spacing-xs) var(--spacing-md);
+  padding: 6px 14px;
   border-radius: var(--radius-full);
   font-weight: 600;
-  font-size: 14px;
-  box-shadow: 0 2px 10px rgba(129, 199, 132, 0.3);
+  font-size: 13px;
+  box-shadow: 0 2px 8px rgba(129, 199, 132, 0.3);
   transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Nouveau: Effet de pulsation subtile */
+.concentrationTag::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  animation: tagPulse 2s infinite;
+}
+
+@keyframes tagPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+  50% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
 }
 
 .concentrationTag:hover {
   transform: scale(1.05);
-  box-shadow: 0 4px 15px rgba(129, 199, 132, 0.4);
+  box-shadow: 0 4px 12px rgba(129, 199, 132, 0.4);
 }
 
+/* Note d'information avec design premium */
 .guideNote {
   display: flex;
   align-items: flex-start;
-  background: linear-gradient(135deg, rgba(33, 150, 243, 0.05) 0%, rgba(33, 150, 243, 0.02) 100%);
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.08) 0%, rgba(33, 150, 243, 0.03) 100%);
   border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
   margin-top: var(--spacing-lg);
@@ -921,6 +772,13 @@
   border: 1px solid rgba(33, 150, 243, 0.2);
   position: relative;
   overflow: hidden;
+  transition: all var(--transition-normal);
+}
+
+/* Nouveau: Animation d'attention */
+.guideNote:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(33, 150, 243, 0.15);
 }
 
 .guideNote::before {
@@ -928,7 +786,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 4px;
+  width: 3px;
   height: 100%;
   background: linear-gradient(180deg, var(--color-info) 0%, rgba(33, 150, 243, 0.3) 100%);
 }
@@ -936,28 +794,29 @@
 .guideNoteIcon {
   color: var(--color-info);
   flex-shrink: 0;
-  animation: bounce 2s infinite;
+  animation: iconFloat 3s ease-in-out infinite;
 }
 
-@keyframes bounce {
+@keyframes iconFloat {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+  50% { transform: translateY(-3px); }
 }
 
 .guideNoteContent h4 {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
-  margin: 0 0 var(--spacing-md);
+  margin: 0 0 var(--spacing-sm);
   color: var(--color-text);
 }
 
 .guideNoteContent p {
-  margin: 0 0 var(--spacing-sm);
+  margin: 0 0 var(--spacing-xs);
   color: var(--color-text-light);
-  line-height: 1.6;
+  line-height: 1.5;
+  font-size: 14px;
 }
 
-/* Section conseils avec cartes numérotées - OPTIMISÉ */
+/* Section conseils avec numérotation interactive */
 .usageSection {
   padding: var(--spacing-3xl) 0;
   background: linear-gradient(180deg, var(--color-background-light) 0%, var(--color-background) 100%);
@@ -966,7 +825,7 @@
 
 .usageContent {
   margin-top: var(--spacing-2xl);
-  max-width: 1200px;
+  max-width: 1000px;
   margin-left: auto;
   margin-right: auto;
   padding: 0 var(--spacing-xl);
@@ -979,10 +838,23 @@
   padding: var(--spacing-lg);
   background: white;
   border-radius: var(--radius-lg);
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05);
   transition: all var(--transition-normal);
   position: relative;
   overflow: hidden;
+  cursor: pointer;
+}
+
+/* Nouveau: Ligne de connexion entre les étapes */
+.usageStep:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 40px;
+  width: 2px;
+  height: 20px;
+  background: var(--color-gradient-primary);
+  opacity: 0.3;
 }
 
 .usageStep::before {
@@ -992,57 +864,58 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, rgba(46, 125, 50, 0.02) 0%, transparent 50%);
+  background: linear-gradient(90deg, rgba(46, 125, 50, 0.03) 0%, transparent 50%);
   opacity: 0;
   transition: opacity var(--transition-normal);
 }
 
 .usageStep:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 40px rgba(46, 125, 50, 0.1);
+  transform: translateY(-3px) translateX(5px);
+  box-shadow: 0 8px 25px rgba(46, 125, 50, 0.1);
 }
 
 .usageStep:hover::before {
   opacity: 1;
 }
 
+/* Numéro d'étape avec design moderne */
 .usageStepNumber {
-  width: 50px;
-  height: 50px;
+  width: 45px;
+  height: 45px;
   background: var(--color-gradient-primary);
   color: white;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 700;
   flex-shrink: 0;
-  box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+  box-shadow: 0 3px 12px rgba(46, 125, 50, 0.3);
   position: relative;
-  animation: rotate 20s linear infinite;
+  transition: all var(--transition-normal);
 }
 
-@keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+/* Nouveau: Animation de rotation au survol */
+.usageStep:hover .usageStepNumber {
+  transform: rotate(360deg) scale(1.1);
 }
 
 .usageStepNumber::after {
   content: '';
   position: absolute;
-  inset: -3px;
+  inset: -4px;
   border-radius: 50%;
   background: var(--color-gradient-accent);
   z-index: -1;
-  opacity: 0.3;
+  opacity: 0.2;
   animation: pulse 2s infinite;
 }
 
 .usageStepContent h3 {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
-  margin: 0 0 var(--spacing-md);
+  margin: 0 0 var(--spacing-sm);
   background: var(--color-gradient-dark);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -1051,11 +924,12 @@
 
 .usageStepContent p {
   margin: 0;
-  line-height: 1.7;
+  line-height: 1.6;
   color: var(--color-text-light);
+  font-size: 14px;
 }
 
-/* CTA Section avec animation de fond - OPTIMISÉ */
+/* CTA Section avec design premium */
 .ctaSection {
   padding: var(--spacing-3xl) 0;
   background: var(--color-gradient-dark);
@@ -1064,6 +938,7 @@
   overflow: hidden;
 }
 
+/* Nouveau: Motif géométrique animé */
 .ctaSection::before {
   content: '';
   position: absolute;
@@ -1071,13 +946,15 @@
   left: -100%;
   width: 300%;
   height: 300%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-  animation: ctaGlow 15s ease-in-out infinite;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(129, 199, 132, 0.1) 0%, transparent 40%);
+  animation: ctaRotate 20s linear infinite;
 }
 
-@keyframes ctaGlow {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  50% { transform: translate(50%, 50%) rotate(180deg); }
+@keyframes ctaRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .ctaContent {
@@ -1090,41 +967,43 @@
 }
 
 .ctaContent h2 {
-  font-size: 36px;
+  font-size: 32px;
   font-weight: 700;
   margin-bottom: var(--spacing-lg);
   font-family: var(--font-serif);
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
   animation: fadeInUp 0.8s ease-out;
 }
 
 .ctaContent p {
-  font-size: 18px;
+  font-size: 17px;
   margin-bottom: var(--spacing-2xl);
   opacity: 0.95;
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
-  line-height: 1.7;
+  line-height: 1.6;
   animation: fadeIn 1s ease-out 0.3s both;
 }
 
+/* Bouton CTA avec effet premium */
 .ctaButton {
   display: inline-block;
-  padding: var(--spacing-lg) var(--spacing-3xl);
+  padding: 14px 40px;
   background: white;
   color: var(--color-primary-dark);
   border-radius: var(--radius-full);
   text-decoration: none;
   font-weight: 600;
-  font-size: 18px;
+  font-size: 16px;
   transition: all var(--transition-normal);
   position: relative;
   overflow: hidden;
-  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   animation: fadeInUp 1s ease-out 0.6s both;
 }
 
+/* Nouveau: Double effet de survol */
 .ctaButton::before {
   content: '';
   position: absolute;
@@ -1138,10 +1017,21 @@
   transition: all 0.6s ease-out;
 }
 
+.ctaButton::after {
+  content: '→';
+  position: absolute;
+  right: 40px;
+  top: 50%;
+  transform: translateY(-50%) translateX(10px);
+  opacity: 0;
+  transition: all var(--transition-normal);
+}
+
 .ctaButton:hover {
-  transform: translateY(-5px) scale(1.05);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
   color: white;
+  padding-right: 50px;
 }
 
 .ctaButton:hover::before {
@@ -1149,12 +1039,46 @@
   height: 300px;
 }
 
+.ctaButton:hover::after {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
 .ctaButton span {
   position: relative;
   z-index: 1;
 }
 
-/* Footer moderne */
+/* Animations globales améliorées */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.03);
+    opacity: 0.8;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Effets de scroll révélation */
+.scrollReveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease-out;
+}
+
+.scrollReveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Footer moderne (conservé mais optimisé) */
 .footer {
   background: linear-gradient(180deg, #263238 0%, #1a2327 100%);
   color: white;
@@ -1365,39 +1289,7 @@
   transform: scaleX(1);
 }
 
-/* Animations supplémentaires */
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.05);
-    opacity: 0.8;
-  }
-}
-
-@keyframes cartBump {
-  0% { transform: scale(1) rotate(0deg); }
-  25% { transform: scale(1.2) rotate(-10deg); }
-  50% { transform: scale(1.3) rotate(10deg); }
-  75% { transform: scale(1.2) rotate(-5deg); }
-  100% { transform: scale(1) rotate(0deg); }
-}
-
-/* Effets de scroll */
-.scrollReveal {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: all 0.8s ease-out;
-}
-
-.scrollReveal.revealed {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Responsive Design amélioré */
+/* Responsive Design optimisé */
 @media (max-width: 1024px) {
   .pageTitle {
     font-size: 36px;
@@ -1408,11 +1300,12 @@
   }
   
   .ctaContent h2 {
-    font-size: 32px;
+    font-size: 28px;
   }
   
-  .featureCard {
-    flex: 0 0 calc(50% - var(--spacing-xl));
+  .featuresGrid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
   }
 }
 
@@ -1439,19 +1332,21 @@
   }
   
   .pageHero {
-    padding: 120px 0 50px;
+    padding: 100px 0 40px;
   }
   
   .pageTitle {
-    font-size: 32px;
+    font-size: 28px;
   }
   
   .sectionTitle {
-    font-size: 26px;
+    font-size: 24px;
   }
   
-  .featureCard {
-    flex: 0 0 100%;
+  .featuresGrid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    margin: 0 auto;
   }
   
   .guideTableHeader,
@@ -1478,11 +1373,16 @@
   }
   
   .ctaContent h2 {
-    font-size: 28px;
+    font-size: 24px;
   }
   
   .ctaContent p {
-    font-size: 16px;
+    font-size: 15px;
+  }
+  
+  .ctaButton {
+    padding: 12px 30px;
+    font-size: 15px;
   }
   
   .footerBottomContent {
@@ -1494,11 +1394,11 @@
 
 @media (max-width: 576px) {
   .pageTitle {
-    font-size: 26px;
+    font-size: 24px;
   }
   
   .sectionTitle {
-    font-size: 22px;
+    font-size: 20px;
   }
   
   .navLink {
@@ -1506,12 +1406,7 @@
   }
   
   .concentrationPercentage span {
-    font-size: 24px;
-  }
-  
-  .ctaButton {
-    padding: var(--spacing-md) var(--spacing-xl);
-    font-size: 16px;
+    font-size: 20px;
   }
   
   .footerContent {
