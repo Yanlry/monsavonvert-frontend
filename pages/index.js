@@ -107,7 +107,7 @@ export default function Home() {
       image: "/images/6.JPEG",
       title: "Savons artisanaux, naturels et écologiques",
       subtitle:
-        "Découvrez notre collection de soins faits à la main avec des ingrédients naturels",
+        "Découvrez notre collection ancestrale fabriqué avec des ingrédients naturels",
     },
     {
       image: "/images/4.JPEG",
@@ -236,7 +236,7 @@ export default function Home() {
         </svg>
       ),
       description: "Savon d'Alep doux pour peaux sensibles et usage quotidien",
-      suitableFor: "Visage, peaux sensibles, enfants",
+      suitableFor: "Peaux sèches, peaux normales, enfants",
       link: "/produit/680bd95433437078ee079529",
       image: "/images/1.JPEG",
     },
@@ -820,8 +820,8 @@ export default function Home() {
                     </span>
                   </h2>
                   <p className={styles.aboutSubheading}>
-                    Une passion pour les produits naturels et un engagement
-                    envers la durabilité environnementale.
+                    Une passion pour les soins naturels, le respect de la peau
+                    et l’engagement pour la planète.
                   </p>
                 </div>
               </div>
@@ -837,7 +837,7 @@ export default function Home() {
                       className={styles.aboutImage}
                     />
                     <div className={styles.aboutImageBadge}>
-                      <span>Depuis 2018</span>
+                      <span>Depuis 2022</span>
                     </div>
                   </div>
                 </div>
@@ -846,18 +846,16 @@ export default function Home() {
                 <div className={styles.aboutTextCol}>
                   <div className={styles.aboutContent}>
                     <p className={styles.aboutText}>
-                      MonSavonVert est né d'une passion pour les produits
-                      naturels et d'un engagement envers la durabilité
-                      environnementale. Tout a commencé en 2018, dans une petite
-                      cuisine où nous expérimentions des recettes de savons
-                      naturels pour notre propre utilisation.
+                      MonSavonVert est né de la volonté de soulager les
+                      problèmes de peau tout en redonnant vie au savoir-faire
+                      ancestral du savon d’Alep, mis à mal par la guerre en
+                      Syrie.
                     </p>
                     <p className={styles.aboutText}>
-                      Aujourd'hui, chaque savon est toujours fabriqué à la main
-                      dans notre atelier avec des ingrédients biologiques
-                      soigneusement sélectionnés pour leurs bienfaits. Nous
-                      contrôlons chaque étape du processus, de la sélection des
-                      matières premières jusqu'à l'emballage final.
+                      Chaque savon est fabriqué à la main avec des ingrédients
+                      naturels choisis pour leurs bienfaits, dans une
+                      démarche durable qui évite le plastique et respecte la
+                      tradition.
                     </p>
 
                     <div className={styles.certifications}>
@@ -902,7 +900,7 @@ export default function Home() {
                 </h2>
                 <div className={styles.environmentIntro}>
                   <p className={styles.environmentText}>
-                    Chez MonSavonVert, nous croyons qu'il est possible de
+                    Ici nous croyons qu'il est possible de
                     prendre soin de soi tout en prenant soin de la planète.
                     Notre engagement environnemental va bien au-delà de nos
                     produits.
@@ -971,9 +969,9 @@ export default function Home() {
                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                           </svg>
                         ),
-                        title: "Zéro Déchet",
+                        title: "Minimalisme",
                         description:
-                          "Nos emballages sont biodégradables ou recyclables, et nous utilisons du papier ensemencé qui peut être planté après utilisation.",
+                          "Un seul emballage simple et protecteur recouvre chaque savon, sans plastique inutile.",
                         color: "green",
                       },
                       {
@@ -993,7 +991,7 @@ export default function Home() {
                             <circle cx="12" cy="10" r="3" />
                           </svg>
                         ),
-                        title: "Circuit Court",
+                        title: "Empreinte réduite",
                         description:
                           "Nous privilégions les fournisseurs locaux pour réduire l'empreinte carbone et soutenir l'économie locale.",
                         color: "teal",
@@ -1014,9 +1012,9 @@ export default function Home() {
                             <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
                           </svg>
                         ),
-                        title: "Énergie Verte",
+                        title: "Durabilité",
                         description:
-                          "Notre atelier fonctionne à l'énergie verte et nous optimisons notre consommation d'eau dans tous nos processus.",
+                          "Un savon solide dure longtemps, limite les déchets plastiques des gels douche et réduit l’impact environnemental.",
                         color: "blue",
                       },
                       {
@@ -1035,7 +1033,7 @@ export default function Home() {
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                           </svg>
                         ),
-                        title: "Vegan et sans cruauté",
+                        title: "Sans cruauté",
                         description:
                           "Nos savons sont formulés sans aucun ingrédient d'origine animale et ne sont jamais testés sur les animaux.",
                         color: "purple",
@@ -1172,7 +1170,7 @@ export default function Home() {
                       ),
                       title: "100% Naturel",
                       description:
-                        "Ingrédients certifiés biologiques, sans produits chimiques ni conservateurs artificiels",
+                        "Ingrédients naturels, sans produits chimiques ni conservateurs artificiels",
                     },
                     {
                       id: 2,
@@ -1193,7 +1191,7 @@ export default function Home() {
                       ),
                       title: "Fabrication Artisanale",
                       description:
-                        "Chaque savon est fabriqué à la main dans notre atelier selon des méthodes traditionnelles",
+                        "Chaque savon est fabriqué artisanalement dans les manufactures ancestrales de Syrie, perpétuant un savoir-faire traditionnel millénaire",
                     },
                     {
                       id: 3,
@@ -1216,7 +1214,7 @@ export default function Home() {
                       ),
                       title: "Écoresponsable",
                       description:
-                        "Emballages biodégradables et minimisés pour réduire notre impact environnemental",
+                        "Emballages recyclable et minimisés pour réduire notre impact environnemental",
                     },
                     {
                       id: 4,
@@ -1314,11 +1312,10 @@ export default function Home() {
                     </div>
                   </div>
                   <h3 className={styles.bannerTitle}>
-                    Des savons qui respectent votre peau et la planète
+                  Un savon millénaires qui respectent votre peau et la planète
                   </h3>
                   <p className={styles.bannerText}>
-                    Nos formules exclusives sont le fruit de recherches
-                    approfondies et d'un savoir-faire traditionnel.
+                  Héritiers d'une tradition ancestrale, les savons d'Alep sont naturellement reconnus pour leurs propriétés bienfaisantes uniques, transmises à travers les siècles.
                   </p>
                 </div>
                 <div className={styles.bannerEffect}></div>
@@ -1499,79 +1496,6 @@ export default function Home() {
                   Savons artisanaux, naturels et écologiques fabriqués avec
                   passion en Syrie dans l'antique ville d'Alep.
                 </p>
-                <div className={styles.footerSocial}>
-                  <a
-                    href="https://facebook.com/monsavonvert"
-                    className={styles.socialLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Facebook"
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="20"
-                      height="20"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      fill="none"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-                    </svg>
-                  </a>
-                  <a
-                    href="https://instagram.com/monsavonvert"
-                    className={styles.socialLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Instagram"
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="20"
-                      height="20"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      fill="none"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <rect
-                        x="2"
-                        y="2"
-                        width="20"
-                        height="20"
-                        rx="5"
-                        ry="5"
-                      ></rect>
-                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                    </svg>
-                  </a>
-                  <a
-                    href="https://pinterest.com/monsavonvert"
-                    className={styles.socialLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Pinterest"
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="20"
-                      height="20"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      fill="none"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M8 12a4 4 0 1 1 8 0 4 4 0 0 1-8 0zm2-6h4"></path>
-                      <path d="M9 18l3-3 3 3"></path>
-                      <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"></path>
-                    </svg>
-                  </a>
-                </div>
                 <div className={styles.paymentMethods}>
                   <span className={styles.paymentTitle}>
                     Moyens de paiement
@@ -1674,7 +1598,7 @@ export default function Home() {
                         <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
                       </svg>
                       <a href="tel:+33612345678" className={styles.contactLink}>
-                        +33 6 12 34 56 78
+                        06 58 00 27 07
                       </a>
                     </div>
 
@@ -1700,53 +1624,6 @@ export default function Home() {
                       >
                         info@monsavonvert.fr
                       </a>
-                    </div>
-
-                    <div className={styles.contactItem}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className={styles.contactIcon}
-                      >
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                        <circle cx="12" cy="10" r="3"></circle>
-                      </svg>
-                      <span className={styles.contactText}>
-                        15 rue des Artisans
-                        <br />
-                        69001 Lyon, France
-                      </span>
-                    </div>
-
-                    <div className={styles.contactItem}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className={styles.contactIcon}
-                      >
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="8" x2="12" y2="12"></line>
-                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                      </svg>
-                      <span className={styles.contactText}>
-                        Lun-Ven: 9h-18h
-                        <br />
-                        Sam: 10h-17h
-                      </span>
                     </div>
                   </div>
                 </div>

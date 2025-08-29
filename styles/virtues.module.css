@@ -1261,16 +1261,16 @@
   height: 300px;
 }
 
-/* Section utilisation avec design moderne */
+/* Section conseils avec numérotation interactive */
 .usageSection {
-  padding: var(--spacing-4xl) 0;
+  padding: var(--spacing-3xl) 0;
   background: linear-gradient(180deg, var(--color-background-light) 0%, var(--color-background) 100%);
   position: relative;
 }
 
 .usageContent {
-  margin-top: var(--spacing-3xl);
-  max-width: 1200px;
+  margin-top: var(--spacing-2xl);
+  max-width: 1000px;
   margin-left: auto;
   margin-right: auto;
   padding: 0 var(--spacing-xl);
@@ -1283,10 +1283,23 @@
   padding: var(--spacing-lg);
   background: white;
   border-radius: var(--radius-lg);
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05);
   transition: all var(--transition-normal);
   position: relative;
   overflow: hidden;
+  cursor: pointer;
+}
+
+/* Nouveau: Ligne de connexion entre les étapes */
+.usageStep:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 40px;
+  width: 2px;
+  height: 20px;
+  background: var(--color-gradient-primary);
+  opacity: 0.3;
 }
 
 .usageStep::before {
@@ -1296,52 +1309,58 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, rgba(46, 125, 50, 0.02) 0%, transparent 50%);
+  background: linear-gradient(90deg, rgba(46, 125, 50, 0.03) 0%, transparent 50%);
   opacity: 0;
   transition: opacity var(--transition-normal);
 }
 
 .usageStep:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 40px rgba(46, 125, 50, 0.1);
+  transform: translateY(-3px) translateX(5px);
+  box-shadow: 0 8px 25px rgba(46, 125, 50, 0.1);
 }
 
 .usageStep:hover::before {
   opacity: 1;
 }
 
+/* Numéro d'étape avec design moderne */
 .usageStepNumber {
-  width: 50px;
-  height: 50px;
+  width: 45px;
+  height: 45px;
   background: var(--color-gradient-primary);
   color: white;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 700;
   flex-shrink: 0;
-  box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+  box-shadow: 0 3px 12px rgba(46, 125, 50, 0.3);
   position: relative;
-  animation: rotate 20s linear infinite;
+  transition: all var(--transition-normal);
+}
+
+/* Nouveau: Animation de rotation au survol */
+.usageStep:hover .usageStepNumber {
+  transform: rotate(360deg) scale(1.1);
 }
 
 .usageStepNumber::after {
   content: '';
   position: absolute;
-  inset: -3px;
+  inset: -4px;
   border-radius: 50%;
   background: var(--color-gradient-accent);
   z-index: -1;
-  opacity: 0.3;
+  opacity: 0.2;
   animation: pulse 2s infinite;
 }
 
 .usageStepContent h3 {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
-  margin: 0 0 var(--spacing-md);
+  margin: 0 0 var(--spacing-sm);
   background: var(--color-gradient-dark);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -1350,8 +1369,9 @@
 
 .usageStepContent p {
   margin: 0;
-  line-height: 1.8;
+  line-height: 1.6;
   color: var(--color-text-light);
+  font-size: 14px;
 }
 
 .usageTips {
@@ -1418,7 +1438,6 @@
   flex-shrink: 0;
   margin-top: 3px;
 }
-
 /* Section CTA avec animation de fond */
 .ctaSection {
   padding: var(--spacing-4xl) 0;

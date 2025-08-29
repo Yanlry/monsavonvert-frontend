@@ -1156,7 +1156,7 @@ const buyNow = () => {
                       </div>
                     </li>
                     <li className={styles.usageStep}>
-                      <div className={styles.usageSteppNumber}>4</div>
+                      <div className={styles.usageStepNumber}>4</div>
                       <div className={styles.usageStepContent}>
                         <h4>Rincer</h4>
                         <p>Rincez abondamment à l'eau claire.</p>
