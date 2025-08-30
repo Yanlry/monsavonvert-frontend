@@ -1,26 +1,26 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Head from 'next/head';
-import Link from 'next/link';
-import styles from '../styles/info.module.css';
+import { useState, useEffect } from "react";
+import Head from "next/head";
+import Link from "next/link";
+import styles from "../styles/info.module.css";
 import Header from "../components/Header";
 
 export default function AboutPage() {
   // État pour détecter si nous sommes côté client
   const [isClient, setIsClient] = useState(false);
-  
+
   // État pour l'animation du header au scroll
   const [scrolled, setScrolled] = useState(false);
-  
+
   // État pour le panier (simulé)
   const [cartCount, setCartCount] = useState(0);
-  
+
   // Fonction pour simuler l'ajout au panier
   const addToCart = () => {
     setCartCount(cartCount + 1);
-    if (typeof window !== 'undefined') {
-      const cartIcon = document.getElementById('cartIcon');
+    if (typeof window !== "undefined") {
+      const cartIcon = document.getElementById("cartIcon");
       if (cartIcon) {
         cartIcon.classList.add(styles.cartBump);
         setTimeout(() => cartIcon.classList.remove(styles.cartBump), 300);
@@ -32,122 +32,167 @@ export default function AboutPage() {
   useEffect(() => {
     // Marquer que nous sommes côté client
     setIsClient(true);
-    
+
     // Réinitialisation des marges
-    if (typeof document !== 'undefined') {
+    if (typeof document !== "undefined") {
       document.body.classList.add(styles.resetMargins);
       document.documentElement.classList.add(styles.resetMargins);
     }
-    
+
     // Détection du scroll pour le header
     const handleScroll = () => {
       setScrolled(window.scrollY > 30);
     };
-    
+
     // Gestionnaires d'événements
-    if (typeof window !== 'undefined') {
-      window.addEventListener('scroll', handleScroll);
+    if (typeof window !== "undefined") {
+      window.addEventListener("scroll", handleScroll);
     }
-    
+
     // Nettoyage
     return () => {
-      if (typeof document !== 'undefined') {
+      if (typeof document !== "undefined") {
         document.body.classList.remove(styles.resetMargins);
         document.documentElement.classList.remove(styles.resetMargins);
       }
-      if (typeof window !== 'undefined') {
-        window.removeEventListener('scroll', handleScroll);
+      if (typeof window !== "undefined") {
+        window.removeEventListener("scroll", handleScroll);
       }
     };
   }, []);
 
   useEffect(() => {
     // Synchroniser le nombre d'articles dans le panier avec le localStorage
-    const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
+    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
     const totalItems = storedCart.reduce((sum, item) => sum + item.quantity, 0);
     setCartCount(totalItems);
   }, []);
 
-  
   // Données de la timeline historique
   const timelineItems = [
     {
       year: "VIIIe siècle",
       title: "Naissance du premier savon d'Alep",
-      content: "Les maîtres savonniers développent une recette secrète à base d'huile d'olive et de baies de laurier dans l'antique cité syrienne, transmise de génération en génération.",
-      position: "left"
+      content:
+        "Les maîtres savonniers développent une recette secrète à base d'huile d'olive et de baies de laurier dans l'antique cité syrienne, transmise de génération en génération.",
+      position: "left",
     },
     {
       year: "XIIe siècle",
       title: "L'âge d'or du savon d'Alep",
-      content: "Les Croisés découvrent ce trésor syrien et l'importent en Europe, donnant naissance aux savonneries de Marseille et de Castille. Alep devient le berceau mondial de la savonnerie.",
-      position: "right"
+      content:
+        "Les Croisés découvrent ce trésor syrien et l'importent en Europe, donnant naissance aux savonneries de Marseille et de Castille. Alep devient le berceau mondial de la savonnerie.",
+      position: "right",
     },
     {
       year: "1900-2010",
       title: "Apogée de l'industrie du savon d'Alep",
-      content: "Plus de 100 savonneries traditionnelles façonnent des millions de pains de savon chaque année, perpétuant un savoir-faire millénaire dans toute la région d'Alep.",
-      position: "left"
+      content:
+        "Plus de 100 savonneries traditionnelles façonnent des millions de pains de savon chaque année, perpétuant un savoir-faire millénaire dans toute la région d'Alep.",
+      position: "left",
     },
     {
       year: "2011-2018",
       title: "La guerre en Syrie bouleverse tout",
-      content: "De nombreuses savonneries d'Alep sont détruites ou contraintes d'arrêter leur production. Une partie de cette tradition artisanale ancestrale risque de disparaître.",
-      position: "right"
+      content:
+        "De nombreuses savonneries d'Alep sont détruites ou contraintes d'arrêter leur production. Une partie de cette tradition artisanale ancestrale risque de disparaître.",
+      position: "right",
     },
     {
       year: "2023",
       title: "Naissance de MonSavonVert",
-      content: "Passionnés par l'authenticité du savon d'Alep, nous décidons d'importer directement ces savons traditionnels pour contribuer au maintien de cette économie locale et préserver ce patrimoine.",
-      position: "left"
+      content:
+        "Passionnés par l'authenticité du savon d'Alep, nous décidons d'importer directement ces savons traditionnels pour contribuer au maintien de cette économie locale et préserver ce patrimoine.",
+      position: "left",
     },
     {
       year: "2024",
       title: "Développement de notre gamme",
-      content: "Nous travaillons avec des artisans syriens pour vous proposer des savons d'Alep authentiques, fabriqués selon les méthodes traditionnelles millénaires.",
-      position: "right"
-    }
+      content:
+        "Nous travaillons avec des artisans syriens pour vous proposer des savons d'Alep authentiques, fabriqués selon les méthodes traditionnelles millénaires.",
+      position: "right",
+    },
   ];
 
   // Nos valeurs fondamentales
   const values = [
     {
       title: "Authenticité",
-      description: "Nos savons d'Alep sont importés directement de Syrie et fabriqués selon les méthodes ancestrales : huile d'olive première pression, huile de baies de laurier, et un savoir-faire transmis depuis plus de mille ans.",
+      description:
+        "Nos savons d'Alep sont importés directement de Syrie et fabriqués selon les méthodes ancestrales : huile d'olive première pression, huile de baies de laurier, et un savoir-faire transmis depuis plus de mille ans.",
       icon: (
-        <svg viewBox="0 0 24 24" width="36" height="36" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 2L2 7v10c0 5.55 3.84 10 9 10s9-4.45 9-10V7l-10-5z"/>
-          <circle cx="12" cy="12" r="3"/>
+        <svg
+          viewBox="0 0 24 24"
+          width="36"
+          height="36"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M12 2L2 7v10c0 5.55 3.84 10 9 10s9-4.45 9-10V7l-10-5z" />
+          <circle cx="12" cy="12" r="3" />
         </svg>
-      )
+      ),
     },
     {
       title: "Tradition",
-      description: "Nous contribuons à préserver un patrimoine mondial unique. Le savon d'Alep représente plus de mille ans de tradition artisanale syrienne que nous souhaitons faire découvrir et maintenir vivante.",
+      description:
+        "Nous contribuons à préserver un patrimoine mondial unique. Le savon d'Alep représente plus de mille ans de tradition artisanale syrienne que nous souhaitons faire découvrir et maintenir vivante.",
       icon: (
-        <svg viewBox="0 0 24 24" width="36" height="36" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-          <polyline points="9,22 9,12 15,12 15,22"/>
+        <svg
+          viewBox="0 0 24 24"
+          width="36"
+          height="36"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+          <polyline points="9,22 9,12 15,12 15,22" />
         </svg>
-      )
+      ),
     },
     {
       title: "Qualité",
-      description: "Fabriqués à la main selon les méthodes traditionnelles, nos savons vieillissent naturellement pendant 18 mois minimum. Cette maturation lente leur confère leur douceur exceptionnelle et leurs propriétés uniques.",
+      description:
+        "Fabriqués à la main selon les méthodes traditionnelles, nos savons vieillissent naturellement pendant 18 mois minimum. Cette maturation lente leur confère leur douceur exceptionnelle et leurs propriétés uniques.",
       icon: (
-        <svg viewBox="0 0 24 24" width="36" height="36" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-          <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+        <svg
+          viewBox="0 0 24 24"
+          width="36"
+          height="36"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
         </svg>
-      )
+      ),
     },
     {
       title: "Engagement",
-      description: "En choisissant nos savons d'Alep, vous participez au maintien d'une économie artisanale traditionnelle et contribuez à la préservation de ce savoir-faire millénaire unique au monde.",
+      description:
+        "En choisissant nos savons d'Alep, vous participez au maintien d'une économie artisanale traditionnelle et contribuez à la préservation de ce savoir-faire millénaire unique au monde.",
       icon: (
-        <svg viewBox="0 0 24 24" width="36" height="36" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M20 6L9 17l-5-5"/>
+        <svg
+          viewBox="0 0 24 24"
+          width="36"
+          height="36"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M20 6L9 17l-5-5" />
         </svg>
-      )
+      ),
     },
   ];
 
@@ -156,8 +201,13 @@ export default function AboutPage() {
     return (
       <>
         <Head>
-          <title>Notre Histoire | MonSavonVert - Savons d'Alep Authentiques</title>
-          <meta name="description" content="Découvrez l'histoire millénaire du savon d'Alep et notre démarche d'importation directe depuis la Syrie." />
+          <title>
+            Notre Histoire | MonSavonVert - Savons d'Alep Authentiques
+          </title>
+          <meta
+            name="description"
+            content="Découvrez l'histoire millénaire du savon d'Alep et notre démarche d'importation directe depuis la Syrie."
+          />
           <link rel="icon" href="/favicon.ico" />
         </Head>
         <div className={styles.loadingWrapper}>
@@ -170,23 +220,34 @@ export default function AboutPage() {
   return (
     <>
       <Head>
-        <title>Notre Histoire | MonSavonVert - Savons d'Alep Authentiques</title>
-        <meta name="description" content="Découvrez l'histoire millénaire du savon d'Alep et notre démarche d'importation directe depuis la Syrie pour préserver cette tradition artisanale." />
+        <title>
+          Notre Histoire | MonSavonVert - Savons d'Alep Authentiques
+        </title>
+        <meta
+          name="description"
+          content="Découvrez l'histoire millénaire du savon d'Alep et notre démarche d'importation directe depuis la Syrie pour préserver cette tradition artisanale."
+        />
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
 
       <div className={styles.container}>
         {/* Header avec navigation */}
-        <header className={`${styles.header} ${scrolled ? styles.headerScrolled : ''}`}>
-          <Header cartCount={cartCount}/>
+        <header
+          className={`${styles.header} ${
+            scrolled ? styles.headerScrolled : ""
+          }`}
+        >
+          <Header cartCount={cartCount} />
         </header>
 
         <main className={styles.mainContent}>
           {/* Hero section */}
           <section className={styles.pageHero}>
             <div className={styles.pageHeroContent}>
-              <h1 className={styles.pageTitle}>L'Histoire Millénaire du Savon d'Alep</h1>
+              <h1 className={styles.pageTitle}>
+                L'Histoire Millénaire du Savon d'Alep
+              </h1>
             </div>
           </section>
 
@@ -194,21 +255,39 @@ export default function AboutPage() {
           <section className={styles.introSection}>
             <div className={styles.introImageColumn}>
               <div className={styles.introImage}>
-                <img src="/images/1.JPEG" alt="Artisan fabriquant du savon d'Alep traditionnel" />
+                <img
+                  src="/images/1.JPEG"
+                  alt="Artisan fabriquant du savon d'Alep traditionnel"
+                />
               </div>
             </div>
             <div className={styles.introContentColumn}>
               <div className={styles.introContent}>
                 <span className={styles.sectionTag}>Un héritage en péril</span>
-                <h2 className={styles.introTitle}>Préserver un trésor de l'humanité</h2>
+                <h2 className={styles.introTitle}>
+                  Préserver un trésor de l'humanité
+                </h2>
                 <p className={styles.introParagraph}>
-                  Le savon d'Alep n'est pas qu'un simple produit de beauté. C'est l'ancêtre de tous les savons du monde, né il y a plus de mille ans dans les souks de l'antique cité syrienne d'Alep. Cette merveille artisanale, fabriquée selon une recette secrète transmise de maître à apprenti depuis des siècles, représente un patrimoine culturel inestimable.
+                  Le savon d'Alep n'est pas qu'un simple produit de beauté.
+                  C'est l'ancêtre de tous les savons du monde, né il y a plus de
+                  mille ans dans les souks de l'antique cité syrienne d'Alep.
+                  Cette merveille artisanale, fabriquée selon une recette
+                  secrète transmise de maître à apprenti depuis des siècles,
+                  représente un patrimoine culturel inestimable.
                 </p>
                 <p className={styles.introParagraph}>
-                  La guerre en Syrie a malheureusement perturbé la production de ces savons traditionnels. De nombreuses savonneries ont dû cesser leur activité ou ont été endommagées. Cette situation nous a sensibilisés à l'importance de préserver ce savoir-faire millénaire.
+                  La guerre en Syrie a malheureusement perturbé la production de
+                  ces savons traditionnels. De nombreuses savonneries ont dû
+                  cesser leur activité ou ont été endommagées. Cette situation
+                  nous a sensibilisés à l'importance de préserver ce
+                  savoir-faire millénaire.
                 </p>
                 <p className={styles.introParagraph}>
-                  En 2023, MonSavonVert a vu le jour avec une mission simple mais importante : importer directement des savons d'Alep authentiques pour vous faire découvrir ce trésor de l'artisanat syrien, tout en contribuant au maintien de cette économie traditionnelle locale.
+                  En 2023, MonSavonVert a vu le jour avec une mission simple
+                  mais importante : importer directement des savons d'Alep
+                  authentiques pour vous faire découvrir ce trésor de
+                  l'artisanat syrien, tout en contribuant au maintien de cette
+                  économie traditionnelle locale.
                 </p>
                 <div className={styles.introCertifications}>
                   <div className={styles.certificationBadge}>
@@ -232,17 +311,30 @@ export default function AboutPage() {
           <section className={styles.timelineSection}>
             <div className={styles.sectionHeader}>
               <h2 className={styles.sectionTitle}>Mille ans d'histoire</h2>
-              <p className={styles.sectionSubtitle}>Du berceau de la savonnerie mondiale à la renaissance d'un art en péril</p>
+              <p className={styles.sectionSubtitle}>
+                Du berceau de la savonnerie mondiale à la renaissance d'un art
+                en péril
+              </p>
             </div>
-            
+
             <div className={styles.timeline}>
               {timelineItems.map((item, index) => (
-                <div 
-                  key={index} 
-                  className={`${styles.timelineItem} ${item.position === 'left' ? styles.timelineItemLeft : styles.timelineItemRight}`}
+                <div
+                  key={index}
+                  className={`${styles.timelineItem} ${
+                    item.position === "left"
+                      ? styles.timelineItemLeft
+                      : styles.timelineItemRight
+                  }`}
                 >
                   <div className={styles.timelinePoint}></div>
-                  <div className={`${styles.timelineContent} ${item.position === 'left' ? styles.timelineContentLeft : styles.timelineContentRight}`}>
+                  <div
+                    className={`${styles.timelineContent} ${
+                      item.position === "left"
+                        ? styles.timelineContentLeft
+                        : styles.timelineContentRight
+                    }`}
+                  >
                     <div className={styles.timelineYear}>{item.year}</div>
                     <h3 className={styles.timelineTitle}>{item.title}</h3>
                     <p className={styles.timelineText}>{item.content}</p>
@@ -256,44 +348,70 @@ export default function AboutPage() {
           {/* Section sur la fabrication traditionnelle */}
           <section className={styles.craftSection}>
             <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>L'art ancestral de la fabrication</h2>
-              <p className={styles.sectionSubtitle}>Un processus inchangé depuis mille ans</p>
+              <h2 className={styles.sectionTitle}>
+                L'art ancestral de la fabrication
+              </h2>
+              <p className={styles.sectionSubtitle}>
+                Un processus inchangé depuis mille ans
+              </p>
             </div>
-            
+
             <div className={styles.craftContent}>
               <div className={styles.craftStep}>
                 <div className={styles.craftNumber}>1</div>
                 <h3>La récolte des baies de laurier</h3>
-                <p>Chaque automne, les baies de laurier sauvage sont récoltées à la main dans les montagnes syriennes. Cette huile précieuse, au cœur de la recette, ne peut être remplacée par aucun autre ingrédient.</p>
+                <p>
+                  Chaque automne, les baies de laurier sauvage sont récoltées à
+                  la main dans les montagnes syriennes. Cette huile précieuse,
+                  au cœur de la recette, ne peut être remplacée par aucun autre
+                  ingrédient.
+                </p>
               </div>
-              
+
               <div className={styles.craftStep}>
                 <div className={styles.craftNumber}>2</div>
                 <h3>La saponification ancestrale</h3>
-                <p>Dans d'immenses cuves en cuivre, l'huile d'olive première pression est mélangée à la soude naturelle et cuite lentement pendant trois jours. Les maîtres savonniers surveillent jour et nuit cette alchimie délicate.</p>
+                <p>
+                  Dans d'immenses cuves en cuivre, l'huile d'olive première
+                  pression est mélangée à la soude naturelle et cuite lentement
+                  pendant trois jours. Les maîtres savonniers surveillent jour
+                  et nuit cette alchimie délicate.
+                </p>
               </div>
-              
+
               <div className={styles.craftStep}>
                 <div className={styles.craftNumber}>3</div>
                 <h3>Le coulage et la découpe</h3>
-                <p>Le savon liquide est coulé sur le sol de l'atelier, puis découpé à la main en cubes parfaits. Chaque pain porte la marque du maître savonnier, garantie d'authenticité transmise depuis des générations.</p>
+                <p>
+                  Le savon liquide est coulé sur le sol de l'atelier, puis
+                  découpé à la main en cubes parfaits. Chaque pain porte la
+                  marque du maître savonnier, garantie d'authenticité transmise
+                  depuis des générations.
+                </p>
               </div>
-              
+
               <div className={styles.craftStep}>
                 <div className={styles.craftNumber}>4</div>
                 <h3>Le séchage naturel</h3>
-                <p>Les savons sont empilés en tours géométriques parfaites dans des caves naturelles où ils sèchent pendant 18 mois minimum. Cette maturation lente leur confère leur couleur dorée et leur douceur exceptionnelle.</p>
+                <p>
+                  Les savons sont empilés en tours géométriques parfaites dans
+                  des caves naturelles où ils sèchent pendant 18 mois minimum.
+                  Cette maturation lente leur confère leur couleur dorée et leur
+                  douceur exceptionnelle.
+                </p>
               </div>
             </div>
           </section>
-          
+
           {/* Values section */}
           <section className={styles.valuesSection}>
             <div className={styles.sectionHeader}>
               <h2 className={styles.sectionTitle}>Nos engagements</h2>
-              <p className={styles.sectionSubtitle}>Les valeurs qui guident notre mission de préservation</p>
+              <p className={styles.sectionSubtitle}>
+                Les valeurs qui guident notre mission de préservation
+              </p>
             </div>
-            
+
             <div className={styles.valuesGrid}>
               {values.map((value, index) => (
                 <div key={index} className={styles.valueCard}>
@@ -308,60 +426,121 @@ export default function AboutPage() {
           {/* Section pourquoi choisir */}
           <section className={styles.whySection}>
             <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>Pourquoi choisir nos savons d'Alep ?</h2>
-              <p className={styles.sectionSubtitle}>Un choix authentique pour votre peau et pour préserver une tradition</p>
+              <h2 className={styles.sectionTitle}>
+                Pourquoi choisir nos savons d'Alep ?
+              </h2>
+              <p className={styles.sectionSubtitle}>
+                Un choix authentique pour votre peau et pour préserver une
+                tradition
+              </p>
             </div>
-            
+
             <div className={styles.whyGrid}>
               <div className={styles.whyCard}>
                 <div className={styles.whyIcon}>
-                  <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 2a3 3 0 0 0-3 3c0 1.5 1 3 1 3s1-1.5 1-3a3 3 0 0 0-3-3z"/>
-                    <path d="M7.64 6.64a7 7 0 1 0 8.72 0"/>
-                    <path d="M12 10v4"/>
-                    <path d="M8 18c2-2 4-2 4-2s2 0 4 2"/>
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="48"
+                    height="48"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M12 2a3 3 0 0 0-3 3c0 1.5 1 3 1 3s1-1.5 1-3a3 3 0 0 0-3-3z" />
+                    <path d="M7.64 6.64a7 7 0 1 0 8.72 0" />
+                    <path d="M12 10v4" />
+                    <path d="M8 18c2-2 4-2 4-2s2 0 4 2" />
                   </svg>
                 </div>
                 <h3 className={styles.whyTitle}>100% Naturel</h3>
-                <p className={styles.whyDescription}>Uniquement de l'huile d'olive, de l'huile de baies de laurier, de l'eau et de la soude végétale. Aucun additif, conservateur ou parfum artificiel.</p>
+                <p className={styles.whyDescription}>
+                  Uniquement de l'huile d'olive, de l'huile de baies de laurier,
+                  de l'eau et de l'hydroxyde de sodium. La soude caustique,
+                  indispensable à la saponification, disparaît entièrement lors
+                  de cette réaction naturelle qui transforme les huiles en
+                  savon. Aucun additif, conservateur ou parfum artificiel.
+                </p>
               </div>
-              
+
               <div className={styles.whyCard}>
                 <div className={styles.whyIcon}>
-                  <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10"/>
-                    <polyline points="12,6 12,12 16,14"/>
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="48"
+                    height="48"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12,6 12,12 16,14" />
                   </svg>
                 </div>
                 <h3 className={styles.whyTitle}>Maturation 18 mois</h3>
-                <p className={styles.whyDescription}>Nos savons sont vieillis naturellement pendant au minimum 18 mois, leur conférant leur douceur unique et leurs propriétés exceptionnelles.</p>
+                <p className={styles.whyDescription}>
+                  Nos savons sont vieillis naturellement pendant au minimum 18
+                  mois selon la méthode ancestrale. Cette longue maturation
+                  permet à la saponification de se parfaire, évapore l'humidité
+                  et développe leur douceur unique. Le vieillissement concentre
+                  les propriétés des huiles pour un savon d'exception.
+                </p>
               </div>
-              
+
               <div className={styles.whyCard}>
                 <div className={styles.whyIcon}>
-                  <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 2L2 7v10c0 5.55 3.84 10 9 10s9-4.45 9-10V7l-10-5z"/>
-                    <path d="M12 7v5l3 3"/>
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="48"
+                    height="48"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M12 2L2 7v10c0 5.55 3.84 10 9 10s9-4.45 9-10V7l-10-5z" />
+                    <path d="M12 7v5l3 3" />
                   </svg>
                 </div>
                 <h3 className={styles.whyTitle}>Tradition millénaire</h3>
-                <p className={styles.whyDescription}>Fabriqués selon la méthode ancestrale inchangée depuis plus de 1000 ans, directement dans la région d'Alep en Syrie.</p>
+                <p className={styles.whyDescription}>
+                  Élaborés selon la recette traditionnelle
+                  inchangée depuis plus de 1000 ans, directement dans la région
+                  d'Alep en Syrie. Cette méthode artisanale respecte chaque
+                  étape du processus historique : cuisson lente au chaudron,
+                  coulage manuel et séchage à l'air libre. Un savoir-faire
+                  millénaire transmis de génération en
+                  génération.
+                </p>
               </div>
             </div>
           </section>
-          
+
           {/* Contact CTA section */}
           <section className={styles.contactCta}>
             <div className={styles.ctaContent}>
               <h2 className={styles.ctaTitle}>Découvrez l'authenticité</h2>
               <p className={styles.ctaText}>
-                Chaque savon d'Alep que vous choisissez vous fait découvrir un patrimoine millénaire et contribue au maintien de cette tradition artisanale unique. Rejoignez-nous dans cette démarche authentique.
+                Chaque savon d'Alep que vous choisissez vous fait découvrir un
+                patrimoine millénaire et contribue au maintien de cette
+                tradition artisanale unique. Rejoignez-nous dans cette démarche
+                authentique.
               </p>
               <div className={styles.ctaButtons}>
-                <Link href="/boutique" className={`${styles.button} ${styles.primaryButton}`}>
+                <Link
+                  href="/boutique"
+                  className={`${styles.button} ${styles.primaryButton}`}
+                >
                   Découvrir nos savons
                 </Link>
-                <Link href="/contact" className={`${styles.button} ${styles.secondaryButton}`}>
+                <Link
+                  href="/contact"
+                  className={`${styles.button} ${styles.secondaryButton}`}
+                >
                   En savoir plus
                 </Link>
               </div>
@@ -376,23 +555,77 @@ export default function AboutPage() {
               <div className={styles.footerColumn}>
                 <div className={styles.footerLogo}>MonSavonVert</div>
                 <p className={styles.footerAbout}>
-                  Savons d'Alep authentiques importés directement de Syrie. Découvrez la tradition millénaire de ces savons artisanaux fabriqués selon les méthodes ancestrales.
+                  Savons d'Alep authentiques importés directement de Syrie.
+                  Découvrez la tradition millénaire de ces savons artisanaux
+                  fabriqués selon les méthodes ancestrales.
                 </p>
                 <div className={styles.footerSocial}>
-                  <a href="https://facebook.com/monsavonvert" className={styles.socialLink} target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                  <a
+                    href="https://facebook.com/monsavonvert"
+                    className={styles.socialLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Facebook"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="20"
+                      height="20"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
                       <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
                     </svg>
                   </a>
-                  <a href="https://instagram.com/monsavonvert" className={styles.socialLink} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                  <a
+                    href="https://instagram.com/monsavonvert"
+                    className={styles.socialLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Instagram"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="20"
+                      height="20"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <rect
+                        x="2"
+                        y="2"
+                        width="20"
+                        height="20"
+                        rx="5"
+                        ry="5"
+                      ></rect>
                       <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                       <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
                     </svg>
                   </a>
-                  <a href="https://pinterest.com/monsavonvert" className={styles.socialLink} target="_blank" rel="noopener noreferrer" aria-label="Pinterest">
-                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                  <a
+                    href="https://pinterest.com/monsavonvert"
+                    className={styles.socialLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Pinterest"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="20"
+                      height="20"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
                       <path d="M8 12a4 4 0 1 1 8 0 4 4 0 0 1-8 0zm2-6h4"></path>
                       <path d="M9 18l3-3 3 3"></path>
                       <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"></path>
@@ -400,60 +633,150 @@ export default function AboutPage() {
                   </a>
                 </div>
               </div>
-              
+
               <div className={styles.footerColumn}>
                 <h3 className={styles.footerTitle}>Nos Savons</h3>
-                <Link href="/boutique/savon-alep-traditionnel" className={styles.footerLink}>Savon d'Alep traditionnel</Link>
-                <Link href="/boutique/savon-alep-premium" className={styles.footerLink}>Savon d'Alep premium</Link>
-                <Link href="/boutique/savon-alep-sensible" className={styles.footerLink}>Peaux sensibles</Link>
-                <Link href="/boutique/savon-alep-cheveux" className={styles.footerLink}>Savon cheveux</Link>
-                <Link href="/boutique/coffrets" className={styles.footerLink}>Coffrets découverte</Link>
-                <Link href="/boutique/accessoires" className={styles.footerLink}>Accessoires</Link>
+                <Link
+                  href="/boutique/savon-alep-traditionnel"
+                  className={styles.footerLink}
+                >
+                  Savon d'Alep traditionnel
+                </Link>
+                <Link
+                  href="/boutique/savon-alep-premium"
+                  className={styles.footerLink}
+                >
+                  Savon d'Alep premium
+                </Link>
+                <Link
+                  href="/boutique/savon-alep-sensible"
+                  className={styles.footerLink}
+                >
+                  Peaux sensibles
+                </Link>
+                <Link
+                  href="/boutique/savon-alep-cheveux"
+                  className={styles.footerLink}
+                >
+                  Savon cheveux
+                </Link>
+                <Link href="/boutique/coffrets" className={styles.footerLink}>
+                  Coffrets découverte
+                </Link>
+                <Link
+                  href="/boutique/accessoires"
+                  className={styles.footerLink}
+                >
+                  Accessoires
+                </Link>
               </div>
-              
+
               <div className={styles.footerColumn}>
                 <h3 className={styles.footerTitle}>Informations</h3>
-                <Link href="/histoire-savon-alep" className={styles.footerLink}>Histoire du savon d'Alep</Link>
-                <Link href="/bienfaits" className={styles.footerLink}>Bienfaits & propriétés</Link>
-                <Link href="/fabrication" className={styles.footerLink}>Fabrication artisanale</Link>
-                <Link href="/mission-solidaire" className={styles.footerLink}>Notre mission solidaire</Link>
-                <Link href="/faq" className={styles.footerLink}>Questions fréquentes</Link>
-                <Link href="/contact" className={styles.footerLink}>Contact</Link>
+                <Link href="/histoire-savon-alep" className={styles.footerLink}>
+                  Histoire du savon d'Alep
+                </Link>
+                <Link href="/bienfaits" className={styles.footerLink}>
+                  Bienfaits & propriétés
+                </Link>
+                <Link href="/fabrication" className={styles.footerLink}>
+                  Fabrication artisanale
+                </Link>
+                <Link href="/mission-solidaire" className={styles.footerLink}>
+                  Notre mission solidaire
+                </Link>
+                <Link href="/faq" className={styles.footerLink}>
+                  Questions fréquentes
+                </Link>
+                <Link href="/contact" className={styles.footerLink}>
+                  Contact
+                </Link>
               </div>
-              
+
               <div className={styles.footerColumn}>
                 <h3 className={styles.footerTitle}>Contact</h3>
                 <p className={styles.contactInfo}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
                   </svg>
                   <a href="tel:+33612345678">+33 6 12 34 56 78</a>
                 </p>
                 <p className={styles.contactInfo}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                     <polyline points="22,6 12,13 2,6"></polyline>
                   </svg>
-                  <a href="mailto:contact@monsavonvert.fr">contact@monsavonvert.fr</a>
+                  <a href="mailto:contact@monsavonvert.fr">
+                    contact@monsavonvert.fr
+                  </a>
                 </p>
                 <p className={styles.contactInfo}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                     <circle cx="12" cy="10" r="3"></circle>
                   </svg>
-                  <span>Importé directement<br />d'Alep, Syrie</span>
+                  <span>
+                    Importé directement
+                    <br />
+                    d'Alep, Syrie
+                  </span>
                 </p>
               </div>
             </div>
           </div>
-          
+
           <div className={styles.footerBottom}>
             <div className={styles.footerBottomContent}>
-              <p className={styles.copyright}>© 2024 MonSavonVert. Savons d'Alep authentiques importés de Syrie.</p>
+              <p className={styles.copyright}>
+                © 2024 MonSavonVert. Savons d'Alep authentiques importés de
+                Syrie.
+              </p>
               <div className={styles.footerLinks}>
-                <Link href="/cgv" className={styles.footerSmallLink}>CGV</Link>
-                <Link href="/politique-de-confidentialite" className={styles.footerSmallLink}>Confidentialité</Link>
-                <Link href="/mentions-legales" className={styles.footerSmallLink}>Mentions légales</Link>
+                <Link href="/cgv" className={styles.footerSmallLink}>
+                  CGV
+                </Link>
+                <Link
+                  href="/politique-de-confidentialite"
+                  className={styles.footerSmallLink}
+                >
+                  Confidentialité
+                </Link>
+                <Link
+                  href="/mentions-legales"
+                  className={styles.footerSmallLink}
+                >
+                  Mentions légales
+                </Link>
               </div>
             </div>
           </div>

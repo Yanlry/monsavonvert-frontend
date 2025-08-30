@@ -392,7 +392,7 @@ export default function Home() {
                         <span className={styles.buttonIcon}>→</span>
                       </Link>
                       <Link href="/info" className={styles.secondaryButton}>
-                        <span>Notre philosophie</span>
+                        <span>Une histoire ancestrale</span>
                       </Link>
                     </div>
                   </div>
@@ -853,9 +853,8 @@ export default function Home() {
                     </p>
                     <p className={styles.aboutText}>
                       Chaque savon est fabriqué à la main avec des ingrédients
-                      naturels choisis pour leurs bienfaits, dans une
-                      démarche durable qui évite le plastique et respecte la
-                      tradition.
+                      naturels choisis pour leurs bienfaits, dans une démarche
+                      durable qui évite le plastique et respecte la tradition.
                     </p>
 
                     <div className={styles.certifications}>
@@ -900,10 +899,9 @@ export default function Home() {
                 </h2>
                 <div className={styles.environmentIntro}>
                   <p className={styles.environmentText}>
-                    Ici nous croyons qu'il est possible de
-                    prendre soin de soi tout en prenant soin de la planète.
-                    Notre engagement environnemental va bien au-delà de nos
-                    produits.
+                    Ici nous croyons qu'il est possible de prendre soin de soi
+                    tout en prenant soin de la planète. Notre engagement
+                    environnemental va bien au-delà de nos produits.
                   </p>
                 </div>
               </div>
@@ -1312,10 +1310,12 @@ export default function Home() {
                     </div>
                   </div>
                   <h3 className={styles.bannerTitle}>
-                  Un savon millénaires qui respectent votre peau et la planète
+                    Un savon millénaires qui respectent votre peau et la planète
                   </h3>
                   <p className={styles.bannerText}>
-                  Héritiers d'une tradition ancestrale, les savons d'Alep sont naturellement reconnus pour leurs propriétés bienfaisantes uniques, transmises à travers les siècles.
+                    Héritiers d'une tradition ancestrale, les savons d'Alep sont
+                    naturellement reconnus pour leurs propriétés bienfaisantes
+                    uniques, transmises à travers les siècles.
                   </p>
                 </div>
                 <div className={styles.bannerEffect}></div>
@@ -1520,34 +1520,22 @@ export default function Home() {
                   <h3 className={styles.footerTitle}>Boutique</h3>
                   <div className={styles.footerLinks}>
                     <Link
-                      href="/boutique/nouveautes"
+                      href="/store"
                       className={styles.footerLink}
                     >
-                      Nouveautés
+                      Notre Collection
                     </Link>
-                    <Link href="/boutique/visage" className={styles.footerLink}>
-                      Soins visage
+                    <Link href="/produit/680bd95433437078ee079529" className={styles.footerLink}>
+                      Savon d'Alep 5%
                     </Link>
-                    <Link href="/boutique/corps" className={styles.footerLink}>
-                      Soins corps
+                    <Link href="/produit/680a5ac9841615e1719b023b" className={styles.footerLink}>
+                    Savon d'Alep 20%
                     </Link>
                     <Link
-                      href="/boutique/cheveux"
+                      href="/produit/67fe455e3de677d3ffa1cf89"
                       className={styles.footerLink}
                     >
-                      Cheveux
-                    </Link>
-                    <Link
-                      href="/boutique/coffrets"
-                      className={styles.footerLink}
-                    >
-                      Coffrets cadeaux
-                    </Link>
-                    <Link
-                      href="/boutique/accessoires"
-                      className={styles.footerLink}
-                    >
-                      Accessoires
+                    Savon d'Alep 35%
                     </Link>
                   </div>
                 </div>
@@ -1555,26 +1543,14 @@ export default function Home() {
                 <div className={styles.footerColumn}>
                   <h3 className={styles.footerTitle}>Informations</h3>
                   <div className={styles.footerLinks}>
-                    <Link href="/a-propos" className={styles.footerLink}>
-                      Notre histoire
-                    </Link>
                     <Link href="/virtues" className={styles.footerLink}>
                       Vertu & bienfaits
                     </Link>
-                    <Link href="/blog" className={styles.footerLink}>
-                      Journal
+                    <Link href="/how-to-choose" className={styles.footerLink}>
+                      Bien choisir
                     </Link>
-                    <Link href="/faq" className={styles.footerLink}>
-                      FAQ
-                    </Link>
-                    <Link href="/contact" className={styles.footerLink}>
-                      Contact
-                    </Link>
-                    <Link
-                      href="/programme-fidelite"
-                      className={styles.footerLink}
-                    >
-                      Programme fidélité
+                    <Link href="/info" className={styles.footerLink}>
+                      A propos
                     </Link>
                   </div>
                 </div>
@@ -1582,6 +1558,26 @@ export default function Home() {
                 <div className={styles.footerColumn}>
                   <h3 className={styles.footerTitle}>Contact</h3>
                   <div className={styles.contactInfo}>
+                  <div className={styles.contactItem}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className={styles.contactIcon}
+                      >
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                      </svg>
+                      <Link href="/contact" className={styles.footerLink}>
+                      Formulaire de contact
+                    </Link>
+                    </div>
                     <div className={styles.contactItem}>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
