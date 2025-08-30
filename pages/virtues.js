@@ -192,7 +192,6 @@ export default function VertusBienfaits() {
           <section className={styles.introSection}>
             <div className={styles.flexContainer}>
               <div className={styles.introContent}>
-                <span className={styles.sectionTag}>Le savon d'Alep</span>
                 <h2 className={styles.introTitle}>
                   Le trésor ancestral de la cosmétique
                 </h2>
