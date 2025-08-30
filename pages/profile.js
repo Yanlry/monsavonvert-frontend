@@ -903,11 +903,6 @@ export default function Profile() {
               >
                 Fermer
               </button>
-              {selectedOrder.status === "pending" && (
-                <button className={styles.modalActionButton}>
-                  Suivre ma commande
-                </button>
-              )}
             </div>
           </div>
         </div>
