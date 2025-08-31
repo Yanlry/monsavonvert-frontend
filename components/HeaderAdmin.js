@@ -171,20 +171,6 @@ const HeaderAdmin = ({ userEmail, activePage }) => {
                     </a>
                   </Link>
                 </li>
-                {/* NOUVEAU: Lien vers la gestion des codes promo */}
-                <li>
-                  <Link href="/admin/promos" legacyBehavior>
-                    <a className={`${styles.adminMenuLink} ${activePage === 'promos' ? styles.activeAdminLink : ''}`}>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21.5 2l-2 2m0 0l-7 7H9v3l-2.5 2.5a.5.5 0 0 1-.65-.65L8 11.5V8.5L15.5 1a.5.5 0 0 1 .65.65L14 4l7 7z"></path>
-                        <path d="M16 8L2 22a3 3 0 1 0 4.24 4.24L22 10"></path>
-                        <path d="M16 8l-8 8"></path>
-                        <circle cx="9" cy="9" r="2"></circle>
-                      </svg>
-                      Codes Promo
-                    </a>
-                  </Link>
-                </li>
                 <li>
                   <Link href="/admin/customers" legacyBehavior>
                     <a className={`${styles.adminMenuLink} ${activePage === 'customers' ? styles.activeAdminLink : ''}`}>
