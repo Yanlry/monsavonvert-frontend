@@ -5,7 +5,7 @@ import Head from "next/head";
 import Link from "next/link";
 import styles from "../styles/cart.module.css";
 import Header from "../components/Header";
-import Footer from "../components/Footer"; // NOUVEAU: Import du composant footer
+import Footer from "../components/Footer";
 
 export default function Cart() {
   // État pour détecter si nous sommes côté client
@@ -17,6 +17,12 @@ export default function Cart() {
   // État pour le panier
   const [cartItems, setCartItems] = useState([]);
   const [cartCount, setCartCount] = useState(0);
+
+  // NOUVEAU: États pour les codes promo
+  const [promoCode, setPromoCode] = useState('');
+  const [appliedPromo, setAppliedPromo] = useState(null);
+  const [promoError, setPromoError] = useState('');
+  const [promoSuccess, setPromoSuccess] = useState('');
 
   // Effets au chargement
   useEffect(() => {
@@ -49,6 +55,13 @@ export default function Cart() {
       );
       setCartCount(totalItems);
       console.log("Panier chargé avec succès:", storedCart);
+
+      // NOUVEAU: Récupérer le code promo appliqué s'il y en a un
+      const savedPromo = JSON.parse(localStorage.getItem("appliedPromo"));
+      if (savedPromo) {
+        setAppliedPromo(savedPromo);
+        console.log("Code promo appliqué récupéré:", savedPromo);
+      }
     } catch (error) {
       console.error("Erreur lors du chargement du panier:", error);
     }
@@ -115,10 +128,89 @@ export default function Cart() {
     updateCartCount(updatedCart);
   };
 
+  // NOUVEAU: Fonction pour calculer le sous-total (sans réduction)
+  const getSubTotal = () => {
+    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+  };
+
+  // NOUVEAU: Fonction pour calculer la réduction
+  const getDiscountAmount = () => {
+    if (!appliedPromo) return 0;
+    
+    const subTotal = getSubTotal();
+    
+    if (appliedPromo.type === 'percentage') {
+      return (subTotal * appliedPromo.discount) / 100;
+    } else {
+      // Réduction fixe, mais pas plus que le sous-total
+      return Math.min(appliedPromo.discount, subTotal);
+    }
+  };
+
+  // NOUVEAU: Fonction pour calculer le prix total final
   const getTotalPrice = () => {
-    return cartItems
-      .reduce((total, item) => total + item.price * item.quantity, 0)
-      .toFixed(2);
+    const subTotal = getSubTotal();
+    const discountAmount = getDiscountAmount();
+    return Math.max(0, subTotal - discountAmount).toFixed(2);
+  };
+
+  // NOUVEAU: Fonction pour appliquer un code promo
+  const applyPromoCode = () => {
+    console.log("Tentative d'application du code promo:", promoCode);
+    
+    // Réinitialiser les messages
+    setPromoError('');
+    setPromoSuccess('');
+    
+    if (!promoCode.trim()) {
+      setPromoError('Veuillez saisir un code promo');
+      return;
+    }
+
+    try {
+      // Récupérer les codes promo depuis le localStorage
+      const promoCodes = JSON.parse(localStorage.getItem('promoCodes')) || [];
+      console.log("Codes promo disponibles:", promoCodes);
+      
+      // Chercher le code promo (insensible à la casse)
+      const foundPromo = promoCodes.find(promo => 
+        promo.code.toLowerCase() === promoCode.toLowerCase().trim() && 
+        promo.active === true
+      );
+      
+      if (!foundPromo) {
+        setPromoError('Code promo invalide ou expiré');
+        console.log("Code promo non trouvé ou inactif");
+        return;
+      }
+
+      // Vérifier si un code promo est déjà appliqué
+      if (appliedPromo) {
+        setPromoError('Un code promo est déjà appliqué. Supprimez-le d\'abord.');
+        return;
+      }
+
+      // Appliquer le code promo
+      setAppliedPromo(foundPromo);
+      localStorage.setItem('appliedPromo', JSON.stringify(foundPromo));
+      setPromoSuccess(`Code promo "${foundPromo.code}" appliqué avec succès !`);
+      setPromoCode(''); // Vider le champ
+      
+      console.log("Code promo appliqué:", foundPromo);
+      
+    } catch (error) {
+      console.error('Erreur lors de l\'application du code promo:', error);
+      setPromoError('Erreur lors de l\'application du code promo');
+    }
+  };
+
+  // NOUVEAU: Fonction pour supprimer le code promo appliqué
+  const removePromoCode = () => {
+    console.log("Suppression du code promo appliqué");
+    setAppliedPromo(null);
+    localStorage.removeItem('appliedPromo');
+    setPromoSuccess('');
+    setPromoError('');
   };
 
   // Rendu de base sans contenu dynamique (pour éviter les erreurs d'hydratation)
@@ -159,8 +251,7 @@ export default function Cart() {
             scrolled ? styles.headerScrolled : ""
           }`}
         >
-                <Header cartCount={cartCount}/>
-        
+          <Header cartCount={cartCount}/>
         </header>
 
         <main className={styles.mainContent}>
@@ -273,26 +364,97 @@ export default function Cart() {
                   </div>
                   <div className={styles.cartSummary}>
                     <h2 className={styles.summaryTitle}>Récapitulatif</h2>
+                    
+                    {/* Sous-total */}
                     <div className={styles.summaryRow}>
                       <span>Sous-total</span>
-                      <span>{getTotalPrice()} €</span>
+                      <span>{getSubTotal().toFixed(2)} €</span>
                     </div>
+                    
+                    {/* NOUVEAU: Affichage du code promo appliqué */}
+                    {appliedPromo && (
+                      <div className={styles.summaryRow} style={{color: '#22c55e'}}>
+                        <span>Réduction ({appliedPromo.code})</span>
+                        <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+                          <span>-{getDiscountAmount().toFixed(2)} €</span>
+                          <button 
+                            onClick={removePromoCode}
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              color: '#ef4444',
+                              cursor: 'pointer',
+                              padding: '2px',
+                              fontSize: '12px'
+                            }}
+                            title="Supprimer le code promo"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                    
                     <div className={styles.summaryRow}>
                       <span>Livraison</span>
                       <span>Calculée à l'étape suivante</span>
                     </div>
+                    
+                    {/* Total final */}
                     <div className={styles.summaryRowTotal}>
                       <span>Total</span>
                       <span>{getTotalPrice()} €</span>
                     </div>
+                    
+                    {/* NOUVEAU: Section code promo améliorée */}
                     <div className={styles.promoCode}>
-                      <input
-                        type="text"
-                        placeholder="Code promo"
-                        className={styles.promoInput}
-                      />
-                      <button className={styles.promoButton}>Appliquer</button>
+                      {!appliedPromo ? (
+                        <>
+                          <input
+                            type="text"
+                            placeholder="Code promo"
+                            value={promoCode}
+                            onChange={(e) => {
+                              setPromoCode(e.target.value);
+                              setPromoError(''); // Effacer l'erreur quand l'utilisateur tape
+                              setPromoSuccess('');
+                            }}
+                            className={styles.promoInput}
+                            onKeyPress={(e) => {
+                              if (e.key === 'Enter') {
+                                applyPromoCode();
+                              }
+                            }}
+                          />
+                          <button 
+                            className={styles.promoButton}
+                            onClick={applyPromoCode}
+                            disabled={!promoCode.trim()}
+                          >
+                            Appliquer
+                          </button>
+                        </>
+                      ) : (
+                        <div className={styles.appliedPromoDisplay}>
+                          <span style={{color: '#22c55e', fontWeight: 'bold'}}>
+                            ✓ Code "{appliedPromo.code}" appliqué
+                          </span>
+                        </div>
+                      )}
+                      
+                      {/* Messages d'erreur et de succès */}
+                      {promoError && (
+                        <div className={styles.promoMessage} style={{color: '#ef4444', fontSize: '14px', marginTop: '8px'}}>
+                          {promoError}
+                        </div>
+                      )}
+                      {promoSuccess && (
+                        <div className={styles.promoMessage} style={{color: '#22c55e', fontSize: '14px', marginTop: '8px'}}>
+                          {promoSuccess}
+                        </div>
+                      )}
                     </div>
+                    
                     <Link
                       href="/checkout"
                       className={`${styles.button} ${styles.primaryButton} ${styles.checkoutButton}`}
