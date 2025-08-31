@@ -7,7 +7,7 @@ import styles from "../styles/login.module.css"; // Réutilisation du même fich
 import { useRouter } from "next/router"; // Changé de next/navigation à next/router
 import { UserContext } from "../context/UserContext"; // Import du contexte utilisateur
 import Header from "../components/Header"; // Importation du composant Header
-import footer from "../components/footer"; // NOUVEAU: Import du composant footer
+import Footer from "../components/footer"; // NOUVEAU: Import du composant footer
 
 /**
  * Composant de page d'inscription pour MonSavonVert
@@ -679,7 +679,7 @@ export default function Register() {
           </section>
         </main>
 
-        <footer />
+        <Footer />
       </div>
 
       {/* Styles pour masquer la section "Pourquoi créer un compte" sur mobile */}

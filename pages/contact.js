@@ -5,7 +5,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import styles from '../styles/contact.module.css';
 import Header from "../components/Header";
-import footer from "../components/footer"; // NOUVEAU: Import du composant footer
+import Footer from "../components/footer"; // NOUVEAU: Import du composant footer
 
 export default function Contact() {
   // État pour détecter si nous sommes côté client
@@ -315,7 +315,7 @@ export default function Contact() {
           </section>
         </main>
 
-        <footer />
+        <Footer />
       </div>
     </>
   );
