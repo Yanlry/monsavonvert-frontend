@@ -1647,11 +1647,10 @@ const handleCheckout = async () => {
                                     checked={formData.termsAccepted}
                                     onChange={handleCheckboxChange}
                                   />
-                                  J'accepte les {" "}
-                                  <Link href="/terms">
-                                    {" "}
-                                    termes et conditions
-                                  </Link>
+                                 <label htmlFor="terms">
+                          J'accepte les {" "}
+                          <Link href="/terms"> termes et conditions</Link>
+                        </label>
                                   .
                                 </label>
                               </div>
