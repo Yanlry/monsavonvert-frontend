@@ -5,6 +5,7 @@ import Head from "next/head";
 import Link from "next/link";
 import styles from "../styles/store.module.css";
 import Header from "../components/Header";
+import Footer from "../components/Footer"; // NOUVEAU: Import du composant Footer
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -48,7 +49,7 @@ export default function Boutique() {
   const calculateAverageRating = (reviews) => {
     console.log("📊 Calcul de la moyenne des avis pour un produit...");
     console.log("📝 Nombre d'avis reçus:", reviews?.length || 0);
-    
+
     if (!reviews || reviews.length === 0) {
       console.log("❌ Aucun avis trouvé, moyenne = 0");
       return { average: 0, total: 0 };
@@ -62,11 +63,15 @@ export default function Boutique() {
     }, 0);
 
     const average = totalRating / reviews.length;
-    console.log(`✅ Moyenne calculée: ${average.toFixed(2)} (${totalRating}/${reviews.length})`);
-    
+    console.log(
+      `✅ Moyenne calculée: ${average.toFixed(2)} (${totalRating}/${
+        reviews.length
+      })`
+    );
+
     return {
       average: Math.round(average * 10) / 10, // Arrondir à 1 décimale
-      total: reviews.length
+      total: reviews.length,
     };
   };
 
@@ -104,7 +109,7 @@ export default function Boutique() {
     const { average, total } = calculateAverageRating(product.reviews || []);
     return {
       averageRating: average,
-      totalReviews: total
+      totalReviews: total,
     };
   };
 
@@ -517,85 +522,86 @@ export default function Boutique() {
             </div>
           </div>
 
-        {/* Section des avantages - Affichée seulement après le chargement */}
-{!loading && (
-  <div className={styles.benefitsSection}>
-    <div className={styles.benefitCard}>
-      <div className={styles.benefitIcon}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"></path>
-          <path d="M12 6v6l4 2"></path>
-        </svg>
-      </div>
-      <h3>Origine Syrienne Garantie</h3>
-      <p>
-        Notre savon d'Alep est fabriqué artisanalement en Syrie, dans la
-        ville historique d'Alep, berceau de cette tradition millénaire.
-      </p>
-    </div>
+          {/* Section des avantages - Affichée seulement après le chargement */}
+          {!loading && (
+            <div className={styles.benefitsSection}>
+              <div className={styles.benefitCard}>
+                <div className={styles.benefitIcon}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"></path>
+                    <path d="M12 6v6l4 2"></path>
+                  </svg>
+                </div>
+                <h3>Origine Syrienne Garantie</h3>
+                <p>
+                  Notre savon d'Alep est fabriqué artisanalement en Syrie, dans
+                  la ville historique d'Alep, berceau de cette tradition
+                  millénaire.
+                </p>
+              </div>
 
-    <div className={styles.benefitCard}>
-      <div className={styles.benefitIcon}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M20 6L9 17l-5-5"></path>
-        </svg>
-      </div>
-      <h3>Pureté Naturelle</h3>
-      <p>
-        Composé exclusivement d'huile d'olive et d'huile de baies de
-        laurier, notre savon respecte votre peau sans compromis.
-      </p>
-    </div>
+              <div className={styles.benefitCard}>
+                <div className={styles.benefitIcon}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M20 6L9 17l-5-5"></path>
+                  </svg>
+                </div>
+                <h3>Pureté Naturelle</h3>
+                <p>
+                  Composé exclusivement d'huile d'olive et d'huile de baies de
+                  laurier, notre savon respecte votre peau sans compromis.
+                </p>
+              </div>
 
-    <div className={styles.benefitCard}>
-      <div className={styles.benefitIcon}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <circle cx="12" cy="12" r="10"></circle>
-          <path d="M14.31 8l5.74 9.94"></path>
-          <path d="M9.69 8h11.48"></path>
-          <path d="M7.38 12l5.74-9.94"></path>
-          <path d="M9.69 16l5.74-9.94"></path>
-        </svg>
-      </div>
-      <h3>Efficacité Reconnu</h3>
-      <p>
-        Utilisé depuis l'Antiquité pour ses vertus apaisantes et
-        purifiantes, il convient parfaitement aux peaux sensibles et
-        exigeantes.
-      </p>
-    </div>
-  </div>
-)}
+              <div className={styles.benefitCard}>
+                <div className={styles.benefitIcon}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M14.31 8l5.74 9.94"></path>
+                    <path d="M9.69 8h11.48"></path>
+                    <path d="M7.38 12l5.74-9.94"></path>
+                    <path d="M9.69 16l5.74-9.94"></path>
+                  </svg>
+                </div>
+                <h3>Efficacité Reconnu</h3>
+                <p>
+                  Utilisé depuis l'Antiquité pour ses vertus apaisantes et
+                  purifiantes, il convient parfaitement aux peaux sensibles et
+                  exigeantes.
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Affichage des produits ou message de chargement/erreur */}
           {loading ? (
@@ -658,7 +664,8 @@ export default function Boutique() {
                     new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
                   // NOUVEAU : Calculer les informations de notation pour ce produit
-                  const { averageRating, totalReviews } = getProductRatingInfo(product);
+                  const { averageRating, totalReviews } =
+                    getProductRatingInfo(product);
 
                   return (
                     <div
@@ -705,7 +712,7 @@ export default function Boutique() {
                       </Link>
                       <div className={styles.productInfo}>
                         <h3 className={styles.productName}>{product.title}</h3>
-                        
+
                         {/* MODIFICATION MAJEURE : Affichage des étoiles avec moyenne réelle */}
                         <div className={styles.productRating}>
                           {/* Affichage des étoiles basé sur la moyenne calculée */}
@@ -732,7 +739,7 @@ export default function Boutique() {
                             : product.description ||
                               "Aucune description disponible"}
                         </p>
-                     
+
                         <div className={styles.productActions}>
                           <button
                             className={styles.addToCartButtonLarge}
@@ -770,8 +777,6 @@ export default function Boutique() {
                               ? "Acheter maintenant"
                               : "Rupture de stock"}
                           </button>
-
-        
                         </div>
                       </div>
                     </div>
@@ -860,193 +865,7 @@ export default function Boutique() {
           </div>
         </main>
 
-        {/* Footer */}
-        <footer className={styles.footer}>
-          <div className={styles.footerTop}>
-            <div className={styles.footerContent}>
-              <div className={styles.footerColumn}>
-                <div className={styles.footerLogo}>MonSavonVert</div>
-                <p className={styles.footerAbout}>
-                  Savons artisanaux, naturels et écologiques fabriqués avec
-                  passion en Syrie dans l'antique ville d'Alep.
-                </p>
-                <div className={styles.footerSocial}>
-                  <a
-                    href="https://facebook.com/monsavonvert"
-                    className={styles.socialLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Facebook"
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="20"
-                      height="20"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      fill="none"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-                    </svg>
-                  </a>
-                  <a
-                    href="https://instagram.com/monsavonvert"
-                    className={styles.socialLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Instagram"
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="20"
-                      height="20"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      fill="none"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <rect
-                        x="2"
-                        y="2"
-                        width="20"
-                        height="20"
-                        rx="5"
-                        ry="5"
-                      ></rect>
-                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                    </svg>
-                  </a>
-                  <a
-                    href="https://pinterest.com/monsavonvert"
-                    className={styles.socialLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Pinterest"
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="20"
-                      height="20"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      fill="none"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M8 12a4 4 0 1 1 8 0 4 4 0 0 1-8 0zm2-6h4"></path>
-                      <path d="M9 18l3-3 3 3"></path>
-                      <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"></path>
-                    </svg>
-                  </a>
-                </div>
-              </div>
-
-              <div className={styles.footerColumn}>
-                <h3 className={styles.footerTitle}>Boutique</h3>
-                <Link href="/boutique/nouveautes" className={styles.footerLink}>
-                  Nouveautés
-                </Link>
-                <Link href="/boutique/visage" className={styles.footerLink}>
-                  Soins visage
-                </Link>
-                <Link href="/boutique/corps" className={styles.footerLink}>
-                  Soins corps
-                </Link>
-                <Link href="/boutique/cheveux" className={styles.footerLink}>
-                  Cheveux
-                </Link>
-                <Link href="/boutique/coffrets" className={styles.footerLink}>
-                  Coffrets cadeaux
-                </Link>
-              </div>
-
-              <div className={styles.footerColumn}>
-                <h3 className={styles.footerTitle}>Informations</h3>
-                <Link href="/a-propos" className={styles.footerLink}>
-                  Notre histoire
-                </Link>
-                <Link href="/virtues" className={styles.footerLink}>
-                  Vertu & bienfaits
-                </Link>
-                <Link href="/blog" className={styles.footerLink}>
-                  Journal
-                </Link>
-                <Link href="/faq" className={styles.footerLink}>
-                  FAQ
-                </Link>
-                <Link href="/contact" className={styles.footerLink}>
-                  Contact
-                </Link>
-              </div>
-
-              <div className={styles.footerColumn}>
-                <h3 className={styles.footerTitle}>Contact</h3>
-                <p className={styles.contactInfo}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                  </svg>
-                  <a href="tel:+33612345678">+33 6 12 34 56 78</a>
-                </p>
-                <p className={styles.contactInfo}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                    <polyline points="22,6 12,13 2,6"></polyline>
-                  </svg>
-                  <a href="mailto:info@monsavonvert.fr">info@monsavonvert.fr</a>
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className={styles.footerBottom}>
-            <div className={styles.footerBottomContent}>
-              <p className={styles.copyright}>
-                © 2023 MonSavonVert. Tous droits réservés.
-              </p>
-              <div className={styles.footerLinks}>
-                <Link href="/cgv" className={styles.footerSmallLink}>
-                  CGV
-                </Link>
-                <Link
-                  href="/politique-de-confidentialite"
-                  className={styles.footerSmallLink}
-                >
-                  Politique de confidentialité
-                </Link>
-                <Link
-                  href="/mentions-legales"
-                  className={styles.footerSmallLink}
-                >
-                  Mentions légales
-                </Link>
-              </div>
-            </div>
-          </div>
-        </footer>
+        <Footer />
       </div>
 
       {isCartOpen && (

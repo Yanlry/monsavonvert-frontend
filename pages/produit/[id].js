@@ -4,8 +4,8 @@ import Head from "next/head";
 import Link from "next/link";
 import styles from "../../styles/product.module.css";
 import Header from "../../components/Header";
-// AJOUT : Import du nouveau composant ReviewSystem
 import ReviewSystem from "../../components/ReviewSystem";
+import Footer from "../components/Footer"; // NOUVEAU: Import du composant Footer
 
 export default function ProductDetail({ product }) {
   const router = useRouter();
@@ -38,7 +38,7 @@ export default function ProductDetail({ product }) {
   const calculateAverageRating = (reviews) => {
     console.log("📊 Calcul de la moyenne des avis...");
     console.log("📝 Nombre d'avis reçus:", reviews.length);
-    
+
     if (!reviews || reviews.length === 0) {
       console.log("❌ Aucun avis trouvé, moyenne = 0");
       return { average: 0, total: 0 };
@@ -52,11 +52,15 @@ export default function ProductDetail({ product }) {
     }, 0);
 
     const average = totalRating / reviews.length;
-    console.log(`✅ Moyenne calculée: ${average.toFixed(2)} (${totalRating}/${reviews.length})`);
-    
+    console.log(
+      `✅ Moyenne calculée: ${average.toFixed(2)} (${totalRating}/${
+        reviews.length
+      })`
+    );
+
     return {
       average: Math.round(average * 10) / 10, // Arrondir à 1 décimale
-      total: reviews.length
+      total: reviews.length,
     };
   };
 
@@ -86,7 +90,7 @@ export default function ProductDetail({ product }) {
     const { average, total } = calculateAverageRating(currentReviews);
     setAverageRating(average);
     setTotalReviews(total);
-    
+
     console.log(`📊 Nouvelle moyenne: ${average} sur ${total} avis`);
   }, [currentReviews]);
 
@@ -94,7 +98,7 @@ export default function ProductDetail({ product }) {
   useEffect(() => {
     console.log("🔄 Initialisation des avis du produit");
     console.log("📦 Avis du produit:", product.reviews?.length || 0);
-    
+
     if (product.reviews) {
       setCurrentReviews(product.reviews);
     }
@@ -158,59 +162,63 @@ export default function ProductDetail({ product }) {
     }
   };
 
-// Fonction pour acheter directement
-const buyNow = () => {
-  console.log("🛒 Début de l'achat direct");
-  console.log("📦 Produit actuel :", product);
-  console.log("🔢 Quantité sélectionnée :", quantity);
-  
-  // Vérifier la quantité maximum
-  const maxQuantity = Math.min(20, product.stock);
-  if (quantity > maxQuantity) {
-    console.error("❌ Quantité trop élevée :", quantity, "max:", maxQuantity);
-    alert(`Vous ne pouvez acheter que ${maxQuantity} article(s) pour ce produit.`);
-    return;
-  }
+  // Fonction pour acheter directement
+  const buyNow = () => {
+    console.log("🛒 Début de l'achat direct");
+    console.log("📦 Produit actuel :", product);
+    console.log("🔢 Quantité sélectionnée :", quantity);
 
-  // Créer un panier temporaire avec juste ce produit
-  const directPurchaseItem = {
-    id: product._id,
-    name: product.title,
-    price: product.price,
-    image: product.images[0],
-    quantity: quantity,
-    size: selectedSize, // Si tu utilises les tailles
+    // Vérifier la quantité maximum
+    const maxQuantity = Math.min(20, product.stock);
+    if (quantity > maxQuantity) {
+      console.error("❌ Quantité trop élevée :", quantity, "max:", maxQuantity);
+      alert(
+        `Vous ne pouvez acheter que ${maxQuantity} article(s) pour ce produit.`
+      );
+      return;
+    }
+
+    // Créer un panier temporaire avec juste ce produit
+    const directPurchaseItem = {
+      id: product._id,
+      name: product.title,
+      price: product.price,
+      image: product.images[0],
+      quantity: quantity,
+      size: selectedSize, // Si tu utilises les tailles
+    };
+
+    console.log("📦 Produit pour achat direct :", directPurchaseItem);
+
+    // Sauvegarder dans le localStorage pour la page checkout
+    try {
+      // IMPORTANT : Sauvegarder d'abord le type d'achat
+      localStorage.setItem("purchaseType", "direct");
+      console.log("✅ Type d'achat sauvegardé : direct");
+
+      // Ensuite sauvegarder les données produit
+      localStorage.setItem(
+        "directPurchase",
+        JSON.stringify([directPurchaseItem])
+      );
+      console.log("✅ Produit sauvegardé pour achat direct");
+
+      // Vérifier que ça a bien été sauvegardé
+      const verification1 = localStorage.getItem("purchaseType");
+      const verification2 = localStorage.getItem("directPurchase");
+      console.log("🔍 Vérification purchaseType :", verification1);
+      console.log("🔍 Vérification directPurchase :", verification2);
+
+      // Attendre un petit délai pour être sûr que localStorage est écrit
+      setTimeout(() => {
+        console.log("🚀 Redirection vers checkout...");
+        router.push("/checkout");
+      }, 100); // 100ms de délai
+    } catch (error) {
+      console.error("❌ Erreur lors de la sauvegarde :", error);
+      alert("Une erreur est survenue. Veuillez réessayer.");
+    }
   };
-
-  console.log("📦 Produit pour achat direct :", directPurchaseItem);
-
-  // Sauvegarder dans le localStorage pour la page checkout
-  try {
-    // IMPORTANT : Sauvegarder d'abord le type d'achat
-    localStorage.setItem("purchaseType", "direct");
-    console.log("✅ Type d'achat sauvegardé : direct");
-    
-    // Ensuite sauvegarder les données produit
-    localStorage.setItem("directPurchase", JSON.stringify([directPurchaseItem]));
-    console.log("✅ Produit sauvegardé pour achat direct");
-    
-    // Vérifier que ça a bien été sauvegardé
-    const verification1 = localStorage.getItem("purchaseType");
-    const verification2 = localStorage.getItem("directPurchase");
-    console.log("🔍 Vérification purchaseType :", verification1);
-    console.log("🔍 Vérification directPurchase :", verification2);
-    
-    // Attendre un petit délai pour être sûr que localStorage est écrit
-    setTimeout(() => {
-      console.log("🚀 Redirection vers checkout...");
-      router.push("/checkout");
-    }, 100); // 100ms de délai
-    
-  } catch (error) {
-    console.error("❌ Erreur lors de la sauvegarde :", error);
-    alert("Une erreur est survenue. Veuillez réessayer.");
-  }
-};
 
   // Toggle wishlist
   const toggleWishlist = () => {
@@ -569,149 +577,149 @@ const buyNow = () => {
                   </div>
 
                   {/* Actions */}
-               {/* Actions */}
-<div className={styles.productActions}>
-  {/* Bouton Ajouter au panier (existant) */}
-  <button
-    className={styles.addToCartBtn}
-    onClick={addToCart}
-    disabled={product.stock <= 0}
-  >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="9" cy="21" r="1"></circle>
-      <circle cx="20" cy="21" r="1"></circle>
-      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-    </svg>
-    {product.stock > 0
-      ? "Ajouter au panier"
-      : "Rupture de stock"}
-  </button>
+                  {/* Actions */}
+                  <div className={styles.productActions}>
+                    {/* Bouton Ajouter au panier (existant) */}
+                    <button
+                      className={styles.addToCartBtn}
+                      onClick={addToCart}
+                      disabled={product.stock <= 0}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                      </svg>
+                      {product.stock > 0
+                        ? "Ajouter au panier"
+                        : "Rupture de stock"}
+                    </button>
 
-  {/* NOUVEAU : Bouton Acheter maintenant */}
-  <button
-    className={styles.buyNowBtn}
-    onClick={buyNow}
-    disabled={product.stock <= 0}
-  >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect x="1" y="3" width="15" height="13"></rect>
-      <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
-      <circle cx="5.5" cy="18.5" r="2.5"></circle>
-      <circle cx="18.5" cy="18.5" r="2.5"></circle>
-    </svg>
-    {product.stock > 0
-      ? "Acheter maintenant"
-      : "Rupture de stock"}
-  </button>
+                    {/* NOUVEAU : Bouton Acheter maintenant */}
+                    <button
+                      className={styles.buyNowBtn}
+                      onClick={buyNow}
+                      disabled={product.stock <= 0}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <rect x="1" y="3" width="15" height="13"></rect>
+                        <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                        <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                        <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                      </svg>
+                      {product.stock > 0
+                        ? "Acheter maintenant"
+                        : "Rupture de stock"}
+                    </button>
 
-  {/* Bouton wishlist (existant) */}
-  <button
-    className={`${styles.wishlistBtn} ${
-      isWishlisted ? styles.wishlistBtnActive : ""
-    }`}
-    onClick={toggleWishlist}
-  >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill={isWishlisted ? "currentColor" : "none"}
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-    </svg>
-  </button>
-</div>
+                    {/* Bouton wishlist (existant) */}
+                    <button
+                      className={`${styles.wishlistBtn} ${
+                        isWishlisted ? styles.wishlistBtnActive : ""
+                      }`}
+                      onClick={toggleWishlist}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill={isWishlisted ? "currentColor" : "none"}
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                      </svg>
+                    </button>
+                  </div>
 
                   {/* Livraison et garanties */}
                   <div className={styles.productExtraInfo}>
-  <div className={styles.infoItem}>
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect x="1" y="3" width="15" height="13"></rect>
-      <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
-      <circle cx="5.5" cy="18.5" r="2.5"></circle>
-      <circle cx="18.5" cy="18.5" r="2.5"></circle>
-    </svg>
-    <div>
-      <h4>Livraison offerte</h4>
-      <p>À partir de 29€ d'achats</p>
-    </div>
-  </div>
-  <div className={styles.infoItem}>
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-    </svg>
-    <div>
-      <h4>Fabriqué en Syrie</h4>
-      <p>Selon la tradition ancestrale</p>
-    </div>
-  </div>
-  <div className={styles.infoItem}>
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-      <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-      <line x1="12" y1="22.08" x2="12" y2="12"></line>
-    </svg>
-    <div>
-      <h4>Saponification à froid</h4>
-      <p>Préserve les propriétés</p>
-    </div>
-  </div>
-</div>
+                    <div className={styles.infoItem}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <rect x="1" y="3" width="15" height="13"></rect>
+                        <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                        <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                        <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                      </svg>
+                      <div>
+                        <h4>Livraison offerte</h4>
+                        <p>À partir de 29€ d'achats</p>
+                      </div>
+                    </div>
+                    <div className={styles.infoItem}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                      </svg>
+                      <div>
+                        <h4>Fabriqué en Syrie</h4>
+                        <p>Selon la tradition ancestrale</p>
+                      </div>
+                    </div>
+                    <div className={styles.infoItem}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                      </svg>
+                      <div>
+                        <h4>Saponification à froid</h4>
+                        <p>Préserve les propriétés</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -829,89 +837,105 @@ const buyNow = () => {
                     </div>
                   </div>
 
-            {/* Section "Destiné pour" avec l'icône de check */}
-{/* Section "Destiné pour" avec l'icône de check */}
-<div className={styles.descriptionSection}>
-  <div className={styles.descriptionIconGreen}>
-    {/* Icône de check verte */}
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={styles.destineIcon}
-    >
-      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-      <polyline points="22 4 12 14.01 9 11.01"></polyline>
-    </svg>
-  </div>
-  <div className={`${styles.descriptionText} ${styles.descriptionTextGreen}`}>
-    <h4>Destiné pour</h4>
-    <div className={styles.usageBenefits}>
-      {product.usageTips ? (
-        // Split le texte à chaque retour à la ligne et crée un carré pour chaque ligne
-        product.usageTips.split('\n').map((item, index) => (
-          item.trim() && (
-            <div key={index} className={`${styles.usageBenefit} ${styles.benefitItem}`}>
-              <span>{item.trim()}</span>
-            </div>
-          )
-        ))
-      ) : (
-        <div className={`${styles.usageBenefit} ${styles.benefitItem}`}>
-          <span>Aucune information disponible</span>
-        </div>
-      )}
-    </div>
-  </div>
-</div>
+                  {/* Section "Destiné pour" avec l'icône de check */}
+                  {/* Section "Destiné pour" avec l'icône de check */}
+                  <div className={styles.descriptionSection}>
+                    <div className={styles.descriptionIconGreen}>
+                      {/* Icône de check verte */}
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className={styles.destineIcon}
+                      >
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                      </svg>
+                    </div>
+                    <div
+                      className={`${styles.descriptionText} ${styles.descriptionTextGreen}`}
+                    >
+                      <h4>Destiné pour</h4>
+                      <div className={styles.usageBenefits}>
+                        {product.usageTips ? (
+                          // Split le texte à chaque retour à la ligne et crée un carré pour chaque ligne
+                          product.usageTips.split("\n").map(
+                            (item, index) =>
+                              item.trim() && (
+                                <div
+                                  key={index}
+                                  className={`${styles.usageBenefit} ${styles.benefitItem}`}
+                                >
+                                  <span>{item.trim()}</span>
+                                </div>
+                              )
+                          )
+                        ) : (
+                          <div
+                            className={`${styles.usageBenefit} ${styles.benefitItem}`}
+                          >
+                            <span>Aucune information disponible</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
 
-{/* Section "Déconseillé pour" avec l'icône X */}
-<div className={styles.descriptionSection}>
-  <div className={styles.descriptionIconRed}>
-    {/* Icône de croix rouge */}
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={styles.deconseilIcon}
-    >
-      <circle cx="12" cy="12" r="10"></circle>
-      <line x1="15" y1="9" x2="9" y2="15"></line>
-      <line x1="9" y1="9" x2="15" y2="15"></line>
-    </svg>
-  </div>
-  <div className={`${styles.descriptionText} ${styles.descriptionTextRed}`}>
-    <h4>Déconseillé pour</h4>
-    <div className={styles.usageBenefits}>
-      {product.ingredients ? (
-        // Split le texte à chaque retour à la ligne et crée un carré pour chaque ligne
-        product.ingredients.split('\n').map((item, index) => (
-          item.trim() && (
-            <div key={index} className={`${styles.usageBenefit} ${styles.warningItem}`}>
-              <span>{item.trim()}</span>
-            </div>
-          )
-        ))
-      ) : (
-        <div className={`${styles.usageBenefit} ${styles.warningItem}`}>
-          <span>Aucune information disponible</span>
-        </div>
-      )}
-    </div>
-  </div>
-</div>
+                  {/* Section "Déconseillé pour" avec l'icône X */}
+                  <div className={styles.descriptionSection}>
+                    <div className={styles.descriptionIconRed}>
+                      {/* Icône de croix rouge */}
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className={styles.deconseilIcon}
+                      >
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                      </svg>
+                    </div>
+                    <div
+                      className={`${styles.descriptionText} ${styles.descriptionTextRed}`}
+                    >
+                      <h4>Déconseillé pour</h4>
+                      <div className={styles.usageBenefits}>
+                        {product.ingredients ? (
+                          // Split le texte à chaque retour à la ligne et crée un carré pour chaque ligne
+                          product.ingredients.split("\n").map(
+                            (item, index) =>
+                              item.trim() && (
+                                <div
+                                  key={index}
+                                  className={`${styles.usageBenefit} ${styles.warningItem}`}
+                                >
+                                  <span>{item.trim()}</span>
+                                </div>
+                              )
+                          )
+                        ) : (
+                          <div
+                            className={`${styles.usageBenefit} ${styles.warningItem}`}
+                          >
+                            <span>Aucune information disponible</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1271,8 +1295,8 @@ const buyNow = () => {
               }`}
             >
               {/* REMPLACEMENT : Ancien système d'avis par le nouveau composant avec callback */}
-              <ReviewSystem 
-                productId={id} 
+              <ReviewSystem
+                productId={id}
                 initialReviews={currentReviews}
                 onReviewsUpdate={handleReviewsUpdate}
               />
@@ -1357,57 +1381,7 @@ const buyNow = () => {
           </div>
         )}
 
-        {/* Footer */}
-        <footer className={styles.footer}>
-          <div className={styles.footerTop}>
-            <div className={styles.footerContent}>
-              <div className={styles.footerColumn}>
-                <div className={styles.footerLogo}>MonSavonVert</div>
-                <p className={styles.footerAbout}>
-                  Savons artisanaux, naturels et écologiques fabriqués avec
-                  passion en Syrie dans l'antique ville d'Alep.
-                </p>
-              </div>
-
-              <div className={styles.footerColumn}>
-                <h3 className={styles.footerTitle}>Navigation rapides</h3>
-                <Link href="/" className={styles.footerLink}>
-                  Accueil
-                </Link>
-                <Link href="/store" className={styles.footerLink}>
-                  Boutique
-                </Link>
-                <Link href="/info" className={styles.footerLink}>
-                  À propos
-                </Link>
-                <Link href="/contact" className={styles.footerLink}>
-                  Contact
-                </Link>
-              </div>
-
-              <div className={styles.footerColumn}>
-                <h3 className={styles.footerTitle}>Contact</h3>
-                <a
-                  href="mailto:info@monsavonvert.fr"
-                  className={styles.footerLink}
-                >
-                  info@monsavonvert.fr
-                </a>
-                <a href="tel:+33612345678" className={styles.footerLink}>
-                  +33 6 12 34 56 78
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <div className={styles.footerBottom}>
-            <div className={styles.footerBottomContent}>
-              <p className={styles.copyright}>
-                © 2024 MonSavonVert. Tous droits réservés.
-              </p>
-            </div>
-          </div>
-        </footer>
+        <Footer />
       </div>
     </>
   );
