@@ -1,69 +1,71 @@
 import React from 'react';
 
 /**
- * Composant principal pour la page Termes et Conditions - Version Luxe JavaScript
+ * Composant principal pour la page Gestion des Cookies - Version Luxe JavaScript
+ * Design ultra-professionnel avec palette vert foncé, blanc et beige
  */
-const TermsPage = () => {
+const CookiesPage = () => {
+  console.log('🍪 Chargement de la page Gestion des Cookies - Version Luxe');
 
   // Informations de l'entreprise - MODIFIEZ CES INFORMATIONS AVEC VOS VRAIES DONNÉES
-   // Informations de l'entreprise - MODIFIEZ CES INFORMATIONS AVEC VOS VRAIES DONNÉES
-   const companyInfo = {
-    name: "Mon savon vert", // ⚠️ CHANGEZ PAR VOTRE NOM D'ENTREPRISE
-    email: "contact@monsavonvert.com", // ⚠️ CHANGEZ PAR VOTRE EMAIL
+  const companyInfo = {
+    name: "MON SAVON VERT", // ⚠️ CHANGEZ PAR VOTRE NOM D'ENTREPRISE
+    address: "59000 Lille, Nord, France", // ⚠️ CHANGEZ PAR VOTRE ADRESSE
+    email: "contact@monsavonvert.fr", // ⚠️ CHANGEZ PAR VOTRE EMAIL
     phone: "06 58 00 27 07" // ⚠️ CHANGEZ PAR VOTRE TÉLÉPHONE
   };
 
-  // Sections des termes et conditions
-  const termsections = [
+  // Sections de la gestion des cookies
+  const cookiesSections = [
     {
-      id: "article-1",
-      title: "Article 1 — Objet et champ d'application",
-      content: `Les présentes conditions générales de vente s'appliquent à toutes les ventes de savons artisanaux réalisées par ${companyInfo.name}. Toute commande implique l'acceptation pleine et entière de ces conditions générales de vente, à l'exclusion de toute autre condition.`
+      id: "section-1",
+      title: "Article 1 — Qu'est-ce qu'un cookie ?",
+      content: "Un cookie est un petit fichier de données qu'un site web enregistre sur votre ordinateur ou appareil mobile lorsque vous le visitez. Les cookies permettent au site web de mémoriser vos actions et préférences sur une période donnée, afin de ne pas avoir à les ressaisir à chaque visite."
     },
     {
-      id: "article-2", 
-      title: "Article 2 — Produits et qualité",
-      content: "Nos savons sont élaborés selon des méthodes artisanales traditionnelles avec une sélection rigoureuse d'ingrédients naturels de première qualité. Les compositions détaillées et propriétés spécifiques sont consultables sur chaque fiche produit. Les variations naturelles de couleur et d'aspect témoignent de notre processus de fabrication artisanal."
+      id: "section-2",
+      title: "Article 2 — Types de cookies utilisés",
+      content: `${companyInfo.name} utilise différents types de cookies sur son site : les cookies techniques strictement nécessaires au fonctionnement du site, les cookies de préférences pour mémoriser vos choix, les cookies statistiques pour comprendre l'utilisation du site, et les cookies de marketing pour personnaliser les contenus.`
     },
     {
-      id: "article-3",
-      title: "Article 3 — Processus de commande",
-      content: "Les commandes sont considérées comme fermes et définitives dès validation du paiement par nos services. Un accusé de réception électronique vous sera transmis, comprenant le détail de votre commande ainsi que les modalités de livraison applicables."
+      id: "section-3",
+      title: "Article 3 — Cookies techniques nécessaires",
+      content: "Ces cookies sont indispensables au bon fonctionnement de notre site web. Ils vous permettent de naviguer sur le site et d'utiliser ses fonctionnalités essentielles comme le panier d'achat, l'authentification et les préférences de sécurité. Ces cookies ne nécessitent pas votre consentement."
     },
     {
-      id: "article-4",
-      title: "Article 4 — Tarification et modalités de règlement",
-      content: "L'ensemble de nos tarifs sont exprimés en euros, toutes taxes comprises, incluant la TVA applicable. Le règlement s'effectue exclusivement par carte bancaire via notre système de paiement sécurisé. Tout refus de paiement entraînera l'annulation automatique de la commande."
+      id: "section-4",
+      title: "Article 4 — Cookies de préférences",
+      content: "Ces cookies permettent à notre site web de mémoriser les informations qui modifient son comportement ou son apparence, comme votre langue préférée ou la région dans laquelle vous vous trouvez. Ils améliorent votre expérience de navigation en personnalisant le contenu."
     },
     {
-      id: "article-5",
-      title: "Article 5 — Expédition et livraison",
-      content: "Les expéditions sont effectuées à l'adresse de livraison communiquée lors de la validation de commande. Nos délais de livraison s'établissent entre 3 et 7 jours ouvrés pour la France métropolitaine. Les frais d'expédition sont calculés en fonction du poids du colis et de la destination finale."
+      id: "section-5",
+      title: "Article 5 — Cookies statistiques et d'analyse",
+      content: "Ces cookies nous aident à comprendre comment les visiteurs interagissent avec notre site web en collectant et rapportant des informations de manière anonyme. Ces données nous permettent d'améliorer constamment notre site et votre expérience utilisateur."
     },
     {
-      id: "article-6",
-      title: "Article 6 — Droit de rétractation légal",
-      content: "Conformément aux dispositions du Code de la consommation, vous bénéficiez d'un délai légal de rétractation de 14 jours calendaires à compter de la réception de votre commande. Les produits doivent être retournés dans leur conditionnement d'origine, intacts et non utilisés."
+      id: "section-6",
+      title: "Article 6 — Cookies publicitaires et marketing",
+      content: "Ces cookies sont utilisés pour vous proposer des publicités plus pertinentes pour vous et vos intérêts. Ils peuvent également être utilisés pour limiter le nombre de fois que vous voyez une publicité et aider à mesurer l'efficacité des campagnes publicitaires."
     },
     {
-      id: "article-7",
-      title: "Article 7 — Garanties de qualité",
-      content: "Nous garantissons nos savons exempts de tout défaut de fabrication ou de conformité. En cas de non-conformité avérée, nous vous invitons à contacter notre service clientèle dans un délai de 48 heures suivant la réception. Nous nous engageons à apporter une solution appropriée dans les meilleurs délais."
+      id: "section-7",
+      title: "Article 7 — Durée de conservation",
+      content: "La durée de conservation des cookies varie selon leur type et leur finalité. Les cookies de session sont supprimés lorsque vous fermez votre navigateur, tandis que les cookies persistants peuvent être conservés jusqu'à 13 mois maximum, conformément à la réglementation en vigueur."
     },
     {
-      id: "article-8",
-      title: "Article 8 — Limitation de responsabilité",
-      content: "Notre responsabilité ne saurait être engagée en cas de réaction allergique ou d'intolérance cutanée. Nous recommandons fortement d'effectuer un test préalable sur une surface cutanée restreinte, particulièrement pour les peaux sensibles ou réactives."
+      id: "section-8",
+      title: "Article 8 — Gestion de vos préférences",
+      content: "Vous pouvez à tout moment modifier vos préférences concernant l'utilisation des cookies via les paramètres de votre navigateur ou grâce à notre outil de gestion des cookies disponible sur notre site. Vous pouvez accepter, refuser ou supprimer les cookies selon vos préférences."
     },
     {
-      id: "article-9",
-      title: "Article 9 — Protection des données personnelles",
-      content: "Les données personnelles collectées sont exclusivement utilisées dans le cadre du traitement et du suivi de votre commande. Ces informations ne font l'objet d'aucune transmission à des tiers. Vous disposez d'un droit d'accès, de rectification et de suppression de vos données personnelles."
+      id: "section-9",
+      title: "Article 9 — Paramétrage de votre navigateur",
+      content: "Vous pouvez configurer votre navigateur pour qu'il vous informe de la présence de cookies et vous demande de les accepter ou non. Vous pouvez également paramétrer votre navigateur pour qu'il refuse automatiquement tous les cookies ou seulement certains d'entre eux."
     },
     {
-      id: "article-10",
-      title: "Article 10 — Dispositions juridiques",
-      content: "Les présentes conditions générales de vente sont régies par le droit français en vigueur. Tout différend relatif à leur interprétation ou à leur exécution relèvera de la compétence exclusive des tribunaux français."
+      id: "section-10",
+      title: "Article 10 — Contact et informations",
+      content: `Pour toute question concernant notre utilisation des cookies, vous pouvez nous contacter à l'adresse ${companyInfo.email}. Cette politique de cookies peut être modifiée à tout moment pour refléter les changements dans nos pratiques ou pour des raisons opérationnelles, légales ou réglementaires.`
     }
   ];
 
@@ -76,16 +78,15 @@ const TermsPage = () => {
     }
   };
 
-  // 🆕 NOUVELLE FONCTION - Bouton retour vers la page précédente
+  // Fonction - Bouton retour vers la page précédente
   const handleGoBack = () => {
     console.log('↩️ Retour à la page précédente');
-    // Cette ligne fait revenir à la page précédente dans l'historique du navigateur
     window.history.back();
   };
 
   return (
-    <div className="luxury-terms-container">
-      {/* 🆕 NOUVEAU - Bouton retour élégant */}
+    <div className="luxury-cookies-container">
+      {/* Bouton retour élégant */}
       <div className="back-button-container">
         <button onClick={handleGoBack} className="luxury-back-button">
           <span className="back-arrow">←</span>
@@ -97,11 +98,11 @@ const TermsPage = () => {
       <header className="luxury-header">
         <div className="header-content">
           <h1 className="luxury-title">
-            Conditions Générales de Vente
+            Gestion des Cookies
           </h1>
           <div className="title-divider"></div>
           <p className="luxury-subtitle">
-            Termes et conditions régissant l'acquisition de nos créations artisanales
+            Utilisation et gestion des cookies sur notre site web
           </p>
         </div>
       </header>
@@ -129,7 +130,7 @@ const TermsPage = () => {
       <nav className="luxury-nav">
         <h3 className="nav-title">Sommaire</h3>
         <div className="nav-grid">
-          {termsections.map((section, index) => (
+          {cookiesSections.map((section, index) => (
             <button 
               key={section.id}
               onClick={() => scrollToSection(section.id)}
@@ -144,7 +145,7 @@ const TermsPage = () => {
 
       {/* Contenu principal avec design épuré */}
       <main className="luxury-content">
-        {termsections.map((section, index) => (
+        {cookiesSections.map((section, index) => (
           <article key={section.id} id={section.id} className="luxury-section">
             <div className="section-header">
               <span className="section-number">{String(index + 1).padStart(2, '0')}</span>
@@ -169,7 +170,7 @@ const TermsPage = () => {
             })}
           </p>
           <p className="footer-contact">
-            Pour toute question concernant ces conditions générales de vente, 
+            Pour toute question concernant notre politique de cookies, 
             nous vous invitons à nous contacter à l'adresse : 
             <a href={`mailto:${companyInfo.email}`} className="footer-link">
               {companyInfo.email}
@@ -185,7 +186,7 @@ const TermsPage = () => {
           box-sizing: border-box;
         }
 
-        .luxury-terms-container {
+        .luxury-cookies-container {
           max-width: 900px;
           margin: 0 auto;
           padding: 0;
@@ -196,7 +197,7 @@ const TermsPage = () => {
           font-size: 16px;
         }
 
-        /* 🆕 NOUVEAU - Styles pour le bouton retour */
+        /* Styles pour le bouton retour */
         .back-button-container {
           padding: 30px 60px 0 60px;
           background: #FFFFFF;
@@ -485,7 +486,7 @@ const TermsPage = () => {
 
         /* Design responsive */
         @media (max-width: 768px) {
-          .luxury-terms-container {
+          .luxury-cookies-container {
             font-size: 15px;
           }
 
@@ -558,4 +559,4 @@ const TermsPage = () => {
   );
 };
 
-export default TermsPage;
+export default CookiesPage;

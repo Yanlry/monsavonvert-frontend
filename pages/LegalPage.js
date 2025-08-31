@@ -1,69 +1,74 @@
 import React from 'react';
 
 /**
- * Composant principal pour la page Termes et Conditions - Version Luxe JavaScript
+ * Composant principal pour la page Mentions Légales - Version Luxe JavaScript
+ * Design ultra-professionnel avec palette vert foncé, blanc et beige
  */
-const TermsPage = () => {
+const LegalPage = () => {
+  console.log('⚖️ Chargement de la page Mentions Légales - Version Luxe');
 
   // Informations de l'entreprise - MODIFIEZ CES INFORMATIONS AVEC VOS VRAIES DONNÉES
-   // Informations de l'entreprise - MODIFIEZ CES INFORMATIONS AVEC VOS VRAIES DONNÉES
-   const companyInfo = {
-    name: "Mon savon vert", // ⚠️ CHANGEZ PAR VOTRE NOM D'ENTREPRISE
-    email: "contact@monsavonvert.com", // ⚠️ CHANGEZ PAR VOTRE EMAIL
-    phone: "06 58 00 27 07" // ⚠️ CHANGEZ PAR VOTRE TÉLÉPHONE
+  const companyInfo = {
+    name: "MON SAVON VERT", // ⚠️ CHANGEZ PAR VOTRE NOM D'ENTREPRISE
+    address: "59000 Lille, Nord, France", // ⚠️ CHANGEZ PAR VOTRE ADRESSE
+    email: "contact@monsavonvert.fr", // ⚠️ CHANGEZ PAR VOTRE EMAIL
+    phone: "06 58 00 27 07", // ⚠️ CHANGEZ PAR VOTRE TÉLÉPHONE
+    siret: "123 456 789 00012", // ⚠️ CHANGEZ PAR VOTRE SIRET
+    tva: "FR12345678901", // ⚠️ CHANGEZ PAR VOTRE NUMÉRO TVA
+    capital: "10 000" // ⚠️ CHANGEZ PAR VOTRE CAPITAL SOCIAL
   };
 
-  // Sections des termes et conditions
-  const termsections = [
+  // Sections des mentions légales
+  const legalSections = [
     {
-      id: "article-1",
-      title: "Article 1 — Objet et champ d'application",
-      content: `Les présentes conditions générales de vente s'appliquent à toutes les ventes de savons artisanaux réalisées par ${companyInfo.name}. Toute commande implique l'acceptation pleine et entière de ces conditions générales de vente, à l'exclusion de toute autre condition.`
+      id: "section-1",
+      title: "Article 1 — Identification de l'entreprise",
+      content: `${companyInfo.name} est une société spécialisée dans la fabrication et la vente de savons artisanaux. Siège social : ${companyInfo.address}. SIRET : ${companyInfo.siret}. Numéro de TVA intracommunautaire : ${companyInfo.tva}. Capital social : ${companyInfo.capital} euros.`
     },
     {
-      id: "article-2", 
-      title: "Article 2 — Produits et qualité",
-      content: "Nos savons sont élaborés selon des méthodes artisanales traditionnelles avec une sélection rigoureuse d'ingrédients naturels de première qualité. Les compositions détaillées et propriétés spécifiques sont consultables sur chaque fiche produit. Les variations naturelles de couleur et d'aspect témoignent de notre processus de fabrication artisanal."
+      id: "section-2",
+      title: "Article 2 — Directeur de la publication",
+      content: `Le directeur de la publication du présent site internet est le représentant légal de ${companyInfo.name}. Pour toute question relative au contenu du site, vous pouvez contacter : ${companyInfo.email}.`
     },
     {
-      id: "article-3",
-      title: "Article 3 — Processus de commande",
-      content: "Les commandes sont considérées comme fermes et définitives dès validation du paiement par nos services. Un accusé de réception électronique vous sera transmis, comprenant le détail de votre commande ainsi que les modalités de livraison applicables."
+      id: "section-3",
+      title: "Article 3 — Hébergement du site",
+      content: "Le présent site internet est hébergé par un prestataire professionnel garantissant la continuité du service et la sécurité des données. Les coordonnées complètes de l'hébergeur sont disponibles sur demande."
     },
     {
-      id: "article-4",
-      title: "Article 4 — Tarification et modalités de règlement",
-      content: "L'ensemble de nos tarifs sont exprimés en euros, toutes taxes comprises, incluant la TVA applicable. Le règlement s'effectue exclusivement par carte bancaire via notre système de paiement sécurisé. Tout refus de paiement entraînera l'annulation automatique de la commande."
+      id: "section-4",
+      title: "Article 4 — Propriété intellectuelle",
+      content: `L'ensemble des contenus présents sur ce site (textes, images, logos, marques) sont la propriété exclusive de ${companyInfo.name} ou font l'objet d'une autorisation d'utilisation. Toute reproduction, représentation ou diffusion sans autorisation préalable est interdite.`
     },
     {
-      id: "article-5",
-      title: "Article 5 — Expédition et livraison",
-      content: "Les expéditions sont effectuées à l'adresse de livraison communiquée lors de la validation de commande. Nos délais de livraison s'établissent entre 3 et 7 jours ouvrés pour la France métropolitaine. Les frais d'expédition sont calculés en fonction du poids du colis et de la destination finale."
+      id: "section-5",
+      title: "Article 5 — Conditions d'utilisation",
+      content: "L'accès et l'utilisation de ce site impliquent l'acceptation pleine et entière des présentes mentions légales. L'utilisateur s'engage à respecter les conditions d'utilisation et à ne pas porter atteinte aux droits de propriété intellectuelle."
     },
     {
-      id: "article-6",
-      title: "Article 6 — Droit de rétractation légal",
-      content: "Conformément aux dispositions du Code de la consommation, vous bénéficiez d'un délai légal de rétractation de 14 jours calendaires à compter de la réception de votre commande. Les produits doivent être retournés dans leur conditionnement d'origine, intacts et non utilisés."
+      id: "section-6",
+      title: "Article 6 — Responsabilité",
+      content: `${companyInfo.name} s'efforce d'assurer l'exactitude et la mise à jour des informations diffusées sur ce site. Toutefois, nous ne pouvons garantir l'exactitude, la complétude ou l'actualité des informations mises à disposition.`
     },
     {
-      id: "article-7",
-      title: "Article 7 — Garanties de qualité",
-      content: "Nous garantissons nos savons exempts de tout défaut de fabrication ou de conformité. En cas de non-conformité avérée, nous vous invitons à contacter notre service clientèle dans un délai de 48 heures suivant la réception. Nous nous engageons à apporter une solution appropriée dans les meilleurs délais."
+      id: "section-7",
+      title: "Article 7 — Liens hypertextes",
+      content: "Ce site peut contenir des liens vers des sites externes. Nous ne sommes pas responsables du contenu de ces sites tiers ni des dommages qui pourraient résulter de leur utilisation."
     },
     {
-      id: "article-8",
-      title: "Article 8 — Limitation de responsabilité",
-      content: "Notre responsabilité ne saurait être engagée en cas de réaction allergique ou d'intolérance cutanée. Nous recommandons fortement d'effectuer un test préalable sur une surface cutanée restreinte, particulièrement pour les peaux sensibles ou réactives."
+      id: "section-8",
+      title: "Article 8 — Cookies et traceurs",
+      content: "Ce site utilise des cookies techniques nécessaires à son bon fonctionnement. Les modalités d'utilisation des cookies sont détaillées dans notre politique de gestion des cookies."
     },
     {
-      id: "article-9",
-      title: "Article 9 — Protection des données personnelles",
-      content: "Les données personnelles collectées sont exclusivement utilisées dans le cadre du traitement et du suivi de votre commande. Ces informations ne font l'objet d'aucune transmission à des tiers. Vous disposez d'un droit d'accès, de rectification et de suppression de vos données personnelles."
+      id: "section-9",
+      title: "Article 9 — Droit applicable",
+      content: "Les présentes mentions légales sont soumises au droit français. En cas de litige, les tribunaux français seront seuls compétents."
     },
     {
-      id: "article-10",
-      title: "Article 10 — Dispositions juridiques",
-      content: "Les présentes conditions générales de vente sont régies par le droit français en vigueur. Tout différend relatif à leur interprétation ou à leur exécution relèvera de la compétence exclusive des tribunaux français."
+      id: "section-10",
+      title: "Article 10 — Contact",
+      content: `Pour toute question relative aux présentes mentions légales ou au fonctionnement du site, vous pouvez nous contacter : Email : ${companyInfo.email} - Téléphone : ${companyInfo.phone} - Adresse postale : ${companyInfo.address}.`
     }
   ];
 
@@ -76,16 +81,15 @@ const TermsPage = () => {
     }
   };
 
-  // 🆕 NOUVELLE FONCTION - Bouton retour vers la page précédente
+  // Fonction - Bouton retour vers la page précédente
   const handleGoBack = () => {
     console.log('↩️ Retour à la page précédente');
-    // Cette ligne fait revenir à la page précédente dans l'historique du navigateur
     window.history.back();
   };
 
   return (
-    <div className="luxury-terms-container">
-      {/* 🆕 NOUVEAU - Bouton retour élégant */}
+    <div className="luxury-legal-container">
+      {/* Bouton retour élégant */}
       <div className="back-button-container">
         <button onClick={handleGoBack} className="luxury-back-button">
           <span className="back-arrow">←</span>
@@ -97,11 +101,11 @@ const TermsPage = () => {
       <header className="luxury-header">
         <div className="header-content">
           <h1 className="luxury-title">
-            Conditions Générales de Vente
+            Mentions Légales
           </h1>
           <div className="title-divider"></div>
           <p className="luxury-subtitle">
-            Termes et conditions régissant l'acquisition de nos créations artisanales
+            Informations légales et réglementaires
           </p>
         </div>
       </header>
@@ -112,6 +116,11 @@ const TermsPage = () => {
           <h2 className="company-name">{companyInfo.name}</h2>
           <div className="company-details">
             <p className="company-address">{companyInfo.address}</p>
+            <div className="company-legal-info">
+              <p><strong>SIRET :</strong> {companyInfo.siret}</p>
+              <p><strong>TVA :</strong> {companyInfo.tva}</p>
+              <p><strong>Capital :</strong> {companyInfo.capital} €</p>
+            </div>
             <div className="contact-info">
               <span className="contact-item">
                 <strong>Email :</strong> {companyInfo.email}
@@ -129,7 +138,7 @@ const TermsPage = () => {
       <nav className="luxury-nav">
         <h3 className="nav-title">Sommaire</h3>
         <div className="nav-grid">
-          {termsections.map((section, index) => (
+          {legalSections.map((section, index) => (
             <button 
               key={section.id}
               onClick={() => scrollToSection(section.id)}
@@ -144,7 +153,7 @@ const TermsPage = () => {
 
       {/* Contenu principal avec design épuré */}
       <main className="luxury-content">
-        {termsections.map((section, index) => (
+        {legalSections.map((section, index) => (
           <article key={section.id} id={section.id} className="luxury-section">
             <div className="section-header">
               <span className="section-number">{String(index + 1).padStart(2, '0')}</span>
@@ -169,7 +178,7 @@ const TermsPage = () => {
             })}
           </p>
           <p className="footer-contact">
-            Pour toute question concernant ces conditions générales de vente, 
+            Pour toute question concernant ces mentions légales, 
             nous vous invitons à nous contacter à l'adresse : 
             <a href={`mailto:${companyInfo.email}`} className="footer-link">
               {companyInfo.email}
@@ -185,7 +194,7 @@ const TermsPage = () => {
           box-sizing: border-box;
         }
 
-        .luxury-terms-container {
+        .luxury-legal-container {
           max-width: 900px;
           margin: 0 auto;
           padding: 0;
@@ -196,7 +205,7 @@ const TermsPage = () => {
           font-size: 16px;
         }
 
-        /* 🆕 NOUVEAU - Styles pour le bouton retour */
+        /* Styles pour le bouton retour */
         .back-button-container {
           padding: 30px 60px 0 60px;
           background: #FFFFFF;
@@ -310,12 +319,22 @@ const TermsPage = () => {
           font-style: italic;
         }
 
+        .company-legal-info {
+          margin: 20px 0;
+        }
+
+        .company-legal-info p {
+          margin: 5px 0;
+          font-size: 0.95em;
+        }
+
         .contact-info {
           display: flex;
           justify-content: center;
           align-items: center;
           flex-wrap: wrap;
           gap: 20px;
+          margin-top: 20px;
         }
 
         .contact-item {
@@ -485,7 +504,7 @@ const TermsPage = () => {
 
         /* Design responsive */
         @media (max-width: 768px) {
-          .luxury-terms-container {
+          .luxury-legal-container {
             font-size: 15px;
           }
 
@@ -558,4 +577,4 @@ const TermsPage = () => {
   );
 };
 
-export default TermsPage;
+export default LegalPage;
