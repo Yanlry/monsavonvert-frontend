@@ -1849,7 +1849,7 @@ const handleCheckout = async () => {
                           </div>
                           <div className={styles.shippingOptionInfo}>
                             <h3>Remise en main propre</h3>
-                            <p>Disponible pour les habitant du Nord (Contactez le support aprés votre commande)</p>
+                            <p>Disponible pour l'agglomération lilloise</p>
                           </div>
                           <div className={styles.shippingOptionPrice}>
                             Gratuit
