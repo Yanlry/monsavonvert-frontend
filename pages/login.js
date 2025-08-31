@@ -8,7 +8,7 @@ import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import { useRouter } from "next/router";
 import Header from "../components/Header";
-import Footer from "../components/footer"; // NOUVEAU: Import du composant Footer
+import Footer from "../pages/footer"; // NOUVEAU: Import du composant Footer
 
 export default function Login() {
   const router = useRouter();
