@@ -168,7 +168,7 @@ export default function Home() {
       ),
       title: "Fabrication Artisanale",
       description:
-        "Chaque savon est fabriqué à la main dans notre atelier selon des méthodes traditionnelles",
+        "Chaque savon est fabriqués selon la tradition syrienne utilisant des méthodes ancestrales",
     },
     {
       id: 3,
@@ -298,8 +298,8 @@ export default function Home() {
       <>
         {/* PREMIER BLOC HEAD CORRIGÉ - Utilise maintenant logo.png */}
         <Head>
-          <title>MonSavonVert | Savonnerie Artisanale & Écologique</title>
-          <meta name="description" content="Savons artisanaux et cosmétiques naturels fabriqués à la main en France. Ingrédients 100% bio et emballages écologiques." />
+          <title>MonSavonVert | Un savon ancestral et écologique</title>
+          <meta name="description" content="Savons artisanaux et cosmétiques naturels. Ingrédients 100% naturel." />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           
           {/* Favicon utilisant votre logo.png */}
@@ -311,7 +311,7 @@ export default function Home() {
           
           {/* Méta tags Open Graph */}
           <meta property="og:title" content="MonSavonVert | Savonnerie Artisanale Bio" />
-          <meta property="og:description" content="Découvrez nos savons artisanaux et produits de soins naturels, faits à la main avec des ingrédients biologiques." />
+          <meta property="og:description" content="Découvrez nos savons artisanaux et produits de soins naturels, fabriqués selon la tradition syrienne avec des ingrédients naturels." />
           <meta property="og:image" content="/images/og-image.jpg" />
           
           {/* Polices Google */}
@@ -334,7 +334,7 @@ export default function Home() {
         <title>MonSavonVert | Savonnerie Artisanale & Écologique</title>
         <meta
           name="description"
-          content="Savons artisanaux et cosmétiques naturels fabriqués à la main en France. Ingrédients 100% bio et emballages écologiques."
+          content="Savons artisanaux et cosmétiques naturels fabriqués selon la tradition syrienne. Ingrédients 100% bio et emballages écologiques."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         
@@ -351,7 +351,7 @@ export default function Home() {
         />
         <meta
           property="og:description"
-          content="Découvrez nos savons artisanaux et produits de soins naturels, faits à la main avec des ingrédients biologiques."
+          content="Découvrez nos savons artisanaux et produits de soins naturels, fabriqués selon la tradition syrienne avec des ingrédients naturels."
         />
         <meta property="og:image" content="/images/og-image.jpg" />
         <link
@@ -873,7 +873,7 @@ export default function Home() {
                       Syrie.
                     </p>
                     <p className={styles.aboutText}>
-                      Chaque savon est fabriqué à la main avec des ingrédients
+                      Chaque savon est fabriqués en syrie avec des ingrédients
                       naturels choisis pour leurs bienfaits, dans une démarche
                       durable qui évite le plastique et respecte la tradition.
                     </p>

@@ -159,7 +159,7 @@ export default function AboutPage() {
     {
       title: "Qualité",
       description:
-        "Fabriqués à la main selon les méthodes traditionnelles, nos savons vieillissent naturellement pendant 18 mois minimum. Cette maturation lente leur confère leur douceur exceptionnelle et leurs propriétés uniques.",
+        "Fabriqués selon les méthodes traditionnelles, nos savons vieillissent naturellement pendant 18 mois minimum. Cette maturation lente leur confère leur douceur exceptionnelle et leurs propriétés uniques.",
       icon: (
         <svg
           viewBox="0 0 24 24"
