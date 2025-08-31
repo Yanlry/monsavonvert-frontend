@@ -1654,19 +1654,19 @@ export default function Home() {
                 © 2025 MonSavonVert. Tous droits réservés.
               </p>
               <div className={styles.footerLegalLinks}>
-                <Link href="/cgv" className={styles.footerSmallLink}>
+                <Link href="/terms" className={styles.footerSmallLink}>
                   CGV
                 </Link>
                 <span className={styles.footerDivider}>•</span>
                 <Link
-                  href="/politique-de-confidentialite"
+                  href="/privacy"
                   className={styles.footerSmallLink}
                 >
                   Politique de confidentialité
                 </Link>
                 <span className={styles.footerDivider}>•</span>
                 <Link
-                  href="/mentions-legales"
+                  href="/legal"
                   className={styles.footerSmallLink}
                 >
                   Mentions légales
