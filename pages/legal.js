@@ -11,7 +11,7 @@ const LegalPage = () => {
   const companyInfo = {
     name: "MON SAVON VERT", // ⚠️ CHANGEZ PAR VOTRE NOM D'ENTREPRISE
     address: "59000 Lille, Nord, France", // ⚠️ CHANGEZ PAR VOTRE ADRESSE
-    email: "contact@monsavonvert.fr", // ⚠️ CHANGEZ PAR VOTRE EMAIL
+    email: "contact@monsavonvert.com", // ⚠️ CHANGEZ PAR VOTRE EMAIL
     phone: "06 58 00 27 07", // ⚠️ CHANGEZ PAR VOTRE TÉLÉPHONE
     siret: "123 456 789 00012", // ⚠️ CHANGEZ PAR VOTRE SIRET
     tva: "FR12345678901", // ⚠️ CHANGEZ PAR VOTRE NUMÉRO TVA

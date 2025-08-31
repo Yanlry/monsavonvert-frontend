@@ -8,7 +8,7 @@ import styles from "../styles/checkout.module.css";
 import { loadStripe } from "@stripe/stripe-js";
 import Header from "../components/Header";
 import { UserContext } from "../context/UserContext"; // Ajout du UserContext
-import Footer from "../pages/footer"; // NOUVEAU: Import du composant footer
+import Footer from "../components/Footer"; // NOUVEAU: Import du composant footer
 
 // Initialisez Stripe avec votre clé publique
 const stripePromise = loadStripe(

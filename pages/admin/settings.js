@@ -20,7 +20,7 @@ export default function AdminSettings() {
     general: {
       siteName: 'MonSavonVert',
       siteDescription: 'Savons artisanaux naturels et écologiques',
-      contactEmail: 'contact@monsavonvert.fr',
+      contactEmail: 'contact@monsavonvert.com',
       phoneNumber: '06 12 34 56 78',
       address: '15 rue des Savonniers, 75011 Paris',
       logo: '/images/logo.png',
@@ -63,7 +63,7 @@ export default function AdminSettings() {
     // Paramètres d'emails
     emails: {
       senderName: 'MonSavonVert',
-      senderEmail: 'noreply@monsavonvert.fr',
+      senderEmail: 'noreply@monsavonvert.com',
       orderConfirmationTemplate: 'Merci pour votre commande {order_number}. Nous préparons votre colis avec soin.',
       shippingConfirmationTemplate: 'Votre commande {order_number} a été expédiée. Numéro de suivi: {tracking_number}.',
       welcomeEmailTemplate: 'Bienvenue chez MonSavonVert, {customer_name}! Merci d\'avoir créé un compte.',

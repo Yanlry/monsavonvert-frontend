@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import styles from "../styles/profile.module.css";
 import Header from "../components/Header";
-import Footer from "../pages/footer"; // NOUVEAU: Import du composant footer
+import Footer from "../components/Footer"; // NOUVEAU: Import du composant footer
 
 export default function Profile() {
   // États

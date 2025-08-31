@@ -7,7 +7,7 @@ import styles from "../styles/login.module.css"; // Réutilisation du même fich
 import { useRouter } from "next/router"; // Changé de next/navigation à next/router
 import { UserContext } from "../context/UserContext"; // Import du contexte utilisateur
 import Header from "../components/Header"; // Importation du composant Header
-import Footer from "../pages/footer"; // NOUVEAU: Import du composant footer
+import Footer from "../components/Footer"; // NOUVEAU: Import du composant footer
 
 /**
  * Composant de page d'inscription pour MonSavonVert

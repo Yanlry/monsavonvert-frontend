@@ -131,10 +131,10 @@ export default function footer() {
                     <polyline points="22,6 12,13 2,6"></polyline>
                   </svg>
                   <a
-                    href="mailto:info@monsavonvert.fr"
+                    href="mailto:info@monsavonvert.com"
                     className={styles.contactLink}
                   >
-                    info@monsavonvert.fr
+                    contact@monsavonvert.com
                   </a>
                 </div>
               </div>

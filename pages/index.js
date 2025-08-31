@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import Header from "../components/Header";
-import Footer from "../pages/footer"; // NOUVEAU: Import du composant footer
+import Footer from "../components/Footer"; // NOUVEAU: Import du composant footer
 import styles from "../styles/home.module.css";
 
 export default function Home() {

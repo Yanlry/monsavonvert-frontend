@@ -5,7 +5,7 @@ import Head from "next/head";
 import Link from "next/link";
 import styles from "../styles/how-to-choose.module.css";
 import Header from "../components/Header";
-import Footer from "../pages/footer"; // NOUVEAU: Import du composant footer
+import Footer from "../components/Footer"; // NOUVEAU: Import du composant footer
 
 export default function HowToChoose() {
   // État pour détecter si nous sommes côté client

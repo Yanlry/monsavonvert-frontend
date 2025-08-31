@@ -5,7 +5,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import styles from '../styles/contact.module.css';
 import Header from "../components/Header";
-import Footer from "../pages/footer"; // NOUVEAU: Import du composant footer
+import Footer from "../components/Footer"; // NOUVEAU: Import du composant footer
 
 export default function Contact() {
   // État pour détecter si nous sommes côté client
@@ -194,7 +194,7 @@ export default function Contact() {
                       <div className={styles.infoContent}>
                         <h3 className={styles.infoTitle}>Email</h3>
                         <p className={styles.infoText}>
-                          <a href="mailto:info@monsavonvert.fr">info@monsavonvert.fr</a>
+                          <a href="mailto:contact@monsavonvert.com">contact@monsavonvert.com</a>
                         </p>
                       </div>
                     </div>
@@ -308,7 +308,7 @@ export default function Contact() {
             
             <div className={styles.faqCta}>
               <p className={styles.faqHelpText}>Vous ne trouvez pas la réponse à votre question ?</p>
-              <a href="mailto:info@monsavonvert.fr" className={`${styles.button} ${styles.outlineButton}`}>
+              <a href="mailto:contact@monsavonvert.com" className={`${styles.button} ${styles.outlineButton}`}>
                 Contactez-nous directement
               </a>
             </div>
