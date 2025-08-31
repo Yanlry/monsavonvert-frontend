@@ -2154,10 +2154,8 @@ const handleCheckout = async () => {
                           <p>
                             {shippingMethod === "standard" &&
                               "Livraison standard (3-5 jours ouvrés)"}
-                            {shippingMethod === "express" &&
-                              "Livraison express (24-48h)"}
                             {shippingMethod === "pickup" &&
-                              "Retrait en boutique (15 rue des Artisans, 69001 Lyon)"}
+                              "Remise en main propre (Uniquement agglomération lilloise)"}
                           </p>
                           <button
                             onClick={() => setCurrentStep(2)}
