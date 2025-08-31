@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import HeaderAdmin from '../../components/HeaderAdmin';
-import styles from '../../styles/admin.module.css';
+import styles from '../../styles/admin-promos.module.css';
 
 export default function AdminPromos() {
   // États pour l'interface

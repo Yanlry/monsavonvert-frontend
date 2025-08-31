@@ -1,0 +1,775 @@
+/* Variables globales et réinitialisation */
+.adminContainer {
+    --color-primary: #2e7d32;
+    --color-primary-dark: #1b5e20;
+    --color-primary-light: #4caf50;
+    --color-accent: #81c784;
+    --color-secondary: #f8b400;
+    --color-background: #f9fbf7;
+    --color-background-light: #ffffff;
+    --color-background-dark: #f1f8e9;
+    --color-text: #2c3e50;
+    --color-text-light: #546e7a;
+    --color-text-inverted: #ffffff;
+    --color-border: #e0e0e0;
+    --color-muted: #9e9e9e;
+    --color-success: #4caf50;
+    --color-error: #f44336;
+    --color-warning: #ff9800;
+    --color-info: #2196f3;
+    
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.15);
+    
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-full: 9999px;
+    
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-2xl: 48px;
+    --spacing-3xl: 64px;
+    --spacing-4xl: 96px;
+    
+    --font-sans: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    --font-serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+    
+    /* Configuration globale */
+    width: 100%;
+    min-height: 100vh;
+    background-color: var(--color-background);
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    font-size: 16px;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+  }
+  
+  /* Contenu principal admin */
+  .adminContent {
+    flex: 1;
+    padding: var(--spacing-xl) 0;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-left: var(--spacing-xl);
+    padding-right: var(--spacing-xl);
+    box-sizing: border-box;
+    margin-top: 80px;
+  }
+  
+  /* En-tête admin */
+  .adminHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 1px solid var(--color-border);
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .adminTitle {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0;
+    font-family: var(--font-serif);
+  }
+  
+  .addButton {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+    box-sizing: border-box;
+  }
+  
+  .addButton:hover {
+    background-color: var(--color-primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .primaryButton {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    justify-content: center;
+    box-sizing: border-box;
+  }
+  
+  .primaryButton:hover {
+    background-color: var(--color-primary-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .secondaryButton {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background-color: var(--color-background-light);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    justify-content: center;
+    box-sizing: border-box;
+  }
+  
+  .secondaryButton:hover {
+    background-color: var(--color-background-dark);
+    border-color: var(--color-primary-light);
+  }
+  
+  /* Cartes principales */
+  .formCard,
+  .dataCard {
+    background-color: var(--color-background-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    margin-bottom: var(--spacing-xl);
+    overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .formCard {
+    border-left: 4px solid var(--color-primary);
+  }
+  
+  .dataCard {
+    border-left: 4px solid var(--color-info);
+  }
+  
+  .formTitle,
+  .cardTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0 0 var(--spacing-lg);
+    padding: var(--spacing-lg) var(--spacing-xl) 0;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--spacing-md);
+    font-family: var(--font-serif);
+  }
+  
+  /* Formulaire */
+  .form {
+    padding: var(--spacing-xl);
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .formGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .formLabel {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  .formInput,
+  .formSelect {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-family: var(--font-sans);
+    transition: all var(--transition-fast);
+    box-sizing: border-box;
+  }
+  
+  .formInput:focus,
+  .formSelect:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+  }
+  
+  .formInput::placeholder {
+    color: var(--color-text-light);
+  }
+  
+  .checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: 14px;
+    color: var(--color-text);
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  .checkbox {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+  
+  .checkbox:checked {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+  
+  .formActions {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: flex-end;
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--color-border);
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* États vides */
+  .emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-3xl) var(--spacing-xl);
+    color: var(--color-text-light);
+    text-align: center;
+    gap: var(--spacing-lg);
+  }
+  
+  .emptyState p {
+    font-size: 16px;
+    margin: 0;
+  }
+  
+  /* Container des tableaux */
+  .tableContainer {
+    overflow-x: auto;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Table de données */
+  .dataTable {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    background-color: var(--color-background-light);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+  
+  .dataTable th {
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--color-border);
+    background-color: var(--color-background-dark);
+    white-space: nowrap;
+  }
+  
+  .dataTable td {
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: 14px;
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: middle;
+  }
+  
+  .dataTable tbody tr {
+    transition: background-color var(--transition-fast);
+  }
+  
+  .dataTable tbody tr:hover {
+    background-color: rgba(46, 125, 50, 0.02);
+  }
+  
+  /* Badges de statut */
+  .statusBadge {
+    display: inline-block;
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--radius-full);
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+  }
+  
+  .statusActive {
+    background-color: rgba(76, 175, 80, 0.15);
+    color: var(--color-success);
+  }
+  
+  .statusInactive {
+    background-color: rgba(158, 158, 158, 0.15);
+    color: var(--color-muted);
+  }
+  
+  /* Boutons d'action */
+  .actionButtons {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .actionButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-size: 14px;
+  }
+  
+  .activateButton {
+    background-color: rgba(76, 175, 80, 0.1);
+    color: var(--color-success);
+  }
+  
+  .activateButton:hover {
+    background-color: var(--color-success);
+    color: white;
+    transform: scale(1.05);
+  }
+  
+  .deactivateButton {
+    background-color: rgba(255, 152, 0, 0.1);
+    color: var(--color-warning);
+  }
+  
+  .deactivateButton:hover {
+    background-color: var(--color-warning);
+    color: white;
+    transform: scale(1.05);
+  }
+  
+  .deleteButton {
+    background-color: rgba(244, 67, 54, 0.1);
+    color: var(--color-error);
+  }
+  
+  .deleteButton:hover {
+    background-color: var(--color-error);
+    color: white;
+    transform: scale(1.05);
+  }
+  
+  /* Section codes promo appliqués */
+  .appliedPromoDisplay {
+    padding: var(--spacing-md);
+    background-color: rgba(76, 175, 80, 0.1);
+    border: 1px solid var(--color-success);
+    border-radius: var(--radius-md);
+    margin-top: var(--spacing-sm);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .promoMessage {
+    margin-top: var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+  }
+  
+  /* Messages flash */
+  .flashMessage {
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-lg);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+  
+  .flashSuccess {
+    background-color: rgba(76, 175, 80, 0.1);
+    color: var(--color-success);
+    border-left: 4px solid var(--color-success);
+  }
+  
+  .flashError {
+    background-color: rgba(244, 67, 54, 0.1);
+    color: var(--color-error);
+    border-left: 4px solid var(--color-error);
+  }
+  
+  .flashWarning {
+    background-color: rgba(255, 152, 0, 0.1);
+    color: var(--color-warning);
+    border-left: 4px solid var(--color-warning);
+  }
+  
+  .flashInfo {
+    background-color: rgba(33, 150, 243, 0.1);
+    color: var(--color-info);
+    border-left: 4px solid var(--color-info);
+  }
+  
+  /* Loading states */
+  .loadingSpinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--color-border);
+    border-top: 2px solid var(--color-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  /* Animations */
+  @keyframes slideIn {
+    from { 
+      opacity: 0; 
+      transform: translateY(-10px); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .formCard {
+    animation: slideIn 0.3s ease;
+  }
+  
+  .dataTable tbody tr {
+    animation: fadeIn 0.5s ease;
+  }
+  
+  /* Design responsive */
+  @media (max-width: 1400px) {
+    .adminContent {
+      padding-left: var(--spacing-lg);
+      padding-right: var(--spacing-lg);
+    }
+  }
+  
+  @media (max-width: 1024px) {
+    .adminContent {
+      padding-left: var(--spacing-md);
+      padding-right: var(--spacing-md);
+    }
+    
+    .formGrid {
+      grid-template-columns: 1fr;
+    }
+    
+    .adminHeader {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--spacing-lg);
+    }
+    
+    .adminTitle {
+      font-size: 24px;
+      text-align: center;
+    }
+    
+    .addButton {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .adminContent {
+      padding-left: var(--spacing-sm);
+      padding-right: var(--spacing-sm);
+    }
+    
+    .adminTitle {
+      font-size: 22px;
+    }
+    
+    .formTitle,
+    .cardTitle {
+      font-size: 16px;
+      padding: var(--spacing-md) var(--spacing-lg) 0;
+    }
+    
+    .form {
+      padding: var(--spacing-lg);
+    }
+    
+    .formActions {
+      flex-direction: column;
+    }
+    
+    .primaryButton,
+    .secondaryButton {
+      width: 100%;
+    }
+    
+    /* Transformer le tableau en cartes sur mobile */
+    .dataTable thead {
+      display: none;
+    }
+    
+    .dataTable, 
+    .dataTable tbody, 
+    .dataTable tr, 
+    .dataTable td {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    
+    .dataTable tr {
+      margin-bottom: var(--spacing-lg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      padding: var(--spacing-md);
+    }
+    
+    .dataTable td {
+      text-align: left;
+      position: relative;
+      padding-left: 120px;
+      padding-right: var(--spacing-md);
+      padding-top: var(--spacing-sm);
+      padding-bottom: var(--spacing-sm);
+      border-bottom: 1px solid var(--color-border);
+      min-height: 30px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .dataTable td:last-child {
+      border-bottom: none;
+    }
+    
+    .dataTable td::before {
+      content: attr(data-label);
+      position: absolute;
+      left: var(--spacing-md);
+      width: 100px;
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--color-text-light);
+      text-transform: uppercase;
+    }
+    
+    .actionButtons {
+      justify-content: flex-start;
+      margin-left: 100px;
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .adminTitle {
+      font-size: 20px;
+    }
+    
+    .formGrid {
+      gap: var(--spacing-md);
+    }
+    
+    .formGroup {
+      gap: var(--spacing-xs);
+    }
+    
+    .formLabel {
+      font-size: 12px;
+    }
+    
+    .formInput,
+    .formSelect {
+      padding: var(--spacing-sm);
+      font-size: 13px;
+    }
+    
+    .dataTable td {
+      padding-left: 100px;
+      font-size: 13px;
+    }
+    
+    .dataTable td::before {
+      width: 85px;
+      font-size: 11px;
+    }
+    
+    .actionButtons {
+      margin-left: 85px;
+    }
+    
+    .actionButton {
+      width: 28px;
+      height: 28px;
+      font-size: 12px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .adminContent {
+      margin-top: 70px;
+      padding-top: var(--spacing-md);
+    }
+    
+    .adminTitle {
+      font-size: 18px;
+    }
+    
+    .emptyState {
+      padding: var(--spacing-xl);
+    }
+    
+    .emptyState p {
+      font-size: 14px;
+    }
+    
+    .formCard,
+    .dataCard {
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .form {
+      padding: var(--spacing-md);
+    }
+    
+    .formTitle,
+    .cardTitle {
+      font-size: 15px;
+      padding: var(--spacing-md);
+      margin-bottom: var(--spacing-md);
+    }
+  }
+  
+  /* Utilities */
+  .textCenter {
+    text-align: center;
+  }
+  
+  .textRight {
+    text-align: right;
+  }
+  
+  .fontBold {
+    font-weight: 600;
+  }
+  
+  .fontMono {
+    font-family: var(--font-mono);
+  }
+  
+  .colorPrimary {
+    color: var(--color-primary);
+  }
+  
+  .colorSuccess {
+    color: var(--color-success);
+  }
+  
+  .colorError {
+    color: var(--color-error);
+  }
+  
+  .colorWarning {
+    color: var(--color-warning);
+  }
+  
+  .colorMuted {
+    color: var(--color-text-light);
+  }
+  
+  /* Surcharge pour désactiver les boutons */
+  .primaryButton:disabled,
+  .secondaryButton:disabled,
+  .addButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  .primaryButton:disabled:hover,
+  .secondaryButton:disabled:hover,
+  .addButton:disabled:hover {
+    transform: none;
+    box-shadow: none;
+    background-color: initial;
+  }
