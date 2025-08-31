@@ -1,11 +1,9 @@
 import React from 'react';
 
 /**
- * Composant principal pour la page Mentions Légales - Version Luxe JavaScript
- * Design ultra-professionnel avec palette vert foncé, blanc et beige
+ * Composant principal pour la page Mentions Légales 
  */
 const LegalPage = () => {
-  console.log('⚖️ Chargement de la page Mentions Légales - Version Luxe');
 
   // Informations de l'entreprise - MODIFIEZ CES INFORMATIONS AVEC VOS VRAIES DONNÉES
   const companyInfo = {
@@ -13,9 +11,7 @@ const LegalPage = () => {
     address: "59000 Lille, Nord, France", // ⚠️ CHANGEZ PAR VOTRE ADRESSE
     email: "contact@monsavonvert.com", // ⚠️ CHANGEZ PAR VOTRE EMAIL
     phone: "06 58 00 27 07", // ⚠️ CHANGEZ PAR VOTRE TÉLÉPHONE
-    siret: "123 456 789 00012", // ⚠️ CHANGEZ PAR VOTRE SIRET
-    tva: "FR12345678901", // ⚠️ CHANGEZ PAR VOTRE NUMÉRO TVA
-    capital: "10 000" // ⚠️ CHANGEZ PAR VOTRE CAPITAL SOCIAL
+    siret: "878 373 539 00013", // ⚠️ CHANGEZ PAR VOTRE SIRET
   };
 
   // Sections des mentions légales
