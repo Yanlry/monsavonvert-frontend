@@ -5,7 +5,7 @@ import Link from "next/link";
 import styles from "../../styles/product.module.css";
 import Header from "../../components/Header";
 import ReviewSystem from "../../components/ReviewSystem";
-import Footer from "../components/Footer"; // NOUVEAU: Import du composant Footer
+import footer from "../components/footer"; // NOUVEAU: Import du composant footer
 
 export default function ProductDetail({ product }) {
   const router = useRouter();
@@ -1381,7 +1381,7 @@ export default function ProductDetail({ product }) {
           </div>
         )}
 
-        <Footer />
+        <footer />
       </div>
     </>
   );

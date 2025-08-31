@@ -463,7 +463,7 @@
   box-shadow: var(--shadow-sm);
 }
 
-/* Footer simplifié */
+/* footer simplifié */
 .footer {
   background: linear-gradient(180deg, #263238 0%, #1a2327 100%);
   color: white;

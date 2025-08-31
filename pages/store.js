@@ -5,7 +5,7 @@ import Head from "next/head";
 import Link from "next/link";
 import styles from "../styles/store.module.css";
 import Header from "../components/Header";
-import Footer from "../components/Footer"; // NOUVEAU: Import du composant Footer
+import footer from "../components/footer"; // NOUVEAU: Import du composant footer
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -865,7 +865,7 @@ export default function Boutique() {
           </div>
         </main>
 
-        <Footer />
+        <footer />
       </div>
 
       {isCartOpen && (

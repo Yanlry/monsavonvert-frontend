@@ -717,7 +717,7 @@
   margin-bottom: var(--spacing-xl);
 }
 
-/* Footer */
+/* footer */
 .footer {
   background-color: #263238;
   color: white;
@@ -1085,7 +1085,7 @@
     font-size: 14px;
   }
   
-  /* Footer plus compact sur mobile */
+  /* footer plus compact sur mobile */
   .footerContent {
     flex-direction: column;
     gap: var(--spacing-xl);

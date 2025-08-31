@@ -5,7 +5,7 @@ import Head from "next/head";
 import Link from "next/link";
 import styles from "../styles/info.module.css";
 import Header from "../components/Header";
-import Footer from "../components/Footer"; // NOUVEAU: Import du composant Footer
+import footer from "../components/footer"; // NOUVEAU: Import du composant footer
 
 export default function AboutPage() {
   // État pour détecter si nous sommes côté client
@@ -549,7 +549,7 @@ export default function AboutPage() {
           </section>
         </main>
 
-        <Footer />
+        <footer />
       </div>
     </>
   );

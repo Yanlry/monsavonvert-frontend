@@ -679,7 +679,7 @@ export default function AdminCustomers() {
           </section>
         </main>
 
-        {/* Footer simplifié pour l'admin */}
+        {/* footer simplifié pour l'admin */}
         <footer className={styles.adminFooter}>
           <div className={styles.footerContent}>
             <p className={styles.copyright}>© 2025 MonSavonVert. Panneau d'administration.</p>

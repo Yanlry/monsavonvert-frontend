@@ -8,7 +8,7 @@ import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import { useRouter } from "next/router";
 import Header from "../components/Header";
-import Footer from "../components/Footer"; // NOUVEAU: Import du composant Footer
+import footer from "../components/footer"; // NOUVEAU: Import du composant footer
 
 export default function Login() {
   const router = useRouter();
@@ -508,7 +508,7 @@ export default function Login() {
           </section>
         </main>
 
-        <Footer />
+        <footer />
       </div>
 
       {/* Styles pour masquer la section des avantages sur mobile */}

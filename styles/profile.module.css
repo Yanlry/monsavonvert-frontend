@@ -1916,7 +1916,7 @@ right: 0;
   background-color: var(--color-primary-dark);
 }
 
-/* Footer */
+/* footer */
 .footer {
   background-color: #263238;
   color: white;
@@ -2202,7 +2202,7 @@ right: 0;
     grid-template-columns: 1fr;
   }
   
-  /* Footer */
+  /* footer */
   .footerTop {
     padding: var(--spacing-xl) 0;
   }

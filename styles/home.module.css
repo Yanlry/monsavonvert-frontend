@@ -3630,7 +3630,7 @@ a:hover .buttonIcon {
   }
 }
 
-/* Footer */
+/* footer */
 .footer {
   background-color: var(--primary-dark);
   color: var(--white);
@@ -3833,7 +3833,7 @@ a:hover .buttonIcon {
   opacity: 0.3;
 }
 
-/* Media Queries pour Footer */
+/* Media Queries pour footer */
 @media (max-width: 992px) {
   .footerWrapper {
     gap: var(--spacing-xl);
