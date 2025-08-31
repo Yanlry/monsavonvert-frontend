@@ -296,13 +296,26 @@ export default function Home() {
   if (!isClient) {
     return (
       <>
+        {/* PREMIER BLOC HEAD CORRIGÉ - Utilise maintenant logo.png */}
         <Head>
-          <title>MonSavonVert | Savonnerie Artisanale Bio & Écologique</title>
-          <meta
-            name="description"
-            content="Savons artisanaux et cosmétiques naturels fabriqués à la main en France. Ingrédients 100% bio et emballages écologiques."
-          />
-          <link rel="icon" href="/favicon.ico" />
+          <title>MonSavonVert | Savonnerie Artisanale & Écologique</title>
+          <meta name="description" content="Savons artisanaux et cosmétiques naturels fabriqués à la main en France. Ingrédients 100% bio et emballages écologiques." />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          
+          {/* Favicon utilisant votre logo.png */}
+          <link rel="icon" type="image/png" href="/logo.png" />
+          <link rel="shortcut icon" type="image/png" href="/logo.png" />
+          
+          {/* Pour les appareils Apple */}
+          <link rel="apple-touch-icon" href="/logo.png" />
+          
+          {/* Méta tags Open Graph */}
+          <meta property="og:title" content="MonSavonVert | Savonnerie Artisanale Bio" />
+          <meta property="og:description" content="Découvrez nos savons artisanaux et produits de soins naturels, faits à la main avec des ingrédients biologiques." />
+          <meta property="og:image" content="/images/og-image.jpg" />
+          
+          {/* Polices Google */}
+          <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;700&display=swap" rel="stylesheet" />
         </Head>
         <div className={styles.loadingWrapper}>
           <div className={styles.loadingLogo}>
@@ -316,14 +329,22 @@ export default function Home() {
 
   return (
     <>
+      {/* DEUXIÈME BLOC HEAD CORRIGÉ - Utilise maintenant logo.png au lieu de favicon.ico */}
       <Head>
-        <title>MonSavonVert | Savonnerie Artisanale Bio & Écologique</title>
+        <title>MonSavonVert | Savonnerie Artisanale & Écologique</title>
         <meta
           name="description"
           content="Savons artisanaux et cosmétiques naturels fabriqués à la main en France. Ingrédients 100% bio et emballages écologiques."
         />
-        <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        
+        {/* Favicon utilisant votre logo.png au lieu de favicon.ico */}
+        <link rel="icon" type="image/png" href="/logo.png" />
+        <link rel="shortcut icon" type="image/png" href="/logo.png" />
+        
+        {/* Pour les appareils Apple */}
+        <link rel="apple-touch-icon" href="/logo.png" />
+        
         <meta
           property="og:title"
           content="MonSavonVert | Savonnerie Artisanale Bio"
@@ -821,7 +842,7 @@ export default function Home() {
                   </h2>
                   <p className={styles.aboutSubheading}>
                     Une passion pour les soins naturels, le respect de la peau
-                    et l’engagement pour la planète.
+                    et l'engagement pour la planète.
                   </p>
                 </div>
               </div>
@@ -848,7 +869,7 @@ export default function Home() {
                     <p className={styles.aboutText}>
                       MonSavonVert est né de la volonté de soulager les
                       problèmes de peau tout en redonnant vie au savoir-faire
-                      ancestral du savon d’Alep, mis à mal par la guerre en
+                      ancestral du savon d'Alep, mis à mal par la guerre en
                       Syrie.
                     </p>
                     <p className={styles.aboutText}>
@@ -1012,7 +1033,7 @@ export default function Home() {
                         ),
                         title: "Durabilité",
                         description:
-                          "Un savon solide dure longtemps, limite les déchets plastiques des gels douche et réduit l’impact environnemental.",
+                          "Un savon solide dure longtemps, limite les déchets plastiques des gels douche et réduit l'impact environnemental.",
                         color: "blue",
                       },
                       {
