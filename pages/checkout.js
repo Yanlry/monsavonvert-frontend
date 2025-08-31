@@ -1834,30 +1834,6 @@ const handleCheckout = async () => {
 
                         <div
                           className={`${styles.shippingOption} ${
-                            shippingMethod === "express"
-                              ? styles.shippingOptionSelected
-                              : ""
-                          }`}
-                          onClick={() => handleShippingChange("express")}
-                        >
-                          <div className={styles.shippingOptionRadio}>
-                            <div className={styles.radioOuter}>
-                              {shippingMethod === "express" && (
-                                <div className={styles.radioInner}></div>
-                              )}
-                            </div>
-                          </div>
-                          <div className={styles.shippingOptionInfo}>
-                            <h3>Livraison express</h3>
-                            <p>Livraison en 24-48h</p>
-                          </div>
-                          <div className={styles.shippingOptionPrice}>
-                            9,95 €
-                          </div>
-                        </div>
-
-                        <div
-                          className={`${styles.shippingOption} ${
                             shippingMethod === "pickup"
                               ? styles.shippingOptionSelected
                               : ""
@@ -1872,8 +1848,8 @@ const handleCheckout = async () => {
                             </div>
                           </div>
                           <div className={styles.shippingOptionInfo}>
-                            <h3>Retrait en boutique</h3>
-                            <p>15 rue des Artisans, 69001 Lyon</p>
+                            <h3>Remise en main propre</h3>
+                            <p>Disponible pour les habitant du Nord (Contactez le support aprés votre commande)</p>
                           </div>
                           <div className={styles.shippingOptionPrice}>
                             Gratuit
