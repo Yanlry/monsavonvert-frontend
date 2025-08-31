@@ -1647,7 +1647,7 @@ const handleCheckout = async () => {
                                     checked={formData.termsAccepted}
                                     onChange={handleCheckboxChange}
                                   />
-                                  J'accepte les{" "}
+                                  J'accepte les {" "}
                                   <Link href="/terms">
                                     {" "}
                                     termes et conditions
