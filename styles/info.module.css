@@ -19,9 +19,9 @@
   --color-error: #f44336;
   --color-warning: #ff9800;
   --color-info: #2196f3;
-  --color-gradient-primary: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
-  --color-gradient-accent: linear-gradient(135deg, #81c784 0%, #66bb6a 100%);
-  --color-gradient-dark: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+  --color-gradient-primary: #1a4d2f;
+  --color-gradient-accent: #1a4d2f;
+  --color-gradient-dark: #1a4d2f;
   
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);

@@ -13,8 +13,8 @@
   --color-text-light: #546e7a;
   --color-success: #4caf50;
   --color-error: #f44336;
-  --color-gradient-primary: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
-  --color-gradient-dark: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+  --color-gradient-primary:#1a4d2f;
+  --color-gradient-dark: #1a4d2f;
   
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.15);

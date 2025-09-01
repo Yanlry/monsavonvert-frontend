@@ -2,10 +2,10 @@
 
 /* Variables globales et réinitialisation */
 .container {
-  --color-primary: #2e7d32;
-  --color-primary-dark: #1b5e20;
-  --color-primary-light: #4caf50;
-  --color-accent: #81c784;
+  --color-primary: #1a4d2f;
+  --color-primary-dark: #1a4d2f;
+  --color-primary-light: #1a4d2f;
+  --color-accent: #1a4d2f;
   --color-secondary: #f8b400;
   --color-background: #f9fbf7;
   --color-background-light: #ffffff;
@@ -19,10 +19,9 @@
   --color-error: #f44336;
   --color-warning: #ff9800;
   --color-info: #2196f3;
-  --color-gradient-primary: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
-  --color-gradient-accent: linear-gradient(135deg, #81c784 0%, #66bb6a 100%);
-  --color-gradient-dark: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
-  
+  --color-gradient-primary:  #1a4d2f ;
+  --color-gradient-accent: #1a4d2f ;
+  --color-gradient-dark:  #1a4d2f ;
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
