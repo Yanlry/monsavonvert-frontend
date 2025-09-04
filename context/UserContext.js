@@ -13,7 +13,6 @@ export const UserProvider = ({ children }) => {
     console.log('🔄 Restauration utilisateur depuis le stockage...');
     
     try {
-      // Essayer localStorage d'abord
       let userData = localStorage.getItem("user");
       let token = localStorage.getItem("token");
       let userId = localStorage.getItem("userId");
