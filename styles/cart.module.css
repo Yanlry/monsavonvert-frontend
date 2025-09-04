@@ -1,4 +1,4 @@
-/* Importe les styles globaux */
+/* PAGE PANIER */
 .container {
   --color-primary: #2e7d32;
   --color-primary-dark: #1b5e20;
@@ -17,6 +17,9 @@
   --color-error: #f44336;
   --color-warning: #ff9800;
   --color-info: #2196f3;
+  --color-gradient-primary: #1a4d2f;
+  --color-gradient-accent: #1a4d2f;
+  --color-gradient-dark: #1a4d2f;
   
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -366,49 +369,170 @@
   100% { transform: scale(1); }
 }
 
-/* Hero de la page */
+/* MODIFIÉ : Hero de la page avec style connexion */
 .pageHero {
   padding: 120px 0 60px;
   text-align: center;
-  background-color: var(--color-background-dark);
+  background: var(--color-gradient-dark); /* Changé pour background sombre */
   position: relative;
+  overflow: hidden; /* Ajouté */
+  color: white; /* Ajouté pour texte blanc */
+}
+
+/* AJOUTÉ : Motif de fond animé */
+.pageHero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 35% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 70% 70%, rgba(129, 199, 132, 0.1) 0%, transparent 50%);
+  animation: floatingHero 15s ease-in-out infinite;
+}
+
+/* AJOUTÉ : Animation du fond */
+@keyframes floatingHero {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(30px, -30px); }
 }
 
 .pageHeroContent {
   max-width: 800px;
   margin: 0 auto;
   padding: 0 var(--spacing-lg);
+  position: relative; /* Ajouté */
+  z-index: 1; /* Ajouté pour être au-dessus du fond */
 }
 
+/* MODIFIÉ : Titre avec effet de gradient et barre animée */
 .pageTitle {
   font-size: 48px;
   font-weight: 700;
-  color: var(--color-primary-dark);
-  margin-bottom: var(--spacing-md);
+  color: white; /* Changé pour texte blanc */
+  margin: 0; /* Changé de margin-bottom à margin: 0 */
   font-family: var(--font-serif);
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Ajouté */
+  animation: fadeInUp 0.8s ease-out; /* Ajouté */
+  background: linear-gradient(135deg, white 0%, rgba(255, 255, 255, 0.8) 100%); /* Ajouté */
+  -webkit-background-clip: text; /* Ajouté */
+  -webkit-text-fill-color: transparent; /* Ajouté */
+  background-clip: text; /* Ajouté */
+  position: relative; /* Ajouté pour la barre */
 }
 
+/* AJOUTÉ : Barre fixe sous le titre */
+.pageTitle::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+/* AJOUTÉ : Reflet blanc qui traverse la barre */
+.pageTitle::before {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-150px);
+  width: 30px;
+  height: 4px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.9) 50%, 
+    transparent 100%);
+  border-radius: 2px;
+  animation: shimmer 2s ease-in-out infinite;
+  z-index: 1;
+}
+
+/* AJOUTÉ : Animation du reflet */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-150px);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(150px);
+    opacity: 0;
+  }
+}
+
+/* AJOUTÉ : Animation d'apparition du titre */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* MODIFIÉ : Breadcrumb adapté pour fond sombre */
 .pageBreadcrumb {
-  color: var(--color-text-light);
+  color: rgba(255, 255, 255, 0.8); /* Changé pour être visible sur fond sombre */
   font-size: 14px;
+  animation: fadeIn 1s ease-out 0.3s both; /* Ajouté */
+}
+
+/* AJOUTÉ : Animation fadeIn */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .pageBreadcrumb a {
-  color: var(--color-text-light);
+  color: rgba(255, 255, 255, 0.9); /* Changé pour fond sombre */
   text-decoration: none;
   transition: color var(--transition-fast);
+  position: relative; /* Ajouté */
+}
+
+/* AJOUTÉ : Effet de soulignement au survol */
+.pageBreadcrumb a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: white;
+  transform: scaleX(0);
+  transition: transform var(--transition-fast);
 }
 
 .pageBreadcrumb a:hover {
-  color: var(--color-primary);
+  color: white; /* Changé */
+}
+
+.pageBreadcrumb a:hover::after {
+  transform: scaleX(1);
 }
 
 .breadcrumbSeparator {
   margin: 0 var(--spacing-sm);
+  opacity: 0.5; /* Ajouté */
 }
 
 .breadcrumbCurrent {
-  color: var(--color-primary);
+  color: white; /* Changé pour fond sombre */
   font-weight: 500;
 }
 

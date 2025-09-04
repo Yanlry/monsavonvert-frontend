@@ -45,13 +45,36 @@
   box-sizing: border-box;
 }
 
-/* Hero section */
+/* MODIFIÉ : Hero section avec style harmonisé */
 .pageHero {
-  background-color: #f8f9fa;
-  padding: 40px 0;
+  background: #1a4d2f; /* Fond sombre comme les autres pages */
+  padding: 120px 0 60px; /* Padding harmonisé */
   margin-bottom: 30px;
   text-align: center;
   box-sizing: border-box;
+  position: relative;
+  overflow: hidden; /* Pour contenir l'animation */
+  color: white; /* Texte blanc */
+}
+
+/* AJOUTÉ : Motif de fond animé */
+.pageHero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 35% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 70% 70%, rgba(129, 199, 132, 0.1) 0%, transparent 50%);
+  animation: floatingHero 15s ease-in-out infinite;
+}
+
+/* AJOUTÉ : Animation du fond */
+@keyframes floatingHero {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(30px, -30px); }
 }
 
 .pageHeroContent {
@@ -59,13 +82,86 @@
   margin: 0 auto;
   padding: 0 20px;
   box-sizing: border-box;
+  position: relative; /* Pour être au-dessus du fond animé */
+  z-index: 1;
 }
 
+/* MODIFIÉ : Titre avec effet de gradient et barre animée */
 .pageTitle {
   font-size: 2.5rem;
-  margin-bottom: 10px;
-  color: #333;
+  margin: 0; /* Suppression du margin-bottom */
+  color: white;
   font-weight: 600;
+  font-family: inherit;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Ombre portée */
+  animation: fadeInUp 0.8s ease-out; /* Animation d'apparition */
+  background: linear-gradient(135deg, white 0%, rgba(255, 255, 255, 0.8) 100%); /* Gradient */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+}
+
+/* AJOUTÉ : Barre fixe sous le titre */
+.pageTitle::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+/* AJOUTÉ : Reflet blanc qui traverse la barre */
+.pageTitle::before {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-150px);
+  width: 30px;
+  height: 4px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.9) 50%, 
+    transparent 100%);
+  border-radius: 2px;
+  animation: shimmer 2s ease-in-out infinite;
+  z-index: 1;
+}
+
+/* AJOUTÉ : Animation du reflet */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-150px);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(150px);
+    opacity: 0;
+  }
+}
+
+/* AJOUTÉ : Animation d'apparition du titre */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 576px) {
@@ -74,6 +170,7 @@
   }
 }
 
+/* MODIFIÉ : Breadcrumb adapté pour fond sombre */
 .pageBreadcrumb {
   display: flex;
   justify-content: center;
@@ -81,25 +178,52 @@
   flex-wrap: wrap;
   gap: 5px;
   font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8); /* Couleur adaptée pour fond sombre */
+  animation: fadeIn 1s ease-out 0.3s both; /* Animation d'apparition */
+}
+
+/* AJOUTÉ : Animation fadeIn */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .pageBreadcrumb a {
-  color: #4a9e5a;
+  color: rgba(255, 255, 255, 0.9); /* Couleur adaptée pour fond sombre */
   text-decoration: none;
   transition: color 0.2s;
+  position: relative;
+}
+
+/* AJOUTÉ : Effet de soulignement au survol */
+.pageBreadcrumb a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: white;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
 }
 
 .pageBreadcrumb a:hover {
-  color: #367c44;
+  color: white;
+}
+
+.pageBreadcrumb a:hover::after {
+  transform: scaleX(1);
 }
 
 .breadcrumbSeparator {
-  color: #999;
+  color: rgba(255, 255, 255, 0.5); /* Couleur adaptée */
   margin: 0 5px;
 }
 
 .breadcrumbCurrent {
-  color: #999;
+  color: white; /* Couleur adaptée pour fond sombre */
+  font-weight: 500;
 }
 
 /* Étapes du checkout */

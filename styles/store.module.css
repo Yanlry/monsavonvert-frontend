@@ -103,12 +103,183 @@
   overflow-x: hidden;
 }
 
+/* Hero de la page avec effet de profondeur harmonisé */
+.pageHero {
+  padding: 120px 0 60px;
+  text-align: center;
+  background: var(--color-gradient-dark);
+  position: relative;
+  overflow: hidden;
+  color: white;
+}
+
+/* Motif de feuilles en background pour harmonie avec how-to-choose */
+.pageHero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 35% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 70% 70%, rgba(129, 199, 132, 0.1) 0%, transparent 50%);
+  animation: floatingHero 15s ease-in-out infinite;
+}
+
+@keyframes floatingHero {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(30px, -30px); }
+}
+
+.pageHeroContent {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+  position: relative;
+  z-index: 1;
+}
+
+.pageTitle {
+  font-size: 40px;
+  font-weight: 700;
+  margin: 0;
+  font-family: var(--font-serif);
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  animation: fadeInUp 0.8s ease-out;
+  background: linear-gradient(135deg, white 0%, rgba(255, 255, 255, 0.8) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative; /* Nécessaire pour positionner la barre */
+}
+
+/* Barre fixe sous le titre avec effet de reflet */
+.pageTitle::after {
+  content: ''; /* Crée un élément invisible */
+  position: absolute; /* Positionné par rapport au titre */
+  bottom: -20px; /* 20px sous le titre */
+  left: 50%; /* Centré horizontalement */
+  transform: translateX(-50%); /* Parfaitement centré */
+  width: 100px; /* Largeur de la barre */
+  height: 4px; /* Épaisseur de la barre */
+  background: rgba(255, 255, 255, 0.8); /* Couleur de base de la barre */
+  border-radius: 2px; /* Coins arrondis */
+  overflow: hidden; /* Cache le reflet qui déborde */
+}
+
+/* Reflet blanc qui traverse la barre */
+.pageTitle::before {
+  content: ''; /* Crée le reflet */
+  position: absolute; /* Positionné par rapport au titre */
+  bottom: -20px; /* Même position que la barre */
+  left: 50%; /* Départ au centre */
+  transform: translateX(-150px); /* Commence à gauche de la barre */
+  width: 30px; /* Largeur du reflet */
+  height: 4px; /* Même épaisseur que la barre */
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.9) 50%, 
+    transparent 100%); /* Effet de reflet progressif */
+  border-radius: 2px; /* Coins arrondis */
+  animation: shimmer 2s ease-in-out infinite; /* Animation continue */
+  z-index: 1; /* Au-dessus de la barre */
+}
+
+/* Animation du reflet qui traverse */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-150px); /* Commence à gauche */
+    opacity: 0; /* Invisible au début */
+  }
+  10% {
+    opacity: 1; /* Devient visible */
+  }
+  90% {
+    opacity: 1; /* Reste visible */
+  }
+  100% {
+    transform: translateX(150px); /* Finit à droite */
+    opacity: 0; /* Redevient invisible */
+  }
+}
+
+/* Animation d'apparition du titre (gardée comme avant) */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pageSubtitle {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.7;
+  animation: fadeIn 1s ease-out 0.3s both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Garder l'ancien storeHero comme fallback (masqué) */
+.storeHero {
+  display: none;
+}
+
+/* Responsive pour le nouveau hero */
+@media (max-width: 768px) {
+  .pageHero {
+    padding: 100px 0 20px; /* Maintient l'espacement réduit sur mobile */
+  }
+  
+  .pageTitle {
+    font-size: 28px;
+  }
+  
+  .pageSubtitle {
+    font-size: 16px;
+    margin-top: var(--spacing-md);
+  }
+}
+
+@media (max-width: 576px) {
+  .pageTitle {
+    font-size: 24px;
+  }
+  
+  .pageSubtitle {
+    font-size: 14px;
+    margin-top: var(--spacing-sm);
+  }
+}
+
+/* Contenu principal - ESPACEMENT RÉDUIT */
 .mainContent {
   position: relative;
   z-index: 1;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 80px 32px 0;
+  padding: 40px 32px 0; /* Réduit de 80px à 40px en haut */
 }
 
 /* Écran de chargement moderne */
@@ -574,12 +745,12 @@
   line-height: 1.6;
 }
 
-/* Section des avantages moderne */
+/* Section des avantages moderne - VERSION COMPACTE */
 .benefitsSection {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-2xl);
-  margin-bottom: var(--spacing-2xl);
+  gap: var(--spacing-lg); /* Réduit de 2xl à lg pour moins d'espacement */
+  margin-bottom: var(--spacing-xl); /* Réduit de 2xl à xl */
   animation: fadeInUp 0.8s forwards;
   animation-delay: 0.6s;
   opacity: 0;
@@ -587,7 +758,7 @@
 
 .benefitCard {
   background: linear-gradient(135deg, var(--color-background-light) 0%, var(--color-background) 100%);
-  padding: var(--spacing-xl);
+  padding: var(--spacing-lg); /* Réduit de xl à lg pour moins de hauteur */
   border-radius: var(--radius-xl);
   text-align: center;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
@@ -638,14 +809,14 @@
 }
 
 .benefitIcon {
-  width: 64px;
-  height: 64px;
+  width: 48px; /* Réduit de 64px à 48px pour prendre moins de place */
+  height: 48px; /* Réduit de 64px à 48px */
   border-radius: 50%;
   background: var(--color-gradient-accent);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto var(--spacing-lg);
+  margin: 0 auto var(--spacing-md); /* Réduit de lg à md pour moins d'espacement */
   color: white;
   box-shadow: 0 8px 25px rgba(46, 125, 50, 0.25);
   transition: all var(--transition-normal);
@@ -672,13 +843,13 @@
 }
 
 .benefitCard h3 {
-  font-size: 20px;
+  font-size: 18px; /* Réduit de 20px à 18px */
   font-weight: 600;
   background: var(--color-gradient-dark);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-sm); /* Réduit de md à sm pour moins d'espacement */
   font-family: var(--font-serif);
   position: relative;
   z-index: 1;
@@ -686,10 +857,11 @@
 
 .benefitCard p {
   color: var(--color-text-light);
-  font-size: 15px;
-  line-height: 1.7;
+  font-size: 14px; /* Réduit de 15px à 14px */
+  line-height: 1.5; /* Réduit de 1.7 à 1.5 pour moins d'espacement entre les lignes */
   position: relative;
   z-index: 1;
+  margin: 0; /* Assure qu'il n'y a pas de marge supplémentaire */
 }
 
 /* Grille de produits ultra-moderne */
@@ -1216,7 +1388,7 @@
 .enhancedPromoSection {
   background: var(--color-gradient-dark);
   border-radius: var(--radius-xl);
-  padding: var(--spacing-3xl);
+  padding: var(--spacing-md);
   margin: var(--spacing-3xl) 0;
   text-align: center;
   color: white;
@@ -2260,7 +2432,7 @@
 
 @media (max-width: 900px) {
   .mainContent {
-    padding-top: 100px;
+    padding-top: 60px; /* Ajusté pour mobile */
   }
   
   .storeTitle {
@@ -2280,7 +2452,7 @@
 
 @media (max-width: 768px) {
   .mainContent {
-    padding-top: 80px;
+    padding-top: 40px; /* Encore plus compact sur mobile */
     padding-left: var(--spacing-md);
     padding-right: var(--spacing-md);
   }
@@ -2437,7 +2609,7 @@
 
 @media (max-width: 576px) {
   .mainContent {
-    padding-top: 70px;
+    padding-top: 30px; /* Très compact pour les petits écrans */
     padding-left: var(--spacing-sm);
     padding-right: var(--spacing-sm);
   }

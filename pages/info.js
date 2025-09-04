@@ -247,7 +247,7 @@ export default function AboutPage() {
           <section className={styles.pageHero}>
             <div className={styles.pageHeroContent}>
               <h1 className={styles.pageTitle}>
-                L'Histoire Millénaire du Savon d'Alep
+                L'Histoire Millénaire d'Alep
               </h1>
             </div>
           </section>

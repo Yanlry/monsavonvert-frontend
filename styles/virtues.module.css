@@ -433,11 +433,12 @@
   z-index: 1;
 }
 
+/* CORRIGÉ : Suppression de margin-bottom pour harmoniser avec les autres pages */
 .pageTitle {
   font-size: 40px;
   font-weight: 700;
   color: white;
-  margin-bottom: var(--spacing-md);
+  margin: 0; /* CHANGÉ : était "margin-bottom: var(--spacing-md)" */
   font-family: var(--font-serif);
   text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   animation: fadeInUp 0.8s ease-out;
@@ -445,6 +446,57 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  position: relative; /* Nécessaire pour positionner la barre */
+}
+
+/* Barre fixe sous le titre avec effet de reflet */
+.pageTitle::after {
+  content: ''; /* Crée un élément invisible */
+  position: absolute; /* Positionné par rapport au titre */
+  bottom: -20px; /* 20px sous le titre */
+  left: 50%; /* Centré horizontalement */
+  transform: translateX(-50%); /* Parfaitement centré */
+  width: 100px; /* Largeur de la barre */
+  height: 4px; /* Épaisseur de la barre */
+  background: rgba(255, 255, 255, 0.8); /* Couleur de base de la barre */
+  border-radius: 2px; /* Coins arrondis */
+  overflow: hidden; /* Cache le reflet qui déborde */
+}
+
+/* Reflet blanc qui traverse la barre */
+.pageTitle::before {
+  content: ''; /* Crée le reflet */
+  position: absolute; /* Positionné par rapport au titre */
+  bottom: -20px; /* Même position que la barre */
+  left: 50%; /* Départ au centre */
+  transform: translateX(-150px); /* Commence à gauche de la barre */
+  width: 30px; /* Largeur du reflet */
+  height: 4px; /* Même épaisseur que la barre */
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.9) 50%, 
+    transparent 100%); /* Effet de reflet progressif */
+  border-radius: 2px; /* Coins arrondis */
+  animation: shimmer 2s ease-in-out infinite; /* Animation continue */
+  z-index: 1; /* Au-dessus de la barre */
+}
+
+/* Animation du reflet qui traverse */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-150px); /* Commence à gauche */
+    opacity: 0; /* Invisible au début */
+  }
+  10% {
+    opacity: 1; /* Devient visible */
+  }
+  90% {
+    opacity: 1; /* Reste visible */
+  }
+  100% {
+    transform: translateX(150px); /* Finit à droite */
+    opacity: 0; /* Redevient invisible */
+  }
 }
 
 @keyframes fadeInUp {
@@ -878,11 +930,6 @@
   height: 200%;
   background: radial-gradient(circle, rgba(33, 150, 243, 0.05) 0%, transparent 70%);
   animation: shimmer 8s infinite;
-}
-
-@keyframes shimmer {
-  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-  100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
 }
 
 /* Section caractéristiques avec cartes 3D */

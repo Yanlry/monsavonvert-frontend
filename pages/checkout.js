@@ -1289,21 +1289,14 @@ export default function Checkout() {
         >
           <Header cartCount={cartCount} />
         </header>
-
-        <main className={styles.mainContent}>
-          {/* Hero section */}
-          <section className={styles.pageHero}>
+   {/* Hero section */}
+   <section className={styles.pageHero}>
             <div className={styles.pageHeroContent}>
               <h1 className={styles.pageTitle}>Récapitulatif de commande</h1>
-              <div className={styles.pageBreadcrumb}>
-                <Link href="/">Accueil</Link>
-                <span className={styles.breadcrumbSeparator}>/</span>
-                <Link href="/cart">Panier</Link>
-                <span className={styles.breadcrumbSeparator}>/</span>
-                <span className={styles.breadcrumbCurrent}>Récapitulatif</span>
-              </div>
             </div>
           </section>
+        <main className={styles.mainContent}>
+       
 
           {/* Indicateur d'étapes */}
           <section className={styles.checkoutSteps}>

@@ -310,11 +310,6 @@ export default function Register() {
           <section className={styles.pageHero}>
             <div className={styles.pageHeroContent}>
               <h1 className={styles.pageTitle}>Créer un compte</h1>
-              <div className={styles.pageBreadcrumb}>
-                <Link href="/">Accueil</Link>
-                <span className={styles.breadcrumbSeparator}>/</span>
-                <span className={styles.breadcrumbCurrent}>Inscription</span>
-              </div>
             </div>
           </section>
 
@@ -667,8 +662,7 @@ export default function Register() {
                         <h3>Protection des données</h3>
                         <p>
                           Vos informations personnelles sont sécurisées et ne
-                          seront jamais partagées avec des tiers sans votre
-                          consentement.
+                          seront jamais partagées avec des tiers.
                         </p>
                       </div>
                     </div>
