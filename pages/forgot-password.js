@@ -43,8 +43,8 @@ export default function ForgotPassword() {
         throw new Error('Configuration API manquante');
       }
       
-      // Envoyer la demande au backend
-      const response = await fetch(`${apiUrl}/api/forgot-password`, {
+      // CORRECTION: Utiliser la bonne route backend
+      const response = await fetch(`${apiUrl}/password-reset/forgot-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
