@@ -36,8 +36,24 @@ export default function ResetPassword() {
           throw new Error('Configuration API manquante');
         }
 
-        const response = await fetch(`${apiUrl}/api/verify-reset-token/${token}`);
+        console.log('🌐 URL API utilisée:', apiUrl);
+        console.log('🔗 URL complète de vérification:', `${apiUrl}/password-reset/verify-reset-token/${token}`);
+
+        const response = await fetch(`${apiUrl}/password-reset/verify-reset-token/${token}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        console.log('📡 Réponse reçue - Status:', response.status);
+
+        if (!response.ok) {
+          throw new Error(`Erreur HTTP: ${response.status}`);
+        }
+
         const data = await response.json();
+        console.log('📊 Données reçues:', data);
 
         if (data.success) {
           console.log('✅ Token valide pour:', data.user.firstName);
@@ -98,8 +114,11 @@ export default function ResetPassword() {
       console.log('🔒 Envoi de la réinitialisation du mot de passe...');
       
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      const resetUrl = `${apiUrl}/password-reset/reset-password/${token}`;
       
-      const response = await fetch(`${apiUrl}/api/reset-password/${token}`, {
+      console.log('🔗 URL de réinitialisation:', resetUrl);
+      
+      const response = await fetch(resetUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -110,7 +129,14 @@ export default function ResetPassword() {
         }),
       });
       
+      console.log('📡 Réponse de réinitialisation - Status:', response.status);
+      
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`);
+      }
+      
       const data = await response.json();
+      console.log('📊 Données de réponse:', data);
       
       if (data.success) {
         console.log('✅ Mot de passe réinitialisé avec succès');
@@ -177,6 +203,14 @@ export default function ResetPassword() {
               <h3>Ce lien n'est plus valide</h3>
               <p>{error}</p>
               <p>Les liens de récupération expirent après 10 minutes pour des raisons de sécurité.</p>
+              
+              {/* Debug information */}
+              <details style={{ marginTop: '20px', fontSize: '12px', color: '#666' }}>
+                <summary>Informations de débogage</summary>
+                <p>Token: {token?.substring(0, 20)}...</p>
+                <p>API URL: {process.env.NEXT_PUBLIC_API_URL}</p>
+                <p>URL de vérification: {process.env.NEXT_PUBLIC_API_URL}/password-reset/verify-reset-token/{token?.substring(0, 10)}...</p>
+              </details>
             </div>
 
             <div className={styles.links}>
