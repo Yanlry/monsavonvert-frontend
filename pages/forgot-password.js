@@ -90,8 +90,7 @@ export default function ForgotPassword() {
         {/* Section principale avec design asymétrique */}
         <div className={styles.mainSection}>
           {/* Colonne de gauche - Visuel */}
-          <div className={styles.visualColumn}>
-          </div>
+          <div className={styles.visualColumn}></div>
 
           {/* Colonne de droite - Formulaire */}
           <div className={styles.formColumn}>
@@ -113,8 +112,9 @@ export default function ForgotPassword() {
                     <h3>Email envoyé avec succès</h3>
                     <p>{message}</p>
                     <p className={styles.successNote}>
-                      Vérifiez votre boîte email (et vos spams) pour le lien de
-                      récupération.
+                      Un email de récupération a été envoyé. Cela peut prendre
+                      entre 1 et 5 minutes avant d’arriver. Pensez aussi à
+                      vérifier vos spams.
                     </p>
                   </div>
                 </div>
