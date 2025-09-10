@@ -91,7 +91,6 @@ export default function ForgotPassword() {
               <div className={styles.brandSection}>
                 <h2 className={styles.brandTitle}>MonSavonVert</h2>
               </div>
-            
           </div>
 
           {/* Colonne de droite - Formulaire */}
