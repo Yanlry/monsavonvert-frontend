@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import Header from '../components/Header'; // AJOUT DE L'IMPORT DU HEADER
 import styles from '../styles/forgot-password.module.css';
 
 export default function ForgotPassword() {
@@ -78,100 +79,170 @@ export default function ForgotPassword() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+      {/* AJOUT DU HEADER */}
+      <Header cartCount={0} />
+
       <div className={styles.container}>
-        <div className={styles.formContainer}>
-          {/* Logo et titre */}
-          <div className={styles.header}>
-            <Link href="/" className={styles.logo}>
-              MonSavonVert
-            </Link>
-            <h1 className={styles.title}>Mot de passe oublié</h1>
-            <p className={styles.subtitle}>
-              Saisissez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.
-            </p>
+        {/* Section principale avec design asymétrique */}
+        <div className={styles.mainSection}>
+          {/* Colonne de gauche - Visuel */}
+          <div className={styles.visualColumn}>
+            <div className={styles.visualContent}>
+              <div className={styles.brandSection}>
+                <h2 className={styles.brandTitle}>MonSavonVert</h2>
+                <p className={styles.brandSubtitle}>Naturel & Artisanal</p>
+              </div>
+              
+              <div className={styles.visualElements}>
+                <div className={styles.floatingCard}>
+                  <div className={styles.cardIcon}>🔐</div>
+                  <h3>Sécurisé</h3>
+                  <p>Récupération sécurisée de votre compte</p>
+                </div>
+                
+                <div className={styles.floatingCard}>
+                  <div className={styles.cardIcon}>⚡</div>
+                  <h3>Rapide</h3>
+                  <p>Processus en quelques minutes</p>
+                </div>
+                
+                <div className={styles.floatingCard}>
+                  <div className={styles.cardIcon}>✉️</div>
+                  <h3>Simple</h3>
+                  <p>Un email suffit pour récupérer l'accès</p>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Messages de succès ou d'erreur */}
-          {message && (
-            <div className={styles.successMessage}>
-              <div className={styles.successIcon}>✅</div>
-              <p>{message}</p>
-              <p className={styles.successNote}>
-                Vérifiez votre boîte email (et vos spams) pour le lien de récupération.
-              </p>
-            </div>
-          )}
-
-          {error && (
-            <div className={styles.errorMessage}>
-              <div className={styles.errorIcon}>❌</div>
-              <p>{error}</p>
-            </div>
-          )}
-
-          {/* Formulaire de récupération */}
-          {!message && (
-            <form onSubmit={handleSubmit} className={styles.form}>
-              <div className={styles.inputGroup}>
-                <label htmlFor="email" className={styles.label}>
-                  Adresse email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="votre-email@exemple.com"
-                  className={styles.input}
-                  disabled={isLoading}
-                />
+          {/* Colonne de droite - Formulaire */}
+          <div className={styles.formColumn}>
+            <div className={styles.formContainer}>
+              {/* En-tête du formulaire */}
+              <div className={styles.header}>
+                <h1 className={styles.title}>Récupération de compte</h1>
+                <p className={styles.subtitle}>
+                  Saisissez votre adresse email pour recevoir un lien de récupération
+                </p>
               </div>
 
-              <button 
-                type="submit" 
-                disabled={isLoading}
-                className={styles.submitButton}
-              >
-                {isLoading ? (
-                  <span className={styles.loading}>
-                    <span className={styles.spinner}></span>
-                    Envoi en cours...
-                  </span>
-                ) : (
-                  'Envoyer le lien de récupération'
+              {/* Messages de succès ou d'erreur */}
+              {message && (
+                <div className={styles.successMessage}>
+                  <div className={styles.successIcon}>✅</div>
+                  <div className={styles.messageContent}>
+                    <h3>Email envoyé avec succès</h3>
+                    <p>{message}</p>
+                    <p className={styles.successNote}>
+                      Vérifiez votre boîte email (et vos spams) pour le lien de récupération.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {error && (
+                <div className={styles.errorMessage}>
+                  <div className={styles.errorIcon}>❌</div>
+                  <div className={styles.messageContent}>
+                    <h3>Erreur</h3>
+                    <p>{error}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Formulaire de récupération */}
+              {!message && (
+                <form onSubmit={handleSubmit} className={styles.form}>
+                  <div className={styles.inputGroup}>
+                    <label htmlFor="email" className={styles.label}>
+                      Adresse email
+                    </label>
+                    <div className={styles.inputWrapper}>
+                      <input
+                        type="email"
+                        id="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="votre-email@exemple.com"
+                        className={styles.input}
+                        disabled={isLoading}
+                      />
+                      <div className={styles.inputIcon}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                          <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button 
+                    type="submit" 
+                    disabled={isLoading}
+                    className={styles.submitButton}
+                  >
+                    <span className={styles.buttonContent}>
+                      {isLoading ? (
+                        <>
+                          <span className={styles.spinner}></span>
+                          Envoi en cours...
+                        </>
+                      ) : (
+                        <>
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M22 2L11 13"></path>
+                            <polygon points="22,2 15,22 11,13 2,9"></polygon>
+                          </svg>
+                          Envoyer le lien
+                        </>
+                      )}
+                    </span>
+                  </button>
+                </form>
+              )}
+
+              {/* Liens de navigation */}
+              <div className={styles.links}>
+                <Link href="/login" className={styles.link}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M19 12H5M12 19L5 12L12 5"></path>
+                  </svg>
+                  Retour à la connexion
+                </Link>
+                
+                {message && (
+                  <button 
+                    onClick={() => {
+                      setMessage('');
+                      setError('');
+                      setEmail('');
+                    }}
+                    className={styles.link}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 4H8L1 12L8 20H21C22.1 20 23 19.1 23 18V6C23 4.9 22.1 4 21 4Z"></path>
+                      <path d="M18 9L12 15M12 9L18 15"></path>
+                    </svg>
+                    Nouveau email
+                  </button>
                 )}
-              </button>
-            </form>
-          )}
+              </div>
 
-          {/* Liens de navigation */}
-          <div className={styles.links}>
-            <Link href="/login" className={styles.link}>
-              ← Retour à la connexion
-            </Link>
-            
-            {message && (
-              <button 
-                onClick={() => {
-                  setMessage('');
-                  setError('');
-                  setEmail('');
-                }}
-                className={styles.link}
-              >
-                Envoyer un autre email
-              </button>
-            )}
-          </div>
-
-          {/* Information de sécurité */}
-          <div className={styles.securityInfo}>
-            <h3>Information de sécurité</h3>
-            <ul>
-              <li>Le lien de récupération expire dans 10 minutes</li>
-              <li>Si vous n'avez pas de compte, le système ne vous enverra pas d'email</li>
-              <li>En cas de problème, contactez notre support</li>
-            </ul>
+              {/* Information de sécurité */}
+              <div className={styles.securityInfo}>
+                <div className={styles.securityHeader}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 22S8 18 8 12V7L12 5L16 7V12C16 18 12 22 12 22Z"></path>
+                  </svg>
+                  <h3>Sécurité</h3>
+                </div>
+                <ul>
+                  <li>🕒 Le lien expire dans 10 minutes</li>
+                  <li>🔒 Processus entièrement sécurisé</li>
+                  <li>💬 Support disponible en cas de problème</li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>
