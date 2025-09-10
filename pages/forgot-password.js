@@ -110,7 +110,6 @@ export default function ForgotPassword() {
                   <div className={styles.successIcon}>✅</div>
                   <div className={styles.messageContent}>
                     <h3>Email envoyé avec succès</h3>
-                    <p>{message}</p>
                     <p className={styles.successNote}>
                       Un email de récupération a été envoyé. Cela peut prendre
                       entre 1 et 5 minutes avant d’arriver. Pensez aussi à

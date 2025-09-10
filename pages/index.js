@@ -300,23 +300,38 @@ export default function Home() {
         {/* PREMIER BLOC HEAD CORRIGÉ - Utilise maintenant logo.png */}
         <Head>
           <title>MonSavonVert | Un savon ancestral et écologique</title>
-          <meta name="description" content="Savons artisanaux et cosmétiques naturels. Ingrédients 100% naturel." />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          
+          <meta
+            name="description"
+            content="Savons artisanaux et cosmétiques naturels. Ingrédients 100% naturel."
+          />
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+          />
+
           {/* Favicon utilisant votre logo.png */}
           <link rel="icon" type="image/png" href="/logo.png" />
           <link rel="shortcut icon" type="image/png" href="/logo.png" />
-          
+
           {/* Pour les appareils Apple */}
           <link rel="apple-touch-icon" href="/logo.png" />
-          
+
           {/* Méta tags Open Graph */}
-          <meta property="og:title" content="MonSavonVert | Savonnerie Artisanale Bio" />
-          <meta property="og:description" content="Découvrez nos savons artisanaux et produits de soins naturels, fabriqués selon la tradition syrienne avec des ingrédients naturels." />
+          <meta
+            property="og:title"
+            content="MonSavonVert | Savonnerie Artisanale Bio"
+          />
+          <meta
+            property="og:description"
+            content="Découvrez nos savons artisanaux et produits de soins naturels, fabriqués selon la tradition syrienne avec des ingrédients naturels."
+          />
           <meta property="og:image" content="/images/og-image.jpg" />
-          
+
           {/* Polices Google */}
-          <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;700&display=swap" rel="stylesheet" />
+          <link
+            href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;700&display=swap"
+            rel="stylesheet"
+          />
         </Head>
         <div className={styles.loadingWrapper}>
           <div className={styles.loadingLogo}>
@@ -335,17 +350,17 @@ export default function Home() {
         <title>MonSavonVert | Savonnerie Artisanale & Écologique</title>
         <meta
           name="description"
-          content="Savons artisanaux et cosmétiques naturels fabriqués selon la tradition syrienne. Ingrédients 100% bio et emballages écologiques."
+          content="Savons artisanaux et cosmétiques naturels fabriqués selon la tradition syrienne. Ingrédients 100% naturels."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        
+
         {/* Favicon utilisant votre logo.png au lieu de favicon.ico */}
         <link rel="icon" type="image/png" href="/logo.png" />
         <link rel="shortcut icon" type="image/png" href="/logo.png" />
-        
+
         {/* Pour les appareils Apple */}
         <link rel="apple-touch-icon" href="/logo.png" />
-        
+
         <meta
           property="og:title"
           content="MonSavonVert | Savonnerie Artisanale Bio"
@@ -1362,7 +1377,7 @@ export default function Home() {
                 <div className={styles.ratingBox}>
                   <div className={styles.ratingStars}>★★★★★</div>
                   <div className={styles.ratingScore}>
-                    4.9/5 basé sur 256 avis vérifiés
+                    4/5 basé sur 4 avis vérifiés
                   </div>
                 </div>
               </div>
@@ -1373,12 +1388,9 @@ export default function Home() {
                 <div className={styles.testimonialCard}>
                   <div className={styles.testimonialTop}>
                     <div className={styles.testimonialUser}>
-                      <div className={styles.testimonialAvatar}>ML</div>
+                      <div className={styles.testimonialAvatar}>FP</div>
                       <div className={styles.testimonialInfo}>
-                        <p className={styles.testimonialName}>Marie L.</p>
-                        <p className={styles.testimonialLocation}>
-                          Lyon, France
-                        </p>
+                        <p className={styles.testimonialName}>Franck Parain</p>
                       </div>
                     </div>
                     <div className={styles.testimonialBadge}>✓</div>
@@ -1387,10 +1399,8 @@ export default function Home() {
                   <div className={styles.testimonialContent}>
                     <div className={styles.testimonialStars}>★★★★★</div>
                     <p className={styles.testimonialText}>
-                      J'ai découvert ces savons il y a 6 mois et ma peau s'est
-                      transformée. Plus de problèmes de sécheresse et l'odeur
-                      est divine ! Je recommande particulièrement le savon à
-                      l'avoine pour les peaux sensibles.
+                      Tres bon savon on ressent tout de suite la douceur et le
+                      prix par rapport a la pharmacie il n y pas photo
                     </p>
                   </div>
                 </div>
@@ -1399,12 +1409,9 @@ export default function Home() {
                 <div className={styles.testimonialCard}>
                   <div className={styles.testimonialTop}>
                     <div className={styles.testimonialUser}>
-                      <div className={styles.testimonialAvatar}>TP</div>
+                      <div className={styles.testimonialAvatar}>M</div>
                       <div className={styles.testimonialInfo}>
-                        <p className={styles.testimonialName}>Thomas P.</p>
-                        <p className={styles.testimonialLocation}>
-                          Paris, France
-                        </p>
+                        <p className={styles.testimonialName}>Myriam</p>
                       </div>
                     </div>
                     <div className={styles.testimonialBadge}>✓</div>
@@ -1413,10 +1420,10 @@ export default function Home() {
                   <div className={styles.testimonialContent}>
                     <div className={styles.testimonialStars}>★★★★★</div>
                     <p className={styles.testimonialText}>
-                      En tant qu'homme barbu, j'utilise leur savon pour le
-                      visage et la barbe. Ma peau est apaisée et ma barbe plus
-                      douce que jamais. Le service client est également
-                      excellent, très réactif.
+                      Site très sérieux, savon reçu rapidement et de très bonne
+                      qualité ! Il nettoie la peau et élimine les imperfections
+                      Pas d’additifs, les ingrédients sont tous naturels votre
+                      peau vous remerciera Je recommande les yeux fermés
                     </p>
                   </div>
                 </div>
@@ -1425,11 +1432,10 @@ export default function Home() {
                 <div className={styles.testimonialCard}>
                   <div className={styles.testimonialTop}>
                     <div className={styles.testimonialUser}>
-                      <div className={styles.testimonialAvatar}>SM</div>
+                      <div className={styles.testimonialAvatar}>ST</div>
                       <div className={styles.testimonialInfo}>
-                        <p className={styles.testimonialName}>Sophie M.</p>
-                        <p className={styles.testimonialLocation}>
-                          Marseille, France
+                        <p className={styles.testimonialName}>
+                          Stephane Theillier
                         </p>
                       </div>
                     </div>
@@ -1439,10 +1445,8 @@ export default function Home() {
                   <div className={styles.testimonialContent}>
                     <div className={styles.testimonialStars}>★★★★★</div>
                     <p className={styles.testimonialText}>
-                      J'apprécie particulièrement leur engagement écologique.
-                      Les emballages sont magnifiques et peuvent être plantés
-                      dans le jardin ! Un vrai plus par rapport aux autres
-                      marques.
+                      Savon au top qui me rend la peau nickel et un beau
+                      teint,il élimine rapidement les boutons ou imperfections.
                     </p>
                   </div>
                 </div>
@@ -1450,10 +1454,15 @@ export default function Home() {
 
               {/* Bouton */}
               <div className={styles.testimonialAction}>
-                <Link href="/avis-clients" className={styles.testimonialButton}>
+                <a
+                  href="https://fr.trustpilot.com/review/monsavonvert.com"
+                  className={styles.testimonialButton}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <span>Voir tous les avis</span>
                   <span className={styles.buttonArrow}>→</span>
-                </Link>
+                </a>
               </div>
             </div>
           </section>

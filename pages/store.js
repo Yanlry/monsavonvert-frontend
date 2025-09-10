@@ -827,28 +827,30 @@ export default function Boutique() {
               <div className={styles.testimonialCard}>
                 <div className={styles.testimonialStars}>{"★".repeat(5)}</div>
                 <p className={styles.testimonialText}>
-                  "Ces savons ont transformé ma routine de soins. Ma peau n'a
-                  jamais été aussi douce et hydratée, même en hiver!"
+                Savon au top qui me rend la peau nickel et un beau
+                teint,il élimine rapidement les boutons ou imperfections.
                 </p>
-                <p className={styles.testimonialAuthor}>Marie L.</p>
+                <p className={styles.testimonialAuthor}>Stephane Theillier</p>
               </div>
 
               <div className={styles.testimonialCard}>
                 <div className={styles.testimonialStars}>{"★".repeat(5)}</div>
                 <p className={styles.testimonialText}>
-                  "J'ai enfin trouvé des produits qui respectent mes valeurs
-                  écologiques tout en étant efficaces. Je recommande!"
+                Tres bon savon on ressent tout de suite la douceur et le
+                prix par rapport a la pharmacie il n y pas photo
                 </p>
-                <p className={styles.testimonialAuthor}>Thomas B.</p>
+                <p className={styles.testimonialAuthor}>Franck Parain</p>
               </div>
 
               <div className={styles.testimonialCard}>
                 <div className={styles.testimonialStars}>{"★".repeat(5)}</div>
                 <p className={styles.testimonialText}>
-                  "L'odeur est divine et les ingrédients sont d'une qualité
-                  exceptionnelle. Je n'utiliserai plus jamais d'autres savons."
+                Site très sérieux, savon reçu rapidement et de très bonne
+                      qualité ! Il nettoie la peau et élimine les imperfections
+                      Pas d’additifs, les ingrédients sont tous naturels votre
+                      peau vous remerciera Je recommande les yeux fermés
                 </p>
-                <p className={styles.testimonialAuthor}>Sophie M.</p>
+                <p className={styles.testimonialAuthor}>Myriam</p>
               </div>
             </div>
           </div>
