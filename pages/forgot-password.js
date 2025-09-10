@@ -5,6 +5,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Header from '../components/Header'; // AJOUT DE L'IMPORT DU HEADER
+import Footer from '../components/Footer'; // AJOUT DE L'IMPORT DU HEADER
 import styles from '../styles/forgot-password.module.css';
 
 export default function ForgotPassword() {
@@ -245,6 +246,7 @@ export default function ForgotPassword() {
             </div>
           </div>
         </div>
+        <Footer />
       </div>
     </>
   );
