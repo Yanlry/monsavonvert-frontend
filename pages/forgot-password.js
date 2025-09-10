@@ -5,7 +5,6 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Header from '../components/Header'; // AJOUT DE L'IMPORT DU HEADER
-import Footer from '../components/Footer'; // AJOUT DE L'IMPORT DU HEADER
 import styles from '../styles/forgot-password.module.css';
 
 export default function ForgotPassword() {
@@ -86,6 +85,36 @@ export default function ForgotPassword() {
       <div className={styles.container}>
         {/* Section principale avec design asymétrique */}
         <div className={styles.mainSection}>
+          {/* Colonne de gauche - Visuel */}
+          <div className={styles.visualColumn}>
+            <div className={styles.visualContent}>
+              <div className={styles.brandSection}>
+                <h2 className={styles.brandTitle}>MonSavonVert</h2>
+                <p className={styles.brandSubtitle}>Naturel & Artisanal</p>
+              </div>
+              
+              <div className={styles.visualElements}>
+                <div className={styles.floatingCard}>
+                  <div className={styles.cardIcon}>🔐</div>
+                  <h3>Sécurisé</h3>
+                  <p>Récupération sécurisée de votre compte</p>
+                </div>
+                
+                <div className={styles.floatingCard}>
+                  <div className={styles.cardIcon}>⚡</div>
+                  <h3>Rapide</h3>
+                  <p>Processus en quelques minutes</p>
+                </div>
+                
+                <div className={styles.floatingCard}>
+                  <div className={styles.cardIcon}>✉️</div>
+                  <h3>Simple</h3>
+                  <p>Un email suffit pour récupérer l'accès</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Colonne de droite - Formulaire */}
           <div className={styles.formColumn}>
             <div className={styles.formContainer}>
@@ -217,9 +246,6 @@ export default function ForgotPassword() {
           </div>
         </div>
       </div>
-
-      {/* AJOUT DU FOOTER */}
-      <Footer />
     </>
   );
 }
