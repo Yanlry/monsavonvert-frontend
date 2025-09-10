@@ -245,9 +245,9 @@ export default function ForgotPassword() {
               </div>
             </div>
           </div>
-        </div>
       {/* AJOUT DU FOOTER */}
       <Footer />
+        </div>
       </div>
 
     </>
