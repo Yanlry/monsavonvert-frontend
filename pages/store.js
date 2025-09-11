@@ -513,86 +513,78 @@ export default function Boutique() {
           </div>
         </section>
         <main className={styles.mainContent}>
-          {/* Section des avantages - Affichée seulement après le chargement */}
-          {!loading && (
-            <div className={styles.benefitsSection}>
-              <div className={styles.benefitCard}>
-                <div className={styles.benefitIcon}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"></path>
-                    <path d="M12 6v6l4 2"></path>
-                  </svg>
-                </div>
-                <h3>Origine Syrienne Garantie</h3>
-                <p>
-                  Notre savon d'Alep est fabriqué artisanalement en Syrie, dans
-                  la ville historique d'Alep, berceau de cette tradition
-                  millénaire.
-                </p>
-              </div>
+     {/* Section des avantages - Affichée seulement après le chargement */}
+{!loading && (
+  <div className={styles.benefitsSection}>
+    <div className={styles.benefitCard}>
+      <div className={styles.benefitIcon}>
+        {/* Icône coeur - pour Origine Syrienne Garantie */}
+        <svg
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+        </svg>
+      </div>
+      <h3>Origine Syrienne Garantie</h3>
+      <p>
+        Notre savon d'Alep est fabriqué artisanalement en Syrie, dans la ville historique d'Alep, berceau de cette tradition millénaire.
+      </p>
+    </div>
 
-              <div className={styles.benefitCard}>
-                <div className={styles.benefitIcon}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M20 6L9 17l-5-5"></path>
-                  </svg>
-                </div>
-                <h3>Pureté Naturelle</h3>
-                <p>
-                  Composé exclusivement d'huile d'olive et d'huile de baies de
-                  laurier, notre savon respecte votre peau sans compromis.
-                </p>
-              </div>
+    <div className={styles.benefitCard}>
+      <div className={styles.benefitIcon}>
+        {/* Icône fleur/feuille - pour Pureté Naturelle */}
+        <svg
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+          <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+        </svg>
+      </div>
+      <h3>Pureté Naturelle</h3>
+      <p>
+        Composé exclusivement d'huile d'olive et d'huile de baies de laurier, notre savon respecte votre peau sans compromis.
+      </p>
+    </div>
 
-              <div className={styles.benefitCard}>
-                <div className={styles.benefitIcon}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <path d="M14.31 8l5.74 9.94"></path>
-                    <path d="M9.69 8h11.48"></path>
-                    <path d="M7.38 12l5.74-9.94"></path>
-                    <path d="M9.69 16l5.74-9.94"></path>
-                  </svg>
-                </div>
-                <h3>Efficacité Reconnu</h3>
-                <p>
-                  Utilisé depuis l'Antiquité pour ses vertus apaisantes et
-                  purifiantes, il convient parfaitement aux peaux sensibles et
-                  exigeantes.
-                </p>
-              </div>
-            </div>
-          )}
+    <div className={styles.benefitCard}>
+      <div className={styles.benefitIcon}>
+        {/* Icône bouclier avec check - pour Efficacité Reconnue */}
+        <svg
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          <path d="M9 12l2 2 4-4" />
+        </svg>
+      </div>
+      <h3>Efficacité Reconnue</h3>
+      <p>
+        Utilisé depuis l'Antiquité pour ses vertus apaisantes et purifiantes, il convient parfaitement aux peaux sensibles et exigeantes.
+      </p>
+    </div>
+  </div>
+)}
 
           {/* Affichage des produits ou message de chargement/erreur */}
           {loading ? (
