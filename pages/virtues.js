@@ -94,7 +94,7 @@ export default function VertusBienfaits() {
       id: 1,
       percentage: "5%",
       title: "Savon d'Alep Doux",
-      image: "/images/5.JPEG",
+      image: "/images/13.JPEG",
       suitableFor: "Peaux sensibles, enfants, visage",
       benefits: [
         "Hydratation quotidienne de la peau",
@@ -221,7 +221,7 @@ export default function VertusBienfaits() {
               </div>
               <div className={styles.introImageWrapper}>
                 <img
-                  src="/images/8.JPEG"
+                  src="/images/12.JPEG"
                   alt="Savon d'Alep traditionnel"
                   className={styles.introImage}
                 />
@@ -258,7 +258,7 @@ export default function VertusBienfaits() {
             <div className={styles.laurelContent}>
               <div className={styles.laurelImageWrapper}>
                 <img
-                  src="/images/7.JPEG"
+                  src="/images/10.JPEG"
                   alt="Huile de baie de laurier"
                   className={styles.laurelImage}
                 />

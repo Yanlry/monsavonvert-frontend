@@ -111,13 +111,13 @@ export default function Home() {
         "Découvrez notre collection ancestrale fabriqué avec des ingrédients naturels",
     },
     {
-      image: "/images/4.JPEG",
+      image: "/images/10.JPEG",
       title: "Fabrication Syrienne, ingrédients locaux",
       subtitle:
         "Tradition et savoir-faire syrien pour des produits authentiques et de qualité",
     },
     {
-      image: "/images/5.JPEG",
+      image: "/images/11.JPEG",
       title: "Prendre soin de votre peau et de la planète",
       subtitle:
         "Des formules douces et respectueuses pour un bien-être quotidien",

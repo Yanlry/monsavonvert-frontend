@@ -75,11 +75,16 @@
   opacity: 0.5;
 }
 
+/* Styles corrigés pour le logo image */
 .logoIcon {
-  font-size: 24px;
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+  object-position: center;
   position: relative;
   z-index: 2;
   animation: float 5s ease-in-out infinite;
+  transition: transform 0.3s ease;
 }
 
 .logoTextWrapper {
@@ -125,6 +130,10 @@
 
 .logoLink:hover .logoTagline {
   color: #2A623D;
+}
+
+.logoLink:hover .logoIcon {
+  transform: scale(1.1);
 }
 
 /* Navigation principale moderne */
@@ -1403,6 +1412,17 @@
   .mobileAdminDropdownMenu .adminMenuDivider {
     margin: 0;
   }
+
+  /* Corrections pour le logo mobile */
+  .logoIconWrapper {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .logoIcon {
+    width: 75%;
+    height: 75%;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1411,20 +1431,21 @@
   }
   
   .logoIconWrapper {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
   }
   
   .logoIcon {
-    font-size: 20px;
+    width: 70%;
+    height: 70%;
   }
   
   .logo {
-    font-size: 20px;
+    font-size: 18px;
   }
   
   .logoTagline {
-    font-size: 10px;
+    font-size: 9px;
   }
   
   .headerScrolled {
