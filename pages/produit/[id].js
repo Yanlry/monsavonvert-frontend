@@ -356,10 +356,6 @@ export default function ProductDetail({ product }) {
           {/* Fil d'Ariane */}
           <div className={styles.breadcrumbContainer}>
             <div className={styles.breadcrumbContent}>
-              <Link href="/" className={styles.breadcrumbLink}>
-                Accueil
-              </Link>
-              <span className={styles.breadcrumbSeparator}>/</span>
               <Link href="/store" className={styles.breadcrumbLink}>
                 Boutique
               </Link>
