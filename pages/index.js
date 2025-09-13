@@ -874,7 +874,7 @@ export default function Home() {
                       className={styles.aboutImage}
                     />
                     <div className={styles.aboutImageBadge}>
-                      <span>Depuis 2022</span>
+                      <span>Depuis 2023</span>
                     </div>
                   </div>
                 </div>
@@ -912,7 +912,7 @@ export default function Home() {
                       </div>
                     </div>
 
-                    <Link href="/notre-histoire" className={styles.aboutButton}>
+                    <Link href="/info" className={styles.aboutButton}>
                       <span>En savoir plus</span>
                       <span className={styles.buttonIcon}>→</span>
                     </Link>

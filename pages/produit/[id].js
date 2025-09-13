@@ -353,7 +353,7 @@ export default function ProductDetail({ product }) {
         </header>
 
         <main className={styles.mainContent}>
-        
+
           {/* Section produit */}
           <section className={styles.productLayout}>
             <div className={styles.productLayoutContainer}>
