@@ -776,18 +776,23 @@
   padding-bottom: var(--spacing-md);
   font-weight: 700;
   letter-spacing: -0.5px;
+  /* CORRECTION : S'assurer que le conteneur prend toute la largeur */
+  display: block;
+  width: 100%;
 }
 
+/* CORRECTION du soulignement - maintenant parfaitement centré */
 .sectionTitle::after {
   content: '';
   position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80px;
-  height: 4px;
+  bottom: 8px; /* Position fixe depuis le bas */
+  left: 0;     /* Départ à gauche */
+  right: 0;    /* Jusqu'à droite */
+  width: 80px; /* Largeur du trait */
+  height: 4px; /* Épaisseur du trait */
   background: var(--color-gradient-primary);
   border-radius: 4px;
+  margin: 0 auto; /* CLEF : Centrage automatique avec margin auto */
   animation: pulse 2s infinite;
 }
 
