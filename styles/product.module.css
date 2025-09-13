@@ -820,9 +820,47 @@
   100% { transform: scale(1); }
 }
 
-/* Layout de la page produit - COMMENCÉ ICI */
+/* Fil d'Ariane */
+.breadcrumbContainer {
+  background-color: var(--color-background-dark);
+  padding: 80px 0 16px;
+  width: 100%;
+}
+
+.breadcrumbContent {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-xl);
+  font-size: 14px;
+  color: var(--color-text-light);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.breadcrumbLink {
+  color: var(--color-text-light);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.breadcrumbLink:hover {
+  color: var(--color-primary);
+}
+
+.breadcrumbSeparator {
+  margin: 0 var(--spacing-sm);
+}
+
+.breadcrumbCurrent {
+  color: var(--color-primary);
+  font-weight: 500;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Layout de la page produit */
 .productLayout {
-  padding: var(--spacing-4xl) 0; /* CHANGEMENT: Plus d'espace en haut */
+  padding: var(--spacing-2xl) 0;
   width: 100%;
 }
 
@@ -843,9 +881,9 @@
 }
 
 .productImageGallery {
-  /* CHANGEMENT: Supprimé position: sticky pour éviter les problèmes de z-index */
+  position: sticky;
+  top: 120px;
   width: 100%;
-  margin-bottom: var(--spacing-xl); /* CHANGEMENT: Ajouté margin pour séparer des badges */
 }
 
 .productMainImage {
@@ -861,7 +899,6 @@
   cursor: zoom-in;
   position: relative;
   transition: transform var(--transition-normal);
-  z-index: 1; /* CHANGEMENT: Z-index bas pour permettre aux badges de passer dessus */
 }
 
 .productMainImage:hover {
@@ -908,7 +945,6 @@
   transition: all var(--transition-normal);
   opacity: 0.7;
   flex-shrink: 0;
-  z-index: 1; /* CHANGEMENT: Z-index bas */
 }
 
 .thumbnail:hover {
@@ -930,15 +966,11 @@
   height: 100%;
 }
 
-/* CORRECTION PRINCIPALE: Badges et certifications maintenant visibles */
 .productBadges {
   display: flex;
   gap: var(--spacing-lg);
   justify-content: center;
   flex-wrap: wrap;
-  margin-top: var(--spacing-lg); /* CHANGEMENT: Margin top pour séparer des images */
-  position: relative; /* CHANGEMENT: Position relative */
-  z-index: 10; /* CHANGEMENT: Z-index élevé pour passer au-dessus des images */
 }
 
 .badge {
@@ -947,18 +979,10 @@
   align-items: center;
   text-align: center;
   transition: transform var(--transition-normal);
-  background-color: var(--color-background-light); /* CHANGEMENT: Fond blanc pour la visibilité */
-  padding: var(--spacing-md); /* CHANGEMENT: Padding pour l'espace autour */
-  border-radius: var(--radius-md); /* CHANGEMENT: Coins arrondis */
-  box-shadow: var(--shadow-sm); /* CHANGEMENT: Ombre pour la profondeur */
-  min-width: 80px; /* CHANGEMENT: Largeur minimum */
-  position: relative; /* CHANGEMENT: Position relative */
-  z-index: 10; /* CHANGEMENT: Z-index élevé */
 }
 
 .badge:hover {
-  transform: translateY(-5px); /* CHANGEMENT: Plus de mouvement au hover */
-  box-shadow: var(--shadow-md); /* CHANGEMENT: Ombre plus prononcée au hover */
+  transform: translateY(-3px);
 }
 
 .badge img {
@@ -971,7 +995,7 @@
 .badge span {
   font-size: 12px;
   font-weight: 600;
-  color: var(--color-text);
+  color: var(--color-text-light);
 }
 
 /* Colonne d'informations */
@@ -981,6 +1005,8 @@
 }
 
 .productInfo {
+  position: sticky;
+  top: 120px;
   width: 100%;
 }
 
@@ -2221,9 +2247,19 @@
     grid-template-columns: 1fr !important;
   }
   
+  /* Breadcrumb mobile */
+  .breadcrumbContainer {
+    padding: 60px 0 16px !important;
+  }
+  
+  .breadcrumbContent {
+    padding: 0 var(--spacing-md) !important;
+    font-size: 12px;
+  }
+  
   /* Layout produit mobile */
   .productLayout {
-    padding: var(--spacing-2xl) 0 !important; /* CHANGEMENT: Réduction de l'espace sur mobile */
+    padding: var(--spacing-lg) 0 !important;
   }
   
   .productLayoutContainer {
@@ -2252,31 +2288,9 @@
     flex-shrink: 0;
   }
   
-  /* Badges mobile - CORRECTION IMPORTANTE */
-  .productBadges {
-    flex-direction: row !important; /* CHANGEMENT: Garde les badges en ligne sur mobile */
-    gap: var(--spacing-sm) !important;
-    margin-top: var(--spacing-md) !important;
-    padding: 0 var(--spacing-sm) !important;
-  }
-  
-  .badge {
-    min-width: 70px !important; /* CHANGEMENT: Largeur réduite sur mobile */
-    padding: var(--spacing-sm) !important; /* CHANGEMENT: Padding réduit */
-  }
-  
-  .badge img {
-    width: 30px !important; /* CHANGEMENT: Images plus petites sur mobile */
-    height: 30px !important;
-    margin-bottom: var(--spacing-xs) !important;
-  }
-  
-  .badge span {
-    font-size: 11px !important; /* CHANGEMENT: Texte plus petit sur mobile */
-  }
-  
   /* Info produit mobile */
   .productInfo {
+    position: static !important;
     width: 100% !important;
   }
   
@@ -2578,16 +2592,6 @@
   
   .relatedProductsGrid {
     grid-template-columns: 1fr !important;
-  }
-  
-  /* Badges très petits écrans */
-  .productBadges {
-    flex-direction: column !important; /* CHANGEMENT: Badges en colonne sur très petits écrans */
-    align-items: center;
-  }
-  
-  .badge {
-    min-width: 100px !important;
   }
 }
 

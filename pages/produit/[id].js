@@ -353,6 +353,20 @@ export default function ProductDetail({ product }) {
         </header>
 
         <main className={styles.mainContent}>
+          {/* Fil d'Ariane */}
+          <div className={styles.breadcrumbContainer}>
+            <div className={styles.breadcrumbContent}>
+              <Link href="/" className={styles.breadcrumbLink}>
+                Accueil
+              </Link>
+              <span className={styles.breadcrumbSeparator}>/</span>
+              <Link href="/store" className={styles.breadcrumbLink}>
+                Boutique
+              </Link>
+              <span className={styles.breadcrumbSeparator}>/</span>
+              <span className={styles.breadcrumbCurrent}>{product.title}</span>
+            </div>
+          </div>
 
           {/* Section produit */}
           <section className={styles.productLayout}>
