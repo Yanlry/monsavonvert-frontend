@@ -741,7 +741,7 @@
   padding: 0 var(--spacing-lg);
 }
 
-sectionTitle {
+.sectionTitle {
   font-size: 32px;
   background: var(--color-gradient-dark);
   -webkit-background-clip: text;
