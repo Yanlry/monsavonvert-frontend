@@ -2249,6 +2249,7 @@
   
   /* Breadcrumb mobile */
   .breadcrumbContainer {
+    margin-top: 1rem;
     padding: 60px 0 16px !important;
   }
   
