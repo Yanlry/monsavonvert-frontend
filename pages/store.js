@@ -650,120 +650,130 @@ export default function Boutique() {
                   const { averageRating, totalReviews } =
                     getProductRatingInfo(product);
 
-                  return (
-                    <div
-                      key={product._id}
-                      className={styles.enhancedProductCard}
-                    >
-                      {isNew && (
-                        <div className={styles.productBadge}>Nouveau</div>
-                      )}
-                      <Link
-                        href={`/produit/${product._id}`}
-                        className={styles.productImageContainer}
+                    return (
+                      <div
+                        key={product._id}
+                        className={styles.enhancedProductCard}
                       >
-                        <img
-                          src={
-                            product.images && product.images.length > 0
-                              ? product.images[0]
-                              : "/images/default-product.png"
-                          }
-                          alt={product.title}
-                          className={styles.productImage}
-                        />
-                        <div className={styles.productOverlay}>
-                          <button
-                            className={styles.quickViewButton}
-                            aria-label="Aperçu rapide"
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="20"
-                              height="20"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                              <circle cx="12" cy="12" r="3"></circle>
-                            </svg>
-                          </button>
-                        </div>
-                      </Link>
-                      <div className={styles.productInfo}>
-                        <h3 className={styles.productName}>{product.title}</h3>
-
-                        {/* MODIFICATION MAJEURE : Affichage des étoiles avec moyenne réelle */}
-                        <div className={styles.productRating}>
-                          {/* Affichage des étoiles basé sur la moyenne calculée */}
-                          {renderStars(averageRating, false)}
-                          <div className={styles.reviewCount}>
-                            ({totalReviews} avis)
+                        <Link
+                          href={`/produit/${product._id}`}
+                          className={styles.productCardLink}
+                        >
+                          {isNew && (
+                            <div className={styles.productBadge}>Nouveau</div>
+                          )}
+                          
+                          <div className={styles.productImageContainer}>
+                            <img
+                              src={
+                                product.images && product.images.length > 0
+                                  ? product.images[0]
+                                  : "/images/default-product.png"
+                              }
+                              alt={product.title}
+                              className={styles.productImage}
+                            />
+                            <div className={styles.productOverlay}>
+                              <button
+                                className={styles.quickViewButton}
+                                aria-label="Aperçu rapide"
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="20"
+                                  height="20"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                  <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                              </button>
+                            </div>
                           </div>
-                        </div>
-
-                        <div className={styles.productPrice}>
-                          {product.price
-                            ? `${product.price.toFixed(2)} €`
-                            : "Prix indisponible"}
-                        </div>
-                        <p className={styles.productDescription}>
-                          {(
-                            product.description ||
-                            "Aucune description disponible"
-                          ).length > 180
-                            ? (
+                          
+                          <div className={styles.productInfo}>
+                            <h3 className={styles.productName}>{product.title}</h3>
+                    
+                            <div className={styles.productRating}>
+                              {renderStars(averageRating, false)}
+                              <div className={styles.reviewCount}>
+                                ({totalReviews} avis)
+                              </div>
+                            </div>
+                    
+                            <div className={styles.productPrice}>
+                              {product.price
+                                ? `${product.price.toFixed(2)} €`
+                                : "Prix indisponible"}
+                            </div>
+                            
+                            <p className={styles.productDescription}>
+                              {(
                                 product.description ||
                                 "Aucune description disponible"
-                              ).substring(0, 180) + "..."
-                            : product.description ||
-                              "Aucune description disponible"}
-                        </p>
-
-                        <div className={styles.productActions}>
-                          <button
-                            className={styles.addToCartButtonLarge}
-                            onClick={() => addToCart(product)}
-                            disabled={product.stock <= 0}
-                          >
-                            {product.stock > 0
-                              ? "Ajouter au panier"
-                              : "Rupture de stock"}
-                          </button>
-
-                          {/* ⭐ NOUVEAU : Bouton Acheter maintenant */}
-                          <button
-                            className={styles.buyNowButtonLarge}
-                            onClick={() => buyNow(product)}
-                            disabled={product.stock <= 0}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="18"
-                              height="18"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <rect x="1" y="3" width="15" height="13"></rect>
-                              <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
-                              <circle cx="5.5" cy="18.5" r="2.5"></circle>
-                              <circle cx="18.5" cy="18.5" r="2.5"></circle>
-                            </svg>
-                            {product.stock > 0
-                              ? "Acheter maintenant"
-                              : "Rupture de stock"}
-                          </button>
-                        </div>
+                              ).length > 180
+                                ? (
+                                    product.description ||
+                                    "Aucune description disponible"
+                                  ).substring(0, 180) + "..."
+                                : product.description ||
+                                  "Aucune description disponible"}
+                            </p>
+                    
+                            <div className={styles.productActions}>
+                              <button
+                                className={styles.addToCartButtonLarge}
+                                onClick={(e) => {
+                                  e.preventDefault(); // Empêche la navigation
+                                  e.stopPropagation(); // Empêche la propagation du clic
+                                  addToCart(product);
+                                }}
+                                disabled={product.stock <= 0}
+                              >
+                                {product.stock > 0
+                                  ? "Ajouter au panier"
+                                  : "Rupture de stock"}
+                              </button>
+                    
+                              <button
+                                className={styles.buyNowButtonLarge}
+                                onClick={(e) => {
+                                  e.preventDefault(); // Empêche la navigation
+                                  e.stopPropagation(); // Empêche la propagation du clic
+                                  buyNow(product);
+                                }}
+                                disabled={product.stock <= 0}
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="18"
+                                  height="18"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <rect x="1" y="3" width="15" height="13"></rect>
+                                  <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                                  <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                                  <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                                </svg>
+                                {product.stock > 0
+                                  ? "Acheter maintenant"
+                                  : "Rupture de stock"}
+                              </button>
+                            </div>
+                          </div>
+                        </Link>
                       </div>
-                    </div>
-                  );
+                    );
                 })}
               </div>
 

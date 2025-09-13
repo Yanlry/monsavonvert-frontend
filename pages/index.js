@@ -319,7 +319,7 @@ export default function Home() {
           {/* Méta tags Open Graph */}
           <meta
             property="og:title"
-            content="MonSavonVert | Savonnerie Artisanale Bio"
+            content="MonSavonVert | Savonnerie Artisanale"
           />
           <meta
             property="og:description"
@@ -363,7 +363,7 @@ export default function Home() {
 
         <meta
           property="og:title"
-          content="MonSavonVert | Savonnerie Artisanale Bio"
+          content="MonSavonVert | Savonnerie Artisanale"
         />
         <meta
           property="og:description"

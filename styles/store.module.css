@@ -2131,6 +2131,30 @@
   z-index: 1;
 }
 
+/* Lien produit invisible qui ne modifie pas le style */
+.productCardLink {
+  text-decoration: none !important;
+  color: inherit !important;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.productCardLink:hover {
+  text-decoration: none !important;
+  color: inherit !important;
+}
+
+.productCardLink:visited {
+  color: inherit !important;
+}
+
+.productCardLink:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+
 /* footer moderne */
 .footer {
   background: linear-gradient(180deg, #263238 0%, #1a2327 100%);
@@ -2672,6 +2696,9 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--spacing-lg);
+  }
+  .productCardLink {
+    display: contents; /* Permet aux éléments enfants de participer à la grille */
   }
   
   .enhancedProductCard {
