@@ -757,7 +757,7 @@
 }
 
 .benefitCard {
-
+  background: linear-gradient(135deg, var(--color-background-light) 0%, var(--color-background) 100%);
   padding: var(--spacing-lg); /* Réduit de xl à lg pour moins de hauteur */
   border-radius: var(--radius-xl);
   text-align: center;
@@ -2669,6 +2669,12 @@
   .benefitsSection {
     gap: var(--spacing-md);
     padding-bottom: var(--spacing-sm);
+    /* CORRECTION : Même background transparent */
+    background: transparent;
+    padding-left: var(--spacing-sm);
+    padding-right: var(--spacing-sm);
+    margin-left: calc(-1 * var(--spacing-sm));
+    margin-right: calc(-1 * var(--spacing-sm));
   }
   
   .benefitCard {
@@ -2676,6 +2682,8 @@
     flex: 0 0 auto;
     padding: var(--spacing-md);
     text-align: center;
+    /* CORRECTION : Background encore plus transparent sur très petit écran */
+    background: rgba(255, 255, 255, 0.7);
   }
   
   .benefitIcon {
