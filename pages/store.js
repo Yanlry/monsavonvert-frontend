@@ -8,6 +8,113 @@ import Header from "../components/Header";
 import Footer from "../components/Footer"; // NOUVEAU: Import du composant Footer
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
+// Composant accordéon pour mobile - À ajouter AVANT export default function Boutique()
+function BenefitsMobileAccordion() {
+  const [activeItem, setActiveItem] = useState(null);
+
+  const benefits = [
+    {
+      id: 1,
+      icon: (
+        <svg
+          viewBox="0 0 24 24"
+          width="18"
+          height="18"
+          stroke="currentColor"
+          strokeWidth="2"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+        </svg>
+      ),
+      title: "Origine Syrienne Garantie",
+      description: "Fabriqué artisanalement en Syrie, berceau de cette tradition millénaire."
+    },
+    {
+      id: 2,
+      icon: (
+        <svg
+          viewBox="0 0 24 24"
+          width="18"
+          height="18"
+          stroke="currentColor"
+          strokeWidth="2"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+          <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+        </svg>
+      ),
+      title: "Pureté Naturelle",
+      description: "Exclusivement huile d'olive et huile de baies de laurier, sans compromis."
+    },
+    {
+      id: 3,
+      icon: (
+        <svg
+          viewBox="0 0 24 24"
+          width="18"
+          height="18"
+          stroke="currentColor"
+          strokeWidth="2"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          <path d="M9 12l2 2 4-4" />
+        </svg>
+      ),
+      title: "Efficacité Reconnue",
+      description: "Utilisé depuis l'Antiquité, parfait pour les peaux sensibles et exigeantes."
+    }
+  ];
+
+  const toggleItem = (itemId) => {
+    setActiveItem(activeItem === itemId ? null : itemId);
+  };
+
+  return (
+    <div className={styles.benefitsMobile}>
+      {benefits.map((benefit) => (
+        <div key={benefit.id} className={styles.accordionItem}>
+          <div 
+            className={styles.accordionHeader}
+            onClick={() => toggleItem(benefit.id)}
+          >
+            <div className={styles.accordionHeaderLeft}>
+              <div className={styles.benefitIconMobile}>
+                {benefit.icon}
+              </div>
+              <h3>{benefit.title}</h3>
+            </div>
+            <div className={`${styles.accordionArrow} ${activeItem === benefit.id ? styles.accordionArrowOpen : ''}`}>
+              <svg 
+                width="16" 
+                height="16" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+          </div>
+          
+          <div className={`${styles.accordionContent} ${activeItem === benefit.id ? styles.accordionContentOpen : ''}`}>
+            <p>{benefit.description}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function Boutique() {
   // État pour détecter si nous sommes côté client
   const [isClient, setIsClient] = useState(false);
@@ -589,73 +696,8 @@ export default function Boutique() {
       </div>
     </div>
 
-    {/* Version Mobile - Liste verticale */}
-    <div className={styles.benefitsMobile}>
-      <div className={styles.benefitItem}>
-        <div className={styles.benefitIconMobile}>
-          <svg
-            viewBox="0 0 24 24"
-            width="20"
-            height="20"
-            stroke="currentColor"
-            strokeWidth="2"
-            fill="none"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-          </svg>
-        </div>
-        <div className={styles.benefitContent}>
-          <h3>Origine Syrienne Garantie</h3>
-          <p>Fabriqué artisanalement en Syrie, berceau de cette tradition millénaire.</p>
-        </div>
-      </div>
-
-      <div className={styles.benefitItem}>
-        <div className={styles.benefitIconMobile}>
-          <svg
-            viewBox="0 0 24 24"
-            width="20"
-            height="20"
-            stroke="currentColor"
-            strokeWidth="2"
-            fill="none"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
-            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
-          </svg>
-        </div>
-        <div className={styles.benefitContent}>
-          <h3>Pureté Naturelle</h3>
-          <p>Exclusivement huile d'olive et huile de baies de laurier, sans compromis.</p>
-        </div>
-      </div>
-
-      <div className={styles.benefitItem}>
-        <div className={styles.benefitIconMobile}>
-          <svg
-            viewBox="0 0 24 24"
-            width="20"
-            height="20"
-            stroke="currentColor"
-            strokeWidth="2"
-            fill="none"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-            <path d="M9 12l2 2 4-4" />
-          </svg>
-        </div>
-        <div className={styles.benefitContent}>
-          <h3>Efficacité Reconnue</h3>
-          <p>Utilisé depuis l'Antiquité, parfait pour les peaux sensibles et exigeantes.</p>
-        </div>
-      </div>
-    </div>
+    {/* Version Mobile - Accordéon compact */}
+    <BenefitsMobileAccordion />
   </div>
 )}
 

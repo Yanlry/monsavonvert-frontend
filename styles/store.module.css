@@ -868,60 +868,91 @@
   margin: 0;
 }
 
-/* Version Mobile - Liste verticale (masquée par défaut) */
+/* Version Mobile - Accordéon compact (masquée par défaut) */
 .benefitsMobile {
   display: none;
 }
 
-.benefitItem {
-  display: flex;
-  align-items: flex-start;
-  padding: var(--spacing-lg);
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: var(--radius-lg);
-  margin-bottom: var(--spacing-md);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border-left: 4px solid var(--color-primary);
-  transition: all var(--transition-normal);
+.accordionItem {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-xs);
+  border: 1px solid rgba(46, 125, 50, 0.1);
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
-.benefitItem:hover {
-  transform: translateX(8px);
-  box-shadow: 0 8px 30px rgba(46, 125, 50, 0.15);
+.accordionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  user-select: none;
+}
+
+.accordionHeader:hover {
+  background: rgba(46, 125, 50, 0.02);
+}
+
+.accordionHeaderLeft {
+  display: flex;
+  align-items: center;
+  flex: 1;
 }
 
 .benefitIconMobile {
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   background: var(--color-gradient-primary);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  margin-right: var(--spacing-md);
+  margin-right: var(--spacing-sm);
   flex-shrink: 0;
-  box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+  box-shadow: 0 2px 8px rgba(46, 125, 50, 0.25);
 }
 
-.benefitContent {
-  flex: 1;
-}
-
-.benefitContent h3 {
-  font-size: 16px;
+.accordionHeaderLeft h3 {
+  font-size: 15px;
   font-weight: 600;
   color: var(--color-text);
-  margin-bottom: var(--spacing-xs);
+  margin: 0;
   font-family: var(--font-serif);
 }
 
-.benefitContent p {
-  font-size: 14px;
+.accordionArrow {
   color: var(--color-text-light);
-  line-height: 1.6;
+  transition: transform var(--transition-normal);
+  flex-shrink: 0;
+}
+
+.accordionArrowOpen {
+  transform: rotate(180deg);
+}
+
+.accordionContent {
+  max-height: 0;
+  overflow: hidden;
+  transition: all var(--transition-normal);
+  background: rgba(46, 125, 50, 0.02);
+}
+
+.accordionContentOpen {
+  max-height: 100px;
+  padding: var(--spacing-sm) var(--spacing-md) var(--spacing-md);
+}
+
+.accordionContent p {
+  font-size: 13px;
+  color: var(--color-text-light);
+  line-height: 1.5;
   margin: 0;
 }
+
 
 /* Grille de produits ultra-moderne */
 .enhancedProductGrid {
@@ -2483,6 +2514,8 @@
   }
 }
 
+/* ===== RESPONSIVE DESIGN COMPLET ===== */
+
 @media (max-width: 1024px) {
   .headerContent,
   .mainContent {
@@ -2502,6 +2535,7 @@
     font-size: 28px;
   }
   
+  /* NOUVEAU: Passer en mode 2 colonnes pour les benefits desktop */
   .benefitsDesktop {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -2514,7 +2548,7 @@
 
 @media (max-width: 900px) {
   .mainContent {
-    padding-top: 60px; /* Ajusté pour mobile */
+    padding-top: 60px;
   }
   
   .storeTitle {
@@ -2534,7 +2568,7 @@
 
 @media (max-width: 768px) {
   .mainContent {
-    padding-top: 40px; /* Encore plus compact sur mobile */
+    padding-top: 40px;
     padding-left: var(--spacing-md);
     padding-right: var(--spacing-md);
   }
@@ -2568,32 +2602,15 @@
     font-size: 26px;
   }
   
+  /* ===== NOUVEAU: ACCORDÉON MOBILE ACTIVÉ ===== */
+  /* Cache la version desktop */
   .benefitsDesktop {
     display: none;
   }
   
-  /* Affiche la version mobile */
+  /* Affiche la version mobile accordéon */
   .benefitsMobile {
     display: block;
-  }
-  
-  .benefitItem {
-    padding: var(--spacing-md);
-    margin-bottom: var(--spacing-sm);
-  }
-  
-  .benefitIconMobile {
-    width: 36px;
-    height: 36px;
-    margin-right: var(--spacing-sm);
-  }
-  
-  .benefitContent h3 {
-    font-size: 15px;
-  }
-  
-  .benefitContent p {
-    font-size: 13px;
   }
   
   .enhancedProductCard {
@@ -2684,7 +2701,7 @@
 
 @media (max-width: 576px) {
   .mainContent {
-    padding-top: 30px; /* Très compact pour les petits écrans */
+    padding-top: 30px;
     padding-left: var(--spacing-sm);
     padding-right: var(--spacing-sm);
   }
@@ -2717,31 +2734,33 @@
     font-size: 22px;
   }
   
-  .benefitItem {
+  /* ===== ACCORDÉON MOBILE AJUSTÉ POUR TRÈS PETITS ÉCRANS ===== */
+  .accordionHeader {
     padding: var(--spacing-sm) var(--spacing-md);
   }
   
   .benefitIconMobile {
-    width: 32px;
-    height: 32px;
+    width: 26px;
+    height: 26px;
   }
   
-  .benefitContent h3 {
+  .accordionHeaderLeft h3 {
     font-size: 14px;
   }
   
-  .benefitContent p {
+  .accordionContent p {
     font-size: 12px;
-    line-height: 1.5;
   }
   
+  /* ===== GRILLE PRODUITS MOBILE ===== */
   .enhancedProductGrid {
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--spacing-lg);
   }
+  
   .productCardLink {
-    display: contents; /* Permet aux éléments enfants de participer à la grille */
+    display: contents;
   }
   
   .enhancedProductCard {
@@ -2881,7 +2900,7 @@
   }
 }
 
-/* Bouton retour en haut */
+/* ===== BOUTON RETOUR EN HAUT ===== */
 .scrollToTop {
   position: fixed;
   bottom: 20px;
@@ -2913,7 +2932,7 @@
   box-shadow: 0 12px 35px rgba(46, 125, 50, 0.4);
 }
 
-/* Indicateurs de défilement pour mobile */
+/* ===== INDICATEURS DE DÉFILEMENT POUR MOBILE ===== */
 .scroll-indicator {
   display: none;
 }
