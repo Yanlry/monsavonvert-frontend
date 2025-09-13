@@ -757,7 +757,7 @@
 }
 
 .benefitCard {
-  background: linear-gradient(135deg, var(--color-background-light) 0%, var(--color-background) 100%);
+
   padding: var(--spacing-lg); /* Réduit de xl à lg pour moins de hauteur */
   border-radius: var(--radius-xl);
   text-align: center;
