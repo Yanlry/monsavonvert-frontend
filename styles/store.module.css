@@ -745,20 +745,24 @@
   line-height: 1.6;
 }
 
-/* Section des avantages moderne - VERSION COMPACTE */
+/* Section des avantages - Version adaptative Desktop/Mobile */
 .benefitsSection {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-lg); /* Réduit de 2xl à lg pour moins d'espacement */
-  margin-bottom: var(--spacing-xl); /* Réduit de 2xl à xl */
+  margin-bottom: var(--spacing-xl);
   animation: fadeInUp 0.8s forwards;
   animation-delay: 0.6s;
   opacity: 0;
 }
 
+/* Version Desktop - Grille de cartes */
+.benefitsDesktop {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-lg);
+}
+
 .benefitCard {
   background: linear-gradient(135deg, var(--color-background-light) 0%, var(--color-background) 100%);
-  padding: var(--spacing-lg); /* Réduit de xl à lg pour moins de hauteur */
+  padding: var(--spacing-lg);
   border-radius: var(--radius-xl);
   text-align: center;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
@@ -809,14 +813,14 @@
 }
 
 .benefitIcon {
-  width: 48px; /* Réduit de 64px à 48px pour prendre moins de place */
-  height: 48px; /* Réduit de 64px à 48px */
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background: var(--color-gradient-accent);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto var(--spacing-md); /* Réduit de lg à md pour moins d'espacement */
+  margin: 0 auto var(--spacing-md);
   color: white;
   box-shadow: 0 8px 25px rgba(46, 125, 50, 0.25);
   transition: all var(--transition-normal);
@@ -843,13 +847,13 @@
 }
 
 .benefitCard h3 {
-  font-size: 18px; /* Réduit de 20px à 18px */
+  font-size: 18px;
   font-weight: 600;
   background: var(--color-gradient-dark);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin-bottom: var(--spacing-sm); /* Réduit de md à sm pour moins d'espacement */
+  margin-bottom: var(--spacing-sm);
   font-family: var(--font-serif);
   position: relative;
   z-index: 1;
@@ -857,11 +861,66 @@
 
 .benefitCard p {
   color: var(--color-text-light);
-  font-size: 14px; /* Réduit de 15px à 14px */
-  line-height: 1.5; /* Réduit de 1.7 à 1.5 pour moins d'espacement entre les lignes */
+  font-size: 14px;
+  line-height: 1.5;
   position: relative;
   z-index: 1;
-  margin: 0; /* Assure qu'il n'y a pas de marge supplémentaire */
+  margin: 0;
+}
+
+/* Version Mobile - Liste verticale (masquée par défaut) */
+.benefitsMobile {
+  display: none;
+}
+
+.benefitItem {
+  display: flex;
+  align-items: flex-start;
+  padding: var(--spacing-lg);
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-md);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border-left: 4px solid var(--color-primary);
+  transition: all var(--transition-normal);
+}
+
+.benefitItem:hover {
+  transform: translateX(8px);
+  box-shadow: 0 8px 30px rgba(46, 125, 50, 0.15);
+}
+
+.benefitIconMobile {
+  width: 40px;
+  height: 40px;
+  background: var(--color-gradient-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  margin-right: var(--spacing-md);
+  flex-shrink: 0;
+  box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+}
+
+.benefitContent {
+  flex: 1;
+}
+
+.benefitContent h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-xs);
+  font-family: var(--font-serif);
+}
+
+.benefitContent p {
+  font-size: 14px;
+  color: var(--color-text-light);
+  line-height: 1.6;
+  margin: 0;
 }
 
 /* Grille de produits ultra-moderne */
@@ -2443,9 +2502,8 @@
     font-size: 28px;
   }
   
-  .benefitsSection {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-xl);
+  .benefitsDesktop {
+    grid-template-columns: repeat(2, 1fr);
   }
   
   .testimonialCards {
@@ -2510,39 +2568,32 @@
     font-size: 26px;
   }
   
-  .benefitsSection {
-    display: flex;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    gap: var(--spacing-lg);
-    padding-bottom: var(--spacing-sm);
-    scrollbar-width: none;
-  }
-  
-  .benefitsSection::-webkit-scrollbar {
+  .benefitsDesktop {
     display: none;
   }
   
-  .benefitCard {
-    flex: 0 0 auto;
-    width: 180px;
-    min-width: 160px;
-    padding: var(--spacing-lg);
+  /* Affiche la version mobile */
+  .benefitsMobile {
+    display: block;
   }
   
-  .benefitCard h3 {
-    font-size: 16px;
+  .benefitItem {
+    padding: var(--spacing-md);
     margin-bottom: var(--spacing-sm);
   }
   
-  .benefitCard p {
-    display: none;
+  .benefitIconMobile {
+    width: 36px;
+    height: 36px;
+    margin-right: var(--spacing-sm);
   }
   
-  .benefitIcon {
-    width: 48px;
-    height: 48px;
-    margin-bottom: var(--spacing-sm);
+  .benefitContent h3 {
+    font-size: 15px;
+  }
+  
+  .benefitContent p {
+    font-size: 13px;
   }
   
   .enhancedProductCard {
@@ -2666,38 +2717,22 @@
     font-size: 22px;
   }
   
-  .benefitsSection {
-    gap: var(--spacing-md);
-    padding-bottom: var(--spacing-sm);
-    /* CORRECTION : Même background transparent */
-    background: transparent;
-    padding-left: var(--spacing-sm);
-    padding-right: var(--spacing-sm);
-    margin-left: calc(-1 * var(--spacing-sm));
-    margin-right: calc(-1 * var(--spacing-sm));
+  .benefitItem {
+    padding: var(--spacing-sm) var(--spacing-md);
   }
   
-  .benefitCard {
-    min-width: 140px;
-    flex: 0 0 auto;
-    padding: var(--spacing-md);
-    text-align: center;
-    /* CORRECTION : Background encore plus transparent sur très petit écran */
-    background: rgba(255, 255, 255, 0.7);
+  .benefitIconMobile {
+    width: 32px;
+    height: 32px;
   }
   
-  .benefitIcon {
-    width: 36px;
-    height: 36px;
-    margin-bottom: var(--spacing-xs);
+  .benefitContent h3 {
+    font-size: 14px;
   }
   
-  .benefitCard h3 {
+  .benefitContent p {
     font-size: 12px;
-    margin-bottom: var(--spacing-xs);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1.5;
   }
   
   .enhancedProductGrid {
