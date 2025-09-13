@@ -1831,7 +1831,10 @@
   transform: translateY(0);
 }
 
-/* Responsive Design amélioré */
+/* COPIEZ-COLLEZ CE CODE COMPLET dans votre section responsive de la page virtues */
+/* Remplacez tout votre code responsive existant par cette version corrigée */
+
+/* Responsive Design amélioré avec traits de soulignement toujours centrés */
 @media (max-width: 1024px) {
   .pageTitle {
     font-size: 36px;
@@ -1839,6 +1842,18 @@
   
   .sectionTitle {
     font-size: 28px;
+    /* AJOUT : Centrage du texte */
+    text-align: center;
+  }
+  
+  /* AJOUT : Trait de soulignement adapté pour tablettes */
+  .sectionTitle::after {
+    width: 60px;      /* Taille adaptée pour tablette */
+    height: 3px;      /* Légèrement plus fin */
+    bottom: 6px;      /* Position depuis le bas */
+    left: 0;          /* Départ à gauche */
+    right: 0;         /* Fin à droite */
+    margin: 0 auto;   /* CENTRAGE AUTOMATIQUE */
   }
   
   .ctaContent h2 {
@@ -1903,6 +1918,20 @@
   
   .sectionTitle {
     font-size: 26px;
+    /* AJOUT : Centrage forcé sur mobile */
+    text-align: center;
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+  }
+  
+  /* AJOUT : Trait de soulignement adapté pour mobile */
+  .sectionTitle::after {
+    width: 50px;      /* Taille mobile */
+    height: 3px;      /* Épaisseur mobile */
+    bottom: 5px;      /* Plus proche du texte */
+    left: 0;          /* Départ à gauche */
+    right: 0;         /* Fin à droite */
+    margin: 0 auto;   /* CENTRAGE AUTOMATIQUE */
   }
   
   .introBadges {
@@ -1954,6 +1983,21 @@
   
   .sectionTitle {
     font-size: 22px;
+    /* AJOUT : Centrage forcé sur petit mobile */
+    text-align: center;
+    padding-left: var(--spacing-lg);
+    padding-right: var(--spacing-lg);
+    word-wrap: break-word; /* Évite le débordement du texte */
+  }
+  
+  /* AJOUT : Trait de soulignement adapté pour petit mobile */
+  .sectionTitle::after {
+    width: 40px;      /* Plus petit pour très petits écrans */
+    height: 2px;      /* Plus fin */
+    bottom: 4px;      /* Plus proche */
+    left: 0;          /* Départ à gauche */
+    right: 0;         /* Fin à droite */
+    margin: 0 auto;   /* CENTRAGE AUTOMATIQUE GARANTI */
   }
   
   .navLink {

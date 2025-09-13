@@ -1610,11 +1610,19 @@
   100% { transform: scale(1) rotate(0deg); }
 }
 
-/* Responsive Design amélioré */
+/* COPIEZ-COLLEZ CE CODE COMPLET dans votre section responsive */
+/* Remplacez tout votre code responsive par cette version corrigée */
+
+/* Responsive Design amélioré avec traits de soulignement toujours centrés */
 @media (max-width: 1200px) {
   .craftContent {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-xl);
+  }
+  
+  /* CORRECTION : S'assurer que les titres restent centrés */
+  .sectionTitle::after {
+    width: 70px; /* Légèrement plus petit pour les écrans moyens */
   }
 }
 
@@ -1625,6 +1633,15 @@
   
   .sectionTitle {
     font-size: 28px;
+    /* CORRECTION : Maintenir le centrage parfait */
+    text-align: center;
+  }
+  
+  /* CORRECTION : Ajuster la taille du trait pour les tablettes */
+  .sectionTitle::after {
+    width: 60px;
+    height: 3px;
+    bottom: 6px;
   }
   
   .ctaTitle {
@@ -1681,6 +1698,20 @@
   
   .sectionTitle {
     font-size: 26px;
+    /* CORRECTION : Maintenir le centrage sur mobile */
+    text-align: center;
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+  }
+  
+  /* CORRECTION : Trait adapté pour mobile */
+  .sectionTitle::after {
+    width: 50px;      /* Plus petit pour mobile */
+    height: 3px;      /* Légèrement plus fin */
+    bottom: 5px;      /* Plus proche du texte */
+    left: 0;          /* Toujours à gauche */
+    right: 0;         /* Toujours à droite */
+    margin: 0 auto;   /* CENTRAGE AUTOMATIQUE */
   }
   
   .craftContent {
@@ -1757,6 +1788,21 @@
   
   .sectionTitle {
     font-size: 22px;
+    /* CORRECTION : Centrage forcé sur petits mobiles */
+    text-align: center;
+    padding-left: var(--spacing-lg);
+    padding-right: var(--spacing-lg);
+    word-wrap: break-word; /* Évite le débordement */
+  }
+  
+  /* CORRECTION : Trait encore plus petit pour très petits écrans */
+  .sectionTitle::after {
+    width: 40px;      /* Plus petit pour très petits écrans */
+    height: 2px;      /* Plus fin */
+    bottom: 4px;      /* Plus proche */
+    left: 0;          /* Départ à gauche */
+    right: 0;         /* Fin à droite */
+    margin: 0 auto;   /* CENTRAGE AUTOMATIQUE GARANTI */
   }
   
   .navLink {
