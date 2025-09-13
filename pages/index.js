@@ -117,7 +117,7 @@ export default function Home() {
         "Tradition et savoir-faire syrien pour des produits authentiques et de qualité",
     },
     {
-      image: "/images/12.JPEG",
+      image: "/images/17.JPEG",
       title: "Prendre soin de votre peau et de la planète",
       subtitle:
         "Des formules douces et respectueuses pour un bien-être quotidien",
