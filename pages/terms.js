@@ -6,9 +6,9 @@ import React from 'react';
 const TermsPage = () => {
 
   // Informations de l'entreprise - MODIFIEZ CES INFORMATIONS AVEC VOS VRAIES DONNÉES
-   // Informations de l'entreprise - MODIFIEZ CES INFORMATIONS AVEC VOS VRAIES DONNÉES
-   const companyInfo = {
-    name: "Mon savon vert", // ⚠️ CHANGEZ PAR VOTRE NOM D'ENTREPRISE
+  const companyInfo = {
+    name: "MON SAVON VERT", // ⚠️ CHANGEZ PAR VOTRE NOM D'ENTREPRISE
+    address: "35 rue de l'égalité, 59320 Haubourdin, Nord, France", // ⚠️ CHANGEZ PAR VOTRE ADRESSE
     email: "contact@monsavonvert.com", // ⚠️ CHANGEZ PAR VOTRE EMAIL
     phone: "06 58 00 27 07" // ⚠️ CHANGEZ PAR VOTRE TÉLÉPHONE
   };
@@ -76,25 +76,22 @@ const TermsPage = () => {
     }
   };
 
-  // 🆕 NOUVELLE FONCTION - Bouton retour vers la page précédente
+  // Fonction - Bouton retour vers la page précédente
   const handleGoBack = () => {
     console.log('↩️ Retour à la page précédente');
-    // Cette ligne fait revenir à la page précédente dans l'historique du navigateur
     window.history.back();
   };
 
   return (
-    <div className="luxury-terms-container">
-      {/* 🆕 NOUVEAU - Bouton retour élégant */}
-      <div className="back-button-container">
+    <div className="page-wrapper">
+      {/* En-tête élégant avec bouton retour intégré - PLEINE LARGEUR */}
+      <header className="luxury-header">
+        {/* Bouton retour intégré dans l'en-tête */}
         <button onClick={handleGoBack} className="luxury-back-button">
           <span className="back-arrow">←</span>
           <span className="back-text">Retour</span>
         </button>
-      </div>
-
-      {/* En-tête élégant et minimaliste */}
-      <header className="luxury-header">
+        
         <div className="header-content">
           <h1 className="luxury-title">
             Conditions Générales de Vente
@@ -106,7 +103,7 @@ const TermsPage = () => {
         </div>
       </header>
 
-      {/* Informations société dans un encadré distingué */}
+      {/* Informations société dans un encadré distingué - PLEINE LARGEUR */}
       <section className="company-section">
         <div className="company-content">
           <h2 className="company-name">{companyInfo.name}</h2>
@@ -125,69 +122,73 @@ const TermsPage = () => {
         </div>
       </section>
 
-      {/* Sommaire élégant */}
-      <nav className="luxury-nav">
-        <h3 className="nav-title">Sommaire</h3>
-        <div className="nav-grid">
+      {/* Contenu principal dans un conteneur limité */}
+      <div className="luxury-terms-container">
+        {/* Sommaire élégant */}
+        <nav className="luxury-nav">
+          <h3 className="nav-title">Sommaire</h3>
+          <div className="nav-grid">
+            {termsections.map((section, index) => (
+              <button 
+                key={section.id}
+                onClick={() => scrollToSection(section.id)}
+                className="nav-item"
+              >
+                <span className="nav-number">{String(index + 1).padStart(2, '0')}</span>
+                <span className="nav-text">{section.title}</span>
+              </button>
+            ))}
+          </div>
+        </nav>
+
+        {/* Contenu principal avec design épuré */}
+        <main className="luxury-content">
           {termsections.map((section, index) => (
-            <button 
-              key={section.id}
-              onClick={() => scrollToSection(section.id)}
-              className="nav-item"
-            >
-              <span className="nav-number">{String(index + 1).padStart(2, '0')}</span>
-              <span className="nav-text">{section.title}</span>
-            </button>
+            <article key={section.id} id={section.id} className="luxury-section">
+              <div className="section-header">
+                <span className="section-number">{String(index + 1).padStart(2, '0')}</span>
+                <h3 className="section-title">{section.title}</h3>
+              </div>
+              <div className="section-body">
+                <p className="section-text">{section.content}</p>
+              </div>
+            </article>
           ))}
-        </div>
-      </nav>
+        </main>
 
-      {/* Contenu principal avec design épuré */}
-      <main className="luxury-content">
-        {termsections.map((section, index) => (
-          <article key={section.id} id={section.id} className="luxury-section">
-            <div className="section-header">
-              <span className="section-number">{String(index + 1).padStart(2, '0')}</span>
-              <h3 className="section-title">{section.title}</h3>
-            </div>
-            <div className="section-body">
-              <p className="section-text">{section.content}</p>
-            </div>
-          </article>
-        ))}
-      </main>
+        {/* Pied de page sobre et professionnel */}
+        <footer className="luxury-footer">
+          <div className="footer-content">
+            <div className="footer-divider"></div>
+            <p className="footer-date">
+              <strong>Dernière mise à jour :</strong> {new Date().toLocaleDateString('fr-FR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}
+            </p>
+            <p className="footer-contact">
+              Pour toute question concernant ces conditions générales de vente, 
+              nous vous invitons à nous contacter à l'adresse : 
+              <a href={`mailto:${companyInfo.email}`} className="footer-link">
+                {companyInfo.email}
+              </a>
+            </p>
+          </div>
+        </footer>
+      </div>
 
-      {/* Pied de page sobre et professionnel */}
-      <footer className="luxury-footer">
-        <div className="footer-content">
-          <div className="footer-divider"></div>
-          <p className="footer-date">
-            <strong>Dernière mise à jour :</strong> {new Date().toLocaleDateString('fr-FR', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            })}
-          </p>
-          <p className="footer-contact">
-            Pour toute question concernant ces conditions générales de vente, 
-            nous vous invitons à nous contacter à l'adresse : 
-            <a href={`mailto:${companyInfo.email}`} className="footer-link">
-              {companyInfo.email}
-            </a>
-          </p>
-        </div>
-      </footer>
-
-      {/* Styles CSS ultra-professionnels */}
+      {/* Styles CSS ultra-professionnels AVEC BANNIÈRE PLEINE LARGEUR */}
       <style jsx>{`
         /* Reset et configuration de base */
         * {
           box-sizing: border-box;
         }
 
-        .luxury-terms-container {
-          max-width: 900px;
-          margin: 0 auto;
+        /* NOUVEAU : Wrapper principal pour toute la page */
+        .page-wrapper {
+          width: 100%;
+          margin: 0;
           padding: 0;
           font-family: 'Georgia', 'Times New Roman', serif;
           line-height: 1.8;
@@ -196,35 +197,55 @@ const TermsPage = () => {
           font-size: 16px;
         }
 
-        /* 🆕 NOUVEAU - Styles pour le bouton retour */
-        .back-button-container {
-          padding: 30px 60px 0 60px;
-          background: #FFFFFF;
+        /* MODIFIÉ : Conteneur pour le contenu centré (sauf bannière) */
+        .luxury-terms-container {
+          max-width: 900px;
+          margin: 0 auto;
+          padding: 0;
         }
 
+        /* MODIFIÉ : En-tête en pleine largeur */
+        .luxury-header {
+          width: 100%; /* PLEINE LARGEUR */
+          background: linear-gradient(135deg, #2D4A3A 0%, #1B3B2A 100%);
+          padding: 80px 60px;
+          text-align: center;
+          position: relative;
+          min-height: 300px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+
+        /* Bouton retour repositionné et restyler */
         .luxury-back-button {
+          position: absolute;
+          top: 30px;
+          left: 30px;
           display: flex;
           align-items: center;
           gap: 8px;
-          background: #F5F2E8;
-          border: 2px solid #2D4A3A;
-          color: #1B3B2A;
+          background: rgba(255, 255, 255, 0.15);
+          backdrop-filter: blur(10px);
+          border: 2px solid rgba(245, 242, 232, 0.3);
+          color: #FFFFFF;
           padding: 12px 20px;
           font-family: 'Helvetica Neue', Arial, sans-serif;
-          font-size: 0.95em;
+          font-size: 0.9em;
           font-weight: 500;
           cursor: pointer;
-          border-radius: 6px;
+          border-radius: 25px;
           transition: all 0.3s ease;
           text-transform: uppercase;
           letter-spacing: 0.5px;
+          z-index: 10;
         }
 
         .luxury-back-button:hover {
-          background: #2D4A3A;
-          color: #FFFFFF;
+          background: rgba(245, 242, 232, 0.2);
+          border-color: #F5F2E8;
           transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(29, 59, 42, 0.2);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         .back-arrow {
@@ -238,15 +259,7 @@ const TermsPage = () => {
         }
 
         .back-text {
-          font-size: 0.9em;
-        }
-
-        /* En-tête élégant */
-        .luxury-header {
-          background: linear-gradient(135deg, #2D4A3A 0%, #1B3B2A 100%);
-          padding: 80px 60px;
-          text-align: center;
-          position: relative;
+          font-size: 0.85em;
         }
 
         .header-content {
@@ -280,8 +293,9 @@ const TermsPage = () => {
           opacity: 0.9;
         }
 
-        /* Section entreprise */
+        /* MODIFIÉ : Section entreprise en pleine largeur */
         .company-section {
+          width: 100%; /* PLEINE LARGEUR */
           background: #F5F2E8;
           padding: 50px 60px;
         }
@@ -483,18 +497,22 @@ const TermsPage = () => {
           border-bottom-color: #1B3B2A;
         }
 
-        /* Design responsive */
+        /* Design responsive amélioré */
         @media (max-width: 768px) {
-          .luxury-terms-container {
+          .page-wrapper {
             font-size: 15px;
-          }
-
-          .back-button-container {
-            padding: 20px 30px 0 30px;
           }
           
           .luxury-header {
-            padding: 50px 30px;
+            padding: 60px 30px 50px 30px;
+            min-height: 250px;
+          }
+
+          .luxury-back-button {
+            top: 20px;
+            left: 20px;
+            padding: 10px 16px;
+            font-size: 0.85em;
           }
           
           .luxury-title {
@@ -533,11 +551,18 @@ const TermsPage = () => {
         }
 
         @media (max-width: 480px) {
-          .back-button-container {
-            padding: 15px 20px 0 20px;
+          .luxury-header {
+            padding: 50px 20px 40px 20px;
+            min-height: 220px;
           }
 
-          .luxury-header,
+          .luxury-back-button {
+            top: 15px;
+            left: 15px;
+            padding: 8px 12px;
+            font-size: 0.8em;
+          }
+
           .company-section,
           .luxury-nav,
           .luxury-content,
