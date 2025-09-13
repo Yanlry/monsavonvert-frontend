@@ -640,154 +640,136 @@ export default function Boutique() {
             <>
               {/* Grille de produits */}
               <div className={styles.enhancedProductGrid}>
-  {currentProducts.map((product) => {
-    // Déterminer si c'est un nouveau produit (moins de 30 jours)
-    const isNew =
-      new Date(product.createdAt) >
-      new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+                {currentProducts.map((product) => {
+                  // Déterminer si c'est un nouveau produit (moins de 30 jours)
+                  const isNew =
+                    new Date(product.createdAt) >
+                    new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
-    // NOUVEAU : Calculer les informations de notation pour ce produit
-    const { averageRating, totalReviews } =
-      getProductRatingInfo(product);
+                  // NOUVEAU : Calculer les informations de notation pour ce produit
+                  const { averageRating, totalReviews } =
+                    getProductRatingInfo(product);
 
-    return (
-      <div
-        key={product._id}
-        className={styles.enhancedProductCard}
-      >
-        {/* MODIFICATION : Le Link englobe maintenant TOUTE la carte du produit */}
-        <Link
-          href={`/produit/${product._id}`}
-          className={styles.productCardLink}
-        >
-          {isNew && (
-            <div className={styles.productBadge}>Nouveau</div>
-          )}
-          
-          <div className={styles.productImageContainer}>
-            <img
-              src={
-                product.images && product.images.length > 0
-                  ? product.images[0]
-                  : "/images/default-product.png"
-              }
-              alt={product.title}
-              className={styles.productImage}
-            />
-            <div className={styles.productOverlay}>
-              <button
-                className={styles.quickViewButton}
-                aria-label="Aperçu rapide"
-                onClick={(e) => {
-                  // Empêche le clic sur le bouton d'ouvrir la page produit
-                  e.preventDefault();
-                  e.stopPropagation();
-                  // Ici vous pouvez ajouter la logique pour l'aperçu rapide
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-              </button>
-            </div>
-          </div>
-          
-          <div className={styles.productInfo}>
-            <h3 className={styles.productName}>{product.title}</h3>
+                  return (
+                    <div
+                      key={product._id}
+                      className={styles.enhancedProductCard}
+                    >
+                      {isNew && (
+                        <div className={styles.productBadge}>Nouveau</div>
+                      )}
+                      <Link
+                        href={`/produit/${product._id}`}
+                        className={styles.productImageContainer}
+                      >
+                        <img
+                          src={
+                            product.images && product.images.length > 0
+                              ? product.images[0]
+                              : "/images/default-product.png"
+                          }
+                          alt={product.title}
+                          className={styles.productImage}
+                        />
+                        <div className={styles.productOverlay}>
+                          <button
+                            className={styles.quickViewButton}
+                            aria-label="Aperçu rapide"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="20"
+                              height="20"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                              <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                          </button>
+                        </div>
+                      </Link>
+                      <div className={styles.productInfo}>
+                      <Link
+                        href={`/produit/${product._id}`}
+                      >
+                        <h3 className={styles.productName}>{product.title}</h3>
 
-            {/* MODIFICATION MAJEURE : Affichage des étoiles avec moyenne réelle */}
-            <div className={styles.productRating}>
-              {/* Affichage des étoiles basé sur la moyenne calculée */}
-              {renderStars(averageRating, false)}
-              <div className={styles.reviewCount}>
-                ({totalReviews} avis)
+                        {/* MODIFICATION MAJEURE : Affichage des étoiles avec moyenne réelle */}
+                        <div className={styles.productRating}>
+                          {/* Affichage des étoiles basé sur la moyenne calculée */}
+                          {renderStars(averageRating, false)}
+                          <div className={styles.reviewCount}>
+                            ({totalReviews} avis)
+                          </div>
+                        </div>
+
+                        <div className={styles.productPrice}>
+                          {product.price
+                            ? `${product.price.toFixed(2)} €`
+                            : "Prix indisponible"}
+                        </div>
+                        <p className={styles.productDescription}>
+                          {(
+                            product.description ||
+                            "Aucune description disponible"
+                          ).length > 180
+                            ? (
+                                product.description ||
+                                "Aucune description disponible"
+                              ).substring(0, 180) + "..."
+                            : product.description ||
+                              "Aucune description disponible"}
+                        </p>
+
+                        <div className={styles.productActions}>
+                          <button
+                            className={styles.addToCartButtonLarge}
+                            onClick={() => addToCart(product)}
+                            disabled={product.stock <= 0}
+                          >
+                            {product.stock > 0
+                              ? "Ajouter au panier"
+                              : "Rupture de stock"}
+                          </button>
+
+                          {/* ⭐ NOUVEAU : Bouton Acheter maintenant */}
+                          <button
+                            className={styles.buyNowButtonLarge}
+                            onClick={() => buyNow(product)}
+                            disabled={product.stock <= 0}
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="18"
+                              height="18"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <rect x="1" y="3" width="15" height="13"></rect>
+                              <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                              <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                              <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                            </svg>
+                            {product.stock > 0
+                              ? "Acheter maintenant"
+                              : "Rupture de stock"}
+                          </button>
+                        </div>
+                        </Link>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            </div>
-
-            <div className={styles.productPrice}>
-              {product.price
-                ? `${product.price.toFixed(2)} €`
-                : "Prix indisponible"}
-            </div>
-            <p className={styles.productDescription}>
-              {(
-                product.description ||
-                "Aucune description disponible"
-              ).length > 180
-                ? (
-                    product.description ||
-                    "Aucune description disponible"
-                  ).substring(0, 180) + "..."
-                : product.description ||
-                  "Aucune description disponible"}
-            </p>
-          </div>
-        </Link>
-
-        {/* MODIFICATION : Les boutons sont maintenant HORS du Link pour éviter les conflits */}
-        <div className={styles.productActions}>
-          <button
-            className={styles.addToCartButtonLarge}
-            onClick={(e) => {
-              // Empêche le clic sur le bouton d'ouvrir la page produit
-              e.preventDefault();
-              e.stopPropagation();
-              addToCart(product);
-            }}
-            disabled={product.stock <= 0}
-          >
-            {product.stock > 0
-              ? "Ajouter au panier"
-              : "Rupture de stock"}
-          </button>
-
-          {/* ⭐ NOUVEAU : Bouton Acheter maintenant */}
-          <button
-            className={styles.buyNowButtonLarge}
-            onClick={(e) => {
-              // Empêche le clic sur le bouton d'ouvrir la page produit
-              e.preventDefault();
-              e.stopPropagation();
-              buyNow(product);
-            }}
-            disabled={product.stock <= 0}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <rect x="1" y="3" width="15" height="13"></rect>
-              <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
-              <circle cx="5.5" cy="18.5" r="2.5"></circle>
-              <circle cx="18.5" cy="18.5" r="2.5"></circle>
-            </svg>
-            {product.stock > 0
-              ? "Acheter maintenant"
-              : "Rupture de stock"}
-          </button>
-        </div>
-      </div>
-    );
-  })}
-</div>
 
               {/* Pagination si nécessaire */}
               {totalPages > 1 && (
