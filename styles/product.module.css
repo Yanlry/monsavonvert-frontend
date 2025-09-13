@@ -62,6 +62,20 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* CORRECTION GLOBALE - Empêche tous les débordements */
+* {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+/* CORRECTION - Images et médias */
+img, 
+video, 
+iframe {
+  max-width: 100%;
+  height: auto;
+}
+
 .stockStatus {
   margin: 10px 0;
   font-weight: 500;
@@ -121,6 +135,8 @@
   padding: 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  overflow-wrap: break-word;
 }
 
 .reviewCard:hover {
@@ -132,6 +148,8 @@
   display: flex;
   align-items: center;
   margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .reviewerAvatar {
@@ -146,17 +164,20 @@
   font-size: 18px;
   font-weight: 600;
   margin-right: 12px;
+  flex-shrink: 0;
 }
 
 .reviewerInfo {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .reviewerName {
   font-weight: 600;
   color: #333;
   font-size: 16px;
+  word-break: break-word;
 }
 
 .reviewDate {
@@ -175,6 +196,8 @@
   line-height: 1.6;
   font-size: 15px;
   margin: 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Style pour l'absence d'avis */
@@ -186,6 +209,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 }
 
 .noReviewsIcon {
@@ -212,6 +236,7 @@
   border-radius: 12px;
   padding: 30px;
   margin-top: 20px;
+  width: 100%;
 }
 
 .reviewFormTitle {
@@ -230,18 +255,21 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  width: 100%;
 }
 
 .reviewFormRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
+  width: 100%;
 }
 
 .formGroup {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: 100%;
 }
 
 .formGroup label {
@@ -259,6 +287,7 @@
   font-size: 15px;
   background-color: white;
   transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
 }
 
 .formInput:focus,
@@ -271,6 +300,7 @@
 
 .ratingSelector {
   position: relative;
+  width: 100%;
 }
 
 .formSelect {
@@ -293,6 +323,7 @@
 .formTextarea {
   resize: vertical;
   min-height: 120px;
+  width: 100%;
 }
 
 .formActions {
@@ -313,11 +344,13 @@
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s, transform 0.2s;
+  width: 100%;
 }
 
 /* Styles pour la section description structurée */
 .structuredDescription {
   padding: 20px 0;
+  width: 100%;
 }
 
 .descriptionTitle {
@@ -331,12 +364,14 @@
   display: flex;
   flex-direction: column;
   gap: 30px;
+  width: 100%;
 }
 
 .descriptionSection {
   display: flex;
   gap: 16px;
   align-items: flex-start;
+  width: 100%;
 }
 
 .descriptionIcon {
@@ -353,6 +388,7 @@
 
 .descriptionText {
   flex: 1;
+  min-width: 0;
 }
 
 .descriptionText h4 {
@@ -361,6 +397,7 @@
   margin-top: 0;
   margin-bottom: 12px;
   font-weight: 500;
+  word-wrap: break-word;
 }
 
 .descriptionText p {
@@ -368,6 +405,8 @@
   color: #333;
   line-height: 1.6;
   white-space: pre-line;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .benefitsList {
@@ -377,12 +416,15 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  width: 100%;
 }
 
 .benefitItem {
   display: flex;
   align-items: center;
   gap: 8px;
+  width: 100%;
+  word-wrap: break-word;
 }
 
 .benefitItem svg {
@@ -394,6 +436,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  width: 100%;
 }
 
 .usageBenefit {
@@ -403,6 +446,7 @@
   color: #33691e;
   font-weight: 500;
   font-size: 14px;
+  word-break: break-word;
 }
 
 /* Nouveau style pour le bouton Acheter maintenant */
@@ -413,7 +457,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--spacing-md);
-  background-color: var(--color-secondary); /* Couleur différente pour le distinguer */
+  background-color: var(--color-secondary);
   color: var(--color-text);
   border: none;
   border-radius: var(--radius-md);
@@ -423,10 +467,11 @@
   cursor: pointer;
   transition: all var(--transition-normal);
   box-shadow: var(--shadow-sm);
+  width: 100%;
 }
 
 .buyNowBtn:hover {
-  background-color: #e6a000; /* Version plus foncée du jaune */
+  background-color: #e6a000;
   box-shadow: var(--shadow-md);
   transform: translateY(-2px);
 }
@@ -447,30 +492,8 @@
   display: flex;
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-xl);
-  flex-wrap: wrap; /* Pour mobile */
-}
-
-/* Responsive pour les écrans mobiles */
-@media (max-width: 768px) {
-  .descriptionSection {
-    flex-direction: column;
-    gap: 12px;
-  }
-  
-  .descriptionIcon {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .usageBenefits {
-    flex-direction: column;
-  }
-}
-
-.description, 
-.ingredient, 
-.usageTips p {
-  white-space: pre-line;
+  flex-wrap: wrap;
+  width: 100%;
 }
 
 .submitReviewButton:hover {
@@ -482,12 +505,6 @@
   transform: translateY(0);
 }
 
-@media (max-width: 768px) {
-  .reviewFormRow {
-    grid-template-columns: 1fr;
-  }
-}
-
 .resetMargins {
   margin: 0;
   padding: 0;
@@ -496,19 +513,10 @@
   overflow-x: hidden;
 }
 
-.productActions {
-  flex-direction: column;
-}
-
-.addToCartBtn,
-.buyNowBtn {
-  flex: none;
-  width: 100%;
-}
-
 .mainContent {
   position: relative;
   z-index: 1;
+  width: 100%;
 }
 
 /* Écran de chargement */
@@ -809,6 +817,7 @@
 .breadcrumbContainer {
   background-color: var(--color-background-dark);
   padding: 80px 0 16px;
+  width: 100%;
 }
 
 .breadcrumbContent {
@@ -817,6 +826,7 @@
   padding: 0 var(--spacing-xl);
   font-size: 14px;
   color: var(--color-text-light);
+  word-wrap: break-word;
 }
 
 .breadcrumbLink {
@@ -836,11 +846,13 @@
 .breadcrumbCurrent {
   color: var(--color-primary);
   font-weight: 500;
+  word-break: break-word;
 }
 
 /* Layout de la page produit */
 .productLayout {
   padding: var(--spacing-2xl) 0;
+  width: 100%;
 }
 
 .productLayoutContainer {
@@ -850,16 +862,19 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--spacing-3xl);
+  width: 100%;
 }
 
 /* Colonne des images */
 .productImagesColumn {
   position: relative;
+  width: 100%;
 }
 
 .productImageGallery {
   position: sticky;
   top: 120px;
+  width: 100%;
 }
 
 .productMainImage {
@@ -905,6 +920,8 @@
   display: flex;
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-xl);
+  width: 100%;
+  overflow-x: auto;
 }
 
 .thumbnail {
@@ -918,6 +935,7 @@
   border: 2px solid transparent;
   transition: all var(--transition-normal);
   opacity: 0.7;
+  flex-shrink: 0;
 }
 
 .thumbnail:hover {
@@ -943,6 +961,7 @@
   display: flex;
   gap: var(--spacing-lg);
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .badge {
@@ -972,11 +991,13 @@
 /* Colonne d'informations */
 .productInfoColumn {
   position: relative;
+  width: 100%;
 }
 
 .productInfo {
   position: sticky;
   top: 120px;
+  width: 100%;
 }
 
 .productTitle {
@@ -986,6 +1007,8 @@
   margin: 0 0 var(--spacing-md);
   font-family: var(--font-serif);
   line-height: 1.3;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .productRating {
@@ -993,6 +1016,7 @@
   align-items: center;
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-lg);
+  flex-wrap: wrap;
 }
 
 .ratingStars {
@@ -1019,6 +1043,7 @@
   align-items: baseline;
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-xl);
+  flex-wrap: wrap;
 }
 
 .productPrice {
@@ -1047,11 +1072,14 @@
   margin-bottom: var(--spacing-xl);
   color: var(--color-text-light);
   line-height: 1.8;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Ancien style pour les options produit */
 .productOptions {
   margin-bottom: var(--spacing-xl);
+  width: 100%;
 }
 
 .optionGroup {
@@ -1081,6 +1109,7 @@
   display: flex;
   margin-bottom: var(--spacing-xl);
   max-width: 300px;
+  width: 100%;
 }
 
 .quantityButton {
@@ -1120,12 +1149,6 @@
 }
 
 /* Actions */
-.productActions {
-  display: flex;
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-xl);
-}
-
 .addToCartBtn {
   flex: 1;
   padding: 16px var(--spacing-xl);
@@ -1143,6 +1166,7 @@
   cursor: pointer;
   transition: all var(--transition-normal);
   box-shadow: var(--shadow-sm);
+  width: 100%;
 }
 
 .addToCartBtn:hover {
@@ -1185,6 +1209,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--spacing-lg);
+  width: 100%;
 }
 
 .infoItem {
@@ -1216,6 +1241,7 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
+  flex-wrap: wrap;
 }
 
 .productShare span {
@@ -1251,12 +1277,15 @@
   max-width: 1200px;
   margin: var(--spacing-xs) auto;
   padding: 0 var(--spacing-xl);
+  width: 100%;
 }
 
 .tabsHeader {
   display: flex;
   border-bottom: 1px solid var(--color-border);
   margin-bottom: var(--spacing-lg);
+  width: 100%;
+  overflow-x: auto;
 }
 
 .tab {
@@ -1266,6 +1295,8 @@
   border-bottom: 2px solid transparent;
   cursor: pointer;
   transition: all var(--transition-normal);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .tab:hover {
@@ -1281,6 +1312,7 @@
 .tabContent {
   display: none;
   padding: var(--spacing-lg) var(--spacing-md);
+  width: 100%;
 }
 
 .tabContentActive {
@@ -1304,12 +1336,12 @@
 
 /* Style pour l'icône Destiné pour */
 .destineIcon {
-  color: #2e7d32; /* Couleur verte */
+  color: #2e7d32;
 }
 
 /* Style pour l'icône Déconseillé pour */
 .deconseilIcon {
-  color: #D14836; /* Couleur rouge */
+  color: #D14836;
 }
 
 /* Style pour les carrés verts */
@@ -1385,12 +1417,14 @@
   border: 1px solid rgba(209, 72, 54, 0.3);
   color: #D14836;
 }
+
 /* Styles pour les bénéfices */
 .usageBenefits {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 12px;
+  width: 100%;
 }
 
 .usageBenefit {
@@ -1399,6 +1433,7 @@
   font-size: 14px;
   font-weight: 500;
 }
+
 /* Style pour le titre "Déconseillé pour" avec icône */
 .deconseilTitleContainer {
   display: flex;
@@ -1422,6 +1457,7 @@
   background-color: transparent !important;
   border: none !important;
 }
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -1431,6 +1467,8 @@
   line-height: 1.8;
   color: var(--color-text);
   margin-bottom: var(--spacing-lg);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Style de Ingrédients */
@@ -1502,6 +1540,7 @@
 .relatedProducts {
   padding: var(--spacing-3xl) 0;
   background-color: var(--color-background-dark);
+  width: 100%;
 }
 
 .relatedProductsContainer {
@@ -1545,6 +1584,7 @@
   overflow: hidden;
   box-shadow: var(--shadow-sm);
   transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  width: 100%;
 }
 
 .relatedProductCard:hover {
@@ -1606,6 +1646,7 @@
   text-decoration: none;
   margin-bottom: var(--spacing-sm);
   transition: color var(--transition-fast);
+  word-wrap: break-word;
 }
 
 .relatedProductName:hover {
@@ -1622,6 +1663,7 @@
 .newsletterSection {
   padding: var(--spacing-3xl) 0;
   background-color: var(--color-background-light);
+  width: 100%;
 }
 
 .newsletterContainer {
@@ -1746,6 +1788,7 @@
   gap: var(--spacing-md);
   justify-content: center;
   margin-top: var(--spacing-lg);
+  overflow-x: auto;
 }
 
 .zoomModalThumbnail {
@@ -1759,6 +1802,7 @@
   border: 2px solid transparent;
   transition: all var(--transition-normal);
   opacity: 0.7;
+  flex-shrink: 0;
 }
 
 .zoomModalThumbnail:hover {
@@ -1774,6 +1818,7 @@
 .footer {
   background-color: #263238;
   color: white;
+  width: 100%;
 }
 
 .footerTop {
@@ -1858,12 +1903,14 @@
 /* Styles pour la section ingrédients structurée */
 .structuredIngredients {
   padding: 20px 0;
+  width: 100%;
 }
 
 .ingredientsContent {
   display: flex;
   flex-direction: column;
   gap: 30px;
+  width: 100%;
 }
 
 .ingredientsHeader, .ingredientsFooter {
@@ -1891,6 +1938,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
+  width: 100%;
 }
 
 .ingredientCard {
@@ -1902,6 +1950,7 @@
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
 }
 
 .ingredientCard:hover {
@@ -1923,6 +1972,7 @@
 
 .ingredientInfo {
   flex: 1;
+  min-width: 0;
 }
 
 .ingredientInfo h5 {
@@ -1930,6 +1980,7 @@
   font-size: 16px;
   font-weight: 600;
   color: #333;
+  word-wrap: break-word;
 }
 
 .ingredientInfo p {
@@ -1937,6 +1988,8 @@
   font-size: 14px;
   color: #666;
   line-height: 1.5;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .certificationBadges {
@@ -1955,114 +2008,12 @@
   border-radius: 20px;
 }
 
-/* Responsive design */
-@media (max-width: 1200px) {
-  .productLayoutContainer {
-    gap: var(--spacing-xl);
-  }
-  
-  .relatedProductsGrid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 992px) {
-  .productLayoutContainer {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-2xl);
-  }
-  
-  .productMainImage {
-    height: 400px;
-  }
-  
-  .productImagesColumn {
-    max-width: 600px;
-    margin: 0 auto;
-  }
-  
-  .productExtraInfo {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-md);
-  }
-  
-  .relatedProductsGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .headerContent {
-    flex-wrap: wrap;
-    padding: var(--spacing-sm) var(--spacing-lg);
-  }
-  
-  .mainNav {
-    order: 3;
-    width: 100%;
-    margin-top: var(--spacing-md);
-    overflow-x: auto;
-  }
-  
-  .navList {
-    padding-bottom: var(--spacing-sm);
-  }
-  
-  .tabsHeader {
-    flex-wrap: wrap;
-  }
-  
-  .tab {
-    flex: 1;
-    min-width: 120px;
-    text-align: center;
-  }
-  
-  .newsletterForm {
-    flex-direction: column;
-  }
-  
-  .newsletterInput {
-    border-radius: var(--radius-full);
-    margin-bottom: var(--spacing-md);
-  }
-  
-  .newsletterButton {
-    border-radius: var(--radius-full);
-  }
-
-  .ingredientsHeader, .ingredientsFooter {
-    flex-direction: column;
-  }
-  
-  .ingredientsList {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 576px) {
-  .productMainImage {
-    height: 300px;
-  }
-  
-  .relatedProductsGrid {
-    grid-template-columns: 1fr;
-  }
-  
-  .optionSelect {
-    max-width: 100%;
-  }
-  
-  .quantityControl {
-    max-width: 100%;
-  }
-}
-
 /* Features */
 .productFeatures {
   margin-bottom: var(--spacing-xl);
   padding: 0;
   list-style: none;
+  width: 100%;
 }
 
 .feature {
@@ -2071,6 +2022,7 @@
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-sm);
   color: var(--color-text);
+  word-wrap: break-word;
 }
 
 .feature svg {
@@ -2081,10 +2033,12 @@
 /* Styles pour les options en cartes */
 .productForm {
   margin-bottom: var(--spacing-xl);
+  width: 100%;
 }
 
 .productOption {
   margin-bottom: var(--spacing-xl);
+  width: 100%;
 }
 
 .productOption:last-child {
@@ -2102,6 +2056,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--spacing-md);
+  width: 100%;
 }
 
 .optionChoice {
@@ -2118,6 +2073,7 @@
   flex-direction: column;
   gap: 4px;
   align-items: center;
+  word-wrap: break-word;
 }
 
 .optionChoice:hover {
@@ -2142,6 +2098,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-2xl);
+  width: 100%;
 }
 
 .usageSection h3 {
@@ -2156,6 +2113,7 @@
   padding: 0;
   margin: 0;
   position: relative;
+  width: 100%;
 }
 
 .usageSteps::before {
@@ -2173,6 +2131,7 @@
   position: relative;
   padding-left: 60px;
   margin-bottom: var(--spacing-xl);
+  width: 100%;
 }
 
 .usageStep:last-child {
@@ -2200,17 +2159,21 @@
   font-size: 16px;
   font-weight: 600;
   color: var(--color-primary-dark);
+  word-wrap: break-word;
 }
 
 .usageStepContent p {
   margin: 0;
   color: var(--color-text-light);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .usageTips {
   list-style: none;
   padding: 0;
   margin: var(--spacing-md) 0 0;
+  width: 100%;
 }
 
 .usageTip {
@@ -2223,6 +2186,7 @@
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
   transition: transform var(--transition-normal);
+  width: 100%;
 }
 
 .usageTip:hover {
@@ -2238,4 +2202,499 @@
   color: var(--color-primary);
   flex-shrink: 0;
   margin-top: 2px;
+}
+
+.usageTip span {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* ===== CORRECTIONS MOBILE COMPLÈTES ===== */
+
+@media (max-width: 1200px) {
+  .productLayoutContainer {
+    gap: var(--spacing-xl);
+  }
+  
+  .relatedProductsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .productLayoutContainer {
+    grid-template-columns: 1fr !important;
+    gap: var(--spacing-2xl);
+    padding: 0 var(--spacing-md) !important;
+  }
+  
+  .productMainImage {
+    height: 400px;
+  }
+  
+  .productImagesColumn {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .productExtraInfo {
+    grid-template-columns: 1fr !important;
+    gap: var(--spacing-md);
+  }
+  
+  .relatedProductsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* CORRECTIONS MOBILE PRINCIPALES */
+@media (max-width: 768px) {
+  /* Container principal */
+  .container {
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow-x: hidden !important;
+  }
+  
+  /* Header mobile */
+  .headerContent {
+    padding: 0 var(--spacing-md) !important;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .logo {
+    font-size: 20px !important;
+  }
+  
+  /* Navigation mobile */
+  .mainNav {
+    order: 3;
+    width: 100%;
+    margin-top: var(--spacing-md);
+    overflow-x: auto;
+  }
+  
+  .navList {
+    padding-bottom: var(--spacing-sm);
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .navItem {
+    flex-shrink: 0;
+  }
+  
+  .navLink {
+    white-space: nowrap;
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  
+  /* Mega menu mobile */
+  .megaMenu {
+    width: calc(100vw - 32px) !important;
+    left: 16px !important;
+    right: 16px !important;
+    transform: none !important;
+  }
+  
+  .megaMenuGrid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  /* Breadcrumb mobile */
+  .breadcrumbContainer {
+    padding: 60px 0 16px !important;
+  }
+  
+  .breadcrumbContent {
+    padding: 0 var(--spacing-md) !important;
+    font-size: 12px;
+  }
+  
+  .breadcrumbCurrent,
+  .breadcrumbLink {
+    word-break: break-all;
+  }
+  
+  /* Layout produit mobile */
+  .productLayout {
+    padding: var(--spacing-lg) 0 !important;
+  }
+  
+  .productLayoutContainer {
+    padding: 0 var(--spacing-md) !important;
+    grid-template-columns: 1fr !important;
+    gap: var(--spacing-lg) !important;
+  }
+  
+  /* Images mobile */
+  .productMainImage {
+    height: 250px !important;
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .productThumbnails {
+    overflow-x: auto;
+    padding-bottom: 10px;
+    gap: var(--spacing-sm);
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .thumbnail {
+    min-width: 60px !important;
+    width: 60px !important;
+    height: 60px !important;
+    flex-shrink: 0;
+  }
+  
+  /* Info produit mobile */
+  .productInfo {
+    position: static !important;
+    width: 100% !important;
+  }
+  
+  .productTitle {
+    font-size: 24px !important;
+    line-height: 1.2 !important;
+    margin-bottom: var(--spacing-md) !important;
+  }
+  
+  /* Prix mobile */
+  .productPriceContainer {
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+  }
+  
+  .productPrice {
+    font-size: 22px !important;
+  }
+  
+  /* Features mobile */
+  .productFeatures {
+    margin-bottom: var(--spacing-lg) !important;
+  }
+  
+  .feature {
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+  
+  /* Options mobile */
+  .optionChoices {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  
+  .optionChoice {
+    width: 100% !important;
+    text-align: center;
+    padding: var(--spacing-md) !important;
+  }
+  
+  /* Quantité mobile */
+  .quantityControl {
+    max-width: 100% !important;
+    justify-content: center;
+  }
+  
+  /* Actions produit mobile */
+  .productActions {
+    flex-direction: column !important;
+    gap: var(--spacing-md) !important;
+    width: 100% !important;
+  }
+  
+  .addToCartBtn,
+  .buyNowBtn {
+    width: 100% !important;
+    max-width: 100% !important;
+    font-size: 16px !important;
+    padding: 16px !important;
+  }
+  
+  .wishlistBtn {
+    width: 100% !important;
+    height: 50px !important;
+  }
+  
+  /* Informations extra mobile */
+  .productExtraInfo {
+    grid-template-columns: 1fr !important;
+    gap: var(--spacing-md) !important;
+  }
+  
+  .infoItem {
+    flex-direction: row;
+    justify-content: flex-start;
+    text-align: left;
+    gap: var(--spacing-sm);
+  }
+  
+  /* Onglets mobile */
+  .tabsSection {
+    padding: 0 var(--spacing-md) !important;
+    margin-top: var(--spacing-xl);
+  }
+  
+  .tabsHeader {
+    overflow-x: auto;
+    padding-bottom: var(--spacing-xs);
+    gap: var(--spacing-sm);
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .tab {
+    white-space: nowrap;
+    min-width: 120px;
+    font-size: 14px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    flex-shrink: 0;
+  }
+  
+  /* Contenu des onglets mobile */
+  .tabContent {
+    padding: var(--spacing-md) 0 !important;
+  }
+  
+  /* Description mobile */
+  .descriptionSection {
+    flex-direction: column !important;
+    gap: var(--spacing-md) !important;
+    text-align: center;
+  }
+  
+  .descriptionIcon,
+  .descriptionIconGreen,
+  .descriptionIconRed {
+    align-self: center;
+    width: 40px !important;
+    height: 40px !important;
+  }
+  
+  .usageBenefits {
+    flex-direction: column !important;
+    align-items: center;
+  }
+  
+  .usageBenefit {
+    text-align: center;
+    max-width: 100%;
+  }
+  
+  /* Avis mobile */
+  .reviewFormContainer {
+    padding: var(--spacing-lg) var(--spacing-md) !important;
+    margin: var(--spacing-md) 0 !important;
+  }
+  
+  .reviewFormRow {
+    grid-template-columns: 1fr !important;
+    gap: var(--spacing-md) !important;
+  }
+  
+  .reviewCard {
+    padding: var(--spacing-md) !important;
+    margin: 0 !important;
+  }
+  
+  .reviewCardHeader {
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+  }
+  
+  .reviewerAvatar {
+    width: 35px !important;
+    height: 35px !important;
+    font-size: 16px !important;
+  }
+  
+  .reviewerInfo {
+    min-width: 0;
+  }
+  
+  .reviewText {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+  }
+  
+  /* Ingrédients mobile */
+  .ingredientsList {
+    grid-template-columns: 1fr !important;
+    gap: var(--spacing-md) !important;
+  }
+  
+  .ingredientCard {
+    padding: var(--spacing-md) !important;
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .ingredientIcon {
+    align-self: center;
+    width: 35px !important;
+    height: 35px !important;
+  }
+  
+  .ingredientsHeader,
+  .ingredientsFooter {
+    flex-direction: column !important;
+    text-align: center;
+    padding: var(--spacing-md) !important;
+  }
+  
+  /* Conseils d'utilisation mobile */
+  .usageStep {
+    padding-left: 40px !important;
+  }
+  
+  .usageStepNumber {
+    width: 25px !important;
+    height: 25px !important;
+    font-size: 14px !important;
+  }
+  
+  .usageStepContent h4 {
+    font-size: 15px !important;
+  }
+  
+  .usageStepContent p {
+    font-size: 14px !important;
+  }
+  
+  .usageTip {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--spacing-xs);
+  }
+  
+  /* Newsletter mobile */
+  .newsletterContainer {
+    padding: 0 var(--spacing-md) !important;
+  }
+  
+  .newsletterContent {
+    padding: var(--spacing-xl) var(--spacing-md) !important;
+  }
+  
+  .newsletterTitle {
+    font-size: 22px !important;
+  }
+  
+  .newsletterText {
+    font-size: 14px !important;
+  }
+  
+  .newsletterForm {
+    flex-direction: column !important;
+    gap: var(--spacing-md);
+    max-width: 100% !important;
+  }
+  
+  .newsletterInput,
+  .newsletterButton {
+    border-radius: var(--radius-md) !important;
+    width: 100% !important;
+  }
+  
+  /* Produits similaires mobile */
+  .relatedProductsContainer {
+    padding: 0 var(--spacing-md) !important;
+  }
+  
+  .relatedProductsGrid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: var(--spacing-md) !important;
+  }
+  
+  .relatedProductCard {
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .relatedProductInfo {
+    padding: var(--spacing-md) !important;
+  }
+  
+  .relatedProductName {
+    font-size: 14px !important;
+  }
+  
+  .relatedProductPrice {
+    font-size: 15px !important;
+  }
+  
+  /* Footer mobile */
+  .footerContent {
+    flex-direction: column;
+    padding: 0 var(--spacing-md) !important;
+    gap: var(--spacing-xl);
+  }
+  
+  .footerColumn {
+    min-width: 100%;
+  }
+  
+  .footerBottomContent {
+    padding: 0 var(--spacing-md) !important;
+  }
+}
+
+/* Corrections pour très petits écrans (iPhone SE, etc.) */
+@media (max-width: 480px) {
+  .productTitle {
+    font-size: 20px !important;
+  }
+  
+  .productPrice {
+    font-size: 20px !important;
+  }
+  
+  .tab {
+    min-width: 100px;
+    font-size: 13px;
+  }
+  
+  .productMainImage {
+    height: 200px !important;
+  }
+  
+  .relatedProductsGrid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Corrections pour très petits écrans (iPhone SE, etc.) */
+@media (max-width: 375px) {
+  .reviewCardHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .reviewerAvatar {
+    width: 30px !important;
+    height: 30px !important;
+    font-size: 14px !important;
+  }
+  
+  .ingredientCard {
+    padding: var(--spacing-sm) !important;
+  }
+  
+  .descriptionIcon,
+  .descriptionIconGreen,
+  .descriptionIconRed {
+    width: 35px !important;
+    height: 35px !important;
+  }
+  
+  .usageStepNumber {
+    width: 22px !important;
+    height: 22px !important;
+    font-size: 12px !important;
+  }
+  
+  .usageStep {
+    padding-left: 35px !important;
+  }
 }
