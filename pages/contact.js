@@ -179,7 +179,7 @@ export default function Contact() {
                       <div className={styles.infoContent}>
                         <h3 className={styles.infoTitle}>Téléphone</h3>
                         <p className={styles.infoText}>
-                          <a href="tel:+33612345678">+33 6 58 00 27 07</a>
+                          <a href="tel:+33658002707">+33 6 58 00 27 07</a>
                         </p>
                       </div>
                     </div>
