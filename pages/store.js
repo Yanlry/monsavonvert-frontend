@@ -646,7 +646,7 @@ export default function Boutique() {
       new Date(product.createdAt) >
       new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
-    // Calculer les informations de notation pour ce produit
+    // NOUVEAU : Calculer les informations de notation pour ce produit
     const { averageRating, totalReviews } =
       getProductRatingInfo(product);
 
@@ -655,7 +655,7 @@ export default function Boutique() {
         key={product._id}
         className={styles.enhancedProductCard}
       >
-        {/* LE LINK ENGLOBE MAINTENANT TOUTE LA PARTIE CLIQUABLE */}
+        {/* MODIFICATION : Le Link englobe maintenant TOUTE la carte du produit */}
         <Link
           href={`/produit/${product._id}`}
           className={styles.productCardLink}
@@ -679,10 +679,10 @@ export default function Boutique() {
                 className={styles.quickViewButton}
                 aria-label="Aperçu rapide"
                 onClick={(e) => {
-                  // Empêche ce bouton d'ouvrir la page produit
+                  // Empêche le clic sur le bouton d'ouvrir la page produit
                   e.preventDefault();
                   e.stopPropagation();
-                  // Ici tu peux ajouter la logique pour l'aperçu rapide si tu veux
+                  // Ici vous pouvez ajouter la logique pour l'aperçu rapide
                 }}
               >
                 <svg
@@ -704,25 +704,22 @@ export default function Boutique() {
           </div>
           
           <div className={styles.productInfo}>
-            {/* MAINTENANT CLIQUABLE : Le titre ouvre la page produit */}
             <h3 className={styles.productName}>{product.title}</h3>
 
-            {/* MAINTENANT CLIQUABLE : Les avis ouvrent la page produit */}
+            {/* MODIFICATION MAJEURE : Affichage des étoiles avec moyenne réelle */}
             <div className={styles.productRating}>
+              {/* Affichage des étoiles basé sur la moyenne calculée */}
               {renderStars(averageRating, false)}
               <div className={styles.reviewCount}>
                 ({totalReviews} avis)
               </div>
             </div>
 
-            {/* MAINTENANT CLIQUABLE : Le prix ouvre la page produit */}
             <div className={styles.productPrice}>
               {product.price
                 ? `${product.price.toFixed(2)} €`
                 : "Prix indisponible"}
             </div>
-            
-            {/* MAINTENANT CLIQUABLE : La description ouvre la page produit */}
             <p className={styles.productDescription}>
               {(
                 product.description ||
@@ -738,16 +735,14 @@ export default function Boutique() {
           </div>
         </Link>
 
-        {/* LES BOUTONS SONT MAINTENANT HORS DU LINK */}
-        {/* Ils ne font plus ouvrir la page produit quand on clique dessus */}
+        {/* MODIFICATION : Les boutons sont maintenant HORS du Link pour éviter les conflits */}
         <div className={styles.productActions}>
           <button
             className={styles.addToCartButtonLarge}
             onClick={(e) => {
-              // Empêche ce bouton d'ouvrir la page produit
+              // Empêche le clic sur le bouton d'ouvrir la page produit
               e.preventDefault();
               e.stopPropagation();
-              // Fait juste ajouter au panier
               addToCart(product);
             }}
             disabled={product.stock <= 0}
@@ -757,13 +752,13 @@ export default function Boutique() {
               : "Rupture de stock"}
           </button>
 
+          {/* ⭐ NOUVEAU : Bouton Acheter maintenant */}
           <button
             className={styles.buyNowButtonLarge}
             onClick={(e) => {
-              // Empêche ce bouton d'ouvrir la page produit
+              // Empêche le clic sur le bouton d'ouvrir la page produit
               e.preventDefault();
               e.stopPropagation();
-              // Fait juste l'achat direct
               buyNow(product);
             }}
             disabled={product.stock <= 0}
