@@ -956,7 +956,7 @@ export default function Boutique() {
                 <div className={styles.testimonialStars}>{"★".repeat(5)}</div>
                 <p className={styles.testimonialText}>
                   Tres bon savon on ressent tout de suite la douceur et le prix
-                  par rapport a la pharmacie il n y pas photo
+                  par rapport a la pharmacie il n y pas phot
                 </p>
                 <p className={styles.testimonialAuthor}>Franck Parain</p>
               </div>

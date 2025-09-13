@@ -257,7 +257,7 @@ export default function AboutPage() {
             <div className={styles.introImageColumn}>
               <div className={styles.introImage}>
                 <img
-                  src="/images/1.JPEG"
+                  src="/images/14.JPEG"
                   alt="Artisan fabriquant du savon d'Alep traditionnel"
                 />
               </div>
