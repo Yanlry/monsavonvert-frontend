@@ -23,7 +23,7 @@ export default function AdminSettings() {
       contactEmail: 'contact@monsavonvert.com',
       phoneNumber: '06 12 34 56 78',
       address: '15 rue des Savonniers, 75011 Paris',
-      logo: '/images/logo.png',
+      logo: '/logo.png',
       favicon: '/favicon.ico'
     },
     // Paramètres de boutique

@@ -134,7 +134,7 @@ export default function Header({ cartCount }) {
               {/* Logo rond ajouté ici */}
               <div className={styles.logoIconWrapper}>
                 <img 
-                  src="/images/logo.png" 
+                  src="/logo.png" 
                   alt="MonSavonVert Logo" 
                   className={styles.logoIcon}
                 />
