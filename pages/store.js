@@ -694,9 +694,6 @@ export default function Boutique() {
                         </div>
                       </Link>
                       <div className={styles.productInfo}>
-                      <Link
-                        href={`/produit/${product._id}`}
-                      >
                         <h3 className={styles.productName}>{product.title}</h3>
 
                         {/* MODIFICATION MAJEURE : Affichage des étoiles avec moyenne réelle */}
@@ -764,7 +761,6 @@ export default function Boutique() {
                               : "Rupture de stock"}
                           </button>
                         </div>
-                        </Link>
                       </div>
                     </div>
                   );
