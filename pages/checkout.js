@@ -1921,7 +1921,7 @@ export default function Checkout() {
                           </div>
                           <div className={styles.shippingOptionInfo}>
                             <h3>Livraison standard</h3>
-                            <p>Livraison en 3-5 jours ouvrés</p>
+                            <p>Livraison en 2-5 jours ouvrés</p>
                             {/* Indication de la promotion */}
                             <p className={styles.shippingPromo}>
                               Gratuite à partir de 29€ d'achat
@@ -1930,7 +1930,7 @@ export default function Checkout() {
                           <div className={styles.shippingOptionPrice}>
                             {parseFloat(getTotalPrice()) >= 29
                               ? "Gratuit"
-                              : "4,95 €"}
+                              : "3,95 €"}
                           </div>
                         </div>
 
