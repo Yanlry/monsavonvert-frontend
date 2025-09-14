@@ -112,7 +112,7 @@ export default function HowToChoose() {
     {
       percentage: "5%",
       title: "Savon Doux",
-      description: "Idéal pour les peaux sensibles et l'usage quotidien",
+      description: "Parfait pour les peaux sèches ou sensibles",
       benefits: ["Hydratation douce", "Nettoyage respectueux", "Convient aux enfants"],
       image: "/images/5.JPEG",
       color: "#81c784"
@@ -120,7 +120,7 @@ export default function HowToChoose() {
     {
       percentage: "20%",
       title: "Savon Équilibrant", 
-      description: "Parfait pour les peaux mixtes à grasses",
+      description: "Convient pour les peaux mixtes à grasses",
       benefits: ["Régulation du sébum", "Action purifiante", "Anti-imperfections"],
       image: "/images/4.JPEG",
       color: "#4caf50"

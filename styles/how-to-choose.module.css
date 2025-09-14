@@ -439,11 +439,36 @@
   }
 }
 
+/* ========================================
+   SECTION CONCENTRATIONS AMÉLIORÉE - DÉBUT
+   ======================================== */
+
 /* Section des concentrations avec cartes optimisées */
 .concentrationsSection {
   padding: var(--spacing-3xl) 0;
   background: linear-gradient(180deg, var(--color-background-light) 0%, var(--color-background) 100%);
   position: relative;
+  overflow: hidden;
+}
+
+/* Effet de fond subtil avec animation */
+.concentrationsSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 25% 25%, rgba(46, 125, 50, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(129, 199, 132, 0.03) 0%, transparent 50%);
+  animation: backgroundFloat 20s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes backgroundFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-10px, -10px) scale(1.02); }
 }
 
 .sectionHeader {
@@ -453,8 +478,11 @@
   margin-left: auto;
   margin-right: auto;
   padding: 0 var(--spacing-lg);
+  position: relative;
+  z-index: 2;
 }
 
+/* GARDE LE TITRE ORIGINAL COMME DEMANDÉ */
 .sectionTitle {
   font-size: 32px;
   background: var(--color-gradient-dark);
@@ -499,45 +527,67 @@
 /* CARTES DE CATÉGORIES OPTIMISÉES - Plus petites et lisibles */
 .featuresGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: var(--spacing-lg);
-  max-width: 1500px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--spacing-xl);
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 var(--spacing-lg);
+  position: relative;
+  z-index: 2;
 }
 
 .featureCard {
   background: white;
-  padding: var(--spacing-lg);
+  padding: var(--spacing-xl);
   border-radius: var(--radius-lg);
   text-align: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  transition: all var(--transition-normal);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all var(--transition-spring);
   position: relative;
   transform-style: preserve-3d;
   border: 1px solid rgba(46, 125, 50, 0.1);
   overflow: hidden;
-  cursor: pointer;
+  /* SUPPRIMÉ: cursor: pointer; - Plus de curseur de souris */
+  
+  /* Animation d'apparition décalée */
+  opacity: 0;
+  transform: translateY(30px);
+  animation: cardAppear 0.8s ease-out forwards;
 }
 
-/* Nouveau: Badge de popularité */
-.featureCard[data-popular="true"]::before {
+/* Animation d'apparition avec délai pour chaque carte */
+.featureCard:nth-child(1) { animation-delay: 0.2s; }
+.featureCard:nth-child(2) { animation-delay: 0.4s; }
+.featureCard:nth-child(3) { animation-delay: 0.6s; }
+
+@keyframes cardAppear {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* CORRIGÉ: Badge de popularité plus visible avec z-index élevé */
+.featureCard:nth-child(2)::after {
   content: 'Populaire';
   position: absolute;
-  top: 10px;
-  right: -25px;
+  top: 15px;
+  right: -35px;
   background: var(--color-secondary);
   color: white;
-  padding: 2px 30px;
-  font-size: 10px;
-  font-weight: 600;
-  transform: rotate(45deg);
-  box-shadow: 0 2px 10px rgba(248, 180, 0, 0.3);
-  z-index: 2;
+  padding: 6px 45px;
+  font-size: 12px;
+  font-weight: 700;
+  transform: rotate(35deg);
+  box-shadow: 0 4px 20px rgba(248, 180, 0, 0.5);
+  z-index: 10; /* Z-index très élevé pour être visible */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 /* Nouveau: Indicateur de progression au survol */
-.featureCard::after {
+.featureCard::before {
   content: '';
   position: absolute;
   bottom: 0;
@@ -548,86 +598,113 @@
   transform: scaleX(0);
   transform-origin: left;
   transition: transform var(--transition-normal);
+  z-index: 1;
 }
 
-.featureCard:hover::after {
+.featureCard:hover::before {
   transform: scaleX(1);
 }
 
 .featureCard:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 30px rgba(46, 125, 50, 0.12);
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 0 12px 40px rgba(26, 77, 47, 0.15);
 }
 
-/* Concentration percentage badge compact */
+/* MODIFIÉ: Concentration percentage badge avec couleur uniforme comme le titre */
 .concentrationPercentage {
-  background: var(--color-gradient-primary);
+  /* NOUVELLE COULEUR: Même dégradé que le titre avec un peu de blanc */
+  background: linear-gradient(135deg, #1a4d2f 0%, #1a4d2f 55%, rgba(255, 255, 255, 0.1) 0%);
   color: white;
-  padding: var(--spacing-md);
+  padding: var(--spacing-lg);
   border-radius: var(--radius-md);
   text-align: center;
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
   position: relative;
   overflow: hidden;
-  box-shadow: 0 3px 12px rgba(46, 125, 50, 0.25);
-  transform: scale(0.95);
-  transition: transform var(--transition-fast);
+  box-shadow: 
+    0 8px 25px rgba(26, 77, 47, 0.25), /* Ombres adaptées au vert */
+    0 3px 10px rgba(26, 77, 47, 0.15);
+  transform: scale(0.98);
+  transition: transform var(--transition-normal);
 }
 
 .featureCard:hover .concentrationPercentage {
   transform: scale(1);
 }
 
-/* Nouveau: Animation de brillance */
-.concentrationPercentage::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(45deg, transparent 35%, rgba(255, 255, 255, 0.3) 50%, transparent 65%);
-  animation: shine 3s infinite;
-}
-
-@keyframes shine {
-  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-  100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+@keyframes concentrationPulse {
+  0%, 100% { 
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+  }
+  50% { 
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0;
+  }
 }
 
 .concentrationPercentage span {
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 32px;
+  font-weight: 800;
   display: block;
   position: relative;
-  z-index: 1;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Ombre plus visible sur le vert */
+  margin-bottom: 5px;
 }
 
 .concentrationPercentage p {
-  font-size: 10px;
+  font-size: 13px;
   margin: 0;
-  font-weight: 500;
-  opacity: 0.9;
+  font-weight: 600;
+  opacity: 0.95;
   position: relative;
-  z-index: 1;
+  z-index: 2;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2); /* Petite ombre pour la lisibilité */
 }
 
 .featureTitle {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: var(--spacing-sm);
-  background: var(--color-gradient-dark);
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: var(--spacing-md);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  line-height: 1.3;
+  position: relative;
+}
+
+/* Petit accent sous le titre */
+.featureTitle::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 2px;
+  background: var(--color-primary);
+  border-radius: 2px;
+  opacity: 0;
+  transition: all var(--transition-normal);
+}
+
+.featureCard:hover .featureTitle::after {
+  opacity: 1;
+  width: 50px;
 }
 
 .featureDescription {
   color: var(--color-text-light);
-  line-height: 1.5;
-  margin-bottom: var(--spacing-md);
-  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: var(--spacing-lg);
+  font-size: 15px;
+  max-width: 280px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .benefitsList {
@@ -635,38 +712,80 @@
   padding: 0;
   margin: 0;
   text-align: left;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .benefitsList li {
   display: flex;
-  align-items: center;
-  margin-bottom: var(--spacing-xs);
+  align-items: flex-start;
+  margin-bottom: var(--spacing-sm);
   gap: var(--spacing-sm);
-  transition: transform var(--transition-fast);
-  font-size: 13px;
+  padding: var(--spacing-sm);
+  border-radius: 8px;
+  transition: all var(--transition-fast);
+  font-size: 14px;
   color: var(--color-text);
+  line-height: 1.5;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Effet de survol pour chaque bénéfice */
+.benefitsList li::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, rgba(46, 125, 50, 0.05) 0%, transparent 100%);
+  transform: translateX(-100%);
+  transition: transform var(--transition-normal);
+}
+
+.benefitsList li:hover::before {
+  transform: translateX(0);
 }
 
 .benefitsList li:hover {
-  transform: translateX(3px);
+  transform: translateX(8px);
+  background: rgba(46, 125, 50, 0.03);
 }
 
 .benefitsList li svg {
-  color: var(--color-primary);
+  color: var(--color-success);
   flex-shrink: 0;
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  transition: all var(--transition-fast);
+  position: relative;
+  z-index: 2;
 }
 
 /* Nouveau: Icône animée au survol de la carte */
 .featureCard:hover .benefitsList li svg {
-  animation: checkBounce 0.5s ease-out;
+  animation: checkBounce 0.6s ease-out;
+  color: var(--color-primary);
 }
 
 @keyframes checkBounce {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.2); }
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.2) rotate(-5deg); }
+  75% { transform: scale(1.1) rotate(5deg); }
 }
+
+.benefitsList li span {
+  position: relative;
+  z-index: 2;
+  font-weight: 500;
+}
+
+/* ========================================
+   SECTION CONCENTRATIONS AMÉLIORÉE - FIN
+   ======================================== */
 
 /* Section guide avec tableau interactif amélioré */
 .guideSection {
@@ -1361,8 +1480,16 @@
   }
   
   .featuresGrid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: var(--spacing-md);
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-lg);
+  }
+  
+  .featureCard {
+    padding: var(--spacing-lg);
+  }
+  
+  .concentrationPercentage span {
+    font-size: 28px;
   }
 }
 
@@ -1404,6 +1531,16 @@
     grid-template-columns: 1fr;
     max-width: 400px;
     margin: 0 auto;
+  }
+  
+  .featureCard {
+    margin: 0 auto;
+    max-width: 350px;
+  }
+  
+  /* Masquer le badge "Le plus populaire" sur mobile pour éviter l'encombrement */
+  .featureCard:nth-child(2)::after {
+    display: none;
   }
   
   .guideTableHeader,
@@ -1463,7 +1600,27 @@
   }
   
   .concentrationPercentage span {
+    font-size: 24px;
+  }
+  
+  .featureCard {
+    padding: var(--spacing-md);
+  }
+  
+  .concentrationPercentage {
+    padding: var(--spacing-md);
+  }
+  
+  .featureTitle {
     font-size: 20px;
+  }
+  
+  .featureDescription {
+    font-size: 14px;
+  }
+  
+  .benefitsList li {
+    font-size: 13px;
   }
   
   .footerContent {
@@ -1474,5 +1631,52 @@
     flex-direction: column;
     align-items: center;
     gap: var(--spacing-md);
+  }
+}
+
+/* ========================================
+   ANIMATIONS D'ACCESSIBILITÉ
+   ======================================== */
+
+/* Respect des préférences de mouvement réduit */
+@media (prefers-reduced-motion: reduce) {
+  .concentrationsSection::before,
+  .concentrationPercentage::before,
+  .featureCard::before {
+    animation: none;
+  }
+  
+  .featureCard {
+    transition-duration: 0.1s;
+  }
+  
+  .featureCard:hover {
+    transform: translateY(-4px) scale(1.01);
+  }
+}
+
+/* ========================================
+   FOCUS ET ACCESSIBILITÉ
+   ======================================== */
+
+/* États de focus pour l'accessibilité clavier */
+.featureCard:focus {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.featureCard[tabindex="0"] {
+  cursor: pointer;
+}
+
+/* Amélioration du contraste pour l'accessibilité */
+@media (prefers-contrast: high) {
+  .featureCard {
+    border-width: 2px;
+    border-color: var(--color-primary);
+  }
+  
+  .benefitsList li svg {
+    color: var(--color-primary);
   }
 }
