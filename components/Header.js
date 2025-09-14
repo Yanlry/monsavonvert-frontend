@@ -72,7 +72,6 @@ export default function Header({ cartCount }) {
 
   // Fonction pour fermer le menu quand on clique sur un lien
   const closeMenu = () => {
-    console.log('Menu fermé'); // Log pour diagnostiquer
     setMenuOpen(false);
     setActiveCategory(null);
   };
@@ -151,20 +150,6 @@ export default function Header({ cartCount }) {
 
         {/* Navigation principale avec méga-menu */}
         <nav className={`${styles.mainNav} ${menuOpen ? styles.active : ""}`}>
-          {/* NOUVEAU : Bouton de fermeture à l'intérieur du menu mobile */}
-          <button
-            className={styles.mobileCloseButton}
-            onClick={() => {
-              console.log('Bouton fermeture cliqué'); // Log pour diagnostiquer
-              setMenuOpen(false);
-            }}
-            aria-label="Fermer le menu"
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
-
           <ul className={styles.navList}>
             <li className={styles.navItem}>
               <Link href="/" className={styles.navLink} onClick={closeMenu}>
@@ -354,7 +339,7 @@ export default function Header({ cartCount }) {
                           onClick={handleLogout}
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1-2-2h4"></path>
                             <polyline points="16 17 21 12 16 7"></polyline>
                             <line x1="21" y1="12" x2="9" y2="12"></line>
                           </svg>
