@@ -971,6 +971,7 @@
   border-radius: 3px;
 }
 
+/* SUPPRIMEZ CETTE PARTIE COMPLÈTEMENT */
 .mobileMenuToggle.active span:nth-child(1) {
   transform: translateY(9px) rotate(45deg);
 }
@@ -1508,6 +1509,7 @@
   }
   
   .userAvatar {
+    background-color: #1a4d2f;
     width: 32px;
     height: 32px;
     font-size: 12px;
