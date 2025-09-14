@@ -72,6 +72,7 @@ export default function Header({ cartCount }) {
 
   // Fonction pour fermer le menu quand on clique sur un lien
   const closeMenu = () => {
+    console.log('Menu fermé'); // Log pour diagnostiquer
     setMenuOpen(false);
     setActiveCategory(null);
   };
@@ -150,6 +151,20 @@ export default function Header({ cartCount }) {
 
         {/* Navigation principale avec méga-menu */}
         <nav className={`${styles.mainNav} ${menuOpen ? styles.active : ""}`}>
+          {/* NOUVEAU : Bouton de fermeture à l'intérieur du menu mobile */}
+          <button
+            className={styles.mobileCloseButton}
+            onClick={() => {
+              console.log('Bouton fermeture cliqué'); // Log pour diagnostiquer
+              setMenuOpen(false);
+            }}
+            aria-label="Fermer le menu"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
           <ul className={styles.navList}>
             <li className={styles.navItem}>
               <Link href="/" className={styles.navLink} onClick={closeMenu}>
