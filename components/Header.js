@@ -150,7 +150,7 @@ export default function Header({ cartCount }) {
 
         {/* Navigation principale avec méga-menu */}
         <nav className={`${styles.mainNav} ${menuOpen ? styles.active : ""}`}>
-          {/* Bouton de fermeture à l'intérieur du menu mobile - REMIS */}
+          {/* Bouton de fermeture à l'intérieur du menu mobile */}
           <button
             className={styles.mobileCloseButton}
             onClick={() => setMenuOpen(false)}
@@ -551,9 +551,9 @@ export default function Header({ cartCount }) {
           </Link>
         </div>
 
-        {/* Menu hamburger pour mobile - RESTE TOUJOURS HAMBURGER */}
+        {/* Menu hamburger pour mobile - MODIFIÉ POUR SE CACHER QUAND MENU OUVERT */}
         <button
-          className={styles.mobileMenuToggle}
+          className={`${styles.mobileMenuToggle} ${menuOpen ? styles.hidden : ""}`}
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Menu"
         >
