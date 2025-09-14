@@ -122,11 +122,7 @@ export default function Contact() {
       // CORRECTION PRINCIPALE : Utilise NEXT_PUBLIC_API_URL (ta vraie variable)
       const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'https://monsavonvert-backend.vercel.app';
       const fullUrl = `${backendUrl}/contact/send`;
-      
-      console.log("URL du backend utilisée:", backendUrl);
-      console.log("URL complète:", fullUrl);
-      console.log("Envoi des données vers le backend...");
-      
+    
       const response = await fetch(fullUrl, {
         method: 'POST',
         headers: {
@@ -324,19 +320,6 @@ export default function Contact() {
               <div className={styles.contactFormSection}>
                 <div className={styles.contactFormCard}>
                   <h2 className={styles.formCardTitle}>Envoyez-nous un message</h2>
-                  
-                  {/* Indicateur de diagnostic (utile pour vérifier la configuration) */}
-                  <div style={{
-                    background: '#f0f0f0', 
-                    padding: '10px', 
-                    borderRadius: '5px', 
-                    marginBottom: '20px', 
-                    fontSize: '12px',
-                    color: '#666'
-                  }}>
-                    <strong>URL Backend configurée:</strong> {process.env.NEXT_PUBLIC_API_URL || 'https://monsavonvert-backend.vercel.app'}<br/>
-                    <strong>Test de connexion:</strong> Allez sur <a href={(process.env.NEXT_PUBLIC_API_URL || 'https://monsavonvert-backend.vercel.app') + '/contact/test'} target="_blank" style={{color: '#007bff'}}>{(process.env.NEXT_PUBLIC_API_URL || 'https://monsavonvert-backend.vercel.app')}/contact/test</a>
-                  </div>
                   
                   <form className={styles.contactForm} onSubmit={handleSubmit}>
                     <div className={styles.formRow}>
