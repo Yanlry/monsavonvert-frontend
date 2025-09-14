@@ -896,8 +896,8 @@ export default function Home() {
 
                     <div className={styles.certifications}>
                       <div className={styles.certBadge}>
-                        <img src="/images/bio.png" alt="Certification Bio" />
-                        <span>Bio</span>
+                        <img src="/images/bio.png" alt="Certification naturel" />
+                        <span>Naturel</span>
                       </div>
                       <div className={styles.certBadge}>
                         <img
@@ -908,7 +908,7 @@ export default function Home() {
                       </div>
                       <div className={styles.certBadge}>
                         <img src="/images/vegan.png" alt="Vegan" />
-                        <span>Vegan</span>
+                        <span>Écologique</span>
                       </div>
                     </div>
 

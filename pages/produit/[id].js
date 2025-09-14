@@ -436,7 +436,7 @@ export default function ProductDetail({ product }) {
                   </div>
                   <div className={styles.badge}>
                     <img src="/images/vegan.png" alt="Vegan" />
-                    <span>Vegan</span>
+                    <span>Écologique</span>
                   </div>
                 </div>
               </div>

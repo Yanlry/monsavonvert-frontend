@@ -63,25 +63,42 @@ export default function VertusBienfaits() {
     };
   }, []);
 
-  // Données sur les bienfaits du savon d'Alep
+  // MODIFIÉ: Données sur les bienfaits du savon d'Alep avec icônes SVG professionnelles
   const alepSoapBenefits = [
     {
       id: 1,
-      icon: "🌿",
+      // Icône de feuille pour "Purement Naturel"
+      icon: (
+        <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+          <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+        </svg>
+      ),
       title: "Purement Naturel",
       description:
         "Fabriqué uniquement avec de l'huile d'olive, de l'huile de baie de laurier et de la soude, sans parfums ni colorants artificiels",
     },
     {
       id: 2,
-      icon: "🧴",
+      // Icône de shield/protection pour "Adapté à tous"
+      icon: (
+        <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
+          <path d="m9 12 2 2 4-4"/>
+        </svg>
+      ),
       title: "Adapté à tous",
       description:
         "Convient à tous les types de peau, même les plus sensibles et réactives, grâce à son pH neutre et sa formule douce",
     },
     {
       id: 3,
-      icon: "⏳",
+      // Icône de couronne pour "Savoir-faire millénaire"
+      icon: (
+        <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/>
+        </svg>
+      ),
       title: "Savoir-faire millénaire",
       description:
         "Recette ancestrale originaire de Syrie transmise de génération en génération depuis plus de 3000 ans",
@@ -376,7 +393,7 @@ export default function VertusBienfaits() {
             </div>
           </section>
 
-          {/* Caractéristiques générales du savon d'Alep */}
+          {/* MODIFIÉ: Caractéristiques générales du savon d'Alep avec icônes professionnelles */}
           <section className={styles.featuresSection}>
             <div className={styles.contentContainer}>
               <div className={styles.sectionHeader}>

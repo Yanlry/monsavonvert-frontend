@@ -246,9 +246,7 @@ export default function AboutPage() {
           {/* Hero section */}
           <section className={styles.pageHero}>
             <div className={styles.pageHeroContent}>
-              <h1 className={styles.pageTitle}>
-                L'Histoire Millénaire d'Alep
-              </h1>
+              <h1 className={styles.pageTitle}>L'Histoire Millénaire d'Alep</h1>
             </div>
           </section>
 
@@ -292,16 +290,19 @@ export default function AboutPage() {
                 </p>
                 <div className={styles.introCertifications}>
                   <div className={styles.certificationBadge}>
-                    <img src="/images/bio.png" alt="Artisanal" />
-                    <span>100% Artisanal</span>
+                    <img src="/images/bio.png" alt="Produit naturel" />
+                    <span>Produit naturel</span>
                   </div>
                   <div className={styles.certificationBadge}>
-                    <img src="/images/cruelty-free.png" alt="Naturel" />
-                    <span>100% Naturel</span>
+                    <img
+                      src="/images/cruelty-free.png"
+                      alt="Sans cruauté animale"
+                    />
+                    <span>Sans cruauté animale</span>
                   </div>
                   <div className={styles.certificationBadge}>
-                    <img src="/images/vegan.png" alt="Authentique Alep" />
-                    <span>Authentique d'Alep</span>
+                    <img src="/images/vegan.png" alt="Écologique" />
+                    <span>Écologique</span>
                   </div>
                 </div>
               </div>
@@ -509,13 +510,12 @@ export default function AboutPage() {
                 </div>
                 <h3 className={styles.whyTitle}>Tradition millénaire</h3>
                 <p className={styles.whyDescription}>
-                  Élaborés selon la recette traditionnelle
-                  inchangée depuis plus de 1000 ans, directement dans la région
-                  d'Alep en Syrie. Cette méthode artisanale respecte chaque
-                  étape du processus historique : cuisson lente au chaudron,
-                  coulage manuel et séchage à l'air libre. Un savoir-faire
-                  millénaire transmis de génération en
-                  génération.
+                  Élaborés selon la recette traditionnelle inchangée depuis plus
+                  de 1000 ans, directement dans la région d'Alep en Syrie. Cette
+                  méthode artisanale respecte chaque étape du processus
+                  historique : cuisson lente au chaudron, coulage manuel et
+                  séchage à l'air libre. Un savoir-faire millénaire transmis de
+                  génération en génération.
                 </p>
               </div>
             </div>
