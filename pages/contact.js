@@ -30,7 +30,7 @@ export default function Contact() {
     submitted: false,
     success: false,
     message: '',
-    isLoading: false // NOUVEAU: pour afficher le loading
+    isLoading: false
   });
 
   // Effets au chargement
@@ -65,7 +65,7 @@ export default function Contact() {
     const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
     const totalItems = storedCart.reduce((sum, item) => sum + item.quantity, 0);
     setCartCount(totalItems);
-    console.log("📧 Nombre d'articles dans le panier:", totalItems);
+    console.log("Nombre d'articles dans le panier:", totalItems);
   }, []);
 
   
@@ -76,14 +76,14 @@ export default function Contact() {
       ...formData,
       [name]: value
     });
-    console.log("📧 Champ modifié:", name, "->", value);
+    console.log("Champ modifié:", name, "->", value);
   };
   
-  // NOUVELLE FONCTION : Gérer la soumission du formulaire avec envoi vers le backend
+  // FONCTION CORRIGÉE : Utilise maintenant NEXT_PUBLIC_API_URL au lieu de NEXT_PUBLIC_BACKEND_URL
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("📧 === SOUMISSION FORMULAIRE CONTACT ===");
-    console.log("📧 Données à envoyer:", formData);
+    console.log("=== DÉMARRAGE ENVOI FORMULAIRE ===");
+    console.log("Données du formulaire:", formData);
     
     // Validation côté client
     if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
@@ -118,25 +118,34 @@ export default function Contact() {
       isLoading: true
     });
     
-    console.log("🚀 Envoi des données vers le backend...");
-    
     try {
-      // IMPORTANT: Remplace cette URL par l'URL de ton backend
-      // Si ton backend est en local: 'http://localhost:3001/contact/send'
-      // Si ton backend est déployé: 'https://ton-backend.vercel.app/contact/send'
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
-      const response = await fetch(`${backendUrl}/contact/send`, {
+      // CORRECTION PRINCIPALE : Utilise NEXT_PUBLIC_API_URL (ta vraie variable)
+      const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'https://monsavonvert-backend.vercel.app';
+      const fullUrl = `${backendUrl}/contact/send`;
+      
+      console.log("URL du backend utilisée:", backendUrl);
+      console.log("URL complète:", fullUrl);
+      console.log("Envoi des données vers le backend...");
+      
+      const response = await fetch(fullUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
+        mode: 'cors',
       });
       
-      console.log("📧 Réponse du backend - Status:", response.status);
+      console.log("Réponse reçue - Status:", response.status);
+      console.log("Réponse OK?", response.ok);
+      
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status} - ${response.statusText}`);
+      }
       
       const result = await response.json();
-      console.log("📧 Réponse du backend - Data:", result);
+      console.log("Données reçues du backend:", result);
       
       if (result.result) {
         // Succès
@@ -150,14 +159,14 @@ export default function Contact() {
         
         // Réinitialiser le formulaire après 2 secondes
         setTimeout(() => {
-          console.log("🔄 Réinitialisation du formulaire...");
+          console.log("Réinitialisation du formulaire...");
           setFormData({
             name: '',
             email: '',
             subject: 'information',
             message: ''
           });
-          // Optionnel: cacher le message de succès après 5 secondes
+          // Cacher le message de succès après 3 secondes supplémentaires
           setTimeout(() => {
             setFormStatus({
               submitted: false,
@@ -180,17 +189,36 @@ export default function Contact() {
       }
       
     } catch (error) {
-      // Erreur réseau ou autre
-      console.error("❌ Erreur lors de l'envoi:", error);
+      // Diagnostic détaillé des erreurs
+      console.error("❌ ERREUR DÉTAILLÉE:", error);
+      
+      let errorMessage = '';
+      
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        errorMessage = `Impossible de joindre le serveur backend. 
+        Vérifiez que :
+        1. Le backend est bien déployé sur Vercel
+        2. L'URL est correcte : ${process.env.NEXT_PUBLIC_API_URL || 'https://monsavonvert-backend.vercel.app'}
+        3. La route /contact/send existe sur le backend`;
+      } else if (error.message.includes('CORS')) {
+        errorMessage = 'Problème de permissions entre le frontend et le backend. Vérifiez la configuration CORS.';
+      } else if (error.message.includes('404')) {
+        errorMessage = 'La route de contact n\'existe pas sur le serveur. Vérifiez que /contact/send est bien configurée.';
+      } else if (error.message.includes('500')) {
+        errorMessage = 'Erreur interne du serveur. Vérifiez les logs du backend sur Vercel.';
+      } else {
+        errorMessage = `Erreur de connexion: ${error.message}`;
+      }
+      
       setFormStatus({
         submitted: true,
         success: false,
-        message: 'Impossible de joindre le serveur. Vérifiez votre connexion internet et réessayez.',
+        message: errorMessage,
         isLoading: false
       });
     }
     
-    console.log("📧 === FIN SOUMISSION FORMULAIRE ===");
+    console.log("=== FIN ENVOI FORMULAIRE ===");
   };
   
   // FAQ items
@@ -296,6 +324,20 @@ export default function Contact() {
               <div className={styles.contactFormSection}>
                 <div className={styles.contactFormCard}>
                   <h2 className={styles.formCardTitle}>Envoyez-nous un message</h2>
+                  
+                  {/* Indicateur de diagnostic (utile pour vérifier la configuration) */}
+                  <div style={{
+                    background: '#f0f0f0', 
+                    padding: '10px', 
+                    borderRadius: '5px', 
+                    marginBottom: '20px', 
+                    fontSize: '12px',
+                    color: '#666'
+                  }}>
+                    <strong>URL Backend configurée:</strong> {process.env.NEXT_PUBLIC_API_URL || 'https://monsavonvert-backend.vercel.app'}<br/>
+                    <strong>Test de connexion:</strong> Allez sur <a href={(process.env.NEXT_PUBLIC_API_URL || 'https://monsavonvert-backend.vercel.app') + '/contact/test'} target="_blank" style={{color: '#007bff'}}>{(process.env.NEXT_PUBLIC_API_URL || 'https://monsavonvert-backend.vercel.app')}/contact/test</a>
+                  </div>
+                  
                   <form className={styles.contactForm} onSubmit={handleSubmit}>
                     <div className={styles.formRow}>
                       <div className={styles.formGroup}>
@@ -398,7 +440,7 @@ export default function Contact() {
                       </button>
                     </div>
                     
-                    {/* NOUVEAU: Messages de statut améliorés */}
+                    {/* Messages de statut améliorés */}
                     {formStatus.submitted && (
                       <div 
                         className={`
@@ -413,7 +455,8 @@ export default function Contact() {
                           backgroundColor: formStatus.success ? '#e8f5e8' : '#ffebee',
                           color: formStatus.success ? '#2e7d32' : '#c62828',
                           fontSize: '14px',
-                          fontWeight: '500'
+                          fontWeight: '500',
+                          whiteSpace: 'pre-line'
                         }}
                       >
                         {formStatus.success && <span style={{marginRight: '8px'}}>✅</span>}
@@ -455,7 +498,7 @@ export default function Contact() {
         <Footer />
       </div>
 
-      {/* NOUVEAU: CSS pour l'animation de loading */}
+      {/* CSS pour l'animation de loading */}
       <style jsx>{`
         @keyframes spin {
           from {
