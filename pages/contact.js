@@ -5,7 +5,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import styles from '../styles/contact.module.css';
 import Header from "../components/Header";
-import Footer from "../components/Footer"; // NOUVEAU: Import du composant footer
+import Footer from "../components/Footer";
 
 export default function Contact() {
   // État pour détecter si nous sommes côté client
@@ -29,31 +29,27 @@ export default function Contact() {
   const [formStatus, setFormStatus] = useState({
     submitted: false,
     success: false,
-    message: ''
+    message: '',
+    isLoading: false // NOUVEAU: pour afficher le loading
   });
 
   // Effets au chargement
   useEffect(() => {
-    // Marquer que nous sommes côté client
     setIsClient(true);
     
-    // Réinitialisation des marges
     if (typeof document !== 'undefined') {
       document.body.classList.add(styles.resetMargins);
       document.documentElement.classList.add(styles.resetMargins);
     }
     
-    // Détection du scroll pour le header
     const handleScroll = () => {
       setScrolled(window.scrollY > 30);
     };
     
-    // Gestionnaires d'événements
     if (typeof window !== 'undefined') {
       window.addEventListener('scroll', handleScroll);
     }
     
-    // Nettoyage
     return () => {
       if (typeof document !== 'undefined') {
         document.body.classList.remove(styles.resetMargins);
@@ -66,10 +62,10 @@ export default function Contact() {
   }, []);
 
   useEffect(() => {
-    // Synchroniser le nombre d'articles dans le panier avec le localStorage
     const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
     const totalItems = storedCart.reduce((sum, item) => sum + item.quantity, 0);
     setCartCount(totalItems);
+    console.log("📧 Nombre d'articles dans le panier:", totalItems);
   }, []);
 
   
@@ -80,27 +76,121 @@ export default function Contact() {
       ...formData,
       [name]: value
     });
+    console.log("📧 Champ modifié:", name, "->", value);
   };
   
-  // Gérer la soumission du formulaire
-  const handleSubmit = (e) => {
+  // NOUVELLE FONCTION : Gérer la soumission du formulaire avec envoi vers le backend
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simuler un envoi de formulaire
+    console.log("📧 === SOUMISSION FORMULAIRE CONTACT ===");
+    console.log("📧 Données à envoyer:", formData);
+    
+    // Validation côté client
+    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
+      console.log("❌ Validation échouée - champs manquants");
+      setFormStatus({
+        submitted: true,
+        success: false,
+        message: 'Veuillez remplir tous les champs obligatoires.',
+        isLoading: false
+      });
+      return;
+    }
+    
+    // Validation email basique
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      console.log("❌ Validation échouée - email invalide");
+      setFormStatus({
+        submitted: true,
+        success: false,
+        message: 'Veuillez saisir une adresse email valide.',
+        isLoading: false
+      });
+      return;
+    }
+    
+    // Démarrer le loading
     setFormStatus({
-      submitted: true,
-      success: true,
-      message: 'Votre message a bien été envoyé. Nous vous répondrons dans les plus brefs délais.'
+      submitted: false,
+      success: false,
+      message: '',
+      isLoading: true
     });
     
-    // Réinitialiser le formulaire après soumission
-    setTimeout(() => {
-      setFormData({
-        name: '',
-        email: '',
-        subject: 'information',
-        message: ''
+    console.log("🚀 Envoi des données vers le backend...");
+    
+    try {
+      // IMPORTANT: Remplace cette URL par l'URL de ton backend
+      // Si ton backend est en local: 'http://localhost:3001/contact/send'
+      // Si ton backend est déployé: 'https://ton-backend.vercel.app/contact/send'
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
+      const response = await fetch(`${backendUrl}/contact/send`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
       });
-    }, 1000);
+      
+      console.log("📧 Réponse du backend - Status:", response.status);
+      
+      const result = await response.json();
+      console.log("📧 Réponse du backend - Data:", result);
+      
+      if (result.result) {
+        // Succès
+        console.log("✅ Formulaire envoyé avec succès");
+        setFormStatus({
+          submitted: true,
+          success: true,
+          message: result.message || 'Votre message a bien été envoyé. Nous vous répondrons dans les plus brefs délais.',
+          isLoading: false
+        });
+        
+        // Réinitialiser le formulaire après 2 secondes
+        setTimeout(() => {
+          console.log("🔄 Réinitialisation du formulaire...");
+          setFormData({
+            name: '',
+            email: '',
+            subject: 'information',
+            message: ''
+          });
+          // Optionnel: cacher le message de succès après 5 secondes
+          setTimeout(() => {
+            setFormStatus({
+              submitted: false,
+              success: false,
+              message: '',
+              isLoading: false
+            });
+          }, 3000);
+        }, 2000);
+        
+      } else {
+        // Erreur du backend
+        console.log("❌ Erreur du backend:", result.error);
+        setFormStatus({
+          submitted: true,
+          success: false,
+          message: result.error || 'Une erreur est survenue lors de l\'envoi de votre message. Veuillez réessayer.',
+          isLoading: false
+        });
+      }
+      
+    } catch (error) {
+      // Erreur réseau ou autre
+      console.error("❌ Erreur lors de l'envoi:", error);
+      setFormStatus({
+        submitted: true,
+        success: false,
+        message: 'Impossible de joindre le serveur. Vérifiez votre connexion internet et réessayez.',
+        isLoading: false
+      });
+    }
+    
+    console.log("📧 === FIN SOUMISSION FORMULAIRE ===");
   };
   
   // FAQ items
@@ -218,6 +308,7 @@ export default function Contact() {
                           value={formData.name}
                           onChange={handleInputChange}
                           required 
+                          disabled={formStatus.isLoading}
                         />
                       </div>
                       
@@ -231,6 +322,7 @@ export default function Contact() {
                           value={formData.email}
                           onChange={handleInputChange}
                           required 
+                          disabled={formStatus.isLoading}
                         />
                       </div>
                     </div>
@@ -243,6 +335,7 @@ export default function Contact() {
                         name="subject"
                         value={formData.subject}
                         onChange={handleInputChange}
+                        disabled={formStatus.isLoading}
                       >
                         <option value="information">Demande d'information</option>
                         <option value="order">Question sur une commande</option>
@@ -261,26 +354,70 @@ export default function Contact() {
                         value={formData.message}
                         onChange={handleInputChange}
                         required
+                        disabled={formStatus.isLoading}
                       ></textarea>
                     </div>
                     
                     <div className={styles.formSubmit}>
-                      <button className={styles.submitButton} type="submit">
-                        Envoyer le message
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.submitIcon}>
-                          <line x1="22" y1="2" x2="11" y2="13"></line>
-                          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                        </svg>
+                      <button 
+                        className={styles.submitButton} 
+                        type="submit"
+                        disabled={formStatus.isLoading}
+                        style={{
+                          opacity: formStatus.isLoading ? 0.6 : 1,
+                          cursor: formStatus.isLoading ? 'not-allowed' : 'pointer'
+                        }}
+                      >
+                        {formStatus.isLoading ? (
+                          <>
+                            Envoi en cours...
+                            <svg 
+                              style={{marginLeft: '8px', animation: 'spin 1s linear infinite'}} 
+                              xmlns="http://www.w3.org/2000/svg" 
+                              width="20" 
+                              height="20" 
+                              viewBox="0 0 24 24" 
+                              fill="none" 
+                              stroke="currentColor" 
+                              strokeWidth="2" 
+                              strokeLinecap="round" 
+                              strokeLinejoin="round"
+                            >
+                              <path d="M21 12a9 9 0 11-6.219-8.56"/>
+                            </svg>
+                          </>
+                        ) : (
+                          <>
+                            Envoyer le message
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.submitIcon}>
+                              <line x1="22" y1="2" x2="11" y2="13"></line>
+                              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
+                          </>
+                        )}
                       </button>
                     </div>
                     
+                    {/* NOUVEAU: Messages de statut améliorés */}
                     {formStatus.submitted && (
                       <div 
                         className={`
                           ${styles.formMessage} 
                           ${formStatus.success ? styles.formMessageSuccess : styles.formMessageError}
                         `}
+                        style={{
+                          padding: '15px',
+                          borderRadius: '8px',
+                          marginTop: '15px',
+                          border: `2px solid ${formStatus.success ? '#4caf50' : '#f44336'}`,
+                          backgroundColor: formStatus.success ? '#e8f5e8' : '#ffebee',
+                          color: formStatus.success ? '#2e7d32' : '#c62828',
+                          fontSize: '14px',
+                          fontWeight: '500'
+                        }}
                       >
+                        {formStatus.success && <span style={{marginRight: '8px'}}>✅</span>}
+                        {!formStatus.success && <span style={{marginRight: '8px'}}>❌</span>}
                         {formStatus.message}
                       </div>
                     )}
@@ -317,6 +454,18 @@ export default function Contact() {
 
         <Footer />
       </div>
+
+      {/* NOUVEAU: CSS pour l'animation de loading */}
+      <style jsx>{`
+        @keyframes spin {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+      `}</style>
     </>
   );
 }
