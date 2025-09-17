@@ -863,7 +863,7 @@ export default function Checkout() {
         return 0;
       default: // standard
         // Livraison standard gratuite si le panier est >= 29€
-        return cartTotal >= 29 ? 0 : 4.95;
+        return cartTotal >= 29 ? 0 : 3.95;
     }
   };
 
