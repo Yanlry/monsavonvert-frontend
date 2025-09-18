@@ -18,9 +18,61 @@ export default function ResetPassword() {
   const [tokenValid, setTokenValid] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [timeRemaining, setTimeRemaining] = useState(null);
+
+  // États pour la validation du mot de passe en temps réel
+  const [passwordValidation, setPasswordValidation] = useState({
+    hasMinLength: false,      // Au moins 8 caractères
+    hasUppercase: false,      // Au moins une majuscule
+    hasNumber: false,         // Au moins un chiffre
+    hasSpecialChar: false,    // Au moins un caractère spécial
+    passwordsMatch: false     // Les mots de passe correspondent
+  });
   
   const router = useRouter();
   const { token } = router.query;
+
+  // Fonction pour valider le mot de passe en temps réel
+  const validatePassword = (newPassword, newConfirmPassword) => {
+    console.log('🔍 Validation du mot de passe:', newPassword);
+    
+    const validation = {
+      hasMinLength: newPassword.length >= 8,
+      hasUppercase: /[A-Z]/.test(newPassword),
+      hasNumber: /[0-9]/.test(newPassword),
+      hasSpecialChar: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(newPassword),
+      passwordsMatch: newPassword === newConfirmPassword && newPassword !== '' && newConfirmPassword !== ''
+    };
+
+    console.log('📊 Résultats de validation:', validation);
+    setPasswordValidation(validation);
+    return validation;
+  };
+
+  // Gérer les changements du mot de passe
+  const handlePasswordChange = (newPassword) => {
+    console.log('🔒 Changement mot de passe:', newPassword);
+    setPassword(newPassword);
+    validatePassword(newPassword, confirmPassword);
+  };
+
+  // Gérer les changements de la confirmation
+  const handleConfirmPasswordChange = (newConfirmPassword) => {
+    console.log('🔒 Changement confirmation:', newConfirmPassword);
+    setConfirmPassword(newConfirmPassword);
+    validatePassword(password, newConfirmPassword);
+  };
+
+  // Vérifier si tous les critères sont respectés
+  const isPasswordValid = () => {
+    const allValid = passwordValidation.hasMinLength && 
+                    passwordValidation.hasUppercase && 
+                    passwordValidation.hasNumber && 
+                    passwordValidation.hasSpecialChar && 
+                    passwordValidation.passwordsMatch;
+    
+    console.log('✅ Mot de passe valide:', allValid);
+    return allValid;
+  };
 
   // Vérifier la validité du token au chargement de la page
   useEffect(() => {
@@ -89,7 +141,9 @@ export default function ResetPassword() {
     setError('');
     setMessage('');
     
-    // Vérifications côté client
+    console.log('🚀 Tentative de soumission du formulaire');
+    
+    // Vérifications côté client avec la nouvelle validation
     if (!password) {
       setError('Veuillez saisir votre nouveau mot de passe');
       return;
@@ -99,14 +153,10 @@ export default function ResetPassword() {
       setError('Veuillez confirmer votre mot de passe');
       return;
     }
-    
-    if (password !== confirmPassword) {
-      setError('Les mots de passe ne correspondent pas');
-      return;
-    }
-    
-    if (password.length < 6) {
-      setError('Le mot de passe doit contenir au moins 6 caractères');
+
+    // Vérifier que tous les critères sont respectés
+    if (!isPasswordValid()) {
+      setError('Veuillez respecter tous les critères de sécurité du mot de passe');
       return;
     }
     
@@ -309,7 +359,7 @@ export default function ResetPassword() {
                     type="password"
                     id="password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => handlePasswordChange(e.target.value)}
                     placeholder="Entrez votre nouveau mot de passe"
                     className={styles.input}
                     disabled={isLoading}
@@ -322,9 +372,6 @@ export default function ResetPassword() {
                     </svg>
                   </div>
                 </div>
-                <small className={styles.inputHint}>
-                  Minimum 6 caractères
-                </small>
               </div>
 
               <div className={styles.inputGroup}>
@@ -336,7 +383,7 @@ export default function ResetPassword() {
                     type="password"
                     id="confirmPassword"
                     value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    onChange={(e) => handleConfirmPasswordChange(e.target.value)}
                     placeholder="Confirmez votre nouveau mot de passe"
                     className={styles.input}
                     disabled={isLoading}
@@ -351,10 +398,47 @@ export default function ResetPassword() {
                 </div>
               </div>
 
+              {/* Section de validation des critères */}
+              <div className={styles.passwordCriteria}>
+                <h4 className={styles.criteriaTitle}>Critères de sécurité :</h4>
+                <ul className={styles.criteriaList}>
+                  <li className={`${styles.criteriaItem} ${passwordValidation.hasMinLength ? styles.valid : styles.invalid}`}>
+                    <span className={styles.criteriaIcon}>
+                      {passwordValidation.hasMinLength ? '✓' : '✗'}
+                    </span>
+                    Au moins 8 caractères
+                  </li>
+                  <li className={`${styles.criteriaItem} ${passwordValidation.hasUppercase ? styles.valid : styles.invalid}`}>
+                    <span className={styles.criteriaIcon}>
+                      {passwordValidation.hasUppercase ? '✓' : '✗'}
+                    </span>
+                    Une lettre majuscule
+                  </li>
+                  <li className={`${styles.criteriaItem} ${passwordValidation.hasNumber ? styles.valid : styles.invalid}`}>
+                    <span className={styles.criteriaIcon}>
+                      {passwordValidation.hasNumber ? '✓' : '✗'}
+                    </span>
+                    Un chiffre
+                  </li>
+                  <li className={`${styles.criteriaItem} ${passwordValidation.hasSpecialChar ? styles.valid : styles.invalid}`}>
+                    <span className={styles.criteriaIcon}>
+                      {passwordValidation.hasSpecialChar ? '✓' : '✗'}
+                    </span>
+                    Un caractère spécial (!@#$%^&*)
+                  </li>
+                  <li className={`${styles.criteriaItem} ${passwordValidation.passwordsMatch ? styles.valid : styles.invalid}`}>
+                    <span className={styles.criteriaIcon}>
+                      {passwordValidation.passwordsMatch ? '✓' : '✗'}
+                    </span>
+                    Les mots de passe correspondent
+                  </li>
+                </ul>
+              </div>
+
               <button 
                 type="submit" 
-                disabled={isLoading}
-                className={styles.submitButton}
+                disabled={isLoading || !isPasswordValid()}
+                className={`${styles.submitButton} ${!isPasswordValid() ? styles.disabled : ''}`}
               >
                 <span className={styles.buttonContent}>
                   {isLoading ? (
@@ -384,22 +468,6 @@ export default function ResetPassword() {
               </svg>
               Retour à la connexion
             </Link>
-          </div>
-
-          {/* Conseils de sécurité */}
-          <div className={styles.securityInfo}>
-            <div className={styles.securityHeader}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 22S8 18 8 12V7L12 5L16 7V12C16 18 12 22 12 22Z"></path>
-              </svg>
-              <h3>Conseils pour un mot de passe sécurisé</h3>
-            </div>
-            <ul>
-              <li>🔡 Utilisez au moins 8 caractères</li>
-              <li>🔠 Mélangez lettres majuscules et minuscules</li>
-              <li>🔢 Ajoutez des chiffres et des symboles</li>
-              <li>📖 Évitez les mots du dictionnaire</li>
-            </ul>
           </div>
         </div>
       </div>
