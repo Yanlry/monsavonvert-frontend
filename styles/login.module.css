@@ -374,6 +374,100 @@
   100% { transform: scale(1); }
 }
 
+/* AJOUTÉ : Styles pour la validation des critères de mot de passe dans register.js */
+.passwordCriteriaList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.criteriaItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  border: 1px solid transparent;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.criteriaIcon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+
+/* État invalide (rouge) */
+.criteriaItem.invalid {
+  color: var(--color-error);
+  background: rgba(244, 67, 54, 0.05);
+  border-color: rgba(244, 67, 54, 0.1);
+}
+
+.criteriaItem.invalid .criteriaIcon {
+  background: var(--color-error);
+  color: white;
+}
+
+/* État valide (vert) */
+.criteriaItem.valid {
+  color: var(--color-success);
+  background: rgba(76, 175, 80, 0.05);
+  border-color: rgba(76, 175, 80, 0.1);
+}
+
+.criteriaItem.valid .criteriaIcon {
+  background: var(--color-success);
+  color: white;
+}
+
+/* Animation lorsqu'un critère devient valide */
+.criteriaItem.valid {
+  animation: validCriteriaRegister 0.4s ease-out;
+}
+
+@keyframes validCriteriaRegister {
+  0% {
+    transform: scale(0.95);
+    background: rgba(76, 175, 80, 0.1);
+  }
+  50% {
+    transform: scale(1.02);
+    background: rgba(76, 175, 80, 0.15);
+  }
+  100% {
+    transform: scale(1);
+    background: rgba(76, 175, 80, 0.05);
+  }
+}
+
+/* Style pour le bouton désactivé */
+.submitButtonDisabled {
+  background-color: var(--color-muted) !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+  opacity: 0.6;
+}
+
+.submitButtonDisabled:hover {
+  background-color: var(--color-muted) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
 /* MODIFIÉ : Hero de la page harmonisé avec les autres pages */
 .pageHero {
   padding: 120px 0 60px; /* Changé de 100px à 120px pour correspondre */

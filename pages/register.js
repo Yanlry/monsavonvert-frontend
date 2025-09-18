@@ -29,12 +29,51 @@ export default function Register() {
   const [isClient, setIsClient] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+
+  // AJOUTÉ : États pour la validation du mot de passe en temps réel
+  const [passwordValidation, setPasswordValidation] = useState({
+    hasMinLength: false,      // Au moins 8 caractères
+    hasUppercase: false,      // Au moins une majuscule
+    hasNumber: false,         // Au moins un chiffre
+    hasSpecialChar: false,    // Au moins un caractère spécial
+    passwordsMatch: false     // Les mots de passe correspondent
+  });
+
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   // Fonction pour mettre la première lettre en majuscule
   const capitalizeFirstLetter = (string) => {
     if (!string) return "";
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  };
+
+  // AJOUTÉ : Fonction pour valider le mot de passe en temps réel
+  const validatePassword = (newPassword, newConfirmPassword) => {
+    console.log('🔍 Validation du mot de passe:', newPassword);
+    
+    const validation = {
+      hasMinLength: newPassword.length >= 8,
+      hasUppercase: /[A-Z]/.test(newPassword),
+      hasNumber: /[0-9]/.test(newPassword),
+      hasSpecialChar: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(newPassword),
+      passwordsMatch: newPassword === newConfirmPassword && newPassword !== '' && newConfirmPassword !== ''
+    };
+
+    console.log('📊 Résultats de validation:', validation);
+    setPasswordValidation(validation);
+    return validation;
+  };
+
+  // AJOUTÉ : Vérifier si tous les critères sont respectés
+  const isPasswordValid = () => {
+    const allValid = passwordValidation.hasMinLength && 
+                    passwordValidation.hasUppercase && 
+                    passwordValidation.hasNumber && 
+                    passwordValidation.hasSpecialChar && 
+                    passwordValidation.passwordsMatch;
+    
+    console.log('✅ Mot de passe valide:', allValid);
+    return allValid;
   };
 
   // Fonction pour formater le prénom lors de la saisie
@@ -45,6 +84,20 @@ export default function Register() {
   // Fonction pour formater le nom lors de la saisie
   const handleLastNameChange = (e) => {
     setLastName(e.target.value);
+  };
+
+  // MODIFIÉ : Gérer les changements du mot de passe avec validation
+  const handlePasswordChange = (newPassword) => {
+    console.log('🔒 Changement mot de passe:', newPassword);
+    setPassword(newPassword);
+    validatePassword(newPassword, confirmPassword);
+  };
+
+  // MODIFIÉ : Gérer les changements de la confirmation avec validation
+  const handleConfirmPasswordChange = (newConfirmPassword) => {
+    console.log('🔒 Changement confirmation:', newConfirmPassword);
+    setConfirmPassword(newConfirmPassword);
+    validatePassword(password, newConfirmPassword);
   };
 
   // Effet pour l'initialisation côté client
@@ -176,12 +229,9 @@ export default function Register() {
         throw new Error("Veuillez remplir tous les champs obligatoires.");
       }
 
-      if (password.length < 8) {
-        throw new Error("Le mot de passe doit contenir au moins 8 caractères.");
-      }
-
-      if (password !== confirmPassword) {
-        throw new Error("Les mots de passe ne correspondent pas.");
+      // MODIFIÉ : Utiliser la nouvelle validation
+      if (!isPasswordValid()) {
+        throw new Error("Veuillez respecter tous les critères de sécurité du mot de passe.");
       }
 
       if (!termsAccepted) {
@@ -462,7 +512,7 @@ export default function Register() {
                           id="password"
                           placeholder="Votre mot de passe (8 caractères minimum)"
                           value={password}
-                          onChange={(e) => setPassword(e.target.value)}
+                          onChange={(e) => handlePasswordChange(e.target.value)}
                           required
                           minLength="8"
                         />
@@ -501,7 +551,7 @@ export default function Register() {
                           id="confirmPassword"
                           placeholder="Confirmez votre mot de passe"
                           value={confirmPassword}
-                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          onChange={(e) => handleConfirmPasswordChange(e.target.value)}
                           required
                         />
                       </div>
@@ -524,11 +574,11 @@ export default function Register() {
                       </div>
                     </div>
 
-                    {/* Bouton d'inscription */}
+                    {/* MODIFIÉ : Bouton d'inscription avec validation */}
                     <button
                       type="submit"
-                      className={styles.submitButton}
-                      disabled={loading}
+                      className={`${styles.submitButton} ${!isPasswordValid() || !termsAccepted ? styles.submitButtonDisabled : ''}`}
+                      disabled={loading || !isPasswordValid() || !termsAccepted}
                     >
                       {loading ? (
                         <>
@@ -549,94 +599,42 @@ export default function Register() {
                   </div>
                 </div>
 
-                <div className={styles.loginInfo} id="register-advantages">
+                {/* REMPLACÉ : Section des critères de validation au lieu des avantages */}
+                <div className={styles.loginInfo} id="register-validation">
                   <div className={styles.loginInfoContent}>
-                    <h2>Pourquoi créer un compte</h2>
-                    <ul className={styles.advantagesList}>
-                      <li>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                          <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                        </svg>
-                        <span>Accédez à votre historique de commandes</span>
+                    <h2>Critères de sécurité</h2>
+                    
+                    {/* Liste des critères de validation */}
+                    <ul className={styles.passwordCriteriaList}>
+                      <li className={`${styles.criteriaItem} ${passwordValidation.hasMinLength ? styles.valid : styles.invalid}`}>
+                        <span className={styles.criteriaIcon}>
+                          {passwordValidation.hasMinLength ? '✓' : '✗'}
+                        </span>
+                        <span>Au moins 8 caractères</span>
                       </li>
-                      <li>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                          <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                        </svg>
-                        <span>Sauvegardez votre liste de produits favoris</span>
+                      <li className={`${styles.criteriaItem} ${passwordValidation.hasUppercase ? styles.valid : styles.invalid}`}>
+                        <span className={styles.criteriaIcon}>
+                          {passwordValidation.hasUppercase ? '✓' : '✗'}
+                        </span>
+                        <span>Une lettre majuscule</span>
                       </li>
-                      <li>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                          <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                        </svg>
-                        <span>Recevez des offres exclusives par email</span>
+                      <li className={`${styles.criteriaItem} ${passwordValidation.hasNumber ? styles.valid : styles.invalid}`}>
+                        <span className={styles.criteriaIcon}>
+                          {passwordValidation.hasNumber ? '✓' : '✗'}
+                        </span>
+                        <span>Un chiffre</span>
                       </li>
-                      <li>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                          <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                        </svg>
-                        <span>Passez vos commandes plus rapidement</span>
+                      <li className={`${styles.criteriaItem} ${passwordValidation.hasSpecialChar ? styles.valid : styles.invalid}`}>
+                        <span className={styles.criteriaIcon}>
+                          {passwordValidation.hasSpecialChar ? '✓' : '✗'}
+                        </span>
+                        <span>Un caractère spécial (!@#$%^&*)</span>
                       </li>
-                      <li>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                          <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                        </svg>
-                        <span>Rejoignez notre programme de fidélité</span>
+                      <li className={`${styles.criteriaItem} ${passwordValidation.passwordsMatch ? styles.valid : styles.invalid}`}>
+                        <span className={styles.criteriaIcon}>
+                          {passwordValidation.passwordsMatch ? '✓' : '✗'}
+                        </span>
+                        <span>Les mots de passe correspondent</span>
                       </li>
                     </ul>
 
@@ -653,9 +651,7 @@ export default function Register() {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         >
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <line x1="12" y1="16" x2="12" y2="12"></line>
-                          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                          <path d="M12 22S8 18 8 12V7L12 5L16 7V12C16 18 12 22 12 22Z"></path>
                         </svg>
                       </div>
                       <div className={styles.infoBoxContent}>
@@ -676,12 +672,12 @@ export default function Register() {
         <Footer />
       </div>
 
-      {/* Styles pour masquer la section "Pourquoi créer un compte" sur mobile */}
+      {/* MODIFIÉ : Styles pour masquer la section des critères sur mobile */}
       <style jsx global>{`
-        /* Styles pour masquer la section des avantages sur mobile */
+        /* Styles pour masquer la section de validation sur mobile */
         @media (max-width: 768px) {
           /* Sélecteur pour cibler la classe spécifique via l'ID */
-          #register-advantages {
+          #register-validation {
             display: none !important;
           }
 
