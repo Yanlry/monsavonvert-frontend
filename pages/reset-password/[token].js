@@ -347,94 +347,103 @@ export default function ResetPassword() {
             </div>
           )}
 
-          {/* Formulaire de réinitialisation */}
+          {/* Formulaire de réinitialisation avec layout en deux colonnes */}
           {!message && (
             <form onSubmit={handleSubmit} className={styles.form}>
-              <div className={styles.inputGroup}>
-                <label htmlFor="password" className={styles.label}>
-                  Nouveau mot de passe
-                </label>
-                <div className={styles.inputWrapper}>
-                  <input
-                    type="password"
-                    id="password"
-                    value={password}
-                    onChange={(e) => handlePasswordChange(e.target.value)}
-                    placeholder="Entrez votre nouveau mot de passe"
-                    className={styles.input}
-                    disabled={isLoading}
-                  />
-                  <div className={styles.inputIcon}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                      <circle cx="12" cy="16" r="1"></circle>
-                      <path d="M7 11V7A5 5 0 0 1 17 7V11"></path>
-                    </svg>
+              {/* Container en deux colonnes : formulaire à gauche, critères à droite */}
+              <div className={styles.formLayout}>
+                {/* Colonne de gauche : Champs de saisie */}
+                <div className={styles.inputsColumn}>
+                  <div className={styles.inputGroup}>
+                    <label htmlFor="password" className={styles.label}>
+                      Nouveau mot de passe
+                    </label>
+                    <div className={styles.inputWrapper}>
+                      <input
+                        type="password"
+                        id="password"
+                        value={password}
+                        onChange={(e) => handlePasswordChange(e.target.value)}
+                        placeholder="Entrez votre nouveau mot de passe"
+                        className={styles.input}
+                        disabled={isLoading}
+                      />
+                      <div className={styles.inputIcon}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                          <circle cx="12" cy="16" r="1"></circle>
+                          <path d="M7 11V7A5 5 0 0 1 17 7V11"></path>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className={styles.inputGroup}>
+                    <label htmlFor="confirmPassword" className={styles.label}>
+                      Confirmer le mot de passe
+                    </label>
+                    <div className={styles.inputWrapper}>
+                      <input
+                        type="password"
+                        id="confirmPassword"
+                        value={confirmPassword}
+                        onChange={(e) => handleConfirmPasswordChange(e.target.value)}
+                        placeholder="Confirmez votre nouveau mot de passe"
+                        className={styles.input}
+                        disabled={isLoading}
+                      />
+                      <div className={styles.inputIcon}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                          <circle cx="12" cy="16" r="1"></circle>
+                          <path d="M7 11V7A5 5 0 0 1 17 7V11"></path>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Colonne de droite : Critères de validation */}
+                <div className={styles.criteriaColumn}>
+                  <div className={styles.passwordCriteria}>
+                    <h4 className={styles.criteriaTitle}>Critères de sécurité :</h4>
+                    <ul className={styles.criteriaList}>
+                      <li className={`${styles.criteriaItem} ${passwordValidation.hasMinLength ? styles.valid : styles.invalid}`}>
+                        <span className={styles.criteriaIcon}>
+                          {passwordValidation.hasMinLength ? '✓' : '✗'}
+                        </span>
+                        Au moins 8 caractères
+                      </li>
+                      <li className={`${styles.criteriaItem} ${passwordValidation.hasUppercase ? styles.valid : styles.invalid}`}>
+                        <span className={styles.criteriaIcon}>
+                          {passwordValidation.hasUppercase ? '✓' : '✗'}
+                        </span>
+                        Une lettre majuscule
+                      </li>
+                      <li className={`${styles.criteriaItem} ${passwordValidation.hasNumber ? styles.valid : styles.invalid}`}>
+                        <span className={styles.criteriaIcon}>
+                          {passwordValidation.hasNumber ? '✓' : '✗'}
+                        </span>
+                        Un chiffre
+                      </li>
+                      <li className={`${styles.criteriaItem} ${passwordValidation.hasSpecialChar ? styles.valid : styles.invalid}`}>
+                        <span className={styles.criteriaIcon}>
+                          {passwordValidation.hasSpecialChar ? '✓' : '✗'}
+                        </span>
+                        Un caractère spécial (!@#$%^&*)
+                      </li>
+                      <li className={`${styles.criteriaItem} ${passwordValidation.passwordsMatch ? styles.valid : styles.invalid}`}>
+                        <span className={styles.criteriaIcon}>
+                          {passwordValidation.passwordsMatch ? '✓' : '✗'}
+                        </span>
+                        Les mots de passe correspondent
+                      </li>
+                    </ul>
                   </div>
                 </div>
               </div>
 
-              <div className={styles.inputGroup}>
-                <label htmlFor="confirmPassword" className={styles.label}>
-                  Confirmer le mot de passe
-                </label>
-                <div className={styles.inputWrapper}>
-                  <input
-                    type="password"
-                    id="confirmPassword"
-                    value={confirmPassword}
-                    onChange={(e) => handleConfirmPasswordChange(e.target.value)}
-                    placeholder="Confirmez votre nouveau mot de passe"
-                    className={styles.input}
-                    disabled={isLoading}
-                  />
-                  <div className={styles.inputIcon}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                      <circle cx="12" cy="16" r="1"></circle>
-                      <path d="M7 11V7A5 5 0 0 1 17 7V11"></path>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
-              {/* Section de validation des critères */}
-              <div className={styles.passwordCriteria}>
-                <h4 className={styles.criteriaTitle}>Critères de sécurité :</h4>
-                <ul className={styles.criteriaList}>
-                  <li className={`${styles.criteriaItem} ${passwordValidation.hasMinLength ? styles.valid : styles.invalid}`}>
-                    <span className={styles.criteriaIcon}>
-                      {passwordValidation.hasMinLength ? '✓' : '✗'}
-                    </span>
-                    Au moins 8 caractères
-                  </li>
-                  <li className={`${styles.criteriaItem} ${passwordValidation.hasUppercase ? styles.valid : styles.invalid}`}>
-                    <span className={styles.criteriaIcon}>
-                      {passwordValidation.hasUppercase ? '✓' : '✗'}
-                    </span>
-                    Une lettre majuscule
-                  </li>
-                  <li className={`${styles.criteriaItem} ${passwordValidation.hasNumber ? styles.valid : styles.invalid}`}>
-                    <span className={styles.criteriaIcon}>
-                      {passwordValidation.hasNumber ? '✓' : '✗'}
-                    </span>
-                    Un chiffre
-                  </li>
-                  <li className={`${styles.criteriaItem} ${passwordValidation.hasSpecialChar ? styles.valid : styles.invalid}`}>
-                    <span className={styles.criteriaIcon}>
-                      {passwordValidation.hasSpecialChar ? '✓' : '✗'}
-                    </span>
-                    Un caractère spécial (!@#$%^&*)
-                  </li>
-                  <li className={`${styles.criteriaItem} ${passwordValidation.passwordsMatch ? styles.valid : styles.invalid}`}>
-                    <span className={styles.criteriaIcon}>
-                      {passwordValidation.passwordsMatch ? '✓' : '✗'}
-                    </span>
-                    Les mots de passe correspondent
-                  </li>
-                </ul>
-              </div>
-
+              {/* Bouton de soumission (pleine largeur en bas) */}
               <button 
                 type="submit" 
                 disabled={isLoading || !isPasswordValid()}
