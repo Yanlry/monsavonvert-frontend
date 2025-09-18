@@ -76,6 +76,35 @@ export default function Register() {
     return allValid;
   };
 
+  // AJOUTÉ : Fonction pour traduire les erreurs en français
+  const translateError = (errorMessage) => {
+    console.log('🔍 Message d\'erreur reçu:', errorMessage);
+    
+    // Vérifier si l'erreur indique que l'utilisateur existe déjà
+    if (errorMessage.includes('User already exists') || 
+        errorMessage.includes('already exists') ||
+        errorMessage.includes('Email already in use') ||
+        errorMessage.includes('user exists')) {
+      return 'Cette adresse email est déjà utilisée. Veuillez en choisir une autre ou vous connecter.';
+    }
+    
+    // Autres erreurs courantes que vous pourriez vouloir traduire
+    if (errorMessage.includes('Invalid email')) {
+      return 'Adresse email invalide.';
+    }
+    
+    if (errorMessage.includes('Password too weak')) {
+      return 'Le mot de passe est trop faible.';
+    }
+    
+    if (errorMessage.includes('Invalid password')) {
+      return 'Mot de passe invalide.';
+    }
+    
+    // Si aucune traduction spécifique, retourner le message original
+    return errorMessage;
+  };
+
   // Fonction pour formater le prénom lors de la saisie
   const handleFirstNameChange = (e) => {
     setFirstName(e.target.value);
@@ -242,6 +271,8 @@ export default function Register() {
       const formattedFirstName = capitalizeFirstLetter(firstName);
       const formattedLastName = capitalizeFirstLetter(lastName);
 
+      console.log('📤 Envoi des données d\'inscription...');
+
       // Envoi des données au backend
       const response = await fetch(`${API_URL}/users/signup`, {
         method: "POST",
@@ -259,9 +290,12 @@ export default function Register() {
       });
 
       const data = await response.json();
+      console.log('📨 Réponse du serveur:', data);
 
       if (!response.ok) {
-        throw new Error(data.error || "Erreur lors de l'inscription");
+        // MODIFIÉ : Utiliser la fonction de traduction pour les erreurs
+        const translatedError = translateError(data.error || "Erreur lors de l'inscription");
+        throw new Error(translatedError);
       }
 
       // Stockage dans localStorage (comme dans login.js)
@@ -307,6 +341,7 @@ export default function Register() {
 
       router.push("/profile");
     } catch (err) {
+      console.error('❌ Erreur lors de l\'inscription:', err.message);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -549,7 +584,7 @@ export default function Register() {
                         <input
                           type="password"
                           id="confirmPassword"
-                          placeholder="Confirmez votre mot de passe"
+                          placeholder="Confirmez votre nouveau mot de passe"
                           value={confirmPassword}
                           onChange={(e) => handleConfirmPasswordChange(e.target.value)}
                           required
