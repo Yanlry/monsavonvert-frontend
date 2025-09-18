@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import Header from '../../components/Header'; // Import du Header
+import Footer from '../../components/Footer'; // Import du Footer
 import styles from '../../styles/reset-password.module.css';
 
 export default function ResetPassword() {
@@ -169,13 +171,23 @@ export default function ResetPassword() {
           <meta name="description" content="Vérification du lien de récupération" />
           <link rel="icon" href="/favicon.ico" />
         </Head>
+        
+        <Header cartCount={0} />
+        
         <div className={styles.container}>
-          <div className={styles.loadingContainer}>
-            <div className={styles.spinner}></div>
-            <h2>Vérification du lien de récupération...</h2>
-            <p>Veuillez patienter</p>
+          <div className={styles.mainSection}>
+            <div className={styles.visualColumn}></div>
+            <div className={styles.formColumn}>
+              <div className={styles.loadingContainer}>
+                <div className={styles.spinner}></div>
+                <h2>Vérification du lien de récupération...</h2>
+                <p>Veuillez patienter</p>
+              </div>
+            </div>
           </div>
         </div>
+        
+        <Footer />
       </>
     );
   }
@@ -189,40 +201,57 @@ export default function ResetPassword() {
           <meta name="description" content="Lien de récupération invalide" />
           <link rel="icon" href="/favicon.ico" />
         </Head>
+        
+        <Header cartCount={0} />
+        
         <div className={styles.container}>
-          <div className={styles.formContainer}>
-            <div className={styles.header}>
-              <Link href="/" className={styles.logo}>
-                MonSavonVert
-              </Link>
-              <h1 className={styles.title}>Lien invalide</h1>
-            </div>
+          <div className={styles.mainSection}>
+            <div className={styles.visualColumn}></div>
+            <div className={styles.formColumn}>
+              <div className={styles.formContainer}>
+                <div className={styles.header}>
+                  <h1 className={styles.title}>Lien invalide</h1>
+                  <p className={styles.subtitle}>Ce lien n'est plus valide ou a expiré</p>
+                </div>
 
-            <div className={styles.errorMessage}>
-              <div className={styles.errorIcon}>⚠️</div>
-              <h3>Ce lien n'est plus valide</h3>
-              <p>{error}</p>
-              <p>Les liens de récupération expirent après 10 minutes pour des raisons de sécurité.</p>
-              
-              {/* Debug information */}
-              <details style={{ marginTop: '20px', fontSize: '12px', color: '#666' }}>
-                <summary>Informations de débogage</summary>
-                <p>Token: {token?.substring(0, 20)}...</p>
-                <p>API URL: {process.env.NEXT_PUBLIC_API_URL}</p>
-                <p>URL de vérification: {process.env.NEXT_PUBLIC_API_URL}/password-reset/verify-reset-token/{token?.substring(0, 10)}...</p>
-              </details>
-            </div>
+                <div className={styles.errorMessage}>
+                  <div className={styles.errorIcon}>⚠️</div>
+                  <div className={styles.messageContent}>
+                    <h3>Ce lien n'est plus valide</h3>
+                    <p>{error}</p>
+                    <p>Les liens de récupération expirent après 10 minutes pour des raisons de sécurité.</p>
+                  </div>
+                </div>
 
-            <div className={styles.links}>
-              <Link href="/forgot-password" className={styles.primaryButton}>
-                Faire une nouvelle demande
-              </Link>
-              <Link href="/login" className={styles.link}>
-                Retour à la connexion
-              </Link>
+                <div className={styles.links}>
+                  <Link href="/forgot-password" className={styles.link}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 4H8L1 12L8 20H21C22.1 20 23 19.1 23 18V6C23 4.9 22.1 4 21 4Z"></path>
+                      <path d="M18 9L12 15M12 9L18 15"></path>
+                    </svg>
+                    Faire une nouvelle demande
+                  </Link>
+                  <Link href="/login" className={styles.link}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M19 12H5M12 19L5 12L12 5"></path>
+                    </svg>
+                    Retour à la connexion
+                  </Link>
+                </div>
+
+                {/* Debug information */}
+                <details className={styles.debugInfo}>
+                  <summary>Informations de débogage</summary>
+                  <p>Token: {token?.substring(0, 20)}...</p>
+                  <p>API URL: {process.env.NEXT_PUBLIC_API_URL}</p>
+                  <p>URL de vérification: {process.env.NEXT_PUBLIC_API_URL}/password-reset/verify-reset-token/{token?.substring(0, 10)}...</p>
+                </details>
+              </div>
             </div>
           </div>
         </div>
+        
+        <Footer />
       </>
     );
   }
@@ -235,117 +264,165 @@ export default function ResetPassword() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+      <Header cartCount={0} />
+
       <div className={styles.container}>
-        <div className={styles.formContainer}>
-          {/* En-tête */}
-          <div className={styles.header}>
-            <Link href="/" className={styles.logo}>
-              MonSavonVert
-            </Link>
-            <h1 className={styles.title}>Nouveau mot de passe</h1>
-            {userInfo && (
-              <p className={styles.subtitle}>
-                Bonjour {userInfo.firstName}, créez votre nouveau mot de passe ci-dessous.
-              </p>
-            )}
-            {timeRemaining && (
-              <div className={styles.timeWarning}>
-                ⏰ Ce lien expire dans {timeRemaining} minute{timeRemaining > 1 ? 's' : ''}
-              </div>
-            )}
-          </div>
+        <div className={styles.mainSection}>
+          {/* Colonne de gauche - Visuel */}
+          <div className={styles.visualColumn}></div>
 
-          {/* Messages de succès ou d'erreur */}
-          {message && (
-            <div className={styles.successMessage}>
-              <div className={styles.successIcon}>✅</div>
-              <h3>Mot de passe modifié avec succès !</h3>
-              <p>{message}</p>
-              <p className={styles.successNote}>
-                Redirection vers la page de connexion dans 3 secondes...
-              </p>
-            </div>
-          )}
-
-          {error && (
-            <div className={styles.errorMessage}>
-              <div className={styles.errorIcon}>❌</div>
-              <p>{error}</p>
-            </div>
-          )}
-
-          {/* Formulaire de réinitialisation */}
-          {!message && (
-            <form onSubmit={handleSubmit} className={styles.form}>
-              <div className={styles.inputGroup}>
-                <label htmlFor="password" className={styles.label}>
-                  Nouveau mot de passe
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Entrez votre nouveau mot de passe"
-                  className={styles.input}
-                  disabled={isLoading}
-                />
-                <small className={styles.inputHint}>
-                  Minimum 6 caractères
-                </small>
-              </div>
-
-              <div className={styles.inputGroup}>
-                <label htmlFor="confirmPassword" className={styles.label}>
-                  Confirmer le mot de passe
-                </label>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Confirmez votre nouveau mot de passe"
-                  className={styles.input}
-                  disabled={isLoading}
-                />
-              </div>
-
-              <button 
-                type="submit" 
-                disabled={isLoading}
-                className={styles.submitButton}
-              >
-                {isLoading ? (
-                  <span className={styles.loading}>
-                    <span className={styles.spinner}></span>
-                    Modification en cours...
-                  </span>
-                ) : (
-                  'Modifier mon mot de passe'
+          {/* Colonne de droite - Formulaire */}
+          <div className={styles.formColumn}>
+            <div className={styles.formContainer}>
+              {/* En-tête du formulaire */}
+              <div className={styles.header}>
+                <h1 className={styles.title}>Nouveau mot de passe</h1>
+                {userInfo && (
+                  <p className={styles.subtitle}>
+                    Bonjour {userInfo.firstName}, créez votre nouveau mot de passe ci-dessous.
+                  </p>
                 )}
-              </button>
-            </form>
-          )}
+                {timeRemaining && (
+                  <div className={styles.timeWarning}>
+                    ⏰ Ce lien expire dans {timeRemaining} minute{timeRemaining > 1 ? 's' : ''}
+                  </div>
+                )}
+              </div>
 
-          {/* Liens de navigation */}
-          <div className={styles.links}>
-            <Link href="/login" className={styles.link}>
-              ← Retour à la connexion
-            </Link>
-          </div>
+              {/* Messages de succès ou d'erreur */}
+              {message && (
+                <div className={styles.successMessage}>
+                  <div className={styles.successIcon}>✅</div>
+                  <div className={styles.messageContent}>
+                    <h3>Mot de passe modifié avec succès !</h3>
+                    <p>{message}</p>
+                    <p className={styles.successNote}>
+                      Redirection vers la page de connexion dans 3 secondes...
+                    </p>
+                  </div>
+                </div>
+              )}
 
-          {/* Conseils de sécurité */}
-          <div className={styles.securityInfo}>
-            <h3>Conseils pour un mot de passe sécurisé</h3>
-            <ul>
-              <li>Utilisez au moins 8 caractères</li>
-              <li>Mélangez lettres majuscules et minuscules</li>
-              <li>Ajoutez des chiffres et des symboles</li>
-              <li>Évitez les mots du dictionnaire</li>
-            </ul>
+              {error && (
+                <div className={styles.errorMessage}>
+                  <div className={styles.errorIcon}>❌</div>
+                  <div className={styles.messageContent}>
+                    <h3>Erreur</h3>
+                    <p>{error}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Formulaire de réinitialisation */}
+              {!message && (
+                <form onSubmit={handleSubmit} className={styles.form}>
+                  <div className={styles.inputGroup}>
+                    <label htmlFor="password" className={styles.label}>
+                      Nouveau mot de passe
+                    </label>
+                    <div className={styles.inputWrapper}>
+                      <input
+                        type="password"
+                        id="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Entrez votre nouveau mot de passe"
+                        className={styles.input}
+                        disabled={isLoading}
+                      />
+                      <div className={styles.inputIcon}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                          <circle cx="12" cy="16" r="1"></circle>
+                          <path d="M7 11V7A5 5 0 0 1 17 7V11"></path>
+                        </svg>
+                      </div>
+                    </div>
+                    <small className={styles.inputHint}>
+                      Minimum 6 caractères
+                    </small>
+                  </div>
+
+                  <div className={styles.inputGroup}>
+                    <label htmlFor="confirmPassword" className={styles.label}>
+                      Confirmer le mot de passe
+                    </label>
+                    <div className={styles.inputWrapper}>
+                      <input
+                        type="password"
+                        id="confirmPassword"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="Confirmez votre nouveau mot de passe"
+                        className={styles.input}
+                        disabled={isLoading}
+                      />
+                      <div className={styles.inputIcon}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                          <circle cx="12" cy="16" r="1"></circle>
+                          <path d="M7 11V7A5 5 0 0 1 17 7V11"></path>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button 
+                    type="submit" 
+                    disabled={isLoading}
+                    className={styles.submitButton}
+                  >
+                    <span className={styles.buttonContent}>
+                      {isLoading ? (
+                        <>
+                          <span className={styles.spinner}></span>
+                          Modification en cours...
+                        </>
+                      ) : (
+                        <>
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M9 12L11 14L15 10"></path>
+                            <path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"></path>
+                          </svg>
+                          Modifier mon mot de passe
+                        </>
+                      )}
+                    </span>
+                  </button>
+                </form>
+              )}
+
+              {/* Liens de navigation */}
+              <div className={styles.links}>
+                <Link href="/login" className={styles.link}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M19 12H5M12 19L5 12L12 5"></path>
+                  </svg>
+                  Retour à la connexion
+                </Link>
+              </div>
+
+              {/* Conseils de sécurité */}
+              <div className={styles.securityInfo}>
+                <div className={styles.securityHeader}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 22S8 18 8 12V7L12 5L16 7V12C16 18 12 22 12 22Z"></path>
+                  </svg>
+                  <h3>Conseils pour un mot de passe sécurisé</h3>
+                </div>
+                <ul>
+                  <li>🔡 Utilisez au moins 8 caractères</li>
+                  <li>🔠 Mélangez lettres majuscules et minuscules</li>
+                  <li>🔢 Ajoutez des chiffres et des symboles</li>
+                  <li>📖 Évitez les mots du dictionnaire</li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
+      <Footer />
     </>
   );
 }
