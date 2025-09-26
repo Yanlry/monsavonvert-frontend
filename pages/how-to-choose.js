@@ -280,142 +280,6 @@ export default function HowToChoose() {
             </div>
           </section>
 
-          {/* NOUVELLE SECTION : Authenticité (style sobre et cohérent) */}
-          <section className={styles.authenticitySection}>
-            <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>
-                Comment reconnaître un vrai savon d'Alep ?
-              </h2>
-              <p className={styles.sectionSubtitle}>
-                Apprenez à identifier les caractéristiques d'un savon d'Alep authentique
-              </p>
-            </div>
-
-            {/* Note d'information sobre */}
-            <div className={styles.authenticityNote}>
-              <div className={styles.authenticityNoteIcon}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                  <path d="m9 12 2 2 4-4"/>
-                </svg>
-              </div>
-              <div className={styles.authenticityNoteContent}>
-                <h4>Pourquoi vérifier l'authenticité ?</h4>
-                <p>
-                  Le succès du savon d'Alep a malheureusement donné lieu à de nombreuses imitations. 
-                  Ces contrefaçons ne possèdent pas les propriétés bénéfiques du véritable savon d'Alep 
-                  et peuvent même être nocives pour votre peau.
-                </p>
-              </div>
-            </div>
-
-            {/* Tableau de comparaison sobre */}
-            <div className={styles.authenticityTable}>
-              <div className={styles.authenticityTableHeader}>
-                <div className={styles.authenticityTableCell}>Critère de vérification</div>
-                <div className={styles.authenticityTableCell}>Savon authentique</div>
-                <div className={styles.authenticityTableCell}>Contrefaçon</div>
-              </div>
-
-              {authenticityChecks.map((check, index) => (
-                <div key={index} className={styles.authenticityTableRow}>
-                  <div className={styles.authenticityTableCell}>
-                    <strong>{check.criterion}</strong>
-                  </div>
-                  <div className={styles.authenticityTableCell}>
-                    <span className={styles.authenticTag}>
-                      <svg
-                        viewBox="0 0 24 24"
-                        width="16"
-                        height="16"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        fill="none"
-                      >
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                      </svg>
-                      {check.authentic}
-                    </span>
-                  </div>
-                  <div className={styles.authenticityTableCell}>
-                    <span className={styles.fakeTag}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <circle cx="12" cy="12" r="10"/>
-                        <path d="m15 9-6 6"/>
-                        <path d="m9 9 6 6"/>
-                      </svg>
-                      {check.fake}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Indicateurs de qualité */}
-            <div className={styles.qualitySection}>
-              <h3 className={styles.qualityTitle}>Indicateurs de qualité supplémentaires</h3>
-              <div className={styles.qualityGrid}>
-                {qualityIndicators.map((indicator, index) => (
-                  <div key={index} className={styles.qualityCard}>
-                    <h4>{indicator.title}</h4>
-                    <p>{indicator.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Garantie MonSavonVert sobre */}
-            <div className={styles.authenticityGuarantee}>
-              <div className={styles.guaranteeContent}>
-                <div className={styles.guaranteeIcon}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="32"
-                    height="32"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                    <path d="m9 12 2 2 4-4"/>
-                  </svg>
-                </div>
-                <div className={styles.guaranteeText}>
-                  <h3>Notre engagement qualité</h3>
-                  <p>
-                    Chez MonSavonVert, nous garantissons l'authenticité de tous nos savons d'Alep. 
-                    Nos produits sont sourcés directement auprès de producteurs certifiés et 
-                    respectent l'ensemble des critères traditionnels de fabrication.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
-
           {/* Guide de choix principal */}
           <section className={styles.guideSection}>
             <div className={styles.sectionHeader}>
@@ -549,6 +413,142 @@ export default function HowToChoose() {
             </div>
           </section>
 
+   {/* NOUVELLE SECTION : Authenticité (style sobre et cohérent) */}
+   <section className={styles.authenticitySection}>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>
+                Comment reconnaître un vrai savon d'Alep ?
+              </h2>
+              <p className={styles.sectionSubtitle}>
+                Apprenez à identifier les caractéristiques d'un savon d'Alep authentique
+              </p>
+            </div>
+
+            {/* Note d'information sobre */}
+            <div className={styles.authenticityNote}>
+              <div className={styles.authenticityNoteIcon}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <path d="m9 12 2 2 4-4"/>
+                </svg>
+              </div>
+              <div className={styles.authenticityNoteContent}>
+                <h4>Pourquoi vérifier l'authenticité ?</h4>
+                <p>
+                  Le succès du savon d'Alep a malheureusement donné lieu à de nombreuses imitations. 
+                  Ces contrefaçons ne possèdent pas les propriétés bénéfiques du véritable savon d'Alep 
+                  et peuvent même être nocives pour votre peau.
+                </p>
+              </div>
+            </div>
+
+            {/* Tableau de comparaison sobre */}
+            <div className={styles.authenticityTable}>
+              <div className={styles.authenticityTableHeader}>
+                <div className={styles.authenticityTableCell}>Critère de vérification</div>
+                <div className={styles.authenticityTableCell}>Savon authentique</div>
+                <div className={styles.authenticityTableCell}>Contrefaçon</div>
+              </div>
+
+              {authenticityChecks.map((check, index) => (
+                <div key={index} className={styles.authenticityTableRow}>
+                  <div className={styles.authenticityTableCell}>
+                    <strong>{check.criterion}</strong>
+                  </div>
+                  <div className={styles.authenticityTableCell}>
+                    <span className={styles.authenticTag}>
+                      <svg
+                        viewBox="0 0 24 24"
+                        width="16"
+                        height="16"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        fill="none"
+                      >
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                      </svg>
+                      {check.authentic}
+                    </span>
+                  </div>
+                  <div className={styles.authenticityTableCell}>
+                    <span className={styles.fakeTag}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="m15 9-6 6"/>
+                        <path d="m9 9 6 6"/>
+                      </svg>
+                      {check.fake}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Indicateurs de qualité */}
+            <div className={styles.qualitySection}>
+              <h3 className={styles.qualityTitle}>Indicateurs de qualité</h3>
+              <div className={styles.qualityGrid}>
+                {qualityIndicators.map((indicator, index) => (
+                  <div key={index} className={styles.qualityCard}>
+                    <h4>{indicator.title}</h4>
+                    <p>{indicator.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Garantie MonSavonVert sobre */}
+            <div className={styles.authenticityGuarantee}>
+              <div className={styles.guaranteeContent}>
+                <div className={styles.guaranteeIcon}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="32"
+                    height="32"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    <path d="m9 12 2 2 4-4"/>
+                  </svg>
+                </div>
+                <div className={styles.guaranteeText}>
+                  <h3>Notre engagement qualité</h3>
+                  <p>
+                    Chez MonSavonVert, nous garantissons l'authenticité de tous nos savons d'Alep. 
+                    Nos produits sont sourcés directement auprès de producteurs certifiés et 
+                    respectent l'ensemble des critères traditionnels de fabrication.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+          
           {/* CTA final */}
           <section className={styles.ctaSection}>
             <div className={styles.ctaContent}>
