@@ -368,9 +368,10 @@
   border-radius: 3px;
 }
 
+/* CORRECTION : Grille forcée sur 4 colonnes pour garder tout sur une ligne */
 .qualityGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(4, 1fr); /* Force exactement 4 colonnes égales */
   gap: var(--spacing-lg);
 }
 
@@ -491,6 +492,13 @@
 }
 
 /* Responsive pour la section authenticité */
+@media (max-width: 1024px) {
+  /* Sur tablette, on passe à 2 colonnes pour garder la lisibilité */
+  .qualityGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
   .authenticityNote {
     flex-direction: column;
@@ -511,8 +519,10 @@
     margin-bottom: var(--spacing-sm);
   }
   
+  /* Sur mobile, on garde 2 colonnes mais avec plus de padding */
   .qualityGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
   }
   
   .guaranteeContent {
@@ -532,6 +542,11 @@
   
   .qualityCard {
     padding: var(--spacing-md);
+  }
+  
+  /* Sur très petit écran, on passe à 1 colonne */
+  .qualityGrid {
+    grid-template-columns: 1fr;
   }
   
   .authenticityGuarantee {
