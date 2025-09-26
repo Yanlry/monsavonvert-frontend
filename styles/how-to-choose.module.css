@@ -131,91 +131,220 @@
 }
 
 /* ========================================
-   NOUVELLE SECTION AUTHENTICITÉ - CSS À AJOUTER
+   SECTION AUTHENTICITÉ - STYLE SOBRE ET COHÉRENT
    ======================================== */
 
-/* Section principale d'authenticité */
+/* Section principale d'authenticité - même style que les autres sections */
 .authenticitySection {
   padding: var(--spacing-3xl) 0;
-  background: linear-gradient(180deg, var(--color-background-light) 0%, var(--color-background) 100%);
+  background: linear-gradient(180deg, var(--color-background) 0%, var(--color-background-light) 100%);
   position: relative;
-  overflow: hidden;
 }
 
-/* Effet de fond avec motif subtil */
-.authenticitySection::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
-    radial-gradient(circle at 30% 40%, rgba(244, 67, 54, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 70% 70%, rgba(255, 152, 0, 0.03) 0%, transparent 50%);
-  animation: securityFloat 25s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes securityFloat {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  33% { transform: translate(-15px, -15px) rotate(1deg); }
-  66% { transform: translate(15px, -10px) rotate(-1deg); }
-}
-
-/* Alerte d'importance */
-.authenticityAlert {
-  background: linear-gradient(135deg, rgba(255, 152, 0, 0.1) 0%, rgba(255, 152, 0, 0.05) 100%);
-  border: 1px solid rgba(255, 152, 0, 0.3);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-xl);
-  margin: 0 auto var(--spacing-2xl);
-  max-width: 1000px;
+/* Note d'information - même style que guideNote mais pour l'authenticité */
+.authenticityNote {
   display: flex;
   align-items: flex-start;
+  background: linear-gradient(135deg, rgba(46, 125, 50, 0.08) 0%, rgba(46, 125, 50, 0.03) 100%);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin: 0 auto var(--spacing-2xl);
+  max-width: 1000px;
   gap: var(--spacing-lg);
+  border: 1px solid rgba(46, 125, 50, 0.2);
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(255, 152, 0, 0.1);
+  transition: all var(--transition-normal);
 }
 
-.authenticityAlert::before {
+.authenticityNote:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(46, 125, 50, 0.15);
+}
+
+.authenticityNote::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
-  width: 4px;
+  width: 3px;
   height: 100%;
-  background: linear-gradient(180deg, var(--color-warning) 0%, rgba(255, 152, 0, 0.5) 100%);
+  background: linear-gradient(180deg, var(--color-primary) 0%, rgba(46, 125, 50, 0.3) 100%);
 }
 
-.authenticityAlertIcon {
-  color: var(--color-warning);
+.authenticityNoteIcon {
+  color: var(--color-primary);
   flex-shrink: 0;
-  animation: alertPulse 2s infinite;
+  animation: iconFloat 3s ease-in-out infinite;
 }
 
-@keyframes alertPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+@keyframes iconFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
 }
 
-.authenticityAlertContent h3 {
-  font-size: 18px;
+.authenticityNoteContent h4 {
+  font-size: 16px;
   font-weight: 600;
   margin: 0 0 var(--spacing-sm);
   color: var(--color-text);
 }
 
-.authenticityAlertContent p {
+.authenticityNoteContent p {
   margin: 0;
   color: var(--color-text-light);
   line-height: 1.6;
   font-size: 15px;
 }
 
-/* Sous-titre de section */
-.authenticitySubtitle {
+/* Tableau d'authenticité - même style que guideTable */
+.authenticityTable {
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  background: white;
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto var(--spacing-2xl);
+}
+
+.authenticityTable::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--color-gradient-primary);
+}
+
+.authenticityTableHeader {
+  display: grid;
+  grid-template-columns: 1.2fr 1.5fr 1.5fr;
+  background: var(--color-gradient-dark);
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.authenticityTableHeader::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  animation: wave 8s infinite;
+}
+
+@keyframes wave {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+.authenticityTableRow {
+  display: grid;
+  grid-template-columns: 1.2fr 1.5fr 1.5fr;
+  border-bottom: 1px solid rgba(224, 224, 224, 0.3);
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.authenticityTableRow::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  background: linear-gradient(90deg, rgba(46, 125, 50, 0.1) 0%, transparent 100%);
+  transition: width var(--transition-normal);
+}
+
+.authenticityTableRow:hover::before {
+  width: 100%;
+}
+
+.authenticityTableRow:hover {
+  transform: translateX(3px);
+  background: rgba(46, 125, 50, 0.02);
+}
+
+.authenticityTableRow:nth-child(even) {
+  background-color: rgba(249, 251, 247, 0.3);
+}
+
+.authenticityTableRow:last-child {
+  border-bottom: none;
+}
+
+.authenticityTableCell {
+  padding: var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+/* Tags pour authentique et contrefaçon - style sobre */
+.authenticTag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(76, 175, 80, 0.05) 100%);
+  color: var(--color-text);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  line-height: 1.4;
+  border: 1px solid rgba(76, 175, 80, 0.2);
+  transition: all var(--transition-fast);
+}
+
+.authenticTag:hover {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.15) 0%, rgba(76, 175, 80, 0.1) 100%);
+  transform: translateY(-1px);
+}
+
+.authenticTag svg {
+  color: var(--color-success);
+  flex-shrink: 0;
+}
+
+.fakeTag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background: linear-gradient(135deg, rgba(158, 158, 158, 0.1) 0%, rgba(158, 158, 158, 0.05) 100%);
+  color: var(--color-text);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  line-height: 1.4;
+  border: 1px solid rgba(158, 158, 158, 0.2);
+  transition: all var(--transition-fast);
+}
+
+.fakeTag:hover {
+  background: linear-gradient(135deg, rgba(158, 158, 158, 0.15) 0%, rgba(158, 158, 158, 0.1) 100%);
+  transform: translateY(-1px);
+}
+
+.fakeTag svg {
+  color: var(--color-muted);
+  flex-shrink: 0;
+}
+
+/* Section indicateurs de qualité */
+.qualitySection {
+  margin-top: var(--spacing-3xl);
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 var(--spacing-lg);
+}
+
+.qualityTitle {
   font-size: 24px;
   font-weight: 600;
   text-align: center;
@@ -227,7 +356,7 @@
   position: relative;
 }
 
-.authenticitySubtitle::after {
+.qualityTitle::after {
   content: '';
   position: absolute;
   bottom: -8px;
@@ -239,201 +368,64 @@
   border-radius: 3px;
 }
 
-/* Grille des cartes d'authenticité */
-.authenticityCards {
+.qualityGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--spacing-xl);
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 var(--spacing-lg);
-}
-
-/* Carte individuelle d'authenticité */
-.authenticityCard {
-  background: white;
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-lg);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  transition: all var(--transition-normal);
-  position: relative;
-  overflow: hidden;
-  border: 1px solid rgba(224, 224, 224, 0.3);
-}
-
-.authenticityCard:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-}
-
-/* Header de la carte avec icône */
-.authenticityCardHeader {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-lg);
-  padding-bottom: var(--spacing-md);
-  border-bottom: 2px solid rgba(46, 125, 50, 0.1);
-}
-
-.authenticityIcon {
-  font-size: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  background: linear-gradient(135deg, rgba(46, 125, 50, 0.1) 0%, rgba(76, 175, 80, 0.1) 100%);
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(46, 125, 50, 0.2);
-}
-
-.authenticityCardHeader h4 {
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0;
-  color: var(--color-text);
-}
-
-/* Comparaison authentique vs contrefaçon */
-.authenticityComparison {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-}
-
-.authenticityItem {
-  padding: var(--spacing-md);
-  border-radius: var(--radius-md);
-  border: 2px solid;
-  position: relative;
-  transition: all var(--transition-fast);
-}
-
-/* Style pour authentique */
-.authenticityItem.authentic {
-  background: linear-gradient(135deg, rgba(76, 175, 80, 0.05) 0%, rgba(76, 175, 80, 0.02) 100%);
-  border-color: rgba(76, 175, 80, 0.3);
-}
-
-.authenticityItem.authentic:hover {
-  background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(76, 175, 80, 0.05) 100%);
-  transform: translateX(3px);
-}
-
-/* Style pour contrefaçon */
-.authenticityItem.fake {
-  background: linear-gradient(135deg, rgba(244, 67, 54, 0.05) 0%, rgba(244, 67, 54, 0.02) 100%);
-  border-color: rgba(244, 67, 54, 0.3);
-}
-
-.authenticityItem.fake:hover {
-  background: linear-gradient(135deg, rgba(244, 67, 54, 0.1) 0%, rgba(244, 67, 54, 0.05) 100%);
-  transform: translateX(3px);
-}
-
-/* Labels authentique/contrefaçon */
-.authenticityLabel {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  font-weight: 600;
-  font-size: 14px;
-  margin-bottom: var(--spacing-sm);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.authentic .authenticityLabel {
-  color: var(--color-success);
-}
-
-.fake .authenticityLabel {
-  color: var(--color-error);
-}
-
-.authenticityItem p {
-  margin: 0;
-  color: var(--color-text-light);
-  line-height: 1.5;
-  font-size: 14px;
-}
-
-/* Section signaux d'alarme */
-.redFlagsSection {
-  margin-top: var(--spacing-3xl);
-  max-width: 1000px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 0 var(--spacing-lg);
-}
-
-.redFlagsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: var(--spacing-lg);
 }
 
-/* Carte de signal d'alarme */
-.redFlagCard {
+/* Cartes de qualité - même style que featureCard mais plus petit */
+.qualityCard {
   background: white;
   border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
-  display: flex;
-  align-items: flex-start;
-  gap: var(--spacing-md);
-  box-shadow: 0 2px 15px rgba(244, 67, 54, 0.1);
-  border: 1px solid rgba(244, 67, 54, 0.2);
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05);
   transition: all var(--transition-normal);
   position: relative;
   overflow: hidden;
+  border: 1px solid rgba(46, 125, 50, 0.1);
 }
 
-.redFlagCard::before {
+.qualityCard::before {
   content: '';
   position: absolute;
-  top: 0;
+  bottom: 0;
   left: 0;
-  width: 3px;
-  height: 100%;
-  background: var(--color-error);
+  right: 0;
+  height: 3px;
+  background: var(--color-gradient-primary);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--transition-normal);
 }
 
-.redFlagCard:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 25px rgba(244, 67, 54, 0.15);
+.qualityCard:hover::before {
+  transform: scaleX(1);
 }
 
-.redFlagIcon {
-  background: linear-gradient(135deg, rgba(244, 67, 54, 0.1) 0%, rgba(244, 67, 54, 0.05) 100%);
-  border-radius: var(--radius-md);
-  padding: var(--spacing-sm);
-  color: var(--color-error);
-  flex-shrink: 0;
-  animation: warningShake 3s infinite;
+.qualityCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(46, 125, 50, 0.1);
 }
 
-@keyframes warningShake {
-  0%, 98%, 100% { transform: translateX(0); }
-  1%, 3% { transform: translateX(-2px); }
-  2%, 4% { transform: translateX(2px); }
-}
-
-.redFlagContent h4 {
+.qualityCard h4 {
   font-size: 16px;
   font-weight: 600;
   margin: 0 0 var(--spacing-sm);
-  color: var(--color-text);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.redFlagContent p {
+.qualityCard p {
   margin: 0;
   color: var(--color-text-light);
   line-height: 1.5;
   font-size: 14px;
 }
 
-/* Section garantie d'authenticité */
+/* Garantie d'authenticité - style sobre */
 .authenticityGuarantee {
   margin-top: var(--spacing-3xl);
   background: var(--color-gradient-dark);
@@ -455,8 +447,8 @@
   width: 200%;
   height: 200%;
   background: 
-    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 70% 70%, rgba(129, 199, 132, 0.05) 0%, transparent 50%);
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 70% 70%, rgba(129, 199, 132, 0.03) 0%, transparent 50%);
   animation: guaranteeFloat 20s linear infinite;
 }
 
@@ -468,7 +460,7 @@
 .guaranteeContent {
   display: flex;
   align-items: flex-start;
-  gap: var(--spacing-xl);
+  gap: var(--spacing-lg);
   position: relative;
   z-index: 1;
 }
@@ -485,57 +477,41 @@
 }
 
 .guaranteeText h3 {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
   margin: 0 0 var(--spacing-md);
   font-family: var(--font-serif);
 }
 
 .guaranteeText p {
-  margin: 0 0 var(--spacing-lg);
+  margin: 0;
   line-height: 1.6;
   opacity: 0.9;
   font-size: 15px;
 }
 
-.guaranteeFeatures {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-md);
-}
-
-.guaranteeFeatures span {
-  background: rgba(255, 255, 255, 0.15);
-  padding: 6px 12px;
-  border-radius: var(--radius-full);
-  font-size: 13px;
-  font-weight: 500;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: all var(--transition-fast);
-}
-
-.guaranteeFeatures span:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: translateY(-2px);
-}
-
 /* Responsive pour la section authenticité */
 @media (max-width: 768px) {
-  .authenticityAlert {
+  .authenticityNote {
     flex-direction: column;
     text-align: center;
   }
   
-  .authenticityCards {
+  .authenticityTableHeader,
+  .authenticityTableRow {
     grid-template-columns: 1fr;
-    max-width: 400px;
   }
   
-  .authenticityCard {
-    margin: 0 auto;
+  .authenticityTableHeader .authenticityTableCell:not(:first-child) {
+    display: none;
   }
   
-  .redFlagsGrid {
+  .authenticityTableRow .authenticityTableCell:nth-child(2) {
+    border-bottom: 1px solid rgba(224, 224, 224, 0.2);
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .qualityGrid {
     grid-template-columns: 1fr;
   }
   
@@ -543,22 +519,18 @@
     flex-direction: column;
     text-align: center;
   }
-  
-  .guaranteeFeatures {
-    justify-content: center;
-  }
 }
 
 @media (max-width: 576px) {
-  .authenticitySubtitle {
+  .qualityTitle {
     font-size: 20px;
   }
   
-  .authenticityAlert {
-    padding: var(--spacing-lg);
+  .authenticityNote {
+    padding: var(--spacing-md);
   }
   
-  .authenticityCard {
+  .qualityCard {
     padding: var(--spacing-md);
   }
   
@@ -572,23 +544,22 @@
 }
 
 /* États de focus pour l'accessibilité */
-.authenticityCard:focus,
-.redFlagCard:focus {
+.qualityCard:focus,
+.authenticityTableRow:focus {
   outline: 3px solid var(--color-primary);
   outline-offset: 2px;
 }
 
 /* Animation réduite pour les préférences d'accessibilité */
 @media (prefers-reduced-motion: reduce) {
-  .authenticitySection::before,
   .authenticityGuarantee::before,
-  .redFlagIcon,
+  .authenticityNoteIcon,
   .guaranteeIcon {
     animation: none;
   }
   
-  .authenticityCard:hover,
-  .redFlagCard:hover {
+  .qualityCard:hover,
+  .authenticityTableRow:hover {
     transform: translateY(-2px);
   }
 }
