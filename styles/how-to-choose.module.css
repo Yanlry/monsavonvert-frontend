@@ -130,6 +130,469 @@
   z-index: 1;
 }
 
+/* ========================================
+   NOUVELLE SECTION AUTHENTICITÉ - CSS À AJOUTER
+   ======================================== */
+
+/* Section principale d'authenticité */
+.authenticitySection {
+  padding: var(--spacing-3xl) 0;
+  background: linear-gradient(180deg, var(--color-background-light) 0%, var(--color-background) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Effet de fond avec motif subtil */
+.authenticitySection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 30% 40%, rgba(244, 67, 54, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 70% 70%, rgba(255, 152, 0, 0.03) 0%, transparent 50%);
+  animation: securityFloat 25s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes securityFloat {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(-15px, -15px) rotate(1deg); }
+  66% { transform: translate(15px, -10px) rotate(-1deg); }
+}
+
+/* Alerte d'importance */
+.authenticityAlert {
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.1) 0%, rgba(255, 152, 0, 0.05) 100%);
+  border: 1px solid rgba(255, 152, 0, 0.3);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  margin: 0 auto var(--spacing-2xl);
+  max-width: 1000px;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-lg);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(255, 152, 0, 0.1);
+}
+
+.authenticityAlert::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--color-warning) 0%, rgba(255, 152, 0, 0.5) 100%);
+}
+
+.authenticityAlertIcon {
+  color: var(--color-warning);
+  flex-shrink: 0;
+  animation: alertPulse 2s infinite;
+}
+
+@keyframes alertPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.authenticityAlertContent h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 var(--spacing-sm);
+  color: var(--color-text);
+}
+
+.authenticityAlertContent p {
+  margin: 0;
+  color: var(--color-text-light);
+  line-height: 1.6;
+  font-size: 15px;
+}
+
+/* Sous-titre de section */
+.authenticitySubtitle {
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+  background: var(--color-gradient-dark);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+}
+
+.authenticitySubtitle::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: var(--color-gradient-primary);
+  border-radius: 3px;
+}
+
+/* Grille des cartes d'authenticité */
+.authenticityCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-xl);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+}
+
+/* Carte individuelle d'authenticité */
+.authenticityCard {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(224, 224, 224, 0.3);
+}
+
+.authenticityCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* Header de la carte avec icône */
+.authenticityCardHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2px solid rgba(46, 125, 50, 0.1);
+}
+
+.authenticityIcon {
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, rgba(46, 125, 50, 0.1) 0%, rgba(76, 175, 80, 0.1) 100%);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(46, 125, 50, 0.2);
+}
+
+.authenticityCardHeader h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--color-text);
+}
+
+/* Comparaison authentique vs contrefaçon */
+.authenticityComparison {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.authenticityItem {
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  border: 2px solid;
+  position: relative;
+  transition: all var(--transition-fast);
+}
+
+/* Style pour authentique */
+.authenticityItem.authentic {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.05) 0%, rgba(76, 175, 80, 0.02) 100%);
+  border-color: rgba(76, 175, 80, 0.3);
+}
+
+.authenticityItem.authentic:hover {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(76, 175, 80, 0.05) 100%);
+  transform: translateX(3px);
+}
+
+/* Style pour contrefaçon */
+.authenticityItem.fake {
+  background: linear-gradient(135deg, rgba(244, 67, 54, 0.05) 0%, rgba(244, 67, 54, 0.02) 100%);
+  border-color: rgba(244, 67, 54, 0.3);
+}
+
+.authenticityItem.fake:hover {
+  background: linear-gradient(135deg, rgba(244, 67, 54, 0.1) 0%, rgba(244, 67, 54, 0.05) 100%);
+  transform: translateX(3px);
+}
+
+/* Labels authentique/contrefaçon */
+.authenticityLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: var(--spacing-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.authentic .authenticityLabel {
+  color: var(--color-success);
+}
+
+.fake .authenticityLabel {
+  color: var(--color-error);
+}
+
+.authenticityItem p {
+  margin: 0;
+  color: var(--color-text-light);
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+/* Section signaux d'alarme */
+.redFlagsSection {
+  margin-top: var(--spacing-3xl);
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 var(--spacing-lg);
+}
+
+.redFlagsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+/* Carte de signal d'alarme */
+.redFlagCard {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  box-shadow: 0 2px 15px rgba(244, 67, 54, 0.1);
+  border: 1px solid rgba(244, 67, 54, 0.2);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.redFlagCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--color-error);
+}
+
+.redFlagCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 25px rgba(244, 67, 54, 0.15);
+}
+
+.redFlagIcon {
+  background: linear-gradient(135deg, rgba(244, 67, 54, 0.1) 0%, rgba(244, 67, 54, 0.05) 100%);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm);
+  color: var(--color-error);
+  flex-shrink: 0;
+  animation: warningShake 3s infinite;
+}
+
+@keyframes warningShake {
+  0%, 98%, 100% { transform: translateX(0); }
+  1%, 3% { transform: translateX(-2px); }
+  2%, 4% { transform: translateX(2px); }
+}
+
+.redFlagContent h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 var(--spacing-sm);
+  color: var(--color-text);
+}
+
+.redFlagContent p {
+  margin: 0;
+  color: var(--color-text-light);
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+/* Section garantie d'authenticité */
+.authenticityGuarantee {
+  margin-top: var(--spacing-3xl);
+  background: var(--color-gradient-dark);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-2xl);
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.authenticityGuarantee::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: 
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 70% 70%, rgba(129, 199, 132, 0.05) 0%, transparent 50%);
+  animation: guaranteeFloat 20s linear infinite;
+}
+
+@keyframes guaranteeFloat {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.guaranteeContent {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-xl);
+  position: relative;
+  z-index: 1;
+}
+
+.guaranteeIcon {
+  color: rgba(255, 255, 255, 0.9);
+  flex-shrink: 0;
+  animation: shieldPulse 3s ease-in-out infinite;
+}
+
+@keyframes shieldPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.guaranteeText h3 {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 var(--spacing-md);
+  font-family: var(--font-serif);
+}
+
+.guaranteeText p {
+  margin: 0 0 var(--spacing-lg);
+  line-height: 1.6;
+  opacity: 0.9;
+  font-size: 15px;
+}
+
+.guaranteeFeatures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.guaranteeFeatures span {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all var(--transition-fast);
+}
+
+.guaranteeFeatures span:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+/* Responsive pour la section authenticité */
+@media (max-width: 768px) {
+  .authenticityAlert {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .authenticityCards {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+  }
+  
+  .authenticityCard {
+    margin: 0 auto;
+  }
+  
+  .redFlagsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .guaranteeContent {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .guaranteeFeatures {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .authenticitySubtitle {
+    font-size: 20px;
+  }
+  
+  .authenticityAlert {
+    padding: var(--spacing-lg);
+  }
+  
+  .authenticityCard {
+    padding: var(--spacing-md);
+  }
+  
+  .authenticityGuarantee {
+    padding: var(--spacing-lg);
+  }
+  
+  .guaranteeText h3 {
+    font-size: 18px;
+  }
+}
+
+/* États de focus pour l'accessibilité */
+.authenticityCard:focus,
+.redFlagCard:focus {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Animation réduite pour les préférences d'accessibilité */
+@media (prefers-reduced-motion: reduce) {
+  .authenticitySection::before,
+  .authenticityGuarantee::before,
+  .redFlagIcon,
+  .guaranteeIcon {
+    animation: none;
+  }
+  
+  .authenticityCard:hover,
+  .redFlagCard:hover {
+    transform: translateY(-2px);
+  }
+}
+
 /* Header et Navigation avec effet glassmorphism amélioré */
 .header {
   position: fixed;

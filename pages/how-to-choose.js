@@ -5,7 +5,7 @@ import Head from "next/head";
 import Link from "next/link";
 import styles from "../styles/how-to-choose.module.css";
 import Header from "../components/Header";
-import Footer from "../components/Footer"; // NOUVEAU: Import du composant footer
+import Footer from "../components/Footer";
 
 export default function HowToChoose() {
   // État pour détecter si nous sommes côté client
@@ -135,6 +135,65 @@ export default function HowToChoose() {
     }
   ];
 
+  // NOUVELLE SECTION : Données pour l'authenticité des savons d'Alep
+  const authenticityChecks = [
+    {
+      criterion: "Couleur et aspect",
+      authentic: "Vert olive à brun, surface mate et rugueuse",
+      fake: "Couleur trop uniforme, surface lisse et brillante",
+      icon: "🎨"
+    },
+    {
+      criterion: "Texture",
+      authentic: "Dense, lourd, ne se casse pas facilement",
+      fake: "Léger, friable, se désagrège rapidement",
+      icon: "✋"
+    },
+    {
+      criterion: "Odeur",
+      authentic: "Parfum naturel d'olive et de laurier",
+      fake: "Odeur chimique ou parfum artificiel fort",
+      icon: "👃"
+    },
+    {
+      criterion: "Séchage",
+      authentic: "Séché naturellement 9 mois minimum",
+      fake: "Séchage artificiel, aspect trop parfait",
+      icon: "⏰"
+    },
+    {
+      criterion: "Composition",
+      authentic: "Uniquement huile d'olive, huile de laurier, soude, eau",
+      fake: "Additifs, colorants, parfums synthétiques",
+      icon: "🧪"
+    },
+    {
+      criterion: "Prix",
+      authentic: "Prix cohérent avec la qualité (ni trop bas, ni excessif)",
+      fake: "Prix anormalement bas pour attirer",
+      icon: "💰"
+    }
+  ];
+
+  const redFlags = [
+    {
+      warning: "Prix trop bas",
+      description: "Un savon d'Alep authentique nécessite des ingrédients de qualité et un long processus de fabrication"
+    },
+    {
+      warning: "Couleur parfaite",
+      description: "Les vrais savons d'Alep ont des variations naturelles de couleur et d'aspect"
+    },
+    {
+      warning: "Parfum trop fort",
+      description: "L'odeur doit être naturelle, pas masquée par des parfums artificiels"
+    },
+    {
+      warning: "Pas d'origine indiquée",
+      description: "Un vrai savon d'Alep doit mentionner sa provenance (Syrie ou région méditerranéenne)"
+    }
+  ];
+
   // Rendu de base sans contenu dynamique (pour éviter les erreurs d'hydratation)
   if (!isClient) {
     return (
@@ -183,6 +242,7 @@ export default function HowToChoose() {
               <h1 className={styles.pageTitle}>Comment Choisir ?</h1>
             </div>
           </section>
+
           {/* Section aperçu des concentrations */}
           <section className={styles.concentrationsSection}>
             <div className={styles.sectionHeader}>
@@ -223,6 +283,180 @@ export default function HowToChoose() {
                   </ul>
                 </div>
               ))}
+            </div>
+          </section>
+
+          {/* NOUVELLE SECTION : Authenticity Check */}
+          <section className={styles.authenticitySection}>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>
+                Comment reconnaître un vrai savon d'Alep ?
+              </h2>
+              <p className={styles.sectionSubtitle}>
+                Protégez-vous des contrefaçons grâce à notre guide d'authentification
+              </p>
+            </div>
+
+            {/* Alerte d'importance */}
+            <div className={styles.authenticityAlert}>
+              <div className={styles.authenticityAlertIcon}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                  <path d="M12 9v4"/>
+                  <path d="m12 17 .01 0"/>
+                </svg>
+              </div>
+              <div className={styles.authenticityAlertContent}>
+                <h3>Attention aux contrefaçons !</h3>
+                <p>
+                  Le marché du savon d'Alep est malheureusement touché par de nombreuses contrefaçons. 
+                  Ces imitations peuvent être nocives pour votre peau et ne possèdent aucune des 
+                  propriétés bénéfiques du véritable savon d'Alep.
+                </p>
+              </div>
+            </div>
+
+            {/* Grille de vérification */}
+            <div className={styles.authenticityGrid}>
+              <h3 className={styles.authenticitySubtitle}>
+                Les 6 critères essentiels pour vérifier l'authenticité
+              </h3>
+              
+              <div className={styles.authenticityCards}>
+                {authenticityChecks.map((check, index) => (
+                  <div key={index} className={styles.authenticityCard}>
+                    <div className={styles.authenticityCardHeader}>
+                      <span className={styles.authenticityIcon}>{check.icon}</span>
+                      <h4>{check.criterion}</h4>
+                    </div>
+                    
+                    <div className={styles.authenticityComparison}>
+                      <div className={styles.authenticityItem + " " + styles.authentic}>
+                        <div className={styles.authenticityLabel}>
+                          <svg
+                            viewBox="0 0 24 24"
+                            width="16"
+                            height="16"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            fill="none"
+                          >
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                          </svg>
+                          Authentique
+                        </div>
+                        <p>{check.authentic}</p>
+                      </div>
+                      
+                      <div className={styles.authenticityItem + " " + styles.fake}>
+                        <div className={styles.authenticityLabel}>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="m15 9-6 6"/>
+                            <path d="m9 9 6 6"/>
+                          </svg>
+                          Contrefaçon
+                        </div>
+                        <p>{check.fake}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Signaux d'alarme */}
+            <div className={styles.redFlagsSection}>
+              <h3 className={styles.authenticitySubtitle}>
+                Signaux d'alarme : méfiez-vous si...
+              </h3>
+              
+              <div className={styles.redFlagsGrid}>
+                {redFlags.map((flag, index) => (
+                  <div key={index} className={styles.redFlagCard}>
+                    <div className={styles.redFlagIcon}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M3 3l18 18"/>
+                        <path d="M6 6 3 3l3-3"/>
+                        <path d="m6 18 3 3-3 3"/>
+                        <path d="m18 6 3-3-3-3"/>
+                        <path d="m18 18-3 3 3 3"/>
+                      </svg>
+                    </div>
+                    <div className={styles.redFlagContent}>
+                      <h4>{flag.warning}</h4>
+                      <p>{flag.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Garantie MonSavonVert */}
+            <div className={styles.authenticityGuarantee}>
+              <div className={styles.guaranteeContent}>
+                <div className={styles.guaranteeIcon}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="48"
+                    height="48"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    <path d="m9 12 2 2 4-4"/>
+                  </svg>
+                </div>
+                <div className={styles.guaranteeText}>
+                  <h3>Notre Garantie d'Authenticité</h3>
+                  <p>
+                    Chez MonSavonVert, nous garantissons l'authenticité de tous nos savons d'Alep. 
+                    Nos produits sont sourcés directement auprès de producteurs certifiés et 
+                    respectent tous les critères d'authenticité traditionnels.
+                  </p>
+                  <div className={styles.guaranteeFeatures}>
+                    <span>✓ Origine certifiée</span>
+                    <span>✓ Composition vérifiée</span>
+                    <span>✓ Séchage traditionnel</span>
+                    <span>✓ Tests de qualité</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </section>
 
