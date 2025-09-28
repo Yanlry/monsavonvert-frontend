@@ -66,6 +66,69 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* NOUVEAU: Styles pour le bouton afficher/masquer mot de passe */
+.passwordToggle {
+  position: absolute;
+  right: var(--spacing-md);
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: var(--spacing-xs);
+  cursor: pointer;
+  color: var(--color-text-light);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  z-index: 2; /* Pour être au-dessus de l'input */
+}
+
+/* Effet au survol du bouton */
+.passwordToggle:hover {
+  color: var(--color-primary);
+  background-color: rgba(46, 125, 50, 0.1);
+  transform: translateY(-50%) scale(1.1);
+}
+
+/* Effet au clic du bouton */
+.passwordToggle:active {
+  transform: translateY(-50%) scale(0.95);
+  background-color: rgba(46, 125, 50, 0.2);
+}
+
+/* Focus pour l'accessibilité (navigation au clavier) */
+.passwordToggle:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  color: var(--color-primary);
+}
+
+/* Animation subtile lors du changement d'état */
+.passwordToggle svg {
+  transition: all var(--transition-fast);
+}
+
+/* Modification de l'input pour laisser de la place au bouton */
+.inputWrapper input[type="password"],
+.inputWrapper input[type="text"] {
+  padding-right: calc(var(--spacing-md) * 3.5); /* Plus d'espace à droite pour le bouton */
+}
+
+/* Responsive : ajustement pour mobile */
+@media (max-width: 576px) {
+  .passwordToggle {
+    right: var(--spacing-sm);
+    padding: var(--spacing-xs);
+  }
+  
+  .inputWrapper input[type="password"],
+  .inputWrapper input[type="text"] {
+    padding-right: calc(var(--spacing-md) * 3); /* Moins d'espace sur mobile */
+  }
+}
+
 .resetMargins {
   margin: 0;
   padding: 0;
