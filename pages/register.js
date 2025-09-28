@@ -30,6 +30,10 @@ export default function Register() {
   const [scrolled, setScrolled] = useState(false);
   const [cartCount, setCartCount] = useState(0);
 
+  // NOUVEAU: États pour gérer l'affichage des mots de passe
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   // AJOUTÉ : États pour la validation du mot de passe en temps réel
   const [passwordValidation, setPasswordValidation] = useState({
     hasMinLength: false,      // Au moins 8 caractères
@@ -40,6 +44,17 @@ export default function Register() {
   });
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+  // NOUVEAU: Fonctions pour basculer l'affichage des mots de passe
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+    console.log("Visibilité du mot de passe:", !showPassword);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+    console.log("Visibilité confirmation mot de passe:", !showConfirmPassword);
+  };
 
   // Fonction pour mettre la première lettre en majuscule
   const capitalizeFirstLetter = (string) => {
@@ -517,10 +532,20 @@ export default function Register() {
                       </div>
                     </div>
 
-                    {/* Mot de passe */}
+                    {/* MODIFIÉ: Mot de passe avec bouton afficher/masquer */}
                     <div className={styles.formGroup}>
                       <label htmlFor="password">Mot de passe</label>
-                      <div className={styles.inputWrapper}>
+                      
+                      {/* Container avec styles inline pour éviter les conflits CSS */}
+                      <div 
+                        style={{
+                          position: 'relative',
+                          display: 'block',
+                          width: '100%',
+                          height: '48px'
+                        }}
+                      >
+                        {/* Icône cadenas à gauche */}
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="16"
@@ -531,6 +556,14 @@ export default function Register() {
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
+                          style={{
+                            position: 'absolute',
+                            left: '16px',
+                            top: '16px',
+                            color: '#546e7a',
+                            zIndex: 2,
+                            pointerEvents: 'none'
+                          }}
                         >
                           <rect
                             x="3"
@@ -542,24 +575,133 @@ export default function Register() {
                           ></rect>
                           <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                         </svg>
+
+                        {/* Input mot de passe */}
                         <input
-                          type="password"
+                          type={showPassword ? "text" : "password"}
                           id="password"
                           placeholder="Votre mot de passe (8 caractères minimum)"
                           value={password}
                           onChange={(e) => handlePasswordChange(e.target.value)}
                           required
                           minLength="8"
+                          style={{
+                            position: 'absolute',
+                            top: '0',
+                            left: '0',
+                            width: '100%',
+                            height: '48px',
+                            padding: '16px 50px 16px 48px',
+                            border: '1px solid #e0e0e0',
+                            borderRadius: '8px',
+                            fontSize: '14px',
+                            transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
+                            boxSizing: 'border-box',
+                            outline: 'none',
+                            lineHeight: '16px',
+                            fontFamily: 'inherit'
+                          }}
+                          onFocus={(e) => {
+                            e.target.style.borderColor = '#2e7d32';
+                            e.target.style.boxShadow = '0 0 0 2px rgba(46, 125, 50, 0.1)';
+                          }}
+                          onBlur={(e) => {
+                            e.target.style.borderColor = '#e0e0e0';
+                            e.target.style.boxShadow = 'none';
+                          }}
                         />
+
+                        {/* NOUVEAU: Bouton pour afficher/masquer le mot de passe */}
+                        <button
+                          type="button"
+                          onClick={togglePasswordVisibility}
+                          aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                          style={{
+                            position: 'absolute',
+                            right: '12px',
+                            top: '12px',
+                            background: 'none',
+                            border: 'none',
+                            padding: '0',
+                            cursor: 'pointer',
+                            color: '#666',
+                            transition: 'color 0.2s ease, background-color 0.2s ease',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            zIndex: 10,
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '4px'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.color = '#2e7d32';
+                            e.target.style.backgroundColor = 'rgba(46, 125, 50, 0.1)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.color = '#666';
+                            e.target.style.backgroundColor = 'transparent';
+                          }}
+                          onMouseDown={(e) => {
+                            e.target.style.transform = 'scale(0.95)';
+                          }}
+                          onMouseUp={(e) => {
+                            e.target.style.transform = 'scale(1)';
+                          }}
+                        >
+                          {showPassword ? (
+                            // Icône œil fermé (masquer)
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="18"
+                              height="18"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                              <line x1="1" y1="1" x2="23" y2="23"></line>
+                            </svg>
+                          ) : (
+                            // Icône œil ouvert (afficher)
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="18"
+                              height="18"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                              <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                          )}
+                        </button>
                       </div>
                     </div>
 
-                    {/* Confirmation mot de passe */}
+                    {/* MODIFIÉ: Confirmation mot de passe avec bouton afficher/masquer */}
                     <div className={styles.formGroup}>
                       <label htmlFor="confirmPassword">
                         Confirmez le mot de passe
                       </label>
-                      <div className={styles.inputWrapper}>
+                      
+                      {/* Container avec styles inline pour la confirmation */}
+                      <div 
+                        style={{
+                          position: 'relative',
+                          display: 'block',
+                          width: '100%',
+                          height: '48px'
+                        }}
+                      >
+                        {/* Icône cadenas à gauche */}
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="16"
@@ -570,6 +712,14 @@ export default function Register() {
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
+                          style={{
+                            position: 'absolute',
+                            left: '16px',
+                            top: '16px',
+                            color: '#546e7a',
+                            zIndex: 2,
+                            pointerEvents: 'none'
+                          }}
                         >
                           <rect
                             x="3"
@@ -581,14 +731,113 @@ export default function Register() {
                           ></rect>
                           <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                         </svg>
+
+                        {/* Input confirmation mot de passe */}
                         <input
-                          type="password"
+                          type={showConfirmPassword ? "text" : "password"}
                           id="confirmPassword"
                           placeholder="Confirmez votre nouveau mot de passe"
                           value={confirmPassword}
                           onChange={(e) => handleConfirmPasswordChange(e.target.value)}
                           required
+                          style={{
+                            position: 'absolute',
+                            top: '0',
+                            left: '0',
+                            width: '100%',
+                            height: '48px',
+                            padding: '16px 50px 16px 48px',
+                            border: '1px solid #e0e0e0',
+                            borderRadius: '8px',
+                            fontSize: '14px',
+                            transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
+                            boxSizing: 'border-box',
+                            outline: 'none',
+                            lineHeight: '16px',
+                            fontFamily: 'inherit'
+                          }}
+                          onFocus={(e) => {
+                            e.target.style.borderColor = '#2e7d32';
+                            e.target.style.boxShadow = '0 0 0 2px rgba(46, 125, 50, 0.1)';
+                          }}
+                          onBlur={(e) => {
+                            e.target.style.borderColor = '#e0e0e0';
+                            e.target.style.boxShadow = 'none';
+                          }}
                         />
+
+                        {/* NOUVEAU: Bouton pour afficher/masquer la confirmation */}
+                        <button
+                          type="button"
+                          onClick={toggleConfirmPasswordVisibility}
+                          aria-label={showConfirmPassword ? "Masquer la confirmation" : "Afficher la confirmation"}
+                          style={{
+                            position: 'absolute',
+                            right: '12px',
+                            top: '12px',
+                            background: 'none',
+                            border: 'none',
+                            padding: '0',
+                            cursor: 'pointer',
+                            color: '#666',
+                            transition: 'color 0.2s ease, background-color 0.2s ease',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            zIndex: 10,
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '4px'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.color = '#2e7d32';
+                            e.target.style.backgroundColor = 'rgba(46, 125, 50, 0.1)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.color = '#666';
+                            e.target.style.backgroundColor = 'transparent';
+                          }}
+                          onMouseDown={(e) => {
+                            e.target.style.transform = 'scale(0.95)';
+                          }}
+                          onMouseUp={(e) => {
+                            e.target.style.transform = 'scale(1)';
+                          }}
+                        >
+                          {showConfirmPassword ? (
+                            // Icône œil fermé (masquer)
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="18"
+                              height="18"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                              <line x1="1" y1="1" x2="23" y2="23"></line>
+                            </svg>
+                          ) : (
+                            // Icône œil ouvert (afficher)
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="18"
+                              height="18"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                              <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                          )}
+                        </button>
                       </div>
                     </div>
 
