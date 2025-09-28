@@ -326,7 +326,7 @@ export default function Login() {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         >
-                          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                          <path d="M4 4h16c1.1 0 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                           <polyline points="22,6 12,13 2,6"></polyline>
                         </svg>
                         <input
@@ -352,13 +352,13 @@ export default function Login() {
                         </a>
                       </div>
                       
-                      {/* SOLUTION ALTERNATIVE: Container avec styles inline pour éviter les conflits CSS */}
+                      {/* SOLUTION CORRIGÉE: Container avec positionnement fixe stable */}
                       <div 
                         style={{
                           position: 'relative',
-                          display: 'flex',
-                          alignItems: 'center',
-                          width: '100%'
+                          display: 'block', // Changé de 'flex' à 'block' pour plus de stabilité
+                          width: '100%',
+                          height: '48px' // AJOUTÉ: Hauteur fixe pour empêcher les variations
                         }}
                       >
                         {/* Icône cadenas à gauche */}
@@ -375,8 +375,7 @@ export default function Login() {
                           style={{
                             position: 'absolute',
                             left: '16px',
-                            top: '50%',
-                            transform: 'translateY(-50%)',
+                            top: '16px', // CORRIGÉ: Position fixe au lieu de 50% + transform
                             color: '#546e7a',
                             zIndex: 2,
                             pointerEvents: 'none'
@@ -393,7 +392,7 @@ export default function Login() {
                           <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                         </svg>
 
-                        {/* Input mot de passe */}
+                        {/* Input mot de passe avec hauteur fixe */}
                         <input
                           type={showPassword ? "text" : "password"}
                           id="password"
@@ -402,14 +401,20 @@ export default function Login() {
                           onChange={(e) => setPassword(e.target.value)}
                           required
                           style={{
+                            position: 'absolute', // AJOUTÉ: Position absolue pour stabilité
+                            top: '0',
+                            left: '0',
                             width: '100%',
-                            padding: '16px 50px 16px 48px', // space pour icône gauche et bouton droite
+                            height: '48px', // AJOUTÉ: Hauteur fixe
+                            padding: '16px 50px 16px 48px', // padding identique pour text et password
                             border: '1px solid #e0e0e0',
                             borderRadius: '8px',
                             fontSize: '14px',
-                            transition: 'all 0.15s ease',
+                            transition: 'border-color 0.15s ease, box-shadow 0.15s ease', // Transition seulement sur les propriétés qui ne changent pas la taille
                             boxSizing: 'border-box',
-                            outline: 'none'
+                            outline: 'none',
+                            lineHeight: '16px', // AJOUTÉ: Line-height fixe pour éviter les variations
+                            fontFamily: 'inherit' // AJOUTÉ: Police héritée pour éviter les différences entre text/password
                           }}
                           onFocus={(e) => {
                             e.target.style.borderColor = '#2e7d32';
@@ -421,7 +426,7 @@ export default function Login() {
                           }}
                         />
 
-                        {/* BOUTON AFFICHER/MASQUER avec styles inline */}
+                        {/* BOUTON CORRIGÉ avec position fixe absolue */}
                         <button
                           type="button"
                           onClick={togglePasswordVisibility}
@@ -429,20 +434,19 @@ export default function Login() {
                           style={{
                             position: 'absolute',
                             right: '12px',
-                            top: '50%',
-                            transform: 'translateY(-50%)',
+                            top: '12px', // CORRIGÉ: Position fixe au lieu de 50% + transform pour éviter les décalages
                             background: 'none',
                             border: 'none',
-                            padding: '8px',
+                            padding: '0',
                             cursor: 'pointer',
                             color: '#666',
-                            transition: 'color 0.2s ease',
+                            transition: 'color 0.2s ease, background-color 0.2s ease',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             zIndex: 10,
-                            width: '32px',
-                            height: '32px',
+                            width: '24px', // AJOUTÉ: Taille fixe
+                            height: '24px', // AJOUTÉ: Taille fixe
                             borderRadius: '4px'
                           }}
                           onMouseEnter={(e) => {
@@ -454,10 +458,10 @@ export default function Login() {
                             e.target.style.backgroundColor = 'transparent';
                           }}
                           onMouseDown={(e) => {
-                            e.target.style.transform = 'translateY(-50%) scale(0.95)';
+                            e.target.style.transform = 'scale(0.95)'; // CORRIGÉ: Scale simple sans translate
                           }}
                           onMouseUp={(e) => {
-                            e.target.style.transform = 'translateY(-50%) scale(1)';
+                            e.target.style.transform = 'scale(1)';
                           }}
                         >
                           {showPassword ? (
