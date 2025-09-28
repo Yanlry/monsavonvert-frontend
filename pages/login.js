@@ -351,8 +351,17 @@ export default function Login() {
                           Mot de passe oublié ?
                         </a>
                       </div>
-                      {/* MODIFIÉ: Ajout du bouton pour afficher/masquer le mot de passe */}
-                      <div className={styles.inputWrapper}>
+                      
+                      {/* SOLUTION ALTERNATIVE: Container avec styles inline pour éviter les conflits CSS */}
+                      <div 
+                        style={{
+                          position: 'relative',
+                          display: 'flex',
+                          alignItems: 'center',
+                          width: '100%'
+                        }}
+                      >
+                        {/* Icône cadenas à gauche */}
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="16"
@@ -363,6 +372,15 @@ export default function Login() {
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
+                          style={{
+                            position: 'absolute',
+                            left: '16px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            color: '#546e7a',
+                            zIndex: 2,
+                            pointerEvents: 'none'
+                          }}
                         >
                           <rect
                             x="3"
@@ -374,27 +392,80 @@ export default function Login() {
                           ></rect>
                           <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                         </svg>
+
+                        {/* Input mot de passe */}
                         <input
-                          type={showPassword ? "text" : "password"} // Change le type selon l'état
+                          type={showPassword ? "text" : "password"}
                           id="password"
                           placeholder="Votre mot de passe"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           required
+                          style={{
+                            width: '100%',
+                            padding: '16px 50px 16px 48px', // space pour icône gauche et bouton droite
+                            border: '1px solid #e0e0e0',
+                            borderRadius: '8px',
+                            fontSize: '14px',
+                            transition: 'all 0.15s ease',
+                            boxSizing: 'border-box',
+                            outline: 'none'
+                          }}
+                          onFocus={(e) => {
+                            e.target.style.borderColor = '#2e7d32';
+                            e.target.style.boxShadow = '0 0 0 2px rgba(46, 125, 50, 0.1)';
+                          }}
+                          onBlur={(e) => {
+                            e.target.style.borderColor = '#e0e0e0';
+                            e.target.style.boxShadow = 'none';
+                          }}
                         />
-                        {/* NOUVEAU: Bouton pour afficher/masquer le mot de passe */}
+
+                        {/* BOUTON AFFICHER/MASQUER avec styles inline */}
                         <button
                           type="button"
-                          className={styles.passwordToggle}
                           onClick={togglePasswordVisibility}
                           aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                          style={{
+                            position: 'absolute',
+                            right: '12px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            background: 'none',
+                            border: 'none',
+                            padding: '8px',
+                            cursor: 'pointer',
+                            color: '#666',
+                            transition: 'color 0.2s ease',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            zIndex: 10,
+                            width: '32px',
+                            height: '32px',
+                            borderRadius: '4px'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.color = '#2e7d32';
+                            e.target.style.backgroundColor = 'rgba(46, 125, 50, 0.1)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.color = '#666';
+                            e.target.style.backgroundColor = 'transparent';
+                          }}
+                          onMouseDown={(e) => {
+                            e.target.style.transform = 'translateY(-50%) scale(0.95)';
+                          }}
+                          onMouseUp={(e) => {
+                            e.target.style.transform = 'translateY(-50%) scale(1)';
+                          }}
                         >
                           {showPassword ? (
                             // Icône œil fermé (masquer)
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
-                              width="16"
-                              height="16"
+                              width="18"
+                              height="18"
                               viewBox="0 0 24 24"
                               fill="none"
                               stroke="currentColor"
@@ -409,8 +480,8 @@ export default function Login() {
                             // Icône œil ouvert (afficher)
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
-                              width="16"
-                              height="16"
+                              width="18"
+                              height="18"
                               viewBox="0 0 24 24"
                               fill="none"
                               stroke="currentColor"
