@@ -66,117 +66,108 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* NOUVEAU: Styles corrigés pour le bouton afficher/masquer mot de passe */
+/* NOUVEAU: Bouton afficher/masquer mot de passe - VERSION SIMPLE (juste l'icône) */
 
-/* Container pour positionner correctement le bouton */
+/* Container pour les inputs - assure le positionnement relatif */
 .inputWrapper {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-/* Bouton pour afficher/masquer le mot de passe */
+/* BOUTON SIMPLIFIÉ - Juste l'icône sans fond ni cadre */
 .passwordToggle {
-  position: absolute;
-  right: 12px; /* Position fixe depuis la droite */
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  padding: 8px;
-  cursor: pointer;
-  color: var(--color-text-light);
-  transition: all var(--transition-fast);
+  position: absolute;              /* Positionné par rapport au container */
+  right: 16px;                    /* 16 pixels depuis le bord droit */
+  top: 50%;                       /* Au milieu verticalement */
+  transform: translateY(-50%);    /* Centrage parfait */
+  background: none;               /* Pas de fond du tout */
+  border: none;                   /* Pas de bordure du tout */
+  padding: 0;                     /* Pas de padding pour éviter les décalages */
+  cursor: pointer;                /* Curseur main au survol */
+  color: #666;                    /* Couleur grise neutre */
+  transition: color 0.2s ease;    /* Animation douce juste pour la couleur */
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
-  z-index: 10; /* S'assurer qu'il est au-dessus */
-  width: 32px; /* Largeur fixe */
-  height: 32px; /* Hauteur fixe */
+  z-index: 10;                    /* Au-dessus de l'input */
+  width: 20px;                    /* Taille fixe de la zone cliquable */
+  height: 20px;
 }
 
-/* Effet au survol du bouton */
+/* Effet au survol - L'icône devient verte */
 .passwordToggle:hover {
-  color: var(--color-primary);
-  background-color: rgba(46, 125, 50, 0.1);
-  transform: translateY(-50%) scale(1.05);
+  color: var(--color-primary);     /* Utilise la couleur verte de votre thème */
 }
 
-/* Effet au clic du bouton */
+/* Effet au clic - Léger rétrécissement */
 .passwordToggle:active {
-  transform: translateY(-50%) scale(0.95);
-  background-color: rgba(46, 125, 50, 0.2);
+  transform: translateY(-50%) scale(0.9);
 }
 
-/* Focus pour l'accessibilité */
+/* Accessibilité - Contour au focus (navigation clavier) */
 .passwordToggle:focus {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
-  color: var(--color-primary);
+  border-radius: 2px;
 }
 
-/* Animation de l'icône */
+/* Style de l'icône SVG à l'intérieur */
 .passwordToggle svg {
-  transition: all 0.2s ease;
-  width: 16px;
-  height: 16px;
+  width: 18px;                    /* Taille de l'icône */
+  height: 18px;
+  transition: none;               /* Pas d'animation sur l'icône elle-même */
 }
 
-/* IMPORTANT: Modification des inputs pour laisser de la place au bouton */
+/* IMPORTANT: Espace dans l'input pour le bouton */
 .inputWrapper input {
-  width: 100%;
-  padding: 16px 50px 16px 48px !important; /* Padding spécifique : haut/bas, droite (pour le bouton), gauche (pour l'icône) */
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  font-size: 14px;
-  transition: all var(--transition-fast);
-  box-sizing: border-box; /* Important pour le calcul des dimensions */
+  padding-right: 50px !important; /* Réserve l'espace à droite pour le bouton */
 }
 
-/* Style spécifique pour les champs avec icône à gauche */
+/* Style pour l'icône de gauche (email, cadenas) - ne pas modifier */
 .inputWrapper svg:first-child {
   position: absolute;
-  left: 16px;
+  left: var(--spacing-md);
   top: 50%;
   transform: translateY(-50%);
   color: var(--color-text-light);
-  z-index: 5;
-  pointer-events: none; /* Empêche l'interaction avec l'icône */
+  z-index: 2;
+  pointer-events: none;           /* Empêche les clics sur cette icône */
 }
 
-/* Focus sur l'input */
-.inputWrapper input:focus {
-  border-color: var(--color-primary);
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.1);
-}
-
-/* Responsive : ajustements pour mobile */
+/* RESPONSIVE - Adaptations pour mobile */
 @media (max-width: 768px) {
   .passwordToggle {
-    right: 10px;
-    width: 30px;
-    height: 30px;
-    padding: 6px;
+    right: 14px;                  /* Plus près du bord sur tablette */
+    width: 18px;
+    height: 18px;
+  }
+  
+  .passwordToggle svg {
+    width: 16px;
+    height: 16px;
   }
   
   .inputWrapper input {
-    padding: 14px 45px 14px 45px !important;
+    padding-right: 45px !important;
   }
 }
 
 @media (max-width: 576px) {
   .passwordToggle {
-    right: 8px;
-    width: 28px;
-    height: 28px;
-    padding: 4px;
+    right: 12px;                  /* Encore plus près sur mobile */
+    width: 16px;
+    height: 16px;
+  }
+  
+  .passwordToggle svg {
+    width: 14px;
+    height: 14px;
   }
   
   .inputWrapper input {
-    padding: 12px 40px 12px 40px !important;
-    font-size: 16px; /* Évite le zoom sur iOS */
+    padding-right: 40px !important;
+    font-size: 16px;              /* Évite le zoom automatique sur iPhone */
   }
 }
 
